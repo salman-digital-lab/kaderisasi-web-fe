@@ -1,0 +1,6 @@
+.tab {
+  width: calc(100vw - 20rem);
+  @media (max-width: $mantine-breakpoint-md) {
+    width: 100%;
+  }
+}

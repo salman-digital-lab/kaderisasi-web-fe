@@ -1,0 +1,17 @@
+.container {
+  margin-top: 5rem;
+}
+
+.content {
+  flex-direction: row;
+  @media (max-width: $mantine-breakpoint-md) {
+    flex-direction: column;
+  }
+}
+
+.tab {
+  width: calc(100vw - 20rem);
+  @media (max-width: $mantine-breakpoint-md) {
+    width: 100%;
+  }
+}
