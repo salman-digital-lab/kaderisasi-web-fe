@@ -69,7 +69,7 @@ export default function ActivityCard({
           radius="md"
           style={{ flex: 1 }}
         >
-          Lihat Detil
+          Lihat Selengkapnya
         </Button>
       </Group>
     </Card>
