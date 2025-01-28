@@ -2,10 +2,9 @@ import ErrorWrapper from "@/components/layout/Error";
 import ProfileForm from "@/features/activity/ProfileForm";
 import { verifySession } from "@/functions/server/session";
 import { getActivity } from "@/services/activity";
-import { getProfile, getProvinces, getUniversities } from "@/services/profile";
+import { getProfile, getProvinces } from "@/services/profile";
 import { PublicUser, Member } from "@/types/model/members";
 import { Province } from "@/types/model/province";
-import { University } from "@/types/model/university";
 
 import {
   Container,
@@ -20,12 +19,11 @@ import {
 
 export default async function Page({ params }: { params: { slug: string } }) {
   let provinceData: Province[] | undefined;
-  let universityData: University[] | undefined;
   let profileData:
     | {
-        userData: PublicUser;
-        profile: Member;
-      }
+      userData: PublicUser;
+      profile: Member;
+    }
     | undefined;
 
   const sessionData = await verifySession();
@@ -33,7 +31,6 @@ export default async function Page({ params }: { params: { slug: string } }) {
 
   try {
     provinceData = await getProvinces();
-    universityData = await getUniversities();
     profileData = await getProfile(sessionData.session || "");
   } catch (error: unknown) {
     if (typeof error === "string") return <ErrorWrapper message={error} />;
@@ -66,7 +63,6 @@ export default async function Page({ params }: { params: { slug: string } }) {
       <Paper radius="md" withBorder p="lg" mt="xl">
         <ProfileForm
           provinces={provinceData}
-          universities={universityData}
           profileData={profileData}
           mandatoryProfileData={
             activity.additional_config.mandatory_profile_data || []

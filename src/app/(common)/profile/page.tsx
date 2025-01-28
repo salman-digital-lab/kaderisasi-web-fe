@@ -3,7 +3,6 @@ import { Avatar, Text, Button, Paper, Container, Flex } from "@mantine/core";
 import {
   getProfile,
   getProvinces,
-  getUniversities,
 } from "../../../services/profile";
 
 import ErrorWrapper from "../../../components/layout/Error";
@@ -19,12 +18,10 @@ import { Activity, Registrant } from "@/types/model/activity";
 import { PublicUser, Member } from "@/types/model/members";
 import { Province } from "@/types/model/province";
 import { RuangCurhatData } from "@/types/model/ruangcurhat";
-import { University } from "@/types/model/university";
 import { redirect } from "next/navigation";
 
 export default async function Page() {
   let provinceData: Province[] | undefined;
-  let universityData: University[] | undefined;
   let profileData:
     | {
       userData: PublicUser;
@@ -42,7 +39,6 @@ export default async function Page() {
 
   try {
     provinceData = await getProvinces();
-    universityData = await getUniversities();
     profileData = await getProfile(sessionData.session || "");
     activitiesRegistration = await getActivitiesRegistration(
       sessionData.session || "",
@@ -76,7 +72,6 @@ export default async function Page() {
           <ProfileTab
             profileData={profileData}
             provinceData={provinceData}
-            universityData={universityData}
             activitiesRegistration={activitiesRegistration}
             ruangcurhatData={ruangCurhatData}
           />

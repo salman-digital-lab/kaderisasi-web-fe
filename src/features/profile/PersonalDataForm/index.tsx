@@ -17,10 +17,10 @@ import { PublicUser } from "@/types/model/members";
 import { Member } from "@/types/model/members";
 import { Province } from "@/types/model/province";
 import { University } from "@/types/model/university";
+import UniversitySelect from "@/components/common/UniversitySelect";
 
 type PersonalDataFormProps = {
   provinces?: Province[];
-  universities?: University[];
   profileData?: {
     userData: PublicUser;
     profile: Member;
@@ -29,7 +29,6 @@ type PersonalDataFormProps = {
 
 export default function PersonalDataForm({
   provinces,
-  universities,
   profileData,
 }: PersonalDataFormProps) {
   const form = useForm({
@@ -162,17 +161,11 @@ export default function PersonalDataForm({
           />
         </Fieldset>
         <Fieldset legend="Pendidikan" mt="md">
-          <Select
+          <UniversitySelect
             {...form.getInputProps("university_id")}
             key={form.key("university_id")}
             label="Universitas"
             placeholder="Pilih Universitas Anda"
-            data={universities?.map((university) => ({
-              label: university.name,
-              value: university.id.toString(),
-            }))}
-            mt="md"
-            searchable
           />
           <TextInput
             {...form.getInputProps("major")}

@@ -17,7 +17,6 @@ import UniversitySelect from "@/components/common/UniversitySelect";
 
 type ProfileFormProps = {
   provinces?: Province[];
-  universities?: University[];
   profileData?: {
     userData: PublicUser;
     profile: Member;
@@ -28,7 +27,6 @@ type ProfileFormProps = {
 
 export default function ProfileForm({
   provinces,
-  universities,
   profileData,
   mandatoryProfileData,
   slug,

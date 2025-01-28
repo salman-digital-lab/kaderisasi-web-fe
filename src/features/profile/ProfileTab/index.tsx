@@ -12,24 +12,21 @@ import { PublicUser } from "@/types/model/members";
 import { RuangCurhatData } from "@/types/model/ruangcurhat";
 import { Activity, Registrant } from "@/types/model/activity";
 import { Member } from "@/types/model/members";
-import { University } from "@/types/model/university";
 
 type ProfileTabProps = {
   provinceData: Province[] | undefined;
-  universityData: University[] | undefined;
   profileData:
-    | {
-        userData: PublicUser;
-        profile: Member;
-      }
-    | undefined;
+  | {
+    userData: PublicUser;
+    profile: Member;
+  }
+  | undefined;
   activitiesRegistration: ({ activity: Activity } & Registrant)[] | undefined;
   ruangcurhatData: RuangCurhatData[] | undefined;
 };
 
 export function ProfileTab({
   provinceData,
-  universityData,
   profileData,
   activitiesRegistration,
   ruangcurhatData,
@@ -60,7 +57,6 @@ export function ProfileTab({
       <TabsPanel value="profiledata" mt="md">
         <PersonalDataForm
           provinces={provinceData}
-          universities={universityData}
           profileData={profileData}
         />
       </TabsPanel>
