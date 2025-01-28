@@ -1,11 +1,14 @@
 "use client";
 
+import dayjs from "dayjs";
 import Link from "next/link";
-import { Card, Image, Text, Group, Badge, Button, rem } from "@mantine/core";
+import { Image, Text, Group, Badge, Button, rem, Card } from "@mantine/core";
 import classes from "./index.module.css";
 import { USER_LEVEL_RENDER } from "../../../constants/render/activity";
 import { IconCalendarTime } from "@tabler/icons-react";
 import { USER_LEVEL_ENUM } from "@/types/constants/profile";
+
+require('dayjs/locale/id')
 
 type ActivityCardProps = {
   activityName: string;
@@ -50,12 +53,20 @@ export default function ActivityCard({
 
       <Card.Section className={classes.section}>
         <Text mt="md" className={classes.label} c="dimmed">
-          Information
+          Tutup Pendaftaran
         </Text>
         <Group gap={7} mt={5}>
           <Badge variant="light" color="red" leftSection={calenderIcon}>
-            {registrationEnd}
+            {dayjs(registrationEnd).locale('id').format("DD MMMM YYYY")}
           </Badge>
+        </Group>
+      </Card.Section>
+
+      <Card.Section className={classes.section}>
+        <Text mt="md" className={classes.label} c="dimmed">
+          Jenjang Minimum
+        </Text>
+        <Group gap={7} mt={5}>
           <Badge size="sm" variant="light">
             {USER_LEVEL_RENDER[minimumLevel]}
           </Badge>

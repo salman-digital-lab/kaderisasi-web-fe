@@ -9,6 +9,7 @@ import {
   Stack,
   Title,
   Text,
+  CardSection,
 } from "@mantine/core";
 import { IconCalendarTime, IconCalendarMonth } from "@tabler/icons-react";
 import { Carousel, CarouselSlide } from "@mantine/carousel";
@@ -41,15 +42,15 @@ const calenderMonthIcon = (
 export default async function Page({ params }: { params: { slug: string } }) {
   let activityRegistration:
     | {
-        status: string;
-      }
+      status: string;
+    }
     | undefined;
 
   let profileData:
     | {
-        userData: PublicUser;
-        profile: Member;
-      }
+      userData: PublicUser;
+      profile: Member;
+    }
     | undefined;
 
   let activity: Activity | undefined;
@@ -73,12 +74,12 @@ export default async function Page({ params }: { params: { slug: string } }) {
   const isRegistered =
     !!activityRegistration?.status &&
     activityRegistration?.status !==
-      ACTIVITY_REGISTRANT_STATUS_ENUM.BELUM_TERDAFTAR;
+    ACTIVITY_REGISTRANT_STATUS_ENUM.BELUM_TERDAFTAR;
 
   const isLevelEligible = Boolean(
     activity &&
-      profileData?.profile?.level !== undefined &&
-      profileData?.profile?.level >= activity.minimum_level,
+    profileData?.profile?.level !== undefined &&
+    profileData?.profile?.level >= activity.minimum_level,
   );
 
   return (
@@ -134,15 +135,20 @@ export default async function Page({ params }: { params: { slug: string } }) {
                 ? ACTIVITY_CATEGORY_RENDER[activity.activity_category]
                 : ""}
             </Badge>
-            <Badge variant="light" leftSection={calenderMonthIcon}>
-              {activity?.activity_start}
-            </Badge>
             {isRegistered && (
               <Badge color="red" leftSection={calendarIcon}>
                 {activity?.registration_end}
               </Badge>
             )}
           </Group>
+          <CardSection className={classes.section}>
+            <Text mt="md" className={classes.label} c="dimmed">
+              Tanggal Kegiatan
+            </Text>
+            <Badge variant="light" leftSection={calenderMonthIcon}>
+              {activity?.activity_start}
+            </Badge>
+          </CardSection>
         </Card>
         <Card className={classes.control} padding="lg" radius="md" withBorder>
           {isRegistered ? (
@@ -190,10 +196,10 @@ export default async function Page({ params }: { params: { slug: string } }) {
           )}
         </Card>
       </Container>
-      <Container size="md">
+      <Container w="100%">
         <Card withBorder radius="md">
           <Title ta="center" mt="sm">
-            Deskripsi
+            Deskripsi Kegiatan
           </Title>
           <div
             dangerouslySetInnerHTML={{ __html: activity?.description || "" }}
