@@ -16,6 +16,7 @@ import {
   Text,
   Stack,
 } from "@mantine/core";
+import { redirect } from "next/navigation";
 
 export default async function Page({ params }: { params: { slug: string } }) {
   let provinceData: Province[] | undefined;
@@ -33,6 +34,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
     provinceData = await getProvinces();
     profileData = await getProfile(sessionData.session || "");
   } catch (error: unknown) {
+    if (typeof error === "string" && error === "Unauthorized") redirect('/api/logout')
     if (typeof error === "string") return <ErrorWrapper message={error} />;
   }
 

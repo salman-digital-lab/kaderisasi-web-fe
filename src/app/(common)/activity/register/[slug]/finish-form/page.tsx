@@ -1,5 +1,3 @@
-import ActivityForm from "../../../../../../features/activity/ActivityForm";
-import { getActivity } from "../../../../../../services/activity";
 import {
   Container,
   Paper,
@@ -14,7 +12,6 @@ import {
 import Link from "next/link";
 
 export default async function Page({ params }: { params: { slug: string } }) {
-  // const activity = await getActivity(params);
 
   return (
     <Container size="sm" component="main" mt="xl">

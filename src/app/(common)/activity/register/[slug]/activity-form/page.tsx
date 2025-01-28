@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import ActivityForm from "../../../../../../features/activity/ActivityForm";
 import { verifySession } from "../../../../../../functions/server/session";
 import { getActivity } from "../../../../../../services/activity";
@@ -15,6 +16,8 @@ import {
 export default async function Page({ params }: { params: { slug: string } }) {
   const activity = await getActivity(params);
   const sessionData = await verifySession();
+
+  if (sessionData.session === null) redirect('/api/logout')
 
   return (
     <Container size="sm" component="main" mt="xl">
