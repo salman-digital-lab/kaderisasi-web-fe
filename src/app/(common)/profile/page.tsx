@@ -20,15 +20,16 @@ import { PublicUser, Member } from "@/types/model/members";
 import { Province } from "@/types/model/province";
 import { RuangCurhatData } from "@/types/model/ruangcurhat";
 import { University } from "@/types/model/university";
+import { redirect } from "next/navigation";
 
 export default async function Page() {
   let provinceData: Province[] | undefined;
   let universityData: University[] | undefined;
   let profileData:
     | {
-        userData: PublicUser;
-        profile: Member;
-      }
+      userData: PublicUser;
+      profile: Member;
+    }
     | undefined;
 
   let activitiesRegistration:
@@ -48,6 +49,7 @@ export default async function Page() {
     );
     ruangCurhatData = await getRuangCurhat(sessionData.session || "");
   } catch (error: unknown) {
+    if (typeof error === "string" && error === "Unauthorized") redirect('/api/logout')
     if (typeof error === "string") return <ErrorWrapper message={error} />;
   }
 
@@ -63,7 +65,7 @@ export default async function Page() {
             <Text ta="center" c="dimmed" fz="sm">
               {profileData &&
                 USER_LEVEL_RENDER[
-                  profileData.profile.level || USER_LEVEL_ENUM.JAMAAH
+                profileData.profile.level || USER_LEVEL_ENUM.JAMAAH
                 ]}
             </Text>
             <Button variant="default" c="red" fullWidth mt="md">

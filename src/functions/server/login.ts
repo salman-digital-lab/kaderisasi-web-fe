@@ -34,8 +34,15 @@ export default async function login({ email, password }: LoginFormData) {
       },
     );
 
-    cookies().set(SESSION_COOKIE_NAME, response?.data?.token?.token);
-    cookies().set(NAME_COOKIE_NAME, response?.data?.data?.name);
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    cookies().set(SESSION_COOKIE_NAME, response?.data?.token?.token, {
+      expires: tomorrow
+    });
+    cookies().set(NAME_COOKIE_NAME, response?.data?.data?.name, {
+      expires: tomorrow
+    });
 
     return response.message;
   } catch (error: unknown) {
