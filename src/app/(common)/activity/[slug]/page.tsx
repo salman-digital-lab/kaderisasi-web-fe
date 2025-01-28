@@ -39,7 +39,8 @@ const calenderMonthIcon = (
   <IconCalendarMonth style={{ width: rem(12), height: rem(12) }} />
 );
 
-export default async function Page({ params }: { params: { slug: string } }) {
+export default async function Page(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   let activityRegistration:
     | {
       status: string;

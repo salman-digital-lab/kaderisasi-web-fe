@@ -7,11 +7,12 @@ import ActivityFilter from "../../../features/activity/ActivityFilter";
 import { getActivities } from "../../../services/activity";
 import ActivityPagination from "../../../features/activity/ActivityPagination";
 
-export default async function Page({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
+export default async function Page(
+  props: {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const activities = await getActivities({ per_page: "8", ...searchParams });
 
   return (

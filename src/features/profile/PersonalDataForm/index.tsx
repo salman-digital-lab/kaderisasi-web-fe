@@ -16,7 +16,6 @@ import editProfile from "@/functions/server/editProfile";
 import { PublicUser } from "@/types/model/members";
 import { Member } from "@/types/model/members";
 import { Province } from "@/types/model/province";
-import { University } from "@/types/model/university";
 import UniversitySelect from "@/components/common/UniversitySelect";
 
 type PersonalDataFormProps = {

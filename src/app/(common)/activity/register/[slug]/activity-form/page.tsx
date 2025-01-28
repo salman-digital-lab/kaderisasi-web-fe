@@ -13,7 +13,8 @@ import {
   Stack,
 } from "@mantine/core";
 
-export default async function Page({ params }: { params: { slug: string } }) {
+export default async function Page(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const activity = await getActivity(params);
   const sessionData = await verifySession();
 

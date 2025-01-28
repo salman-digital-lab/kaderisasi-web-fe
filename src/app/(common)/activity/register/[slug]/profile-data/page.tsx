@@ -18,7 +18,8 @@ import {
 } from "@mantine/core";
 import { redirect } from "next/navigation";
 
-export default async function Page({ params }: { params: { slug: string } }) {
+export default async function Page(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   let provinceData: Province[] | undefined;
   let profileData:
     | {

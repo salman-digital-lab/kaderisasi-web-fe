@@ -9,30 +9,33 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@mantine/carousel": "^7.15.2",
-    "@mantine/core": "^7.15.2",
-    "@mantine/dates": "^7.15.2",
-    "@mantine/form": "^7.15.2",
-    "@mantine/hooks": "^7.15.2",
-    "@mantine/modals": "^7.15.2",
-    "@mantine/notifications": "^7.15.2",
-    "@tabler/icons-react": "^3.26.0",
-    "ahooks": "^3.8.1",
+    "@mantine/carousel": "^7.16.2",
+    "@mantine/core": "^7.16.2",
+    "@mantine/dates": "^7.16.2",
+    "@mantine/form": "^7.16.2",
+    "@mantine/hooks": "^7.16.2",
+    "@mantine/modals": "^7.16.2",
+    "@mantine/notifications": "^7.16.2",
+    "@tabler/icons-react": "^3.29.0",
     "dayjs": "^1.11.13",
-    "embla-carousel-react": "^8.5.1",
-    "next": "^14.2.23",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "embla-carousel-react": "^8.5.2",
+    "next": "15.1.6",
+    "react": "19.0.0",
+    "react-dom": "19.0.0"
   },
   "devDependencies": {
     "@types/node": "^20.16.10",
-    "@types/react": "^18.3.10",
-    "@types/react-dom": "^18.3.0",
+    "@types/react": "19.0.8",
+    "@types/react-dom": "19.0.3",
     "eslint": "^8.57.1",
-    "eslint-config-next": "14.2.7",
+    "eslint-config-next": "15.1.6",
     "postcss": "^8.4.47",
     "postcss-preset-mantine": "^1.17.0",
     "postcss-simple-vars": "^7.0.1",
-    "typescript": "^5.6.2"
+    "typescript": "^5.7.3"
+  },
+  "overrides": {
+    "@types/react": "19.0.8",
+    "@types/react-dom": "19.0.3"
   }
 }
