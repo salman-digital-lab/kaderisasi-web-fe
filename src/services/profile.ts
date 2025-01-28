@@ -23,9 +23,9 @@ export const getProvinces = async () => {
   return response.data;
 };
 
-export const getUniversities = async () => {
+export const getUniversities = async (search?: string) => {
   const response = await fetcher<GetUniversitiesResp>(
-    process.env.NEXT_PUBLIC_BE_ADMIN_API + "/universities?per_page=5000",
+    process.env.NEXT_PUBLIC_BE_ADMIN_API + "/universities?per_page=20" + (search ? "&search=" + search : ""),
     {
       method: "GET",
       headers: {

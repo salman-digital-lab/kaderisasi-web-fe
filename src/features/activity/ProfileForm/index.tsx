@@ -12,6 +12,7 @@ import { Member, PublicUser } from "@/types/model/members";
 import { Province } from "@/types/model/province";
 import { University } from "@/types/model/university";
 import { MandatoryProfileData } from "@/types/model/activity";
+import UniversitySelect from "@/components/common/UniversitySelect";
 
 
 type ProfileFormProps = {
@@ -145,16 +146,11 @@ export default function ProfileForm({
 
       case "university_id":
         return (
-          <Select
+          <UniversitySelect
             {...form.getInputProps("university_id")}
             key={form.key("university_id")}
             label="Universitas"
             placeholder="Pilih Universitas Anda"
-            data={universities?.map((university) => ({
-              label: university.name,
-              value: university.id.toString(),
-            }))}
-            searchable
             required={type.required}
           />
         );
