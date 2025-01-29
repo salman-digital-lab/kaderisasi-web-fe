@@ -15,3 +15,9 @@ export const USER_LEVEL_RENDER = {
   [USER_LEVEL_ENUM.KADER]: "Kader",
   [USER_LEVEL_ENUM.KADER_LANJUT]: "Kader Lanjut",
 } as const;
+
+export const ACTIVITY_REGISTRANT_COLOR_STATUS_RENDER = {
+  "TIDAK DITERIMA": "red",
+  "TIDAK LULUS": "red",
+  "LULUS KEGIATAN": "green",
+} as const;

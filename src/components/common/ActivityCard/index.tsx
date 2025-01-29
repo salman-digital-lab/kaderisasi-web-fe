@@ -7,8 +7,7 @@ import classes from "./index.module.css";
 import { USER_LEVEL_RENDER } from "../../../constants/render/activity";
 import { IconCalendarTime } from "@tabler/icons-react";
 import { USER_LEVEL_ENUM } from "@/types/constants/profile";
-
-require('dayjs/locale/id')
+import 'dayjs/locale/id'
 
 type ActivityCardProps = {
   activityName: string;

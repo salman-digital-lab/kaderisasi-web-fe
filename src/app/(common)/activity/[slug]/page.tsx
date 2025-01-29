@@ -18,6 +18,7 @@ import Link from "next/link";
 import classes from "./index.module.css";
 import {
   ACTIVITY_CATEGORY_RENDER,
+  ACTIVITY_REGISTRANT_COLOR_STATUS_RENDER,
   USER_LEVEL_RENDER,
 } from "../../../../constants/render/activity";
 import { verifySession } from "../../../../functions/server/session";
@@ -30,6 +31,8 @@ import ErrorWrapper from "../../../../components/layout/Error";
 import { ACTIVITY_REGISTRANT_STATUS_ENUM } from "@/types/constants/activity";
 import { Activity } from "@/types/model/activity";
 import { PublicUser, Member } from "@/types/model/members";
+import dayjs from "dayjs";
+import "dayjs/locale/id";
 
 const calendarIcon = (
   <IconCalendarTime style={{ width: rem(12), height: rem(12) }} />
@@ -39,19 +42,21 @@ const calenderMonthIcon = (
   <IconCalendarMonth style={{ width: rem(12), height: rem(12) }} />
 );
 
-export default async function Page(props: { params: Promise<{ slug: string }> }) {
+export default async function Page(props: {
+  params: Promise<{ slug: string }>;
+}) {
   const params = await props.params;
   let activityRegistration:
     | {
-      status: string;
-    }
+        status: string;
+      }
     | undefined;
 
   let profileData:
     | {
-      userData: PublicUser;
-      profile: Member;
-    }
+        userData: PublicUser;
+        profile: Member;
+      }
     | undefined;
 
   let activity: Activity | undefined;
@@ -75,12 +80,12 @@ export default async function Page(props: { params: Promise<{ slug: string }> })
   const isRegistered =
     !!activityRegistration?.status &&
     activityRegistration?.status !==
-    ACTIVITY_REGISTRANT_STATUS_ENUM.BELUM_TERDAFTAR;
+      ACTIVITY_REGISTRANT_STATUS_ENUM.BELUM_TERDAFTAR;
 
   const isLevelEligible = Boolean(
     activity &&
-    profileData?.profile?.level !== undefined &&
-    profileData?.profile?.level >= activity.minimum_level,
+      profileData?.profile?.level !== undefined &&
+      profileData?.profile?.level >= activity.minimum_level,
   );
 
   return (
@@ -136,18 +141,15 @@ export default async function Page(props: { params: Promise<{ slug: string }> })
                 ? ACTIVITY_CATEGORY_RENDER[activity.activity_category]
                 : ""}
             </Badge>
-            {isRegistered && (
-              <Badge color="red" leftSection={calendarIcon}>
-                {activity?.registration_end}
-              </Badge>
-            )}
           </Group>
           <CardSection className={classes.section}>
             <Text mt="md" className={classes.label} c="dimmed">
-              Tanggal Kegiatan
+              Tanggal Mulai Kegiatan
             </Text>
             <Badge variant="light" leftSection={calenderMonthIcon}>
-              {activity?.activity_start}
+              {dayjs(activity?.activity_start)
+                .locale("id")
+                .format("DD MMMM YYYY")}
             </Badge>
           </CardSection>
         </Card>
@@ -157,7 +159,21 @@ export default async function Page(props: { params: Promise<{ slug: string }> })
               <Title order={5} ta="center">
                 Status Pendaftaran
               </Title>
-              <Badge m="auto" size="lg" px="xl">
+              <Badge
+                color={
+                  activityRegistration?.status &&
+                  ACTIVITY_REGISTRANT_COLOR_STATUS_RENDER[
+                    activityRegistration.status as keyof typeof ACTIVITY_REGISTRANT_COLOR_STATUS_RENDER
+                  ]
+                    ? ACTIVITY_REGISTRANT_COLOR_STATUS_RENDER[
+                        activityRegistration.status as keyof typeof ACTIVITY_REGISTRANT_COLOR_STATUS_RENDER
+                      ]
+                    : "blue"
+                }
+                m="auto"
+                size="lg"
+                px="xl"
+              >
                 {activityRegistration?.status}
               </Badge>
             </Stack>
@@ -167,7 +183,9 @@ export default async function Page(props: { params: Promise<{ slug: string }> })
                 Tutup Pendaftaran
               </Title>
               <Badge m="auto" color="red" leftSection={calendarIcon}>
-                {activity?.registration_end}
+                {dayjs(activity?.registration_end)
+                  .locale("id")
+                  .format("DD MMMM YYYY")}
               </Badge>
             </Stack>
           )}

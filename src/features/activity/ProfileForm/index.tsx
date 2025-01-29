@@ -71,8 +71,8 @@ export default function ProfileForm({
           <TextInput
             {...form.getInputProps("personal_id")}
             key={form.key("personal_id")}
-            label="Nomor KTP"
-            placeholder="Nomor KTP"
+            label="Nomor Identitas (KTP/NIM)"
+            placeholder="Cth: 1234567890123456"
             required={type.required}
           />
         );
