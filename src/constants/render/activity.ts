@@ -12,9 +12,6 @@ export const ACTIVITY_CATEGORY_RENDER = {
 export const USER_LEVEL_RENDER = {
   [USER_LEVEL_ENUM.JAMAAH]: "Jamaah",
   [USER_LEVEL_ENUM.AKTIVIS]: "Aktivis",
-  [USER_LEVEL_ENUM.AKTIVIS_KK]: "Aktivis KK",
   [USER_LEVEL_ENUM.KADER]: "Kader",
-  [USER_LEVEL_ENUM.KADER_INVENTRA]: "Kader Inventra",
-  [USER_LEVEL_ENUM.KADER_KOMPROF]: "Kader Komprof",
   [USER_LEVEL_ENUM.KADER_LANJUT]: "Kader Lanjut",
 } as const;
