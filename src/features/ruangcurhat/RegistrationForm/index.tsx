@@ -9,12 +9,15 @@ import showNotif from "@/functions/common/notification";
 import { PROBLEM_OWNER_OPTIONS } from "@/constants/form/ruangcurhat";
 import { PROBLEM_OWNER_ENUM } from "@/types/constants/ruangcurhat";
 import classes from "./index.module.css";
+import editProfile from "@/functions/server/editProfile";
 
 type RegistrationFormProps = {
   token: string;
+  whatsapp?: string;
 };
 
 type RegistrationFormItems = {
+  whatsapp: string;
   problem_ownership: string;
   problem_category: string;
   problem_description: string;
@@ -22,12 +25,16 @@ type RegistrationFormItems = {
   counselor_gender: string;
 };
 
-export default function RegistrationForm({ token }: RegistrationFormProps) {
+export default function RegistrationForm({
+  token,
+  whatsapp,
+}: RegistrationFormProps) {
   const [loading, setLoading] = useState(false);
   const [isFriend, setIsFriend] = useState(false);
 
   const form = useForm({
     initialValues: {
+      whatsapp: whatsapp || "",
       problem_ownership: "",
       owner_name: "",
       problem_category: "",
@@ -44,13 +51,22 @@ export default function RegistrationForm({ token }: RegistrationFormProps) {
   const handleRegistration = async (val: RegistrationFormItems) => {
     try {
       setLoading(true);
+      await editProfile({ whatsapp: val.whatsapp });
       const resp = await postRuangCurhat(token, {
         ...val,
         problem_ownership: Number(val.problem_ownership),
       });
       if (resp) {
         showNotif(resp.message);
-        form.reset();
+        form.setValues({
+          whatsapp: val.whatsapp || "",
+          problem_ownership: "",
+          owner_name: "",
+          problem_category: "",
+          problem_description: "",
+          handling_technic: "",
+          counselor_gender: "",
+        });
       }
     } catch (error: unknown) {
       if (error instanceof Error) showNotif(error.message, true);
@@ -65,6 +81,15 @@ export default function RegistrationForm({ token }: RegistrationFormProps) {
       className={classes.form}
       onSubmit={form.onSubmit((val) => handleRegistration(val))}
     >
+      <TextInput
+        {...form.getInputProps("whatsapp")}
+        key={form.key("whatsapp")}
+        label="Nomor Whatsapp"
+        placeholder="Contoh: 081234567890"
+        description="Pastikan nomor whatsapp anda aktif"
+        required
+        mt="md"
+      />
       <Select
         {...form.getInputProps("problem_ownership")}
         key={form.key("problem_ownership")}
