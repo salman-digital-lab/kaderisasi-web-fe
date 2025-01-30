@@ -24,6 +24,10 @@ export default function RootLayout({
   return (
     <html lang="en" {...mantineHtmlProps}>
       <head>
+        <meta
+          name="google-site-verification"
+          content="BhyTMNxi8e9S4lV2NLGSX1QuJSU0GEkGGoIMuJzJIUM"
+        />
         <ColorSchemeScript />
       </head>
       <body>
