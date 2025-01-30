@@ -171,16 +171,18 @@ export default async function Page(props: {
                 : ""}
             </Badge>
           </Group>
-          <CardSection className={classes.section}>
-            <Text mt="md" className={classes.label} c="dimmed">
-              Tanggal Mulai Kegiatan
-            </Text>
-            <Badge variant="light" leftSection={calenderMonthIcon}>
-              {dayjs(activity?.activity_start)
-                .locale("id")
-                .format("DD MMMM YYYY")}
-            </Badge>
-          </CardSection>
+          {activity?.activity_start && (
+            <CardSection className={classes.section}>
+              <Text mt="md" className={classes.label} c="dimmed">
+                Tanggal Mulai Kegiatan
+              </Text>
+              <Badge variant="light" leftSection={calenderMonthIcon}>
+                {dayjs(activity?.activity_start)
+                  .locale("id")
+                  .format("DD MMMM YYYY")}
+              </Badge>
+            </CardSection>
+          )}
         </Card>
         <Card className={classes.control} padding="lg" radius="md" withBorder>
           {isRegistered ? (
