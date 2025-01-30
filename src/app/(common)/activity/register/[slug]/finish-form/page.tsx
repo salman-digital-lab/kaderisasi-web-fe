@@ -11,6 +11,10 @@ import {
 } from "@mantine/core";
 import Link from "next/link";
 
+export const metadata = {
+  title: "Selesai Pendaftaran",
+};
+
 export default async function Page(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
 

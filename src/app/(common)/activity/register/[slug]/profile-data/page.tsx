@@ -18,14 +18,20 @@ import {
 } from "@mantine/core";
 import { redirect } from "next/navigation";
 
-export default async function Page(props: { params: Promise<{ slug: string }> }) {
+export const metadata = {
+  title: "Data Diri",
+};
+
+export default async function Page(props: {
+  params: Promise<{ slug: string }>;
+}) {
   const params = await props.params;
   let provinceData: Province[] | undefined;
   let profileData:
     | {
-      userData: PublicUser;
-      profile: Member;
-    }
+        userData: PublicUser;
+        profile: Member;
+      }
     | undefined;
 
   const sessionData = await verifySession();
@@ -35,7 +41,8 @@ export default async function Page(props: { params: Promise<{ slug: string }> })
     provinceData = await getProvinces();
     profileData = await getProfile(sessionData.session || "");
   } catch (error: unknown) {
-    if (typeof error === "string" && error === "Unauthorized") redirect('/api/logout')
+    if (typeof error === "string" && error === "Unauthorized")
+      redirect("/api/logout");
     if (typeof error === "string") return <ErrorWrapper message={error} />;
   }
 

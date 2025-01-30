@@ -7,6 +7,10 @@ import LoginForm from "../../features/auth/LoginForm";
 
 import classes from "./index.module.css";
 
+export const metadata = {
+  title: "Masuk",
+};
+
 export default function Page() {
   return (
     <Container size={420} my={40}>

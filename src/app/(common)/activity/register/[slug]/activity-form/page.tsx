@@ -13,6 +13,10 @@ import {
   Stack,
 } from "@mantine/core";
 
+export const metadata = {
+  title: "Daftar Kegiatan",
+};
+
 export default async function Page(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
   const activity = await getActivity(params);

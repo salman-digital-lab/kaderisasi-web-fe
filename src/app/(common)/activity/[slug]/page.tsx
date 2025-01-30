@@ -42,6 +42,21 @@ const calenderMonthIcon = (
   <IconCalendarMonth style={{ width: rem(12), height: rem(12) }} />
 );
 
+export async function generateMetadata(props: {
+  params: Promise<{ slug: string }>;
+}) {
+  const param = await props.params;
+
+  const activity = await getActivity(param);
+  return {
+    title: activity?.name,
+    openGraph: {
+      title: activity?.name,
+      description: `${activity?.name} - Ayo daftar kegiatan ini di Kaderisasi Salman`,
+    },
+  };
+}
+
 export default async function Page(props: {
   params: Promise<{ slug: string }>;
 }) {

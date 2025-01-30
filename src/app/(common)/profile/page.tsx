@@ -26,6 +26,10 @@ import { Province } from "@/types/model/province";
 import { RuangCurhatData } from "@/types/model/ruangcurhat";
 import { redirect } from "next/navigation";
 
+export const metadata = {
+  title: "Profil",
+};
+
 export default async function Page() {
   let provinceData: Province[] | undefined;
   let profileData:

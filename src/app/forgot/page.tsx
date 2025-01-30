@@ -7,6 +7,10 @@ import ForgotForm from "@/features/auth/ForgotForm";
 
 import classes from "./index.module.css";
 
+export const metadata = {
+  title: "Lupa Password",
+};
+
 export default function Page() {
   return (
     <Container size={420} my={40}>

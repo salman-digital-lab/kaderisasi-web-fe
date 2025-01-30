@@ -7,6 +7,10 @@ import ActivityFilter from "../../../features/activity/ActivityFilter";
 import { getActivities } from "../../../services/activity";
 import ActivityPagination from "../../../features/activity/ActivityPagination";
 
+export const metadata = {
+  title: "Kegiatan",
+};
+
 export default async function Page(
   props: {
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;

@@ -14,6 +14,10 @@ import illustration from "@/assets/homepage-1.svg";
 import Link from "next/link";
 import { getActivities } from "../../services/activity";
 
+export const metadata = {
+  title: "Beranda",
+};
+
 export default async function Home() {
   const { data: activities } = await getActivities({ per_page: "4" });
 

@@ -5,6 +5,10 @@ import illustration from "@/assets/homepage-1.svg";
 import RegistrationForm from "../../../features/ruangcurhat/RegistrationForm";
 import { verifySession } from "../../../functions/server/session";
 
+export const metadata = {
+  title: "Ruang Curhat",
+};
+
 export default async function Home() {
   const sessionData = await verifySession();
 

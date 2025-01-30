@@ -7,6 +7,10 @@ import logo from "@/assets/bmka_logo_color.png";
 import classes from "./index.module.css";
 import RegistrationForm from "../../features/auth/RegistrationForm";
 
+export const metadata = {
+  title: "Daftar",
+};
+
 export default function Page() {
   return (
     <Container size={420} my={40}>

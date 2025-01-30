@@ -11,9 +11,19 @@ import { Notifications } from "@mantine/notifications";
 import { ModalsProvider } from "@mantine/modals";
 
 export const metadata = {
-  title: "Platform Aktivis Salman ITB (BMKA)",
+  title: {
+    template: "%s | Kaderisasi Salman",
+    default: "Kaderisasi Salman",
+  },
   description:
     "Portal Aktivis Salman yang dikelola BMKA (Bidang Kemahasiswaan, Kaderisasi dan Alumni) Salman yang berfungsi sebagai pusat pendaftaran kegiatan di @kaderisasisalman. Program pembinaan dalam rangka membentuk kader teladan untuk membangun Indonesia.",
+  openGraph: {
+    title: "Kaderisasi Salman",
+    description:
+      "Portal Aktivis Salman yang dikelola BMKA (Bidang Kemahasiswaan, Kaderisasi dan Alumni) Salman yang berfungsi sebagai pusat pendaftaran kegiatan di @kaderisasisalman. Program pembinaan dalam rangka membentuk kader teladan untuk membangun Indonesia.",
+    type: "website",
+    siteName: "Kaderisasi Salman",
+  },
 };
 
 export default function RootLayout({
@@ -24,10 +34,6 @@ export default function RootLayout({
   return (
     <html lang="en" {...mantineHtmlProps}>
       <head>
-        <meta
-          name="google-site-verification"
-          content="BhyTMNxi8e9S4lV2NLGSX1QuJSU0GEkGGoIMuJzJIUM"
-        />
         <ColorSchemeScript />
       </head>
       <body>

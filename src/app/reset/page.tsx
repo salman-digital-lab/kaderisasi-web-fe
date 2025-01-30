@@ -7,6 +7,10 @@ import logo from "@/assets/bmka_logo_color.png";
 import classes from "./index.module.css";
 import ResetPasswordForm from "@/features/auth/ResetPasswordForm";
 
+export const metadata = {
+  title: "Lupa Password",
+};
+
 export default function Page() {
   return (
     <Container size={420} my={40}>
