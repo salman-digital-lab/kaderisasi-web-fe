@@ -53,6 +53,18 @@ export async function generateMetadata(props: {
     openGraph: {
       title: activity?.name,
       description: `${activity?.name} - Ayo daftar kegiatan ini di Kaderisasi Salman`,
+      url: `${process.env.NEXT_PUBLIC_APP_URL}/activity/${param.slug}`,
+      type: "website",
+      images: activity?.additional_config?.images?.length
+        ? [
+            {
+              url: `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${activity.additional_config.images[0]}`,
+              width: 800,
+              height: 800,
+              alt: activity?.name,
+            },
+          ]
+        : undefined,
     },
   };
 }
@@ -146,7 +158,9 @@ export default async function Page(props: {
       </Container>
       <Container size="md" className={classes.header}>
         <Card className={classes.title} padding="lg" radius="md" withBorder>
-          <Title order={2}>{activity?.name}</Title>
+          <Title order={1} size="h2">
+            {activity?.name}
+          </Title>
           <Group gap={7} mt={10}>
             <Badge variant="light">
               {activity ? USER_LEVEL_RENDER[activity.minimum_level] : ""}
@@ -232,7 +246,7 @@ export default async function Page(props: {
       </Container>
       <Container w="100%">
         <Card withBorder radius="md">
-          <Title ta="center" mt="sm">
+          <Title order={2} ta="center" mt="sm">
             Deskripsi Kegiatan
           </Title>
           <div

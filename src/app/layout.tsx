@@ -22,6 +22,15 @@ export const metadata = {
     description:
       "Portal Aktivis Salman yang dikelola BMKA (Bidang Kemahasiswaan, Kaderisasi dan Alumni) Salman yang berfungsi sebagai pusat pendaftaran kegiatan di @kaderisasisalman.",
     type: "website",
+    images: [
+      {
+        url: "https://nos.wjv-1.neo.id/kaderisasi-static/kaderisasi-main-banner.png",
+        width: 2034,
+        height: 1152,
+        alt: "Kaderisasi Salman",
+      },
+    ],
+    url: process.env.NEXT_PUBLIC_APP_URL,
     siteName: "Kaderisasi Salman",
   },
 };
