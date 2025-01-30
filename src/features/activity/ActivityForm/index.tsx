@@ -9,6 +9,7 @@ import {
   NumberInput,
   Select,
   Stack,
+  Textarea,
   TextInput,
   Title,
 } from "@mantine/core";
@@ -37,6 +38,19 @@ const renderForm = (
           label={schema.label}
           placeholder={schema.label}
           required={schema.required}
+        />
+      );
+
+    case "textarea":
+      return (
+        <Textarea
+          key={form.key(schema.name)}
+          {...form.getInputProps(schema.name)}
+          name={schema.name}
+          label={schema.label}
+          placeholder={schema.label}
+          required={schema.required}
+          resize="vertical"
         />
       );
 
