@@ -14,10 +14,6 @@ export const metadata = {
   title: "Platform Aktivis Salman ITB (BMKA)",
   description:
     "Portal Aktivis Salman yang dikelola BMKA (Bidang Kemahasiswaan, Kaderisasi dan Alumni) Salman yang berfungsi sebagai pusat pendaftaran kegiatan di @kaderisasisalman. Program pembinaan dalam rangka membentuk kader teladan untuk membangun Indonesia.",
-  robots:
-    process.env.NEXT_PUBLIC_APP_ENV === "production"
-      ? "index,follow"
-      : "noindex,nofollow",
 };
 
 export default function RootLayout({
