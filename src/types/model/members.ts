@@ -7,6 +7,7 @@ export type Member = {
   name: string;
   user_id: number | undefined;
   publicUser?: PublicUser;
+  badges: string[] | undefined;
 
   personal_id: string | undefined;
   gender: GENDER | undefined;
@@ -27,7 +28,7 @@ export type Member = {
 
   major: string | undefined;
   intake_year: number | undefined;
-  
+
   created_at: string;
   updated_at: string;
 };
@@ -40,7 +41,6 @@ export type Token = {
   lastUsedAt: string | null;
   expiredAt: string;
 };
-
 
 export type PublicUser = {
   id: number;

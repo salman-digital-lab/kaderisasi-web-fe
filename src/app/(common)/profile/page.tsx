@@ -1,9 +1,15 @@
-import { Avatar, Text, Button, Paper, Container, Flex } from "@mantine/core";
-
 import {
-  getProfile,
-  getProvinces,
-} from "../../../services/profile";
+  Avatar,
+  Text,
+  Button,
+  Paper,
+  Container,
+  Flex,
+  Group,
+  Badge,
+} from "@mantine/core";
+
+import { getProfile, getProvinces } from "../../../services/profile";
 
 import ErrorWrapper from "../../../components/layout/Error";
 import { verifySession } from "../../../functions/server/session";
@@ -24,9 +30,9 @@ export default async function Page() {
   let provinceData: Province[] | undefined;
   let profileData:
     | {
-      userData: PublicUser;
-      profile: Member;
-    }
+        userData: PublicUser;
+        profile: Member;
+      }
     | undefined;
 
   let activitiesRegistration:
@@ -45,7 +51,8 @@ export default async function Page() {
     );
     ruangCurhatData = await getRuangCurhat(sessionData.session || "");
   } catch (error: unknown) {
-    if (typeof error === "string" && error === "Unauthorized") redirect('/api/logout')
+    if (typeof error === "string" && error === "Unauthorized")
+      redirect("/api/logout");
     if (typeof error === "string") return <ErrorWrapper message={error} />;
   }
 
@@ -61,9 +68,16 @@ export default async function Page() {
             <Text ta="center" c="dimmed" fz="sm">
               {profileData &&
                 USER_LEVEL_RENDER[
-                profileData.profile.level || USER_LEVEL_ENUM.JAMAAH
+                  profileData.profile.level || USER_LEVEL_ENUM.JAMAAH
                 ]}
             </Text>
+            <Group gap="xs" justify="center" mt="md">
+              {profileData?.profile.badges?.map((badge) => (
+                <Badge key={badge} variant="outline">
+                  {badge}
+                </Badge>
+              ))}
+            </Group>
             <Button variant="default" c="red" fullWidth mt="md">
               Keluar
             </Button>
