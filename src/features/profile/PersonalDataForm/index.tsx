@@ -165,6 +165,7 @@ export default function PersonalDataForm({
             key={form.key("university_id")}
             label="Universitas"
             placeholder="Pilih Universitas Anda"
+            showedValue={profileData?.profile.university?.name}
           />
           <TextInput
             {...form.getInputProps("major")}

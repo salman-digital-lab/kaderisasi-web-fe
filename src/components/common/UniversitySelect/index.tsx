@@ -8,11 +8,18 @@ import { University } from "@/types/model/university";
 
 type UniversitySelectProps = Omit<SelectProps, "data" | "onSearchChange"> & {
   onChange?: (value: string | null) => void;
+  showedValue?: string;
 };
 
-export default function UniversitySelect({ onChange, ...props }: UniversitySelectProps) {
-  const [universities, setUniversities] = useState<{ label: string; value: string }[]>([]);
-  const [searchValue, setSearchValue] = useState("");
+export default function UniversitySelect({
+  onChange,
+  showedValue,
+  ...props
+}: UniversitySelectProps) {
+  const [universities, setUniversities] = useState<
+    { label: string; value: string }[]
+  >([]);
+  const [searchValue, setSearchValue] = useState(showedValue || "");
 
   const fetchUniversities = async (search?: string) => {
     try {
@@ -28,7 +35,7 @@ export default function UniversitySelect({ onChange, ...props }: UniversitySelec
   };
 
   useEffect(() => {
-    fetchUniversities();
+    fetchUniversities(showedValue);
   }, []);
 
   const debouncedFetch = useDebouncedCallback((value: string) => {
@@ -43,6 +50,7 @@ export default function UniversitySelect({ onChange, ...props }: UniversitySelec
   return (
     <Select
       {...props}
+      allowDeselect={false}
       data={universities}
       searchable
       searchValue={searchValue}

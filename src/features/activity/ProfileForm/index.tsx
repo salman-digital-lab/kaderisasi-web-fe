@@ -14,7 +14,6 @@ import { University } from "@/types/model/university";
 import { MandatoryProfileData } from "@/types/model/activity";
 import UniversitySelect from "@/components/common/UniversitySelect";
 
-
 type ProfileFormProps = {
   provinces?: Province[];
   profileData?: {
@@ -150,6 +149,8 @@ export default function ProfileForm({
             label="Universitas"
             placeholder="Pilih Universitas Anda"
             required={type.required}
+            showedValue={profileData?.profile.university?.name}
+            allowDeselect={false}
           />
         );
       case "major":
