@@ -18,11 +18,12 @@ type RegistrationFormProps = {
 
 type RegistrationFormItems = {
   whatsapp: string;
-  problem_ownership: string;
-  problem_category: string;
-  problem_description: string;
-  handling_technic: string;
-  counselor_gender: string;
+  owner_name?: string;
+  problem_ownership?: string;
+  problem_category?: string;
+  problem_description?: string;
+  handling_technic?: string;
+  counselor_gender?: string;
 };
 
 export default function RegistrationForm({
@@ -31,19 +32,28 @@ export default function RegistrationForm({
 }: RegistrationFormProps) {
   const [loading, setLoading] = useState(false);
   const [isFriend, setIsFriend] = useState(false);
-
-  const form = useForm({
+  const form = useForm<RegistrationFormItems>({
+    mode: "uncontrolled",
     initialValues: {
       whatsapp: whatsapp || "",
-      problem_ownership: "",
-      owner_name: "",
-      problem_category: "",
-      problem_description: "",
-      handling_technic: "",
-      counselor_gender: "",
+      problem_ownership: undefined,
+      owner_name: undefined,
+      problem_category: undefined,
+      problem_description: undefined,
+      handling_technic: undefined,
+      counselor_gender: undefined,
+    },
+    validate: {
+      whatsapp: (value) => (value === undefined ? "Whatsapp harus diisi" : null),
+      problem_ownership: (value) => (value === undefined ? "Kepemilikan masalah harus diisi" : null),
+      owner_name: (value) => (value === undefined ? "Nama pemilik masalah harus diisi" : null),
+      problem_category: (value) => (value === undefined ? "Kategori masalah harus diisi" : null),
+      problem_description: (value) => (value === undefined ? "Deskripsi masalah harus diisi" : null),
+      handling_technic: (value) => (value === undefined ? "Teknik penanganan harus diisi" : null),
+      counselor_gender: (value) => (value === undefined ? "Preferensi konselor harus diisi" : null),
     },
   });
-
+  
   form.watch("problem_ownership", ({ value }) => {
     setIsFriend(value === String(PROBLEM_OWNER_ENUM.TEMAN));
   });
@@ -57,15 +67,19 @@ export default function RegistrationForm({
         problem_ownership: Number(val.problem_ownership),
       });
       if (resp) {
-        showNotif(resp.message);
+        showNotif(
+          "Tim Ruang Curhat akan segera menghubungimu.",
+          false,
+          "Pendaftaran berhasil!",
+        );
         form.setValues({
-          whatsapp: val.whatsapp || "",
-          problem_ownership: "",
-          owner_name: "",
-          problem_category: "",
-          problem_description: "",
-          handling_technic: "",
-          counselor_gender: "",
+          whatsapp: val.whatsapp,
+          problem_ownership: undefined,
+          owner_name: undefined,
+          problem_category: undefined,
+          problem_description: undefined,
+          handling_technic: undefined,
+          counselor_gender: undefined,
         });
       }
     } catch (error: unknown) {
@@ -82,17 +96,17 @@ export default function RegistrationForm({
       onSubmit={form.onSubmit((val) => handleRegistration(val))}
     >
       <TextInput
-        {...form.getInputProps("whatsapp")}
         key={form.key("whatsapp")}
+        {...form.getInputProps("whatsapp")}
         label="Nomor Whatsapp"
         placeholder="Contoh: 081234567890"
-        description="Pastikan nomor whatsapp anda aktif"
+        description="Pastikan nomor whatsapp kamu aktif. Jangan khawatir, datamu aman."
         required
         mt="md"
       />
       <Select
-        {...form.getInputProps("problem_ownership")}
         key={form.key("problem_ownership")}
+        {...form.getInputProps("problem_ownership")}
         label="Kepemilikan Masalah"
         placeholder="Pilih Kepemilikan Masalah"
         data={PROBLEM_OWNER_OPTIONS}
@@ -100,8 +114,8 @@ export default function RegistrationForm({
       />
       {isFriend && (
         <TextInput
-          {...form.getInputProps("owner_name")}
           key={form.key("owner_name")}
+          {...form.getInputProps("owner_name")}
           label="Nama Pemilik Masalah"
           placeholder="Nama Pemilik Masalah"
           required
@@ -109,8 +123,8 @@ export default function RegistrationForm({
       )}
 
       <Select
-        {...form.getInputProps("problem_category")}
         key={form.key("problem_category")}
+        {...form.getInputProps("problem_category")}
         label="Kategori Masalah"
         placeholder="Pilih Kategori Masalah"
         data={[
@@ -124,26 +138,26 @@ export default function RegistrationForm({
         required
       />
       <Textarea
-        {...form.getInputProps("problem_description")}
         key={form.key("problem_description")}
+        {...form.getInputProps("problem_description")}
         label="Deskripsi masalah yang akan didiskusikan"
         placeholder="Ketikkan detil masalah anda"
         required
       />
       <Select
-        {...form.getInputProps("handling_technic")}
         key={form.key("handling_technic")}
+        {...form.getInputProps("handling_technic")}
         label="Teknik Penanganan"
         placeholder="Pilih Teknik Penanganan"
         data={["Online", "Langsung Bertemu"]}
         required
       />
       <Select
-        {...form.getInputProps("counselor_gender")}
         key={form.key("counselor_gender")}
+        {...form.getInputProps("counselor_gender")}
         label="Preferensi Konselor"
         placeholder="Pilih Preferensi Konselor"
-        data={["Laki-laki", "Perempuan"]}
+        data={["Laki-laki", "Perempuan", "Keduanya"]}
         required
       />
       <Button

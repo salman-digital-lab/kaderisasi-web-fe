@@ -92,21 +92,23 @@ export default async function Home() {
 
       <Container size="lg" py="xl">
         <Stack
-          h={300}
+          mt={150}
           bg="var(--mantine-color-body)"
-          align="stretch"
+          align="center"
           justify="center"
           gap="md"
         >
-          <Title>Kembalikan Senyum Bahagiamu</Title>
-          <Text>
+          <Title className={classes.description_list} ta="center">
+            Butuh Dukungan Kesehatan Mental? Ruang Curhat Ada Untukmu.
+          </Title>
+          <Text ta="center">
             Ruang Curhat merupakan layanan konseling sebaya yang diberikan oleh
             sesama aktivis salman. Aktivis salman yang akan membersamai kamu,
             sudah mendapatkan pelatihan dan bekal-bekal pengetahuan psikologi
             praktis untuk menjadi seorang konselor lho.
           </Text>
-          <Button component={Link} href="/consultation" w="max-content">
-            Ruang Curhat
+          <Button component={Link} size="md" href="/consultation" w="max-content">
+            Ayo Curhat
           </Button>
         </Stack>
       </Container>

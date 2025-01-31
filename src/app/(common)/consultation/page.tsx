@@ -61,7 +61,7 @@ export default async function Home() {
 
       <Container size="lg" py="xl">
         <Title ta="center" mt="sm">
-          Pendaftaran Sesi Konsultasi
+          Pendaftaran Sesi Curhat
         </Title>
 
         <Text
@@ -70,9 +70,10 @@ export default async function Home() {
           ta="center"
           mt="md"
         >
-          Silahkan mengisi formulir untuk mendapatkan sesi konseling sebaya
-          dengan Aktivis Salman. Setelah anda berhasil mengirim formulir,
-          Aktivis akan ditunjuk dan langsung menghubungi anda.
+          Tak ada masalah yang terlalu kecil untuk diceritakan dan setiap cerita
+          sama berharganya untuk didengarkan. Isi formulir berikut untuk
+          mendaftar konseling di Ruang Curhat. Selesai mengisi formulir, Tim
+          Ruang Curhat akan segera menghubungimu.
         </Text>
 
         <Container size="sm">
