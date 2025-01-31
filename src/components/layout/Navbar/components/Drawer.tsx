@@ -75,6 +75,9 @@ export default function NavDrawer({
                       component={Link}
                       href="/profile"
                       className={classes.link}
+                      onClick={() => {
+                        closeDrawer();
+                      }}
                       underline="never"
                     >
                       <IconSettings
