@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Text,
   Button,
   Paper,
@@ -16,6 +15,7 @@ import { verifySession } from "../../../functions/server/session";
 import { USER_LEVEL_RENDER } from "../../../constants/render/activity";
 import { getActivitiesRegistration } from "../../../services/activity";
 import { ProfileTab } from "../../../features/profile/ProfileTab";
+import { ProfilePicture } from "../../../features/profile/ProfilePicture";
 
 import classes from "./index.module.css";
 import { getRuangCurhat } from "../../../services/ruangcurhat";
@@ -65,7 +65,7 @@ export default async function Page() {
       <Container size="lg">
         <Flex gap="xl" className={classes.content}>
           <Paper radius="md" withBorder p="lg" miw="20rem" h="fit-content">
-            <Avatar size={120} radius={120} mx="auto" />
+            <ProfilePicture src={profileData?.profile.picture} token={sessionData.session || ""} />
             <Text ta="center" fz="lg" fw={500} mt="md">
               {profileData?.profile.name}
             </Text>

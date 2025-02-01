@@ -25,7 +25,9 @@ export const getProvinces = async () => {
 
 export const getUniversities = async (search?: string) => {
   const response = await fetcher<GetUniversitiesResp>(
-    process.env.NEXT_PUBLIC_BE_ADMIN_API + "/universities?per_page=20" + (search ? "&search=" + search : ""),
+    process.env.NEXT_PUBLIC_BE_ADMIN_API +
+      "/universities?per_page=20" +
+      (search ? "&search=" + search : ""),
     {
       method: "GET",
       headers: {
@@ -67,6 +69,24 @@ export const putProfile = async (token: string, data: PutProfileReq) => {
       },
     },
   );
+
+  return response;
+};
+
+export const postProfilePicture = async (token: string, picture: File) => {
+  const formData = new FormData();
+  formData.append("file", picture);
+
+  const response = await fetcher<{
+    message: string;
+    data: { picture: string };
+  }>(process.env.NEXT_PUBLIC_BE_API + "/profiles/picture", {
+    method: "POST",
+    body: formData,
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  });
 
   return response;
 };

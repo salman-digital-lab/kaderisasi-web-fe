@@ -8,7 +8,7 @@ export type Member = {
   user_id: number | undefined;
   publicUser?: PublicUser;
   badges: string[] | undefined;
-
+  picture: string | undefined;
   personal_id: string | undefined;
   gender: GENDER | undefined;
   level: USER_LEVEL_ENUM | undefined;
