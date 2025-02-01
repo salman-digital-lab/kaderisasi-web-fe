@@ -11,7 +11,12 @@ import {
   Text,
   CardSection,
 } from "@mantine/core";
-import { IconCalendarTime, IconCalendarMonth } from "@tabler/icons-react";
+import {
+  IconCalendarTime,
+  IconCalendarMonth,
+  IconArrowLeft,
+  IconArrowRight,
+} from "@tabler/icons-react";
 import { Carousel, CarouselSlide } from "@mantine/carousel";
 import Link from "next/link";
 
@@ -119,12 +124,18 @@ export default async function Page(props: {
     <Stack component="main" mt="xl">
       <Container size="xs">
         <Carousel
+          classNames={{
+            control: classes["carousel-control"],
+            indicator: classes["carousel-indicator"],
+          }}
           slideGap="md"
           withIndicators
           controlsOffset={0}
           controlSize={40}
           loop
           align="start"
+          nextControlIcon={<IconArrowRight size={24} color="white" />}
+          previousControlIcon={<IconArrowLeft size={24} color="white" />}
           withControls={
             activity?.additional_config?.images &&
             activity?.additional_config?.images?.length > 1

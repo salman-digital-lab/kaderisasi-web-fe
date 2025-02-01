@@ -1,3 +1,23 @@
+.carousel-control {
+  background-color: var(--mantine-color-blue-3);
+  opacity: 50%;
+}
+
+.carousel-control:hover {
+  background-color: var(--mantine-color-blue-6);
+  opacity: 100%;
+}
+
+.carousel-indicator {
+  background-color: var(--mantine-color-blue-3);
+  opacity: 75%;
+}
+
+.carousel-indicator[data-active] {
+  background-color: var(--mantine-color-blue-6);
+  opacity: 75%;
+}
+
 .header {
   display: flex;
   gap: 1rem;
