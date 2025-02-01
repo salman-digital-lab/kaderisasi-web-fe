@@ -2,7 +2,13 @@
 
 import showNotif from "@/functions/common/notification";
 import { postProfilePicture } from "@/services/profile";
-import { Avatar, FileButton, Indicator, LoadingOverlay, Stack } from "@mantine/core";
+import {
+  Avatar,
+  FileButton,
+  Indicator,
+  LoadingOverlay,
+  Stack,
+} from "@mantine/core";
 import { IconPencil } from "@tabler/icons-react";
 import { useState } from "react";
 
@@ -60,7 +66,11 @@ export function ProfilePicture({
               size={size}
               radius={radius}
               mx="auto"
-              src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${fileName}`}
+              src={
+                fileName && fileName !== ""
+                  ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${fileName}`
+                  : undefined
+              }
             />
           </Indicator>
         )}
