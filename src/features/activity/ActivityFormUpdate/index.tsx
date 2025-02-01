@@ -2,7 +2,7 @@
 
 import showNotif from "@/functions/common/notification";
 import { postActivity, putActivity } from "@/services/activity";
-import { Questionnaire } from "@/types/model/activity";
+import { Questionnaire, Registrant } from "@/types/model/activity";
 import {
   Button,
   Group,
@@ -18,15 +18,16 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-type ActivityFormUpdateProps = {
+type ActivityFormProps = {
   token: string;
   formSchemas: Questionnaire[];
   slug: string;
+  registrationData: Registrant;
 };
 
 const renderForm = (
   schema: Questionnaire,
-  form: UseFormReturnType<Record<string, unknown>>,
+  form: UseFormReturnType<Record<string, string>>,
 ) => {
   switch (schema.type) {
     case "text":
@@ -85,16 +86,18 @@ const renderForm = (
   }
 };
 
-export default function ActivityFormUpdate({
+export default function ActivityForm({
   token,
   slug,
   formSchemas,
-}: ActivityFormUpdateProps) {
+  registrationData,
+}: ActivityFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   const form = useForm({
     mode: "uncontrolled",
+    initialValues: registrationData.questionnaire_answer,
   });
 
   const handleActivityRegister = async (val: Record<string, any>) => {
@@ -106,7 +109,7 @@ export default function ActivityFormUpdate({
       });
       if (resp) {
         showNotif(resp.message);
-        router.push(`/activity/register/${slug}/finish-form`);
+        router.push(`/profile?tab=activity`);
       }
     } catch (error: unknown) {
       if (error instanceof Error) showNotif(error.message, true);
@@ -122,15 +125,11 @@ export default function ActivityFormUpdate({
         <Title order={3}>Form Pendaftaran Kegiatan </Title>
         {formSchemas?.map((item) => renderForm(item, form))}
         <Group>
-          <Button
-            component={Link}
-            flex="1"
-            href={`/activity/register/${slug}/profile-data`}
-          >
-            Sebelumnya
+          <Button component={Link} flex="1" href={`/profile?tab=activity`}>
+            Kembali
           </Button>
           <Button type="submit" flex="1" loading={loading}>
-            Selanjutnya
+            Ubah Formulir
           </Button>
         </Group>
       </Stack>

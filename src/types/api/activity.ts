@@ -28,6 +28,12 @@ export type GetActivityRegistrationReq = {
 
 export type GetActivityRegistrationResp = APIResponse<{ status: string }>;
 
+export type GetActivityRegistrationDataReq = {
+  slug: string;
+};
+
+export type GetActivityRegistrationDataResp = APIResponse<Registrant>;
+
 export type GetActivitiesRegistrationResp = APIResponse<
   ({ activity: Activity } & Registrant)[]
 >;

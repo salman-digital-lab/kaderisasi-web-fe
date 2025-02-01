@@ -55,7 +55,7 @@ export default function ActivityPersonalCard({
         </Button>
         <Button
           component={Link}
-          href={`/activity/${slug}`}
+          href={`/activity/register/${slug}/edit-activity-form`}
           radius="md"
           style={{ flex: 1 }}
         >

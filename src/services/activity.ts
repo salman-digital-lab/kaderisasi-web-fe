@@ -3,6 +3,8 @@ import {
   GetActivitiesRegistrationResp,
   GetActivitiesReq,
   GetActivitiesResp,
+  GetActivityRegistrationDataReq,
+  GetActivityRegistrationDataResp,
   GetActivityRegistrationReq,
   GetActivityRegistrationResp,
   GetActivityReq,
@@ -51,6 +53,25 @@ export const getActivityRegistration = async (
 ) => {
   const response = await fetcher<GetActivityRegistrationResp>(
     process.env.NEXT_PUBLIC_BE_API + "/profiles/activities/" + props.slug,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+      cache: "no-store",
+    },
+  );
+
+  return response.data;
+};
+
+export const getActivityRegistrationData = async (
+  token: string,
+  props: GetActivityRegistrationDataReq,
+) => {
+  const response = await fetcher<GetActivityRegistrationDataResp>(
+    process.env.NEXT_PUBLIC_BE_API + "/activities/" + props.slug + "/registration",
     {
       method: "GET",
       headers: {
