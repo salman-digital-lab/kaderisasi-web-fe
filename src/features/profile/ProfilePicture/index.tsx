@@ -2,7 +2,7 @@
 
 import showNotif from "@/functions/common/notification";
 import { postProfilePicture } from "@/services/profile";
-import { Avatar, FileButton, Indicator, Stack } from "@mantine/core";
+import { Avatar, FileButton, Indicator, LoadingOverlay, Stack } from "@mantine/core";
 import { IconPencil } from "@tabler/icons-react";
 import { useState } from "react";
 
@@ -20,10 +20,12 @@ export function ProfilePicture({
   token,
 }: ProfilePictureProps) {
   const [fileName, setFileName] = useState<string | null>(src || "");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleUploadPicture = async (file: File | null) => {
     if (!file) return;
     try {
+      setLoading(true);
       const resp = await postProfilePicture(token, file);
       if (resp) {
         showNotif(resp.message);
@@ -31,6 +33,8 @@ export function ProfilePicture({
       }
     } catch (error: unknown) {
       if (error instanceof Error) showNotif(error.message, true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -45,7 +49,13 @@ export function ProfilePicture({
             size={30}
             w="fit-content"
             mx="auto"
+            style={{ cursor: "pointer" }}
           >
+            <LoadingOverlay
+              visible={loading}
+              zIndex={1000}
+              overlayProps={{ radius: "sm", blur: 2 }}
+            />
             <Avatar
               size={size}
               radius={radius}

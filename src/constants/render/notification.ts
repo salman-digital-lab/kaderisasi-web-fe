@@ -8,4 +8,5 @@ export const NOTIFICATION_TEXT_RENDER = {
   ALREADY_REGISTERED: "Anda sudah terdaftar",
   INVALID_TOKEN: "Token anda salah atau sudah kadaluarsa",
   USER_NOT_FOUND: "Pengguna belum terdaftar!",
+  UPLOAD_SUCCESS: "Upload berhasil",
 } as Record<string, string>;
