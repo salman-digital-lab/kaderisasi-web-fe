@@ -9,6 +9,7 @@ import {
 } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { ModalsProvider } from "@mantine/modals";
+import Script from "next/script";
 
 export const metadata = {
   title: {
@@ -40,9 +41,18 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const isProduction = process.env.NEXT_PUBLIC_APP_ENV === "production";
+
   return (
     <html lang="en" {...mantineHtmlProps}>
       <head>
+        {isProduction && (
+          <Script
+            defer
+            src="https://umami-kaderisasi.salmanitb.com/script.js"
+            data-website-id="2bf5419c-a004-4d29-9fd2-999176beb2ab"
+          />
+        )}
         <ColorSchemeScript />
       </head>
       <body>
