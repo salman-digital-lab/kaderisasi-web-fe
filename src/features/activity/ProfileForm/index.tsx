@@ -96,7 +96,7 @@ export default function ProfileForm({
             {...form.getInputProps("line")}
             key={form.key("line")}
             label="ID Line"
-            placeholder="ID Line"
+            placeholder="Cth: @salman_kaderisasi"
             required={type.required}
           />
         );
@@ -105,8 +105,9 @@ export default function ProfileForm({
           <TextInput
             {...form.getInputProps("whatsapp")}
             key={form.key("whatsapp")}
-            label="Nomor Whatsapp"
-            placeholder="Nomor Whatsapp"
+            label="Nomor Whatsapp Aktif "
+            description="Cth: +6281234567890. Pastikan nomor whatsapp kamu aktif."
+            placeholder="Cth: +6281234567890"
             required={type.required}
           />
         );
@@ -126,7 +127,7 @@ export default function ProfileForm({
             {...form.getInputProps("instagram")}
             key={form.key("instagram")}
             label="Akun Instagram"
-            placeholder="Akun Instagram"
+            placeholder="Cth: @salman_kaderisasi"
             required={type.required}
           />
         );
@@ -136,7 +137,7 @@ export default function ProfileForm({
             {...form.getInputProps("tiktok")}
             key={form.key("tiktok")}
             label="Akun Tiktok"
-            placeholder="Akun Tiktok"
+            placeholder="Cth: @salman_kaderisasi"
             required={type.required}
           />
         );
@@ -159,7 +160,7 @@ export default function ProfileForm({
             {...form.getInputProps("major")}
             key={form.key("major")}
             label="Jurusan"
-            placeholder="Jurusan"
+            placeholder="Cth: Teknik Informatika"
             required={type.required}
           />
         );
@@ -169,7 +170,7 @@ export default function ProfileForm({
             {...form.getInputProps("intake_year")}
             key={form.key("intake_year")}
             label="Angkatan"
-            placeholder="Angkatan"
+            placeholder="Cth: 2024"
             required={type.required}
           />
         );
