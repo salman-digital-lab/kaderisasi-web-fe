@@ -133,8 +133,9 @@ export default function PersonalDataForm({
           <TextInput
             {...form.getInputProps("whatsapp")}
             key={form.key("whatsapp")}
-            label="Nomor Whatsapp"
-            placeholder="Nomor Whatsapp"
+            label="Nomor Whatsapp Aktif "
+            description="Cth: 6281234567890. Pastikan nomor whatsapp kamu aktif."
+            placeholder="Cth: 6281234567890"
             mt="md"
           />
           <TextInput
