@@ -36,17 +36,13 @@ export default function Page() {
 
       <Text c="dimmed" size="sm" ta="center" mt={5}>
         Jika ada kendala dalam mengakses akun, silakan hubungi admin melalui
-        Instagram
-        <Anchor
-          size="sm"
-          component={Link}
-          href="https://www.instagram.com/kaderisasisalman/"
-        >
-          @kaderisasisalman
+        Whatsapp di{" "}
+        <Anchor size="sm" component={Link} href="https://wa.me/6285156168499">
+          +62 851 5616 8499
         </Anchor>
       </Text>
 
-      <Paper withBorder shadow="md" p={30} mt={30} radius="md">
+      <Paper withBorder shadow="md" p={30} mt={24} radius="md">
         <LoginForm />
         <Button variant="default" fullWidth mt="xl" component={Link} href="/">
           Kembali ke Beranda

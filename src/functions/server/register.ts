@@ -33,8 +33,12 @@ export default async function register({
       },
     );
 
-    return response.message;
+    return { success: true, message: response.message };
   } catch (error: unknown) {
-    handleCatchError(error);
+    const errorMessage =
+      typeof error === "string"
+        ? error
+        : "An error occurred during registration";
+    return { success: false, message: errorMessage };
   }
 }

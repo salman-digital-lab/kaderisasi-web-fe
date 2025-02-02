@@ -28,7 +28,15 @@ export default function Page() {
         </Anchor>
       </Text>
 
-      <Paper withBorder shadow="md" p={30} mt={30} radius="md">
+      <Text c="dimmed" size="sm" ta="center" mt={5}>
+        Jika ada kendala dalam registrasi akun, silakan hubungi admin melalui
+        Whatsapp di{" "}
+        <Anchor size="sm" component={Link} href="https://wa.me/6285156168499">
+          +62 851 5616 8499
+        </Anchor>
+      </Text>
+
+      <Paper withBorder shadow="md" p={30} mt={24} radius="md">
         <RegistrationForm />
         <Button variant="default" fullWidth mt="xl" component={Link} href="/">
           Kembali ke Beranda

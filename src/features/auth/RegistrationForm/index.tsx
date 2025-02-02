@@ -31,12 +31,16 @@ export default function RegistrationForm() {
     fullname: string;
   }) => {
     try {
-      const message = await register(registrationFormData);
-      if (message)
+      const response = await register(registrationFormData);
+      
+      if (response.success) {
         showNotif("Registrasi berhasil. Silahkan masuk ke akun anda.");
-      router.push("/login");
+        router.push("/login");
+      } else {
+        showNotif(response.message, true);
+      }
     } catch (error: unknown) {
-      if (error instanceof Error) showNotif(error.message, true);
+      showNotif("Terjadi kesalahan pada sistem", true);
     }
   };
 

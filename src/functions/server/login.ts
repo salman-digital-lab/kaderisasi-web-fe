@@ -38,15 +38,16 @@ export default async function login({ email, password }: LoginFormData) {
     tomorrow.setDate(tomorrow.getDate() + 1);
 
     (await cookies()).set(SESSION_COOKIE_NAME, response?.data?.token?.token, {
-      expires: tomorrow
+      expires: tomorrow,
     });
     (await cookies()).set(NAME_COOKIE_NAME, response?.data?.data?.name, {
-      expires: tomorrow
+      expires: tomorrow,
     });
 
     return { success: true, message: response.message };
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'An error occurred during login';
+    const errorMessage =
+      typeof error === "string" ? error : "An error occurred during login";
     return { success: false, message: errorMessage };
   }
 }
