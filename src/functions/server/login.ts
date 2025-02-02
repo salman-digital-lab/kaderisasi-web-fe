@@ -44,8 +44,9 @@ export default async function login({ email, password }: LoginFormData) {
       expires: tomorrow
     });
 
-    return response.message;
+    return { success: true, message: response.message };
   } catch (error: unknown) {
-    handleCatchError(error);
+    const errorMessage = error instanceof Error ? error.message : 'An error occurred during login';
+    return { success: false, message: errorMessage };
   }
 }

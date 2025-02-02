@@ -23,11 +23,16 @@ export default function LoginForm() {
     password: string;
   }) => {
     try {
-      const message = await login(loginFormData);
-      if (message) showNotif("Anda berhasil masuk");
-      router.push("/");
+      const response = await login(loginFormData);
+      
+      if (response.success) {
+        showNotif("Anda berhasil masuk");
+        router.push("/");
+      } else {
+        showNotif(response.message, true);
+      }
     } catch (error: unknown) {
-      if (error instanceof Error) showNotif(error.message, true);
+      showNotif("Terjadi kesalahan pada sistem", true);
     }
   };
 
