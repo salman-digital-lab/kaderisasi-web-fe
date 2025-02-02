@@ -34,6 +34,18 @@ export default function Page() {
         </Anchor>
       </Text>
 
+      <Text c="dimmed" size="sm" ta="center" mt={5}>
+        Jika ada kendala dalam mengakses akun, silakan hubungi admin melalui
+        Instagram
+        <Anchor
+          size="sm"
+          component={Link}
+          href="https://www.instagram.com/kaderisasisalman/"
+        >
+          @kaderisasisalman
+        </Anchor>
+      </Text>
+
       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
         <LoginForm />
         <Button variant="default" fullWidth mt="xl" component={Link} href="/">
