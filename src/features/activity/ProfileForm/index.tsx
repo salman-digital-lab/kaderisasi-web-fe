@@ -106,8 +106,8 @@ export default function ProfileForm({
             {...form.getInputProps("whatsapp")}
             key={form.key("whatsapp")}
             label="Nomor Whatsapp Aktif "
-            description="Cth: +6281234567890. Pastikan nomor whatsapp kamu aktif."
-            placeholder="Cth: +6281234567890"
+            description="Cth: 6281234567890. Pastikan nomor whatsapp kamu aktif."
+            placeholder="Cth: 6281234567890"
             required={type.required}
           />
         );

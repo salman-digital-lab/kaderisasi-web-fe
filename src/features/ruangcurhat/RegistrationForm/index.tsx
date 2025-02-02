@@ -99,8 +99,8 @@ export default function RegistrationForm({
         key={form.key("whatsapp")}
         {...form.getInputProps("whatsapp")}
         label="Nomor Whatsapp"
-        placeholder="Contoh: +6281234567890"
-        description="Cth: +6281234567890. Pastikan nomor whatsapp kamu aktif. Jangan khawatir, datamu aman."
+        placeholder="Cth: 6281234567890"
+        description="Cth: 6281234567890. Pastikan nomor whatsapp kamu aktif. Jangan khawatir, datamu aman."
         required
         mt="md"
       />
