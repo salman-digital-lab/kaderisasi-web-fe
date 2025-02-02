@@ -1,7 +1,7 @@
 "use client";
 
 import showNotif from "@/functions/common/notification";
-import { postActivity, putActivity } from "@/services/activity";
+import { postActivity } from "@/services/activity";
 import { Questionnaire } from "@/types/model/activity";
 import {
   Button,
@@ -100,7 +100,7 @@ export default function ActivityFormUpdate({
   const handleActivityRegister = async (val: Record<string, any>) => {
     try {
       setLoading(true);
-      const resp = await putActivity(token, {
+      const resp = await postActivity(token, {
         slug,
         data: { questionnaire_answer: val },
       });
