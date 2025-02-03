@@ -44,16 +44,26 @@ export default function RegistrationForm({
       counselor_gender: undefined,
     },
     validate: {
-      whatsapp: (value) => (value === undefined ? "Whatsapp harus diisi" : null),
-      problem_ownership: (value) => (value === undefined ? "Kepemilikan masalah harus diisi" : null),
-      owner_name: (value) => (value === undefined ? "Nama pemilik masalah harus diisi" : null),
-      problem_category: (value) => (value === undefined ? "Kategori masalah harus diisi" : null),
-      problem_description: (value) => (value === undefined ? "Deskripsi masalah harus diisi" : null),
-      handling_technic: (value) => (value === undefined ? "Teknik penanganan harus diisi" : null),
-      counselor_gender: (value) => (value === undefined ? "Preferensi konselor harus diisi" : null),
+      whatsapp: (value) =>
+        value === undefined ? "Whatsapp harus diisi" : null,
+      problem_ownership: (value) =>
+        value === undefined ? "Kepemilikan masalah harus diisi" : null,
+      owner_name: (value, { ...values }) =>
+        values.problem_ownership === String(PROBLEM_OWNER_ENUM.TEMAN) &&
+        value === undefined
+          ? "Nama pemilik masalah harus diisi"
+          : null,
+      problem_category: (value) =>
+        value === undefined ? "Kategori masalah harus diisi" : null,
+      problem_description: (value) =>
+        value === undefined ? "Deskripsi masalah harus diisi" : null,
+      handling_technic: (value) =>
+        value === undefined ? "Teknik penanganan harus diisi" : null,
+      counselor_gender: (value) =>
+        value === undefined ? "Preferensi konselor harus diisi" : null,
     },
   });
-  
+
   form.watch("problem_ownership", ({ value }) => {
     setIsFriend(value === String(PROBLEM_OWNER_ENUM.TEMAN));
   });
