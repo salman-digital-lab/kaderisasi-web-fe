@@ -35,6 +35,7 @@ export default function PersonalActivityData({
                 activityName={activity.activity.name}
                 slug={activity.activity.slug}
                 registrationStatus={activity.status}
+                imageUrl={activity.activity.additional_config?.images?.[0]}
               />
             ))}
         </SimpleGrid>

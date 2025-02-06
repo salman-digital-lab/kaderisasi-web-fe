@@ -8,18 +8,24 @@ type ActivityCardProps = {
   activityName: string;
   registrationStatus: string;
   slug: string;
+  imageUrl?: string;
 };
 
 export default function ActivityPersonalCard({
   activityName,
   registrationStatus,
   slug,
+  imageUrl,
 }: ActivityCardProps) {
   return (
     <Card withBorder radius="md" p="md" className={classes.card}>
       <Card.Section>
         <Image
-          src="https://admin-api-kaderisasi.salmanitb.com/activity_pic/1704528106622.jpeg"
+          src={
+            imageUrl
+              ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${imageUrl}`
+              : "https://placehold.co/350x400?text=" + activityName
+          }
           alt={activityName}
           height={350}
         />
