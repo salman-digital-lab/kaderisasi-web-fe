@@ -17,11 +17,11 @@ import {
 import logo from "@/assets/bmka_logo_color.png";
 
 import classes from "./index.module.css";
-import { IconSettings, IconLogout } from "@tabler/icons-react";
+import { IconSettings } from "@tabler/icons-react";
 import ClientNavbar from "./components/ClientNavbar";
 import { verifySession } from "../../../functions/server/session";
 import LogoutButton from "./components/LogoutButton";
-
+import ProfilePictureNav from "@/features/profile/ProfilePictureNav";
 export default async function Navbar() {
   const sessionData = await verifySession();
 
@@ -54,7 +54,7 @@ export default async function Navbar() {
               <Menu shadow="md" width={200}>
                 <MenuTarget>
                   <Group>
-                    <Avatar radius="xl" />
+                    <ProfilePictureNav token={sessionData.session || ""} />
                     <Text size="md">{sessionData.name}</Text>
                   </Group>
                 </MenuTarget>
