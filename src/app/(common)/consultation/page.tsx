@@ -1,12 +1,11 @@
 import Image from "next/image";
 import { Button, Container, Text, Title } from "@mantine/core";
 import classes from "./index.module.css";
-import illustration from "@/assets/homepage-1.svg";
+import illustration from "@/assets/ruangcurhatpage-1.svg";
 import RegistrationForm from "../../../features/ruangcurhat/RegistrationForm";
 import { verifySession } from "../../../functions/server/session";
 import { getProfile } from "@/services/profile";
 import ErrorWrapper from "@/components/layout/Error";
-import { getActivity, getActivityRegistration } from "@/services/activity";
 import { PublicUser, Member } from "@/types/model/members";
 import Link from "next/link";
 
