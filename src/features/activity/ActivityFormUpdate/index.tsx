@@ -122,7 +122,7 @@ export default function ActivityForm({
   return (
     <form onSubmit={form.onSubmit(handleActivityRegister)}>
       <Stack gap="lg">
-        <Title order={3}>Form Pendaftaran Kegiatan </Title>
+        <Title order={3}>Ubah Form Pendaftaran Kegiatan </Title>
         {formSchemas?.map((item) => renderForm(item, form))}
         <Group>
           <Button component={Link} flex="1" href={`/profile?tab=activity`}>

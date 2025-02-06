@@ -10,18 +10,21 @@ import {
   Button,
 } from "@mantine/core";
 import Link from "next/link";
-
+import { getActivity } from "../../../../../../services/activity";
 export const metadata = {
   title: "Selesai Pendaftaran",
 };
 
-export default async function Page(props: { params: Promise<{ slug: string }> }) {
+export default async function Page(props: {
+  params: Promise<{ slug: string }>;
+}) {
   const params = await props.params;
+  const activity = await getActivity(params);
 
   return (
     <Container size="sm" component="main" mt="xl">
       <Title ta="center" m="xl">
-        {params.slug}
+        {activity?.name}
       </Title>
       <Stepper active={2} visibleFrom="sm">
         <StepperStep label="Data Diri" description="Lengkapi Data Diri" />

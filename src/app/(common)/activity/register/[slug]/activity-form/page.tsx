@@ -27,7 +27,7 @@ export default async function Page(props: { params: Promise<{ slug: string }> })
   return (
     <Container size="sm" component="main" mt="xl">
       <Title ta="center" m="xl">
-        {params.slug}
+        {activity?.name}
       </Title>
       <Stepper active={1} visibleFrom="sm">
         <StepperStep label="Data Diri" description="Lengkapi Data Diri" />

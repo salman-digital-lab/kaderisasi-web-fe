@@ -1,7 +1,10 @@
 import { redirect } from "next/navigation";
 import ActivityFormUpdate from "../../../../../../features/activity/ActivityFormUpdate";
 import { verifySession } from "../../../../../../functions/server/session";
-import { getActivity, getActivityRegistrationData } from "../../../../../../services/activity";
+import {
+  getActivity,
+  getActivityRegistrationData,
+} from "../../../../../../services/activity";
 import { Container, Paper, Title } from "@mantine/core";
 
 export const metadata = {
@@ -24,7 +27,7 @@ export default async function Page(props: {
   return (
     <Container size="sm" component="main" mt="xl">
       <Title ta="center" m="xl">
-        {params.slug}
+        {activity?.name}
       </Title>
 
       <Paper radius="md" withBorder p="lg" mt="xl">
