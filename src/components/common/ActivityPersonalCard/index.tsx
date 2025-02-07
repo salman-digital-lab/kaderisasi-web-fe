@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import NextImage from "next/image";
 import { Card, Image, Text, Group, Badge, Button, rem } from "@mantine/core";
 import classes from "./index.module.css";
 
@@ -21,6 +22,7 @@ export default function ActivityPersonalCard({
     <Card withBorder radius="md" p="md" className={classes.card}>
       <Card.Section>
         <Image
+          component={NextImage}
           src={
             imageUrl
               ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${imageUrl}`
@@ -28,6 +30,7 @@ export default function ActivityPersonalCard({
           }
           alt={activityName}
           height={350}
+          width={400}
         />
       </Card.Section>
 

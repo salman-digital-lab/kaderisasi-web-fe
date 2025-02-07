@@ -2,12 +2,13 @@
 
 import dayjs from "dayjs";
 import Link from "next/link";
+import NextImage from "next/image";
 import { Image, Text, Group, Badge, Button, rem, Card } from "@mantine/core";
 import classes from "./index.module.css";
 import { USER_LEVEL_RENDER } from "../../../constants/render/activity";
 import { IconCalendarTime } from "@tabler/icons-react";
 import { USER_LEVEL_ENUM } from "@/types/constants/profile";
-import 'dayjs/locale/id'
+import "dayjs/locale/id";
 
 type ActivityCardProps = {
   activityName: string;
@@ -32,6 +33,7 @@ export default function ActivityCard({
     <Card withBorder radius="md" p="md" className={classes.card}>
       <Card.Section>
         <Image
+          component={NextImage}
           src={
             imageUrl
               ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${imageUrl}`
@@ -39,6 +41,7 @@ export default function ActivityCard({
           }
           alt={activityName}
           height={350}
+          width={400}
         />
       </Card.Section>
 
@@ -56,7 +59,7 @@ export default function ActivityCard({
         </Text>
         <Group gap={7} mt={5}>
           <Badge variant="light" color="red" leftSection={calenderIcon}>
-            {dayjs(registrationEnd).locale('id').format("DD MMMM YYYY")}
+            {dayjs(registrationEnd).locale("id").format("DD MMMM YYYY")}
           </Badge>
         </Group>
       </Card.Section>

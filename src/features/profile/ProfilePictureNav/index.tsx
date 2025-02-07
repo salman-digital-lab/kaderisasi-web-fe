@@ -14,7 +14,7 @@ export default function ProfilePictureNav({ src, token }: ProfilePictureProps) {
 
   useEffect(() => {
     const fetchProfilePicture = async () => {
-      const cachedPicture = localStorage.getItem(`profile-picture-${token}`);
+      const cachedPicture = localStorage.getItem(`profile-picture`);
       if (cachedPicture) {
         setFileName(cachedPicture);
         return;
@@ -23,7 +23,7 @@ export default function ProfilePictureNav({ src, token }: ProfilePictureProps) {
       const resp = await getProfile(token);
       const picture = resp?.profile?.picture || "";
       setFileName(picture);
-      localStorage.setItem(`profile-picture-${token}`, picture);
+      localStorage.setItem(`profile-picture`, picture);
     };
     fetchProfilePicture();
   }, [token]);
