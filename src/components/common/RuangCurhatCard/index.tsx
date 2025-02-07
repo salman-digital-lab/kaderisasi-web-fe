@@ -19,6 +19,8 @@ import {
 } from "../../../constants/render/ruangcurhat";
 import { RuangCurhatData } from "@/types/model/ruangcurhat";
 import { PROBLEM_OWNER_ENUM } from "@/types/constants/ruangcurhat";
+import dayjs from "dayjs";
+import "dayjs/locale/id";
 
 type RuangCurhatCardProps = {
   data: RuangCurhatData;
@@ -40,7 +42,7 @@ export default function RuangCurhatCard({ data }: RuangCurhatCardProps) {
         </Group>
         <Group gap={7} mt={5}>
           <Badge variant="light" color="blue" leftSection={calenderIcon}>
-            {data.created_at}
+            {dayjs(data.created_at).locale("id").format("DD MMMM YYYY")}
           </Badge>
           <Badge size="sm" variant="light" color="yellow">
             {data.handling_technic}
