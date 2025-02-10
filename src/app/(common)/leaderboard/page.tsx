@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Button, Group } from "@mantine/core";
 import classes from "./page.module.css";
 import { Container, Text } from "@mantine/core";
+import Link from "next/link";
 
 const LeaderboardPage = () => {
   return (
@@ -23,7 +24,12 @@ const LeaderboardPage = () => {
               pengguna.
             </Text>
             <Group mt={30}>
-              <Button size="md" className={classes.control}>
+              <Button
+                component={Link}
+                href="/leaderboard/submit"
+                size="md"
+                className={classes.control}
+              >
                 Masukkan Prestasi Anda Disini
               </Button>
             </Group>
