@@ -57,6 +57,10 @@ export default function NavDrawer({
           Ruang Curhat
         </Anchor>
 
+        <Anchor href="/leaderboard" className={classes.link} underline="never">
+          Leaderboard
+        </Anchor>
+
         <Divider my="sm" />
 
         <Group justify="center" grow pb="xl" px="md">

@@ -1,4 +1,4 @@
-import { Container, Paper, Title, Text } from "@mantine/core";
+import { Container, Paper, Title, Text, rem } from "@mantine/core";
 import AchievementForm from "@/features/leaderboard/AchievementForm";
 import { verifySession } from "@/functions/server/session";
 import { redirect } from "next/navigation";
@@ -13,7 +13,7 @@ export default async function Page() {
   if (sessionData.session === null) redirect("/api/logout");
 
   return (
-    <Container size="sm" component="main" mt="xl">
+    <Container size="sm" component="main" mt={rem(80)}>
       <Title ta="center" mb="xl">
         Kirim Prestasi Anda
       </Title>

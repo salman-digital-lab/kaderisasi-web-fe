@@ -12,19 +12,10 @@ import {
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/navigation";
 import showNotif from "@/functions/common/notification";
-
+import { ACHIEVEMENT_TYPE_OPTIONS } from "@/constants/form/achievement";
 type AchievementFormProps = {
   token: string;
 };
-
-const ACHIEVEMENT_TYPES = [
-  { value: "1", label: "Academic" },
-  { value: "2", label: "Non-Academic" },
-  { value: "3", label: "Organization" },
-  { value: "4", label: "Competition" },
-  { value: "5", label: "Research" },
-  { value: "6", label: "Community Service" },
-];
 
 export default function AchievementForm({ token }: AchievementFormProps) {
   const router = useRouter();
@@ -38,11 +29,10 @@ export default function AchievementForm({ token }: AchievementFormProps) {
       proof: null as File | null,
     },
     validate: {
-      name: (value) => (value ? null : "Achievement name is required"),
-      description: (value) =>
-        value ? null : "Achievement description is required",
-      type: (value) => (value ? null : "Achievement type is required"),
-      proof: (value) => (value ? null : "Achievement proof is required"),
+      name: (value) => (value ? null : "Nama prestasi harus diisi"),
+      description: (value) => (value ? null : "Deskripsi prestasi harus diisi"),
+      type: (value) => (value ? null : "Jenis prestasi harus diisi"),
+      proof: (value) => (value ? null : "Bukti prestasi harus diisi"),
     },
   });
 
@@ -58,7 +48,7 @@ export default function AchievementForm({ token }: AchievementFormProps) {
       }
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BE_API}/v2/achievements`,
+        `${process.env.NEXT_PUBLIC_BE_API}/achievements`,
         {
           method: "POST",
           headers: {
@@ -71,10 +61,10 @@ export default function AchievementForm({ token }: AchievementFormProps) {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Failed to submit achievement");
+        throw new Error(data.message || "Gagal mengirim prestasi");
       }
 
-      showNotif("Achievement submitted successfully");
+      showNotif("Prestasi berhasil dikirim");
       router.push("/leaderboard");
       router.refresh();
     } catch (error) {
@@ -103,7 +93,7 @@ export default function AchievementForm({ token }: AchievementFormProps) {
         <Select
           label="Jenis Prestasi"
           placeholder="Pilih jenis prestasi"
-          data={ACHIEVEMENT_TYPES}
+          data={ACHIEVEMENT_TYPE_OPTIONS}
           required
           {...form.getInputProps("type")}
         />

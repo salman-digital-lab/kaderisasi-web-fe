@@ -47,6 +47,14 @@ export default async function Navbar() {
             >
               Ruang Curhat
             </Anchor>
+
+            <Anchor
+              href="/leaderboard"
+              className={classes.link}
+              underline="never"
+            >
+              Leaderboard
+            </Anchor>
           </Group>
 
           {sessionData.session ? (

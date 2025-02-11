@@ -1,5 +1,5 @@
 import MonthlyLeaderboard from "@/features/leaderboard/MonthlyLeaderboard";
-import illustration from "@/assets/ruangcurhatpage-1.svg";
+import illustration from "@/assets/leaderboardpage-1.svg";
 import Image from "next/image";
 import { Button, Group } from "@mantine/core";
 import classes from "./page.module.css";
@@ -19,9 +19,10 @@ const LeaderboardPage = () => {
               </Text>
             </h1>
             <Text c="dimmed" mt="md">
-              Leaderboard merupakan daftar peringkat pengguna berdasarkan skor
-              yang diperoleh. Skor diperoleh dari prestasi yang dilakukan
-              pengguna.
+              Leaderboard merupakan website tempat menghimpun prestasi aktivis
+              Salman. Pengguna dengan skoring tertinggi akan tampil dalam 10
+              besar setiap bulannya. Ayo submit prestasi akademik, kompetisi,
+              dan organisasi mu disini!
             </Text>
             <Group mt={30}>
               <Button

@@ -49,7 +49,7 @@ export const getMonthlyLeaderboard = async (
   })
 
   const response = await fetcher<LeaderboardResponse>(
-    process.env.NEXT_PUBLIC_BE_API + `/v2/achievements/monthly?${params.toString()}`
+    process.env.NEXT_PUBLIC_BE_API + `/achievements/monthly?${params.toString()}`
   )
 
   return response

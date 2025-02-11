@@ -24,29 +24,8 @@ import styles from "./style.module.css";
 import { USER_LEVEL_RENDER } from "@/constants/render/activity";
 import { USER_LEVEL_ENUM } from "@/types/constants/profile";
 
-const data = [
-  {
-    id: 1,
-    user_id: 1,
-    score: 100,
-    month: "2024-01",
-    created_at: "2024-01-01",
-    updated_at: "2024-01-01",
-    user: {
-      id: 1,
-      email: "test@test.com",
-      profile: {
-        id: 1,
-        name: "John Doe",
-        picture: "https://via.placeholder.com/150",
-        level: 0,
-      },
-    },
-  },
-];
-
 const MonthlyLeaderboard = () => {
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>(data);
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -69,7 +48,7 @@ const MonthlyLeaderboard = () => {
   };
 
   useEffect(() => {
-    // fetchLeaderboard(currentPage, selectedMonth);
+    fetchLeaderboard(currentPage, selectedMonth);
   }, [currentPage, selectedMonth]);
 
   // Generate last 12 months options
@@ -119,20 +98,20 @@ const MonthlyLeaderboard = () => {
                     {index + 1 + (currentPage - 1) * 10}
                   </Text>
                   <Avatar
-                    src={entry.user.profile.picture}
-                    alt={entry.user.profile.name}
+                    src={entry.user.profile?.picture}
+                    alt={entry.user.profile?.name}
                     size="md"
                     radius="xl"
                   >
                     <IconUser size={24} />
                   </Avatar>
                   <div>
-                    <Text fw={500}>{entry.user.profile.name}</Text>
+                    <Text fw={500}>{entry.user.profile?.name}</Text>
                     <Text size="sm" c="dimmed">
                       {
                         USER_LEVEL_RENDER[
                           (entry.user.profile
-                            .level as keyof typeof USER_LEVEL_RENDER) ||
+                            ?.level as keyof typeof USER_LEVEL_RENDER) ||
                             USER_LEVEL_ENUM.JAMAAH
                         ]
                       }
