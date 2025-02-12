@@ -13,3 +13,21 @@ export function handleCatchError(error: unknown) {
 
   throw new Error(message);
 }
+
+export async function handleDownloadFile(fileUrl: string, filename: string) {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${fileUrl}`);
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('Error downloading file:', error);
+    handleCatchError(error);
+  }
+}

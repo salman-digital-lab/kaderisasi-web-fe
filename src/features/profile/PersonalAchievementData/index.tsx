@@ -5,16 +5,21 @@ import {
   Accordion,
   Badge,
   Group,
-  Tooltip,
   Alert,
+  Button,
 } from "@mantine/core";
-import { IconExclamationCircle, IconAlertCircle } from "@tabler/icons-react";
+import {
+  IconExclamationCircle,
+  IconAlertCircle,
+  IconDownload,
+} from "@tabler/icons-react";
 import { Achievement } from "@/types/model/achievement";
 import {
   ACHIEVEMENT_STATUS_RENDER,
   ACHIEVEMENT_STATUS_COLOR,
   ACHIEVEMENT_TYPE_RENDER,
 } from "@/constants/render/leaderboard";
+import { handleDownloadFile } from "@/functions/common/handler";
 
 type PersonalAchievementDataProps = {
   achievements: Achievement[];
@@ -75,8 +80,40 @@ export default function PersonalAchievementData({
                       title="Alasan Penolakan"
                       icon={<IconAlertCircle size={16} />}
                     >
-                      {achievement.remark}
+                      <Stack gap="sm">
+                        <Text size="sm">{achievement.remark}</Text>
+                        <Button
+                          variant="light"
+                          color="red"
+                          size="xs"
+                          leftSection={<IconDownload size={14} />}
+                          onClick={() =>
+                            handleDownloadFile(
+                              achievement.proof,
+                              `bukti-prestasi-${achievement.name}.pdf`,
+                            )
+                          }
+                        >
+                          Unduh Bukti Prestasi
+                        </Button>
+                      </Stack>
                     </Alert>
+                  )}
+                  {achievement.status === 0 && (
+                    <Button
+                      variant="light"
+                      color="blue"
+                      size="xs"
+                      leftSection={<IconDownload size={14} />}
+                      onClick={() =>
+                        handleDownloadFile(
+                          achievement.proof,
+                          `bukti-prestasi-${achievement.name}.pdf`,
+                        )
+                      }
+                    >
+                      Unduh Bukti Prestasi
+                    </Button>
                   )}
                   <Text size="sm" c="dimmed">
                     {achievement.description}
