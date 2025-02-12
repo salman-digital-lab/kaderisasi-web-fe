@@ -1,10 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  getMonthlyLeaderboard,
-  LeaderboardEntry,
-} from "@/services/leaderboard";
+import { getMonthlyLeaderboard } from "@/services/leaderboard";
 import { IconUser } from "@tabler/icons-react";
 import {
   Paper,
@@ -23,9 +20,9 @@ import dayjs from "dayjs";
 import styles from "./style.module.css";
 import { USER_LEVEL_RENDER } from "@/constants/render/activity";
 import { USER_LEVEL_ENUM } from "@/types/constants/profile";
-
-const MonthlyLeaderboard = () => {
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+import { MonthlyLeaderboard } from "@/types/model/achievement";
+const MonthlyLeaderboardList = () => {
+  const [leaderboard, setLeaderboard] = useState<MonthlyLeaderboard[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -146,4 +143,4 @@ const MonthlyLeaderboard = () => {
   );
 };
 
-export default MonthlyLeaderboard;
+export default MonthlyLeaderboardList;

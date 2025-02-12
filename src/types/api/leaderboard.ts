@@ -1,8 +1,8 @@
-import { APIResponse } from "../helper";
+import { APIPagiResponse, APIResponse } from "../helper";
 import { LifetimeLeaderboard, MonthlyLeaderboard } from "../model/achievement";
 import { Achievement } from "../model/achievement";
 
-export type GetMonthlyLeaderboardResp = APIResponse<MonthlyLeaderboard[]>;
+export type GetMonthlyLeaderboardResp = APIPagiResponse<MonthlyLeaderboard>;
 
 export type GetLifetimeLeaderboardResp = APIResponse<LifetimeLeaderboard[]>;
 
