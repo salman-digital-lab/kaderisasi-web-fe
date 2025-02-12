@@ -4,6 +4,7 @@ import {
   GetLifetimeLeaderboardResp,
   SubmitAchievementReq,
   SubmitAchievementResp,
+  GetMyAchievementsResp,
 } from "@/types/api/leaderboard";
 
 export interface LeaderboardEntry {
@@ -100,4 +101,26 @@ export const submitAchievement = async (
       body: formData,
     },
   );
+};
+
+export const getMyAchievements = async (
+  token: string,
+  page: number = 1,
+  perPage: number = 100,
+) => {
+  const params = new URLSearchParams({
+    page: page.toString(),
+    per_page: perPage.toString(),
+  });
+
+  const response = await fetcher<GetMyAchievementsResp>(
+    process.env.NEXT_PUBLIC_BE_API + `/achievements?${params.toString()}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  return response.data.data;
 };

@@ -3,6 +3,7 @@
 import { Tabs, TabsList, TabsPanel, TabsTab } from "@mantine/core";
 import PersonalDataForm from "../PersonalDataForm";
 import PersonalActivityData from "../PersonalActivityData";
+import PersonalAchievementData from "../PersonalAchievementData";
 
 import classes from "./index.module.css";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -12,6 +13,7 @@ import { PublicUser } from "@/types/model/members";
 import { RuangCurhatData } from "@/types/model/ruangcurhat";
 import { Activity, Registrant } from "@/types/model/activity";
 import { Member } from "@/types/model/members";
+import { Achievement } from "@/types/model/achievement";
 
 type ProfileTabProps = {
   provinceData: Province[] | undefined;
@@ -23,6 +25,7 @@ type ProfileTabProps = {
   | undefined;
   activitiesRegistration: ({ activity: Activity } & Registrant)[] | undefined;
   ruangcurhatData: RuangCurhatData[] | undefined;
+  achievements: Achievement[] | undefined;
 };
 
 export function ProfileTab({
@@ -30,6 +33,7 @@ export function ProfileTab({
   profileData,
   activitiesRegistration,
   ruangcurhatData,
+  achievements,
 }: ProfileTabProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -53,6 +57,7 @@ export function ProfileTab({
         <TabsTab value="profiledata">Data Diri</TabsTab>
         <TabsTab value="activity">Kegiatan</TabsTab>
         <TabsTab value="ruangcurhat">Ruang Curhat</TabsTab>
+        <TabsTab value="achievements">Prestasi</TabsTab>
       </TabsList>
       <TabsPanel value="profiledata" mt="md">
         <PersonalDataForm
@@ -65,6 +70,9 @@ export function ProfileTab({
       </TabsPanel>
       <TabsPanel value="ruangcurhat" mt="md">
         <RuangCurhatList data={ruangcurhatData || []} />
+      </TabsPanel>
+      <TabsPanel value="achievements" mt="md">
+        <PersonalAchievementData achievements={achievements || []} />
       </TabsPanel>
     </Tabs>
   );

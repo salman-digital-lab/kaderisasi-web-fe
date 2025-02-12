@@ -16,6 +16,7 @@ export type Achievement = {
   score: number;
   proof: string;
   status: ACHIEVEMENT_STATUS_ENUM;
+  remark?: string;
   approver_id: number;
   approved_at: string;
   created_at: string;

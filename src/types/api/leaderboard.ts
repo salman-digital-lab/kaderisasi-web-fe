@@ -15,3 +15,5 @@ export type SubmitAchievementReq = {
 };
 
 export type SubmitAchievementResp = APIResponse<Achievement>;
+
+export type GetMyAchievementsResp = APIPagiResponse<Achievement>;

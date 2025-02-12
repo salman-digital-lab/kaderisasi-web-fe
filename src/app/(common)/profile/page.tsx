@@ -25,6 +25,8 @@ import { PublicUser, Member } from "@/types/model/members";
 import { Province } from "@/types/model/province";
 import { RuangCurhatData } from "@/types/model/ruangcurhat";
 import { redirect } from "next/navigation";
+import { Achievement } from "@/types/model/achievement";
+import { getMyAchievements } from "@/services/leaderboard";
 
 export const metadata = {
   title: "Profil",
@@ -44,6 +46,7 @@ export default async function Page() {
     | undefined;
 
   let ruangCurhatData: RuangCurhatData[] | undefined;
+  let achievements: Achievement[] | undefined;
 
   const sessionData = await verifySession();
 
@@ -54,6 +57,7 @@ export default async function Page() {
       sessionData.session || "",
     );
     ruangCurhatData = await getRuangCurhat(sessionData.session || "");
+    achievements = await getMyAchievements(sessionData.session || "");
   } catch (error: unknown) {
     if (typeof error === "string" && error === "Unauthorized")
       redirect("/api/logout");
@@ -65,7 +69,10 @@ export default async function Page() {
       <Container size="lg">
         <Flex gap="xl" className={classes.content}>
           <Paper radius="md" withBorder p="lg" miw="20rem" h="fit-content">
-            <ProfilePicture src={profileData?.profile.picture} token={sessionData.session || ""} />
+            <ProfilePicture
+              src={profileData?.profile.picture}
+              token={sessionData.session || ""}
+            />
             <Text ta="center" fz="lg" fw={500} mt="md">
               {profileData?.profile.name}
             </Text>
@@ -92,6 +99,7 @@ export default async function Page() {
             provinceData={provinceData}
             activitiesRegistration={activitiesRegistration}
             ruangcurhatData={ruangCurhatData}
+            achievements={achievements}
           />
         </Flex>
       </Container>
