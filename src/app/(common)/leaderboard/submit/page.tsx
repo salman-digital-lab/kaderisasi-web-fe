@@ -10,7 +10,7 @@ export const metadata = {
 export default async function Page() {
   const sessionData = await verifySession();
 
-  if (sessionData.session === null) redirect("/api/logout");
+  if (!sessionData.session) redirect("/api/logout");
 
   return (
     <Container size="sm" component="main" mt={rem(80)}>
@@ -19,8 +19,8 @@ export default async function Page() {
       </Title>
       <Paper radius="md" withBorder p="lg">
         <Text c="dimmed" mb="lg">
-          Isi form dibawah ini untuk mengirim prestasi anda. Prestasi anda akan diperiksa oleh admin
-          sebelum ditambahkan ke leaderboard.
+          Isi form dibawah ini untuk mengirim prestasi anda. Prestasi anda akan
+          diperiksa oleh admin sebelum ditambahkan ke leaderboard.
         </Text>
         <AchievementForm token={sessionData.session || ""} />
       </Paper>
