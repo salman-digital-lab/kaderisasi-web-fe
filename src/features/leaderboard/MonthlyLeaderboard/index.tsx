@@ -32,13 +32,7 @@ const MonthlyLeaderboardList = () => {
       setLoading(true);
       setError(null);
       const response = await getMonthlyLeaderboard(1, 10, month);
-      setLeaderboard([
-        ...response.data.data,
-        ...response.data.data,
-        ...response.data.data,
-        ...response.data.data,
-
-      ]);
+      setLeaderboard(response.data.data);
     } catch (error) {
       setError("Failed to load leaderboard data. Please try again later.");
       console.error("Error fetching leaderboard:", error);
