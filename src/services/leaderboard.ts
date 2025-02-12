@@ -103,6 +103,32 @@ export const submitAchievement = async (
   );
 };
 
+export const editAchievement = async (
+  id: number,
+  payload: Omit<SubmitAchievementReq, 'proof'> & { proof?: File },
+  token: string,
+) => {
+  const formData = new FormData();
+  formData.append("name", payload.name);
+  formData.append("description", payload.description);
+  formData.append("achievement_date", payload.achievement_date);
+  formData.append("type", payload.type);
+  if (payload.proof) {
+    formData.append("proof", payload.proof);
+  }
+
+  return await fetcher<SubmitAchievementResp>(
+    `${process.env.NEXT_PUBLIC_BE_API}/achievements/${id}`,
+    {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    },
+  );
+};
+
 export const getMyAchievements = async (
   token: string,
   page: number = 1,
