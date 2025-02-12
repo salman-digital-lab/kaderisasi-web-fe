@@ -4,6 +4,7 @@ import {
 } from "@/types/constants/achievement";
 import { AdminUser } from "./adminuser";
 import { PublicUser } from "./members";
+import { Member } from "./members";
 
 export type Achievement = {
   id: number;
@@ -22,3 +23,22 @@ export type Achievement = {
   user: PublicUser;
   approver?: AdminUser;
 };
+
+export interface MonthlyLeaderboard {
+  id: number;
+  user_id: number;
+  score: number;
+  month?: string;
+  created_at: string;
+  updated_at: string;
+  user: PublicUser & { profile: Omit<Member, "publicUser"> };
+}
+
+export interface LifetimeLeaderboard {
+  id: number;
+  user_id: number;
+  score: number;
+  created_at: string;
+  updated_at: string;
+  user: PublicUser & { profile: Omit<Member, "publicUser"> };
+}

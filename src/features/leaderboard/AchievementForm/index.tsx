@@ -13,6 +13,9 @@ import { useForm } from "@mantine/form";
 import { useRouter } from "next/navigation";
 import showNotif from "@/functions/common/notification";
 import { ACHIEVEMENT_TYPE_OPTIONS } from "@/constants/form/achievement";
+import { submitAchievement } from "@/services/leaderboard";
+import { DateInput } from "@mantine/dates";
+import { Dayjs } from "dayjs";
 type AchievementFormProps = {
   token: string;
 };
@@ -25,12 +28,15 @@ export default function AchievementForm({ token }: AchievementFormProps) {
     initialValues: {
       name: "",
       description: "",
+      achievement_date: null as Dayjs | null,
       type: "",
       proof: null as File | null,
     },
     validate: {
       name: (value) => (value ? null : "Nama prestasi harus diisi"),
       description: (value) => (value ? null : "Deskripsi prestasi harus diisi"),
+      achievement_date: (value) =>
+        value ? null : "Tanggal prestasi harus diisi",
       type: (value) => (value ? null : "Jenis prestasi harus diisi"),
       proof: (value) => (value ? null : "Bukti prestasi harus diisi"),
     },
@@ -39,30 +45,20 @@ export default function AchievementForm({ token }: AchievementFormProps) {
   const handleSubmit = async (values: typeof form.values) => {
     try {
       setLoading(true);
-      const formData = new FormData();
-      formData.append("name", values.name);
-      formData.append("description", values.description);
-      formData.append("type", values.type);
-      if (values.proof) {
-        formData.append("proof", values.proof);
+      if (!values.proof) {
+        throw new Error("Bukti prestasi harus diisi");
       }
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BE_API}/achievements`,
+      await submitAchievement(
         {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
+          name: values.name,
+          description: values.description,
+          achievement_date: values.achievement_date?.toISOString() || "",
+          type: values.type,
+          proof: values.proof,
         },
+        token,
       );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Gagal mengirim prestasi");
-      }
 
       showNotif("Prestasi berhasil dikirim");
       router.push("/leaderboard");
@@ -82,6 +78,12 @@ export default function AchievementForm({ token }: AchievementFormProps) {
           placeholder="Masukkan nama prestasi"
           required
           {...form.getInputProps("name")}
+        />
+        <DateInput
+          label="Tanggal Prestasi"
+          placeholder="Pilih tanggal prestasi"
+          required
+          {...form.getInputProps("achievement_date")}
         />
         <Textarea
           label="Deskripsi Prestasi"
