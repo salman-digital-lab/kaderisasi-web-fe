@@ -11,7 +11,6 @@ import {
   Text,
   Group,
   Stack,
-  Pagination,
   Loader,
   Container,
 } from "@mantine/core";
@@ -21,21 +20,25 @@ import styles from "./style.module.css";
 import { USER_LEVEL_RENDER } from "@/constants/render/activity";
 import { USER_LEVEL_ENUM } from "@/types/constants/profile";
 import { MonthlyLeaderboard } from "@/types/model/achievement";
+
 const MonthlyLeaderboardList = () => {
   const [leaderboard, setLeaderboard] = useState<MonthlyLeaderboard[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalItems, setTotalItems] = useState(0);
   const [selectedMonth, setSelectedMonth] = useState(dayjs().format("YYYY-MM"));
 
-  const fetchLeaderboard = async (page: number, month: string) => {
+  const fetchLeaderboard = async (month: string) => {
     try {
       setLoading(true);
       setError(null);
-      const response = await getMonthlyLeaderboard(page, 10, month);
-      setLeaderboard(response.data.data);
-      setTotalItems(response.data.meta.total);
+      const response = await getMonthlyLeaderboard(1, 10, month);
+      setLeaderboard([
+        ...response.data.data,
+        ...response.data.data,
+        ...response.data.data,
+        ...response.data.data,
+
+      ]);
     } catch (error) {
       setError("Failed to load leaderboard data. Please try again later.");
       console.error("Error fetching leaderboard:", error);
@@ -45,8 +48,8 @@ const MonthlyLeaderboardList = () => {
   };
 
   useEffect(() => {
-    fetchLeaderboard(currentPage, selectedMonth);
-  }, [currentPage, selectedMonth]);
+    fetchLeaderboard(selectedMonth);
+  }, [selectedMonth]);
 
   // Generate last 12 months options
   const monthOptions = Array.from({ length: 12 }, (_, i) => {
@@ -57,6 +60,13 @@ const MonthlyLeaderboardList = () => {
     };
   });
 
+  const getPositionClass = (index: number) => {
+    if (index === 0) return styles.top1;
+    if (index === 1) return styles.top2;
+    if (index === 2) return styles.top3;
+    return "";
+  };
+
   return (
     <Container size="md" py="xl">
       <Group justify="space-between" mb="lg">
@@ -66,7 +76,6 @@ const MonthlyLeaderboardList = () => {
           onChange={(value) => {
             if (value) {
               setSelectedMonth(value);
-              setCurrentPage(1);
             }
           }}
           data={monthOptions}
@@ -87,12 +96,19 @@ const MonthlyLeaderboardList = () => {
               shadow="xs"
               p="md"
               withBorder
-              className={styles.leaderboardItem}
+              className={`${styles.leaderboardItem} ${getPositionClass(index)}`}
             >
               <Group w="100%" justify="space-between">
                 <Group flex={1} gap="md">
-                  <Text size="xl" fw={700} w={40} ta="center" c="dimmed">
-                    {index + 1 + (currentPage - 1) * 10}
+                  <Text
+                    size="xl"
+                    fw={700}
+                    w={40}
+                    ta="center"
+                    c="dimmed"
+                    className={styles.rank}
+                  >
+                    {index + 1}
                   </Text>
                   <Avatar
                     src={entry.user.profile?.picture}
@@ -128,16 +144,6 @@ const MonthlyLeaderboardList = () => {
             </Text>
           )}
         </Stack>
-      )}
-
-      {!loading && totalItems > 0 && (
-        <Group justify="center" mt="xl">
-          <Pagination
-            value={currentPage}
-            onChange={setCurrentPage}
-            total={Math.ceil(totalItems / 10)}
-          />
-        </Group>
       )}
     </Container>
   );

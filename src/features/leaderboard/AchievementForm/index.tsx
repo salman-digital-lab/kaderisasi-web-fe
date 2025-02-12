@@ -87,7 +87,7 @@ export default function AchievementForm({ token }: AchievementFormProps) {
         />
         <Textarea
           label="Deskripsi Prestasi"
-          placeholder="Deskripsi prestasi"
+          placeholder="Jelaskan prestasi anda sedetil mungkin, jangan lupa sebutkan skala(Kampus, Nasional, Internasional) dari prestasi anda"
           required
           minRows={3}
           {...form.getInputProps("description")}
