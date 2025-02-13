@@ -7,57 +7,24 @@ import {
   GetMyAchievementsResp,
 } from "@/types/api/leaderboard";
 
-export interface LeaderboardEntry {
-  id: number;
-  user_id: number;
-  score: number;
-  month?: string;
-  created_at: string;
-  updated_at: string;
-  user: {
-    id: number;
-    email: string;
-    profile: {
-      id: number;
-      name: string;
-      picture: string;
-      level: number;
-    };
-  };
-}
-
-export interface LeaderboardResponse {
-  message: string;
-  data: {
-    meta: {
-      total: number;
-      per_page: number;
-      current_page: number;
-      last_page: number;
-      first_page: number;
-      first_page_url: string;
-      last_page_url: string;
-      next_page_url: string | null;
-      previous_page_url: string | null;
-    };
-    data: LeaderboardEntry[];
-  };
-}
-
 export const getMonthlyLeaderboard = async (
   page: number = 1,
   perPage: number = 10,
-  month?: string,
+  month: string,
 ) => {
   const params = new URLSearchParams({
     page: page.toString(),
     per_page: perPage.toString(),
-    ...(month && { month }),
+    month,
   });
 
   const response = await fetcher<GetMonthlyLeaderboardResp>(
     process.env.NEXT_PUBLIC_BE_API +
       `/achievements/monthly?${params.toString()}`,
+    {
+      revalidate: 300, // Cache for 5 minutes since it's more dynamic
+      tags: ["leaderboard", "monthly", `monthly-${month}`],
+    },
   );
 
   return response;
@@ -74,7 +41,11 @@ export const getLifetimeLeaderboard = async (
 
   const response = await fetcher<GetLifetimeLeaderboardResp>(
     process.env.NEXT_PUBLIC_BE_API +
-      `/v2/achievements/lifetime?${params.toString()}`,
+      `/achievements/lifetime?${params.toString()}`,
+    {
+      revalidate: 3600, // Cache for 1 hour
+      tags: ["leaderboard", "lifetime"],
+    },
   );
 
   return response;
@@ -105,7 +76,7 @@ export const submitAchievement = async (
 
 export const editAchievement = async (
   id: number,
-  payload: Omit<SubmitAchievementReq, 'proof'> & { proof?: File },
+  payload: Omit<SubmitAchievementReq, "proof"> & { proof?: File },
   token: string,
 ) => {
   const formData = new FormData();
@@ -145,6 +116,8 @@ export const getMyAchievements = async (
       headers: {
         Authorization: `Bearer ${token}`,
       },
+      revalidate: 60, // Cache for 1 minute since it's personal data
+      tags: ["achievements", "personal"],
     },
   );
 

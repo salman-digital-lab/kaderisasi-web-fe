@@ -11,15 +11,16 @@ export const metadata = {
 export default async function Page({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const param = await params;
   const sessionData = await verifySession();
 
   if (!sessionData.session) redirect("/api/logout");
 
   const achievements = await getMyAchievements(sessionData.session);
   const achievement = achievements.find(
-    (achievement) => achievement.id === parseInt(params.id)
+    (achievement) => achievement.id === parseInt(param.id)
   );
 
   if (!achievement) redirect("/leaderboard");

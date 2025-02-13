@@ -16,7 +16,8 @@ export const getProvinces = async () => {
       headers: {
         "Content-Type": "application/json",
       },
-      cache: "no-store",
+      revalidate: 86400, // Cache for 24 hours since provinces rarely change
+      tags: ["provinces"],
     },
   );
 

@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
+    dangerouslyAllowSVG: true,
     remotePatterns: [
       {
         protocol: 'https',
@@ -15,6 +16,12 @@ const nextConfig = {
         port: '',
         pathname: '/kaderisasi-prod/**',
         search: '',
+      },
+      {
+        protocol: 'https',
+        hostname: 'placehold.co',
+        port: '',
+        pathname: '/**'
       },
     ],
   },
