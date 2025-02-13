@@ -36,7 +36,7 @@ export default function UniversitySelect({
 
   useEffect(() => {
     fetchUniversities(showedValue);
-  }, []);
+  }, [showedValue]);
 
   const debouncedFetch = useDebouncedCallback((value: string) => {
     fetchUniversities(value);
