@@ -105,7 +105,7 @@ const MonthlyLeaderboardList = () => {
                     {index + 1}
                   </Text>
                   <Avatar
-                    src={entry.user.profile?.picture}
+                    src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${entry.user.profile?.picture}`}
                     alt={entry.user.profile?.name}
                     size="md"
                     radius="xl"
