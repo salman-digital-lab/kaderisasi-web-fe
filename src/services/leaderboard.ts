@@ -22,8 +22,7 @@ export const getMonthlyLeaderboard = async (
     process.env.NEXT_PUBLIC_BE_API +
       `/achievements/monthly?${params.toString()}`,
     {
-      revalidate: 300, // Cache for 5 minutes since it's more dynamic
-      tags: ["leaderboard", "monthly", `monthly-${month}`],
+      cache: "no-store",
     },
   );
 
@@ -43,8 +42,7 @@ export const getLifetimeLeaderboard = async (
     process.env.NEXT_PUBLIC_BE_API +
       `/achievements/lifetime?${params.toString()}`,
     {
-      revalidate: 3600, // Cache for 1 hour
-      tags: ["leaderboard", "lifetime"],
+      cache: "no-store",
     },
   );
 
