@@ -89,7 +89,7 @@ export default async function Home() {
             />
           ))}
         </SimpleGrid>
-        {activities.length > 4 && (
+        {activities.length > 3 && (
           <Center>
             <Button size="md" mt="md" component={Link} href="/activity">
               Lihat Kegiatan Lainnya
