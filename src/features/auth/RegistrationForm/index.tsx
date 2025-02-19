@@ -19,7 +19,7 @@ export default function RegistrationForm() {
       fullname: "",
     },
     validate: {
-      email: isEmail("Invalid email"),
+      email: isEmail("Tolong masukkan email yang valid"),
       password: hasLength({ min: 6 }, "Minimal memiliki 6 karakter"),
       confirmPassword: matchesField("password", "Password tidak sama"),
     },
@@ -31,8 +31,11 @@ export default function RegistrationForm() {
     fullname: string;
   }) => {
     try {
-      const response = await register(registrationFormData);
-      
+      const response = await register({
+        ...registrationFormData,
+        email: registrationFormData.email.toLowerCase(),
+      });
+
       if (response.success) {
         showNotif("Registrasi berhasil. Silahkan masuk ke akun anda.");
         router.push("/login");
