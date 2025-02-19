@@ -7,6 +7,7 @@ import {
   Title,
   SimpleGrid,
   Stack,
+  Center,
 } from "@mantine/core";
 import classes from "./index.module.css";
 import ActivityCard from "../../components/common/ActivityCard";
@@ -40,7 +41,7 @@ export default async function Home() {
             </Text>
 
             <Group mt={30}>
-              <Button size="md" className={classes.control}>
+              <Button size="md" component={Link} href="/activity">
                 Daftar Kegiatan Sekarang
               </Button>
             </Group>
@@ -88,6 +89,13 @@ export default async function Home() {
             />
           ))}
         </SimpleGrid>
+        {activities.length > 4 && (
+          <Center>
+            <Button size="md" mt="md" component={Link} href="/activity">
+              Lihat Kegiatan Lainnya
+            </Button>
+          </Center>
+        )}
       </Container>
 
       <Container size="lg" py="xl">
@@ -107,7 +115,12 @@ export default async function Home() {
             sudah mendapatkan pelatihan dan bekal-bekal pengetahuan psikologi
             praktis untuk menjadi seorang konselor lho.
           </Text>
-          <Button component={Link} size="md" href="/consultation" w="max-content">
+          <Button
+            component={Link}
+            size="md"
+            href="/consultation"
+            w="max-content"
+          >
             Ayo Curhat
           </Button>
         </Stack>
