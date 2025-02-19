@@ -250,7 +250,10 @@ export default async function Page(props: {
               <Text size="xs" c="dimmed">
                 Silahkan masuk terlebih dahulu
               </Text>
-              <Button component={Link} href="/login">
+              <Button
+                component={Link}
+                href={`/login?redirect=${process.env.NEXT_PUBLIC_APP_URL}/activity/${params.slug}`}
+              >
                 Masuk
               </Button>
             </Stack>

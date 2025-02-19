@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button, PasswordInput, TextInput } from "@mantine/core";
 import { isEmail, useForm } from "@mantine/form";
 
@@ -9,12 +9,14 @@ import login from "@/functions/server/login";
 
 export default function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect");
 
   const form = useForm({
     mode: "controlled",
     initialValues: { password: "", email: "" },
     validate: {
-      email: isEmail("Invalid email"),
+      email: isEmail("Tolong masukkan email yang valid"),
     },
   });
 
@@ -27,7 +29,7 @@ export default function LoginForm() {
       
       if (response.success) {
         showNotif("Anda berhasil masuk");
-        router.push("/");
+        router.push(redirect || "/");
       } else {
         showNotif(response.message, true);
       }

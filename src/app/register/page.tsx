@@ -11,7 +11,13 @@ export const metadata = {
   title: "Daftar",
 };
 
-export default function Page() {
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const redirect = (await searchParams).redirect;
+  
   return (
     <Container size={420} my={40}>
       <div className={classes.logo}>
@@ -23,7 +29,7 @@ export default function Page() {
       </Title>
       <Text c="dimmed" size="sm" ta="center" mt={5}>
         Sudah Punya Akun?{" "}
-        <Anchor size="sm" component={Link} href="/login">
+        <Anchor size="sm" component={Link} href={`/login?redirect=${redirect}`}>
           Silahkan Masuk Disini
         </Anchor>
       </Text>
