@@ -34,6 +34,8 @@ export default function ActivityCard({
       <Card.Section>
         <Image
           component={NextImage}
+          placeholder="blur"
+          blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mN0qAcAAQUAwRZaSmYAAAAASUVORK5CYII="
           src={
             imageUrl
               ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${imageUrl}`

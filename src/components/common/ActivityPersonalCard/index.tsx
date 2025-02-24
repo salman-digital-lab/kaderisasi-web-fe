@@ -23,6 +23,8 @@ export default function ActivityPersonalCard({
       <Card.Section>
         <Image
           component={NextImage}
+          blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mN0qAcAAQUAwRZaSmYAAAAASUVORK5CYII="
+          placeholder="blur"
           src={
             imageUrl
               ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${imageUrl}`
