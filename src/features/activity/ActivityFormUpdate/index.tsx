@@ -18,7 +18,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-type ActivityFormProps = {
+type ActivityFormUpdateProps = {
   token: string;
   formSchemas: Questionnaire[];
   slug: string;
@@ -86,12 +86,12 @@ const renderForm = (
   }
 };
 
-export default function ActivityForm({
+export default function ActivityFormUpdate({
   token,
   slug,
   formSchemas,
   registrationData,
-}: ActivityFormProps) {
+}: ActivityFormUpdateProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
