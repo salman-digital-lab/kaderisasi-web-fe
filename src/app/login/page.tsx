@@ -46,7 +46,11 @@ export default async function Page({
       <Text c="dimmed" size="sm" ta="center" mt={5}>
         Jika ada kendala dalam mengakses akun, silakan hubungi admin melalui
         Whatsapp di{" "}
-        <Anchor size="sm" component={Link} href="https://wa.me/6285156168499">
+        <Anchor
+          size="sm"
+          component={Link}
+          href="https://wa.me/6285156168499?text=Hai%20Kak%2C%20saya%20ingin%20bertanya...%0A%0ANama%20lengkap%20%3A%20%0AEmail%20%3A%20%0AAsal%20Universitas%20%3A%20%0APertanyaan%2FMasalah%20%3A%20"
+        >
           +62 851 5616 8499
         </Anchor>
       </Text>
