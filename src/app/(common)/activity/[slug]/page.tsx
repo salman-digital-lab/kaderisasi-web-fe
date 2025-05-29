@@ -132,8 +132,7 @@ export default async function Page(props: {
           withIndicators
           controlsOffset={0}
           controlSize={40}
-          loop
-          align="start"
+          emblaOptions={{ loop: true, align: "start" }}
           nextControlIcon={<IconArrowRight size={24} color="white" />}
           previousControlIcon={<IconArrowLeft size={24} color="white" />}
           withControls={

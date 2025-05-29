@@ -16,7 +16,6 @@ import showNotif from "@/functions/common/notification";
 import { ACHIEVEMENT_TYPE_OPTIONS } from "@/constants/form/achievement";
 import { editAchievement } from "@/services/leaderboard";
 import { DateInput } from "@mantine/dates";
-import { Dayjs } from "dayjs";
 import { Achievement } from "@/types/model/achievement";
 import { IconAlertCircle } from "@tabler/icons-react";
 import { ACHIEVEMENT_STATUS_ENUM } from "@/types/constants/achievement";
@@ -37,9 +36,7 @@ export default function EditAchievementForm({
     initialValues: {
       name: achievement.name,
       description: achievement.description,
-      achievement_date: new Date(
-        achievement.achievement_date,
-      ) as unknown as Dayjs,
+      achievement_date: achievement.achievement_date,
       type: String(achievement.type),
       proof: null as File | null,
     },
@@ -61,7 +58,7 @@ export default function EditAchievementForm({
         {
           name: values.name,
           description: values.description,
-          achievement_date: values.achievement_date?.toISOString() || "",
+          achievement_date: values.achievement_date || "",
           type: values.type,
           proof: values.proof || undefined,
         },

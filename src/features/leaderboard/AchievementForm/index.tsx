@@ -15,7 +15,7 @@ import showNotif from "@/functions/common/notification";
 import { ACHIEVEMENT_TYPE_OPTIONS } from "@/constants/form/achievement";
 import { submitAchievement } from "@/services/leaderboard";
 import { DateInput } from "@mantine/dates";
-import { Dayjs } from "dayjs";
+
 type AchievementFormProps = {
   token: string;
 };
@@ -28,7 +28,7 @@ export default function AchievementForm({ token }: AchievementFormProps) {
     initialValues: {
       name: "",
       description: "",
-      achievement_date: null as Dayjs | null,
+      achievement_date: null as string | null,
       type: "",
       proof: null as File | null,
     },
@@ -53,7 +53,7 @@ export default function AchievementForm({ token }: AchievementFormProps) {
         {
           name: values.name,
           description: values.description,
-          achievement_date: values.achievement_date?.toISOString() || "",
+          achievement_date: values.achievement_date || "",
           type: values.type,
           proof: values.proof,
         },
