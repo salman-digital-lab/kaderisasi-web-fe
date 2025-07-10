@@ -57,6 +57,44 @@ export default async function Home() {
       </Container>
 
       <Container size="lg" py="xl">
+        <Title ta="center" mt="sm" order={1}>
+          Bersama Membangun Generasi Pemimpin Masa Depan
+        </Title>
+        <Text
+          c="dimmed"
+          className={classes.description_list}
+          ta="center"
+          mt="md"
+          mb="xl"
+          size="lg"
+        >
+          Bergabunglah bersama lebih dari <b>45.000</b> mahasiswa dan{" "}
+          <b>320</b> kampus di seluruh Indonesia yang telah berkontribusi
+          membangun negeri melalui Kaderisasi Salman. Kami telah membentuk
+          generasi pemimpin masa depan yang siap menghadapi tantangan masa
+          depan.
+        </Text>
+        <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="xl" mb="xl">
+          <Stack align="center" justify="center">
+            <Title order={2} c="blue" size="h1">
+              45.000+
+            </Title>
+            <Text c="dimmed" size="lg" ta="center">
+              Mahasiswa
+            </Text>
+          </Stack>
+          <Stack align="center" justify="center">
+            <Title order={2} c="blue" size="h1">
+              320+
+            </Title>
+            <Text c="dimmed" size="lg" ta="center">
+              Kampus
+            </Text>
+          </Stack>
+        </SimpleGrid>
+      </Container>
+
+      <Container size="lg" py="xl">
         <Title ta="center" mt="sm">
           Kegiatan Baru
         </Title>
