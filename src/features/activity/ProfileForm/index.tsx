@@ -54,17 +54,6 @@ export default function ProfileForm({
 
   const renderForm = (type: { name: string; required: boolean }) => {
     switch (type.name) {
-      case "gender":
-        return (
-          <Select
-            {...form.getInputProps("gender")}
-            key={form.key("gender")}
-            label="Jenis Kelamin"
-            placeholder="Pilih Jenis Kelamin"
-            data={GENDER_OPTION}
-            required={type.required}
-          />
-        );
       case "personal_id":
         return (
           <TextInput
@@ -218,6 +207,14 @@ export default function ProfileForm({
           key={form.key("name")}
           label="Nama Lengkap"
           placeholder="Nama Lengkap"
+          required
+        />
+        <Select
+          {...form.getInputProps("gender")}
+          key={form.key("gender")}
+          label="Jenis Kelamin"
+          placeholder="Pilih Jenis Kelamin"
+          data={GENDER_OPTION}
           required
         />
         {mandatoryProfileData.map((item) => renderForm(item))}
