@@ -165,9 +165,10 @@ export default async function Home() {
                   key={club.id}
                   id={club.id}
                   name={club.name}
+                  short_description={club.short_description}
                   logo={club.logo}
-                  startPeriod={club.startPeriod}
-                  endPeriod={club.endPeriod}
+                  start_period={club.start_period}
+                  end_period={club.end_period}
                 />
               ))}
             </SimpleGrid>

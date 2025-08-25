@@ -11,17 +11,19 @@ import "dayjs/locale/id";
 type ClubCardProps = {
   id: number;
   name: string;
+  short_description: string | null;
   logo: string;
-  startPeriod: string | null;
-  endPeriod: string | null;
+  start_period: string | null;
+  end_period: string | null;
 };
 
 export default function ClubCard({
   id,
   name,
+  short_description,
   logo,
-  startPeriod,
-  endPeriod,
+  start_period,
+  end_period,
 }: ClubCardProps) {
   const calendarIcon = (
     <IconCalendarTime style={{ width: rem(12), height: rem(12) }} />
@@ -47,24 +49,27 @@ export default function ClubCard({
         <Text fz="lg" fw={500} ta="center" lineClamp={2}>
           {name}
         </Text>
+        {short_description && (
+          <Text size="sm" c="dimmed" ta="center" lineClamp={3} mt="xs">
+            {short_description}
+          </Text>
+        )}
       </Card.Section>
 
-      {(startPeriod || endPeriod) && (
+      {(start_period || end_period) && (
         <Card.Section className={classes.section}>
           <Text className={classes.label} c="dimmed">
             Periode Aktivitas
           </Text>
           <Group gap={7} mt={5} justify="center">
-            {startPeriod && (
-              <Badge variant="light" color="blue" leftSection={calendarIcon}>
-                {dayjs(startPeriod).locale("id").format("MMM YYYY")}
-              </Badge>
-            )}
-            {endPeriod && (
-              <Badge variant="light" color="orange" leftSection={calendarIcon}>
-                s/d {dayjs(endPeriod).locale("id").format("MMM YYYY")}
-              </Badge>
-            )}
+            <Badge variant="light" color="blue" leftSection={calendarIcon}>
+              {start_period && end_period 
+                ? `${dayjs(start_period).locale("id").format("MMM YYYY")} - ${dayjs(end_period).locale("id").format("MMM YYYY")}`
+                : start_period 
+                  ? dayjs(start_period).locale("id").format("MMM YYYY")
+                  : `s/d ${dayjs(end_period).locale("id").format("MMM YYYY")}`
+              }
+            </Badge>
           </Group>
         </Card.Section>
       )}

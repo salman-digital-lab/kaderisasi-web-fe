@@ -12,11 +12,12 @@ export type Club = {
   id: number;
   name: string;
   description: string;
+  short_description: string | null;
   logo: string;
   media: MediaStructure;
-  startPeriod: string | null;
-  endPeriod: string | null;
-  isShow: boolean;
-  createdAt: string;
-  updatedAt: string;
+  start_period: string | null;
+  end_period: string | null;
+  is_show: boolean;
+  created_at: string;
+  updated_at: string;
 };

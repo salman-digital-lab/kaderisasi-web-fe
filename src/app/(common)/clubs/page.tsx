@@ -27,14 +27,14 @@ type Props = {
 
 export default async function ClubsPage(props: Props) {
   const searchParams = await props.searchParams;
-  const page = Array.isArray(searchParams.page) 
-    ? searchParams.page[0] 
+  const page = Array.isArray(searchParams.page)
+    ? searchParams.page[0]
     : searchParams.page || "1";
-  const search = Array.isArray(searchParams.search) 
-    ? searchParams.search[0] 
+  const search = Array.isArray(searchParams.search)
+    ? searchParams.search[0]
     : searchParams.search || "";
 
-  const { data: clubs } = await getClubs({ 
+  const { data: clubs } = await getClubs({
     page,
     per_page: "12",
     search,
@@ -46,23 +46,17 @@ export default async function ClubsPage(props: Props) {
         <div className={classes.inner}>
           <div className={classes.content}>
             <h1 className={classes.title}>
-              Klub &{" "}
+              Klub & Komunitas{" "}
               <Text component="span" c="blue" inherit>
-                Komunitas
-              </Text>{" "}
-              Kaderisasi Salman
+                Kaderisasi Salman
+              </Text>
             </h1>
             <Text c="dimmed" mt="md">
-              Temukan berbagai klub dan komunitas yang ada di Kaderisasi Salman. 
-              Bergabunglah dengan komunitas yang sesuai dengan minat dan bakat Anda 
-              untuk mengembangkan potensi diri dan berkontribusi bagi sesama.
+              Temukan berbagai klub dan komunitas yang ada di Kaderisasi Salman.
+              Bergabunglah dengan komunitas yang sesuai dengan minat dan bakat
+              Anda untuk mengembangkan potensi diri dan berkontribusi bagi
+              sesama.
             </Text>
-
-            <Group mt={30}>
-              <Button size="md" component={Link} href="/activity">
-                Lihat Kegiatan Klub
-              </Button>
-            </Group>
           </div>
           <Image
             width={400}
@@ -87,9 +81,9 @@ export default async function ClubsPage(props: Props) {
               mt="md"
               mb="xl"
             >
-              Temukan komunitas yang tepat untuk mengembangkan minat dan bakat Anda. 
-              Setiap klub memiliki keunikan dan kontribusi tersendiri dalam membangun 
-              generasi pemimpin masa depan.
+              Temukan komunitas yang tepat untuk mengembangkan minat dan bakat
+              Anda. Setiap klub memiliki keunikan dan kontribusi tersendiri
+              dalam membangun generasi pemimpin masa depan.
             </Text>
           </div>
 
@@ -114,13 +108,14 @@ export default async function ClubsPage(props: Props) {
                     key={club.id}
                     id={club.id}
                     name={club.name}
+                    short_description={club.short_description}
                     logo={club.logo}
-                    startPeriod={club.startPeriod}
-                    endPeriod={club.endPeriod}
+                    start_period={club.start_period}
+                    end_period={club.end_period}
                   />
                 ))}
               </SimpleGrid>
-              
+
               {clubs.length === 12 && (
                 <Center>
                   <Button variant="outline" size="md">
@@ -133,7 +128,9 @@ export default async function ClubsPage(props: Props) {
             <Center py="xl">
               <Stack align="center" gap="md">
                 <Text size="lg" c="dimmed">
-                  {search ? "Tidak ada klub yang ditemukan" : "Belum ada klub yang tersedia"}
+                  {search
+                    ? "Tidak ada klub yang ditemukan"
+                    : "Belum ada klub yang tersedia"}
                 </Text>
                 {search && (
                   <Button component={Link} href="/clubs" variant="outline">

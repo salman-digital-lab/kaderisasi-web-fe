@@ -35,7 +35,6 @@ export default async function ClubDetailPage(props: Props) {
   
   try {
     const club = await getClub({ id: params.id });
-
     return (
       <main>
         {/* Simple Hero Section */}
@@ -73,6 +72,17 @@ export default async function ClubDetailPage(props: Props) {
                 {club.name}
               </Title>
 
+              {club.short_description && (
+                <Text 
+                  size="lg" 
+                  c="dimmed" 
+                  ta="center" 
+                  style={{ maxWidth: 600 }}
+                >
+                  {club.short_description}
+                </Text>
+              )}
+
               <Group gap="md" justify="center" mt="md">
                 <Badge 
                   size="lg" 
@@ -82,24 +92,24 @@ export default async function ClubDetailPage(props: Props) {
                 >
                   Klub Aktif
                 </Badge>
-                {club.startPeriod && (
+                {club.start_period && (
                   <Badge 
                     size="lg" 
                     variant="light" 
                     color="blue"
                     leftSection={<IconCalendarTime size={16} />}
                   >
-                    Mulai {dayjs(club.startPeriod).locale("id").format("MMMM YYYY")}
+                    Mulai {dayjs(club.start_period).locale("id").format("MMMM YYYY")}
                   </Badge>
                 )}
-                {club.endPeriod && (
+                {club.end_period && (
                   <Badge 
                     size="lg" 
                     variant="light" 
                     color="orange"
                     leftSection={<IconCalendarTime size={16} />}
                   >
-                    Hingga {dayjs(club.endPeriod).locale("id").format("MMMM YYYY")}
+                    Hingga {dayjs(club.end_period).locale("id").format("MMMM YYYY")}
                   </Badge>
                 )}
               </Group>
@@ -137,34 +147,7 @@ export default async function ClubDetailPage(props: Props) {
               />
             </Paper>
 
-            {/* Period Information */}
-            {(club.startPeriod || club.endPeriod) && (
-              <Paper p="xl" radius="md" shadow="sm">
-                <Group mb="md">
-                  <IconCalendarTime size={24} />
-                  <Title order={2}>Periode Aktivitas</Title>
-                </Group>
-                <Divider mb="md" />
-                <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="xl">
-                  {club.startPeriod && (
-                    <div>
-                      <Text fw={500} mb="xs" c="blue">Tanggal Mulai</Text>
-                      <Text size="lg">
-                        {dayjs(club.startPeriod).locale("id").format("DD MMMM YYYY")}
-                      </Text>
-                    </div>
-                  )}
-                  {club.endPeriod && (
-                    <div>
-                      <Text fw={500} mb="xs" c="orange">Tanggal Berakhir</Text>
-                      <Text size="lg">
-                        {dayjs(club.endPeriod).locale("id").format("DD MMMM YYYY")}
-                      </Text>
-                    </div>
-                  )}
-                </SimpleGrid>
-              </Paper>
-            )}
+
 
             {/* Media Gallery Carousel */}
             <MediaCarousel media={club.media} clubName={club.name} />

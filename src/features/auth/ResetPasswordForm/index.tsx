@@ -36,7 +36,6 @@ function Component() {
         showNotif("Password berhasil diubah. Silahkan masuk ke akun anda.");
       router.push("/login");
     } catch (error: unknown) {
-      console.log(error);
       if (error instanceof Error) showNotif(error.message, true);
       if (typeof error === "string") showNotif(error, true);
     }
