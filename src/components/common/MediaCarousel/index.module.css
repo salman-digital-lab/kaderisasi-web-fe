@@ -1,0 +1,45 @@
+.carousel {
+  --mantine-carousel-indicator-size: 10px;
+  --mantine-carousel-indicator-transition: all 250ms ease;
+}
+
+.carousel :global(.mantine-Carousel-indicator) {
+  background-color: rgba(255, 255, 255, 0.5);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  transition: all 0.25s ease;
+}
+
+.carousel :global(.mantine-Carousel-indicator[data-active]) {
+  background-color: var(--mantine-color-blue-5);
+  border-color: var(--mantine-color-blue-5);
+  transform: scale(1.2);
+}
+
+.carouselRoot {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.carouselViewport {
+  border-radius: 12px;
+}
+
+.carouselControl {
+  background-color: rgba(255, 255, 255, 0.95);
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  color: var(--mantine-color-gray-7);
+  transition: all 0.2s ease;
+}
+
+.carouselControl:hover {
+  background-color: rgba(255, 255, 255, 1);
+  transform: scale(1.1);
+  color: var(--mantine-color-blue-6);
+}
+
+.carouselIndicators {
+  bottom: 20px;
+  gap: 8px;
+}

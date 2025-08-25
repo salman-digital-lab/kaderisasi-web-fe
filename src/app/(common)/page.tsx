@@ -11,16 +11,21 @@ import {
 } from "@mantine/core";
 import classes from "./index.module.css";
 import ActivityCard from "../../components/common/ActivityCard";
+import ClubCard from "../../components/common/ClubCard";
 import illustration from "@/assets/homepage-1.svg";
 import Link from "next/link";
 import { getActivities } from "../../services/activity";
+import { getClubs } from "../../services/club";
 
 export const metadata = {
   title: "Beranda",
 };
 
 export default async function Home() {
-  const { data: activities } = await getActivities({ per_page: "4" });
+  const [{ data: activities }, { data: clubs }] = await Promise.all([
+    getActivities({ per_page: "4" }),
+    getClubs({ per_page: "4" }),
+  ]);
 
   return (
     <main>
@@ -132,6 +137,53 @@ export default async function Home() {
             <Button size="md" mt="md" component={Link} href="/activity">
               Lihat Kegiatan Lainnya
             </Button>
+          </Center>
+        )}
+      </Container>
+
+      <Container size="lg" py="xl">
+        <Title ta="center" mt="sm">
+          Klub & Komunitas
+        </Title>
+
+        <Text
+          c="dimmed"
+          className={classes.description_list}
+          ta="center"
+          mt="md"
+        >
+          Bergabunglah dengan berbagai klub dan komunitas untuk mengembangkan 
+          minat dan bakat Anda serta berkontribusi dalam membangun generasi 
+          pemimpin masa depan.
+        </Text>
+
+        {clubs.length > 0 ? (
+          <>
+            <SimpleGrid cols={{ base: 1, md: 4 }} spacing="md" mt={50}>
+              {clubs.map((club) => (
+                <ClubCard
+                  key={club.id}
+                  id={club.id}
+                  name={club.name}
+                  logo={club.logo}
+                  startPeriod={club.startPeriod}
+                  endPeriod={club.endPeriod}
+                />
+              ))}
+            </SimpleGrid>
+            {clubs.length > 3 && (
+              <Center>
+                <Button size="md" mt="md" component={Link} href="/clubs">
+                  Lihat Klub Lainnya
+                </Button>
+              </Center>
+            )}
+          </>
+        ) : (
+          <Center py="xl">
+            <Text size="lg" c="dimmed">
+              Belum ada klub yang tersedia
+            </Text>
           </Center>
         )}
       </Container>
