@@ -17,7 +17,7 @@ import { getClubs } from "../../../services/club";
 import { IconSearch } from "@tabler/icons-react";
 
 export const metadata = {
-  title: "Klub & Komunitas",
+  title: "Unit Kegiatan & Kepanitiaan",
 };
 
 type Props = {
@@ -45,9 +45,9 @@ export default async function ClubsPage(props: Props) {
         <div className={classes.inner}>
           <div className={classes.content}>
             <h1 className={classes.title}>
-              Unit Kegiatan dan Unit Kepanitiaan{" "}
+              Unit Kegiatan dan Kepanitiaan di{" "}
               <Text component="span" c="blue" inherit>
-                di Kaderisasi Salman
+                Kaderisasi Salman
               </Text>
             </h1>
             <Text c="dimmed" mt="md">
@@ -69,7 +69,7 @@ export default async function ClubsPage(props: Props) {
         <Stack gap="xl">
           <div>
             <Title ta="center" mt="sm">
-              Jelajahi Klub & Komunitas
+              Jelajahi Unit Kegiatan dan Kepanitiaan
             </Title>
             <Text
               c="dimmed"
@@ -79,7 +79,7 @@ export default async function ClubsPage(props: Props) {
               mb="xl"
             >
               Temukan komunitas yang tepat untuk mengembangkan minat dan bakat
-              Anda. Setiap klub memiliki keunikan dan kontribusi tersendiri
+              Anda. Setiap unit memiliki keunikan dan kontribusi tersendiri
               dalam membangun generasi pemimpin masa depan.
             </Text>
           </div>
@@ -87,7 +87,7 @@ export default async function ClubsPage(props: Props) {
           <Center>
             <form style={{ width: "100%", maxWidth: "400px" }}>
               <TextInput
-                placeholder="Cari klub atau komunitas..."
+                placeholder="Cari unit kegiatan atau kepanitiaan..."
                 leftSection={<IconSearch size={16} />}
                 name="search"
                 defaultValue={search}
@@ -118,12 +118,12 @@ export default async function ClubsPage(props: Props) {
               <Stack align="center" gap="md">
                 <Text size="lg" c="dimmed">
                   {search
-                    ? "Tidak ada klub yang ditemukan"
-                    : "Belum ada klub yang tersedia"}
+                    ? "Tidak ada unit kegiatan atau kepanitiaan yang ditemukan"
+                    : "Belum ada unit kegiatan atau kepanitiaan yang tersedia"}
                 </Text>
                 {search && (
                   <Button component={Link} href="/clubs" variant="outline">
-                    Lihat Semua Klub
+                    Lihat Semua Unit Kegiatan & Kepanitiaan
                   </Button>
                 )}
               </Stack>
