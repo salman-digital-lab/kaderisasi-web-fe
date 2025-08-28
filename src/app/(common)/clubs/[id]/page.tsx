@@ -8,19 +8,15 @@ import {
   Stack,
   Paper,
   Avatar,
-  Card,
-  Image,
   Divider,
   Box,
-  ActionIcon,
-  Indicator,
-  rem,
-  SimpleGrid,
   Flex,
 } from "@mantine/core";
 import { getClub } from "../../../../services/club";
-import { IconCalendarTime, IconUsers, IconInfoCircle } from "@tabler/icons-react";
+import { IconCalendarTime, IconUsers, IconInfoCircle, IconClipboardList } from "@tabler/icons-react";
 import MediaCarousel from "../../../../components/common/MediaCarousel";
+import ClubRegistrationButtonServerWrapper from "../../../../components/common/ClubRegistrationButton/ServerWrapper";
+import { verifySession } from "../../../../functions/server/session";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
 
@@ -28,13 +24,14 @@ type Props = {
   params: Promise<{ id: string }>;
 };
 
-
-
 export default async function ClubDetailPage(props: Props) {
   const params = await props.params;
   
   try {
     const club = await getClub({ id: params.id });
+    const sessionData = await verifySession();
+    const isAuthenticated = !!sessionData.session;
+    
     return (
       <main>
         {/* Simple Hero Section */}
@@ -117,6 +114,30 @@ export default async function ClubDetailPage(props: Props) {
           </Flex>
         </Container>
 
+        {/* Registration Section - Only show when registration is open */}
+        {club.is_registration_open && (
+          <Container size="lg" py="xl">
+            <Stack gap="xl">
+
+              {/* Registration Button Section */}
+              <Paper p="xl" radius="md" shadow="sm">
+                <Stack gap="lg">
+                  <Title order={2}>Bergabung dengan Klub Ini</Title>
+                  
+                  {/* Registration Button with Status Check */}
+                  <ClubRegistrationButtonServerWrapper
+                    clubId={club.id}
+                    clubName={club.name}
+                    isAuthenticated={isAuthenticated}
+                    afterRegistrationInfo={club.registration_info?.after_registration_info}
+                    isRegistrationOpen={club.is_registration_open}
+                  />
+                </Stack>
+              </Paper>
+            </Stack>
+          </Container>
+        )}
+
         <Container size="lg" py="xl">
           <Stack gap="xl">
             {/* Description Section */}
@@ -146,8 +167,6 @@ export default async function ClubDetailPage(props: Props) {
                 dangerouslySetInnerHTML={{ __html: club.description }}
               />
             </Paper>
-
-
 
             {/* Media Gallery Carousel */}
             <MediaCarousel media={club.media} clubName={club.name} />
