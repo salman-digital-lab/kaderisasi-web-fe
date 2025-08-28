@@ -23,3 +23,12 @@
   border-radius: 50%;
   border: 2px solid var(--mantine-color-gray-2);
 }
+
+/* Add styles to push period and button to bottom */
+.periodSection {
+  margin-top: auto;
+}
+
+.buttonSection {
+  margin-top: auto;
+}

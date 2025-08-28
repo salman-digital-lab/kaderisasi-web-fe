@@ -57,7 +57,7 @@ export default function ClubCard({
       </Card.Section>
 
       {(start_period || end_period) && (
-        <Card.Section className={classes.section}>
+        <Card.Section className={`${classes.section} ${classes.periodSection}`}>
           <Text className={classes.label} c="dimmed">
             Periode Aktivitas
           </Text>
@@ -74,7 +74,7 @@ export default function ClubCard({
         </Card.Section>
       )}
 
-      <Group mt="xs">
+      <Group mt="xs" className={classes.buttonSection}>
         <Button
           component={Link}
           href={`/clubs/${id}`}
