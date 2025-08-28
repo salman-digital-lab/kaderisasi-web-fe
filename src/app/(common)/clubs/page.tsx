@@ -3,7 +3,6 @@ import {
   Container,
   Text,
   Button,
-  Group,
   Title,
   SimpleGrid,
   Stack,
@@ -27,16 +26,16 @@ type Props = {
 
 export default async function ClubsPage(props: Props) {
   const searchParams = await props.searchParams;
-  const page = Array.isArray(searchParams.page)
-    ? searchParams.page[0]
-    : searchParams.page || "1";
   const search = Array.isArray(searchParams.search)
     ? searchParams.search[0]
     : searchParams.search || "";
 
+  // Request a very high number to get all clubs where is_show is true
+  // The backend will filter by isShow: true and return all matching clubs
+  // This ensures we display all available clubs instead of limiting to 12
   const { data: clubs } = await getClubs({
-    page,
-    per_page: "12",
+    page: "1",
+    per_page: "9999", // High number to ensure we get all clubs
     search,
   });
 
@@ -115,14 +114,6 @@ export default async function ClubsPage(props: Props) {
                   />
                 ))}
               </SimpleGrid>
-
-              {clubs.length === 12 && (
-                <Center>
-                  <Button variant="outline" size="md">
-                    Muat Lebih Banyak
-                  </Button>
-                </Center>
-              )}
             </>
           ) : (
             <Center py="xl">
