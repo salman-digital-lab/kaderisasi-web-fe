@@ -54,7 +54,7 @@ export default function NavDrawer({
         </Anchor>
 
         <Anchor href="/clubs" className={classes.link} underline="never">
-          Klub & Komunitas
+          Unit Kegiatan & Kepanitiaan
         </Anchor>
 
         <Anchor href="/consultation" className={classes.link} underline="never">

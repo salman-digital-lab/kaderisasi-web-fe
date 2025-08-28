@@ -45,22 +45,20 @@ export default async function ClubsPage(props: Props) {
         <div className={classes.inner}>
           <div className={classes.content}>
             <h1 className={classes.title}>
-              Klub & Komunitas{" "}
+              Unit Kegiatan dan Unit Kepanitiaan{" "}
               <Text component="span" c="blue" inherit>
-                Kaderisasi Salman
+                di Kaderisasi Salman
               </Text>
             </h1>
             <Text c="dimmed" mt="md">
-              Temukan berbagai klub dan komunitas yang ada di Kaderisasi Salman.
-              Bergabunglah dengan komunitas yang sesuai dengan minat dan bakat
-              Anda untuk mengembangkan potensi diri dan berkontribusi bagi
-              sesama.
+              Ayo bergabung dengan Unit yang sesuai dengan minat dan bakat kamu,
+              untuk mengembangkan potensi diri dan berkontribusi bagi sesama.
             </Text>
           </div>
           <Image
             width={400}
             src={illustration}
-            alt="Klub & Komunitas Kaderisasi Salman"
+            alt=" Unit Kegiatan dan Unit Kepanitiaan Kaderisasi Salman"
             priority
             className={classes.image}
           />
