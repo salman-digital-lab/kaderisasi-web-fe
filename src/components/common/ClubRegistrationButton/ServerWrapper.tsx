@@ -35,7 +35,7 @@ const ClubRegistrationButtonServerWrapper: React.FC<ClubRegistrationButtonServer
       isAuthenticated={isAuthenticated}
       onLoginRequired={handleLoginRequired}
       afterRegistrationInfo={afterRegistrationInfo}
-      isRegistrationOpen={isRegistrationOpen}
+      isRegistrationOpen={isRegistrationOpen ?? false}
     />
   );
 };

@@ -43,11 +43,6 @@ const ClubRegistrationButton: React.FC<ClubRegistrationButtonProps> = ({
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const router = useRouter();
 
-  // If registration is not open, don't show anything
-  if (isRegistrationOpen === false) {
-    return null;
-  }
-
   const checkRegistrationStatus = useCallback(async () => {
     if (!isAuthenticated) return;
 
@@ -67,6 +62,11 @@ const ClubRegistrationButton: React.FC<ClubRegistrationButtonProps> = ({
       checkRegistrationStatus();
     }
   }, [isAuthenticated, checkRegistrationStatus]);
+
+  // If registration is not open, don't show anything
+  if (isRegistrationOpen === false) {
+    return null;
+  }
 
   const handleRegister = async () => {
     if (!isAuthenticated) {
