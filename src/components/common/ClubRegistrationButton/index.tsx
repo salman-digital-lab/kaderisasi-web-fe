@@ -15,6 +15,7 @@ import { IconCheck, IconX } from "@tabler/icons-react";
 import {
   getRegistrationStatus,
   cancelMyRegistration,
+  registerToClub,
 } from "@/services/clubRegistration";
 import { ClubRegistrationStatus } from "@/types/model/clubRegistration";
 import { useRouter } from "next/navigation";
@@ -26,6 +27,7 @@ interface ClubRegistrationButtonProps {
   onLoginRequired?: () => void;
   afterRegistrationInfo?: string;
   isRegistrationOpen: boolean;
+  customForm?: any;
 }
 
 const ClubRegistrationButton: React.FC<ClubRegistrationButtonProps> = ({
@@ -35,6 +37,7 @@ const ClubRegistrationButton: React.FC<ClubRegistrationButtonProps> = ({
   onLoginRequired,
   afterRegistrationInfo,
   isRegistrationOpen,
+  customForm,
 }) => {
   const [registrationStatus, setRegistrationStatus] =
     useState<ClubRegistrationStatus | null>(null);
@@ -74,8 +77,33 @@ const ClubRegistrationButton: React.FC<ClubRegistrationButtonProps> = ({
       return;
     }
 
-    // Redirect to registration page instead of registering directly
-    router.push(`/clubs/${clubId}/register`);
+    // If custom form exists, redirect to custom form page
+    if (customForm) {
+      router.push(`/custom-form/register/club_registration/${clubId}/profile-data`);
+      return;
+    }
+
+    // Otherwise, directly register to club
+    setIsLoading(true);
+    try {
+      await registerToClub(clubId);
+      notifications.show({
+        title: "Pendaftaran Berhasil",
+        message: `Berhasil mendaftar ke ${clubName}`,
+        color: "green",
+      });
+      // Refresh registration status
+      await checkRegistrationStatus();
+    } catch (error: any) {
+      const message = error.response?.data?.message || "Gagal mendaftar ke klub";
+      notifications.show({
+        title: "Pendaftaran Gagal",
+        message: message,
+        color: "red",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleDeleteConfirm = async () => {

@@ -9,6 +9,7 @@ interface ClubRegistrationButtonServerWrapperProps {
   isAuthenticated: boolean;
   afterRegistrationInfo?: string;
   isRegistrationOpen?: boolean;
+  customForm?: any; // Add custom form prop
 }
 
 /**
@@ -21,6 +22,7 @@ const ClubRegistrationButtonServerWrapper: React.FC<ClubRegistrationButtonServer
   isAuthenticated,
   afterRegistrationInfo,
   isRegistrationOpen,
+  customForm,
 }) => {
   const router = useRouter();
 
@@ -36,6 +38,7 @@ const ClubRegistrationButtonServerWrapper: React.FC<ClubRegistrationButtonServer
       onLoginRequired={handleLoginRequired}
       afterRegistrationInfo={afterRegistrationInfo}
       isRegistrationOpen={isRegistrationOpen ?? false}
+      customForm={customForm}
     />
   );
 };
