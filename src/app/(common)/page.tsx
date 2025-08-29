@@ -73,11 +73,10 @@ export default async function Home() {
           mb="xl"
           size="lg"
         >
-          Bergabunglah bersama lebih dari <b>45.000</b> mahasiswa dan{" "}
-          <b>320</b> kampus di seluruh Indonesia yang telah berkontribusi
-          membangun negeri melalui Kaderisasi Salman. Kami telah membentuk
-          generasi pemimpin masa depan yang siap menghadapi tantangan masa
-          depan.
+          Bergabunglah bersama lebih dari <b>45.000</b> mahasiswa dan <b>320</b>{" "}
+          kampus di seluruh Indonesia yang telah berkontribusi membangun negeri
+          melalui Kaderisasi Salman. Kami telah membentuk generasi pemimpin masa
+          depan yang siap menghadapi tantangan masa depan.
         </Text>
         <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="xl" mb="xl">
           <Stack align="center" justify="center">
@@ -143,7 +142,7 @@ export default async function Home() {
 
       <Container size="lg" py="xl">
         <Title ta="center" mt="sm">
-          Klub & Komunitas
+          Unit Kegiatan dan Kepanitiaan
         </Title>
 
         <Text
@@ -152,9 +151,9 @@ export default async function Home() {
           ta="center"
           mt="md"
         >
-          Bergabunglah dengan berbagai klub dan komunitas untuk mengembangkan 
-          minat dan bakat Anda serta berkontribusi dalam membangun generasi 
-          pemimpin masa depan.
+          Bergabunglah dengan berbagai unit kegiatan dan kepanitiaan untuk
+          mengembangkan minat dan bakat Anda serta berkontribusi dalam membangun
+          generasi pemimpin masa depan.
         </Text>
 
         {clubs.length > 0 ? (
@@ -175,7 +174,7 @@ export default async function Home() {
             {clubs.length > 3 && (
               <Center>
                 <Button size="md" mt="md" component={Link} href="/clubs">
-                  Lihat Klub Lainnya
+                  Lihat Unit Lainnya
                 </Button>
               </Center>
             )}
@@ -183,7 +182,7 @@ export default async function Home() {
         ) : (
           <Center py="xl">
             <Text size="lg" c="dimmed">
-              Belum ada klub yang tersedia
+              Belum ada unit yang tersedia
             </Text>
           </Center>
         )}
