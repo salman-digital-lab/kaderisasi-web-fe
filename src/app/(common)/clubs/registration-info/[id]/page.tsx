@@ -249,7 +249,7 @@ export default async function ClubRegistrationInfoPage(props: Props) {
                   klub.
                 </Text>
                 <Text mt="md" c="dimmed" size="sm">
-                  Silakan klik tombol "Daftar Klub" di atas untuk memulai proses
+                  Silakan klik tombol &ldquo;Daftar Klub&rdquo; di atas untuk memulai proses
                   pendaftaran.
                 </Text>
                 {customForm && (

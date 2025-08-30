@@ -187,7 +187,7 @@ export default function ClubCustomForm({
           <div style={{ textAlign: 'center', padding: '2rem' }}>
             <Title order={4} c="dimmed">Tidak ada formulir tambahan</Title>
             <p style={{ color: 'var(--mantine-color-dimmed)' }}>
-              Formulir pendaftaran telah selesai. Klik tombol "Selesai" untuk melanjutkan.
+              Formulir pendaftaran telah selesai. Klik tombol &ldquo;Selesai&rdquo; untuk melanjutkan.
             </p>
           </div>
         )}
