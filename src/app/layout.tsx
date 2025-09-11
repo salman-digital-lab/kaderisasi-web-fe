@@ -11,6 +11,9 @@ import {
 import { Notifications } from "@mantine/notifications";
 import { ModalsProvider } from "@mantine/modals";
 import Script from "next/script";
+import { Inter } from "next/font/google";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
   title: {
@@ -45,7 +48,7 @@ export default function RootLayout({
   const isProduction = process.env.NEXT_PUBLIC_APP_ENV === "production";
 
   return (
-    <html lang="en" {...mantineHtmlProps}>
+    <html lang="en" className={inter.className}>
       <head>
         {isProduction && (
           <Script
@@ -57,7 +60,7 @@ export default function RootLayout({
         <ColorSchemeScript />
       </head>
       <body>
-        <MantineProvider>
+        <MantineProvider theme={{ fontFamily: inter.style.fontFamily }}>
           <Notifications position="top-center" />
           <ModalsProvider>{children}</ModalsProvider>
         </MantineProvider>
