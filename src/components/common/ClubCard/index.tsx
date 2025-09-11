@@ -3,10 +3,11 @@
 import dayjs from "dayjs";
 import Link from "next/link";
 import NextImage from "next/image";
-import { Image, Text, Group, Badge, Button, rem, Card, Avatar } from "@mantine/core";
+import { Image, Text, Group, Badge, Button, rem, Card } from "@mantine/core";
 import classes from "./index.module.css";
 import { IconCalendarTime, IconUsers } from "@tabler/icons-react";
-import "dayjs/locale/id";
+
+import("dayjs/locale/id");
 
 type ClubCardProps = {
   id: number;
@@ -37,14 +38,28 @@ export default function ClubCard({
     <Card withBorder radius="md" p="md" className={classes.card}>
       <Card.Section className={classes.section}>
         <Group align="center" justify="center" mb="md">
-          <Avatar
-            src={logo ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${logo}` : null}
-            size={80}
-            radius="xl"
-            className={classes.logo}
-          >
-            {!logo && <IconUsers size={40} />}
-          </Avatar>
+          {logo ? (
+            <NextImage
+              src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${logo}`}
+              width={80}
+              height={80}
+              alt={name}
+              className={classes.logo}
+            />
+          ) : (
+            <div
+              className={classes.logo}
+              style={{
+                width: 80,
+                height: 80,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <IconUsers size={40} />
+            </div>
+          )}
         </Group>
         <Text fz="lg" fw={500} ta="center" lineClamp={2}>
           {name}
