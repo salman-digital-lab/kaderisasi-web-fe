@@ -1,13 +1,15 @@
 "use client";
 
 import dayjs from "dayjs";
+import "dayjs/locale/id";
 import Link from "next/link";
 import NextImage from "next/image";
 import { Image, Text, Group, Badge, Button, rem, Card } from "@mantine/core";
 import classes from "./index.module.css";
 import { IconCalendarTime, IconUsers } from "@tabler/icons-react";
 
-import("dayjs/locale/id");
+// Set the locale globally for this component
+dayjs.locale("id");
 
 type ClubCardProps = {
   id: number;
@@ -79,10 +81,10 @@ export default function ClubCard({
           <Group gap={7} mt={5} justify="center">
             <Badge variant="light" color="blue" leftSection={calendarIcon}>
               {start_period && end_period 
-                ? `${dayjs(start_period).locale("id").format("MMM YYYY")} - ${dayjs(end_period).locale("id").format("MMM YYYY")}`
+                ? `${dayjs(start_period).format("MMM YYYY")} - ${dayjs(end_period).format("MMM YYYY")}`
                 : start_period 
-                  ? dayjs(start_period).locale("id").format("MMM YYYY")
-                  : `s/d ${dayjs(end_period).locale("id").format("MMM YYYY")}`
+                  ? dayjs(start_period).format("MMM YYYY")
+                  : `s/d ${dayjs(end_period).format("MMM YYYY")}`
               }
             </Badge>
           </Group>

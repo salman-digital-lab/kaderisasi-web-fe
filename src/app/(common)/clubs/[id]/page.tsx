@@ -29,6 +29,9 @@ import ClubRegistrationButtonServerWrapper from "../../../../components/common/C
 import { verifySession } from "../../../../functions/server/session";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
+
+// Set the locale globally for this page
+dayjs.locale("id");
 import Link from "next/link";
 
 type Props = {
@@ -123,7 +126,7 @@ export default async function ClubDetailPage(props: Props) {
                     leftSection={<IconCalendarTime size={16} />}
                   >
                     Mulai{" "}
-                    {dayjs(club.start_period).locale("id").format("MMMM YYYY")}
+                    {dayjs(club.start_period).format("MMMM YYYY")}
                   </Badge>
                 )}
                 {club.end_period && (
@@ -134,7 +137,7 @@ export default async function ClubDetailPage(props: Props) {
                     leftSection={<IconCalendarTime size={16} />}
                   >
                     Hingga{" "}
-                    {dayjs(club.end_period).locale("id").format("MMMM YYYY")}
+                    {dayjs(club.end_period).format("MMMM YYYY")}
                   </Badge>
                 )}
               </Group>

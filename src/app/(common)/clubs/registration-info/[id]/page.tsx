@@ -28,6 +28,9 @@ import { verifySession } from "../../../../../functions/server/session";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
 
+// Set the locale globally for this page
+dayjs.locale("id");
+
 import classes from "./index.module.css";
 
 type Props = {
@@ -182,7 +185,7 @@ export default async function ClubRegistrationInfoPage(props: Props) {
                       color="orange"
                     >
                       Hingga{" "}
-                      {dayjs(club.end_period).locale("id").format("MMMM YYYY")}
+                      {dayjs(club.end_period).format("MMMM YYYY")}
                     </Badge>
                   )}
                 </Group>

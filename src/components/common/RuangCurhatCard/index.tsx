@@ -22,6 +22,9 @@ import { PROBLEM_OWNER_ENUM } from "@/types/constants/ruangcurhat";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
 
+// Set the locale globally for this component
+dayjs.locale("id");
+
 type RuangCurhatCardProps = {
   data: RuangCurhatData;
 };
@@ -42,7 +45,7 @@ export default function RuangCurhatCard({ data }: RuangCurhatCardProps) {
         </Group>
         <Group gap={7} mt={5}>
           <Badge variant="light" color="blue" leftSection={calenderIcon}>
-            {dayjs(data.created_at).locale("id").format("DD MMMM YYYY")}
+            {dayjs(data.created_at).format("DD MMMM YYYY")}
           </Badge>
           <Badge size="sm" variant="light" color="yellow">
             {data.handling_technic}

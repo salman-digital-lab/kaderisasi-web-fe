@@ -48,7 +48,7 @@ export default function RootLayout({
   const isProduction = process.env.NEXT_PUBLIC_APP_ENV === "production";
 
   return (
-    <html lang="en" className={inter.className}>
+    <html lang="en" className={inter.className} {...mantineHtmlProps}>
       <head>
         {isProduction && (
           <Script

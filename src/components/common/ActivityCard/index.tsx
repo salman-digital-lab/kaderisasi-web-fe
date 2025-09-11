@@ -1,6 +1,7 @@
 "use client";
 
 import dayjs from "dayjs";
+import "dayjs/locale/id";
 import Link from "next/link";
 import NextImage from "next/image";
 import { Image, Text, Group, Badge, Button, rem, Card } from "@mantine/core";
@@ -9,7 +10,8 @@ import { USER_LEVEL_RENDER } from "../../../constants/render/activity";
 import { IconCalendarTime } from "@tabler/icons-react";
 import { USER_LEVEL_ENUM } from "@/types/constants/profile";
 
-import("dayjs/locale/id");
+// Set the locale globally for this component
+dayjs.locale("id");
 
 type ActivityCardProps = {
   activityName: string;
@@ -62,7 +64,7 @@ export default function ActivityCard({
         </Text>
         <Group gap={7} mt={5}>
           <Badge variant="light" color="red" leftSection={calenderIcon}>
-            {dayjs(registrationEnd).locale("id").format("DD MMMM YYYY")}
+            {dayjs(registrationEnd).format("DD MMMM YYYY")}
           </Badge>
         </Group>
       </Card.Section>
