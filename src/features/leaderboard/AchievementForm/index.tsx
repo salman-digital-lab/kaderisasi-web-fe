@@ -15,6 +15,8 @@ import showNotif from "@/functions/common/notification";
 import { ACHIEVEMENT_TYPE_OPTIONS } from "@/constants/form/achievement";
 import { submitAchievement } from "@/services/leaderboard";
 import { DateInput } from "@mantine/dates";
+import UniversitySelect from "@/components/common/UniversitySelect";
+import editProfile from "@/functions/server/editProfile";
 
 type AchievementFormProps = {
   token: string;
@@ -26,19 +28,23 @@ export default function AchievementForm({ token }: AchievementFormProps) {
 
   const form = useForm({
     initialValues: {
+      whatsapp: "",
       name: "",
       description: "",
       achievement_date: null as string | null,
       type: "",
       proof: null as File | null,
+      university_id: "",
     },
     validate: {
+      whatsapp: (value) => (value ? null : "Nomor WhatsApp harus diisi"),
       name: (value) => (value ? null : "Nama prestasi harus diisi"),
       description: (value) => (value ? null : "Deskripsi prestasi harus diisi"),
       achievement_date: (value) =>
         value ? null : "Tanggal prestasi harus diisi",
       type: (value) => (value ? null : "Jenis prestasi harus diisi"),
       proof: (value) => (value ? null : "Bukti prestasi harus diisi"),
+      university_id: (value) => (value ? null : "Universitas harus diisi"),
     },
   });
 
@@ -48,6 +54,8 @@ export default function AchievementForm({ token }: AchievementFormProps) {
       if (!values.proof) {
         throw new Error("Bukti prestasi harus diisi");
       }
+
+      await editProfile({ whatsapp: values.whatsapp, university_id: Number(values.university_id) });
 
       await submitAchievement(
         {
@@ -73,6 +81,22 @@ export default function AchievementForm({ token }: AchievementFormProps) {
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>
       <Stack gap="md">
+        <TextInput
+          key={form.key("whatsapp")}
+          {...form.getInputProps("whatsapp")}
+          label="Nomor Whatsapp"
+          placeholder="Cth: 6281234567890"
+          description="Cth: 6281234567890. Pastikan nomor whatsapp kamu aktif. Jangan khawatir, datamu aman."
+          required
+          mt="md"
+        />
+        <UniversitySelect
+          {...form.getInputProps("university_id")}
+          key={form.key("university_id")}
+          label="Universitas"
+          placeholder="Pilih Universitas Anda"
+          required
+        />
         <TextInput
           label="Nama Prestasi"
           placeholder="Masukkan nama prestasi"
