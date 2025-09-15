@@ -82,20 +82,17 @@ export default function AchievementForm({ token }: AchievementFormProps) {
     <form onSubmit={form.onSubmit(handleSubmit)}>
       <Stack gap="md">
         <TextInput
-          key={form.key("whatsapp")}
-          {...form.getInputProps("whatsapp")}
           label="Nomor Whatsapp"
           placeholder="Cth: 6281234567890"
           description="Cth: 6281234567890. Pastikan nomor whatsapp kamu aktif. Jangan khawatir, datamu aman."
           required
-          mt="md"
+          {...form.getInputProps("whatsapp")}
         />
         <UniversitySelect
-          {...form.getInputProps("university_id")}
-          key={form.key("university_id")}
           label="Universitas"
           placeholder="Pilih Universitas Anda"
           required
+          {...form.getInputProps("university_id")}
         />
         <TextInput
           label="Nama Prestasi"
