@@ -20,21 +20,23 @@ import editProfile from "@/functions/server/editProfile";
 
 type AchievementFormProps = {
   token: string;
+  whatsapp?: string;
+  university_id?: string;
 };
 
-export default function AchievementForm({ token }: AchievementFormProps) {
+export default function AchievementForm({ token, whatsapp, university_id }: AchievementFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   const form = useForm({
     initialValues: {
-      whatsapp: "",
+      whatsapp: whatsapp || "",
       name: "",
       description: "",
       achievement_date: null as string | null,
       type: "",
       proof: null as File | null,
-      university_id: "",
+      university_id: university_id || "",
     },
     validate: {
       whatsapp: (value) => (value ? null : "Nomor WhatsApp harus diisi"),
