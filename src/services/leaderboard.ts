@@ -98,6 +98,27 @@ export const editAchievement = async (
   );
 };
 
+export const getMyLifetimeRank = async (token: string) => {
+  const response = await fetcher<{
+    message: string;
+    data: {
+      rank: number | null;
+      score: number;
+      message?: string;
+    };
+  }>(
+    process.env.NEXT_PUBLIC_BE_API + `/achievements/my-rank`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      cache: "no-store",
+    },
+  );
+
+  return response;
+};
+
 export const getMyAchievements = async (
   token: string,
   page: number = 1,

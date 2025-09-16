@@ -4,7 +4,7 @@ import { Achievement } from "../model/achievement";
 
 export type GetMonthlyLeaderboardResp = APIPagiResponse<MonthlyLeaderboard>;
 
-export type GetLifetimeLeaderboardResp = APIResponse<LifetimeLeaderboard[]>;
+export type GetLifetimeLeaderboardResp = APIPagiResponse<LifetimeLeaderboard>;
 
 export type SubmitAchievementReq = {
   name: string;

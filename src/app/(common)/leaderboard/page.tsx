@@ -1,12 +1,14 @@
-import MonthlyLeaderboard from "@/features/leaderboard/MonthlyLeaderboard";
+import LifetimeLeaderboard from "@/features/leaderboard/LifetimeLeaderboard";
 import illustration from "@/assets/leaderboardpage-1.svg";
 import Image from "next/image";
 import { Button, Group } from "@mantine/core";
 import classes from "./page.module.css";
 import { Container, Text } from "@mantine/core";
 import Link from "next/link";
+import { verifySession } from "@/functions/server/session";
 
-const LeaderboardPage = () => {
+const LeaderboardPage = async () => {
+  const sessionData = await verifySession();
   return (
     <main>
       <Container size="md">
@@ -21,7 +23,7 @@ const LeaderboardPage = () => {
             <Text c="dimmed" mt="md">
               Leaderboard merupakan website tempat menghimpun prestasi aktivis
               Salman. Pengguna dengan skoring tertinggi akan tampil dalam 10
-              besar setiap bulannya. Ayo submit prestasi akademik, kompetisi,
+              besar sepanjang masa. Ayo submit prestasi akademik, kompetisi,
               dan organisasi mu disini!
             </Text>
             <Group mt={30}>
@@ -44,7 +46,10 @@ const LeaderboardPage = () => {
           />
         </div>
       </Container>
-      <MonthlyLeaderboard />
+      <LifetimeLeaderboard 
+        userSession={sessionData.session} 
+        userName={sessionData.name} 
+      />
     </main>
   );
 };
