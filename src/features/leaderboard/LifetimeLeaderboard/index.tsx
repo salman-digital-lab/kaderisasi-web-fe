@@ -20,8 +20,6 @@ import {
 } from "@mantine/core";
 
 import styles from "./style.module.css";
-import { USER_LEVEL_RENDER } from "@/constants/render/activity";
-import { USER_LEVEL_ENUM } from "@/types/constants/profile";
 import { LifetimeLeaderboard } from "@/types/model/achievement";
 
 interface LifetimeLeaderboardListProps {
@@ -44,24 +42,27 @@ const LifetimeLeaderboardList = ({
       setLoading(true);
       setError(null);
 
-      // Fetch leaderboard data
+      // Ambil data leaderboard
       const response = await getLifetimeLeaderboard(1, 10);
       setLeaderboard(response.data.data);
 
-      // Fetch current user's rank if logged in
+      // Ambil peringkat pengguna saat ini jika sudah login
       if (userSession) {
         try {
           const rankResponse = await getMyLifetimeRank(userSession);
           setUserRank(rankResponse.data.rank);
           setUserScore(rankResponse.data.score);
         } catch (rankError) {
-          console.error("Error fetching user rank:", rankError);
-          // Still show leaderboard even if user rank fails
+          console.error(
+            "Kesalahan saat mengambil peringkat pengguna:",
+            rankError,
+          );
+          // Tetap tampilkan leaderboard meskipun peringkat pengguna gagal
         }
       }
     } catch (error) {
-      setError("Failed to load leaderboard data. Please try again later.");
-      console.error("Error fetching leaderboard:", error);
+      setError("Gagal memuat data leaderboard. Silakan coba lagi nanti.");
+      console.error("Kesalahan saat mengambil leaderboard:", error);
     } finally {
       setLoading(false);
     }
@@ -169,15 +170,13 @@ const LifetimeLeaderboardList = ({
                         </Badge>
                       )}
                     </Group>
-                    <Text size="sm" c="dimmed">
-                      {
-                        USER_LEVEL_RENDER[
-                          (entry.user.profile
-                            ?.level as keyof typeof USER_LEVEL_RENDER) ||
-                            USER_LEVEL_ENUM.JAMAAH
-                        ]
-                      }
-                    </Text>
+                    <Stack gap="xs">
+                      {entry.user.profile?.university?.name && (
+                        <Text size="sm" c="dimmed">
+                          {entry.user.profile.university.name}
+                        </Text>
+                      )}
+                    </Stack>
                   </div>
                 </Group>
                 <Text fw={700} size="lg" c="blue">

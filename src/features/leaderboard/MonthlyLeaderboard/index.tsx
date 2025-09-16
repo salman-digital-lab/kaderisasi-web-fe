@@ -114,15 +114,22 @@ const MonthlyLeaderboardList = () => {
                   </Avatar>
                   <div>
                     <Text fw={500}>{entry.user.profile?.name}</Text>
-                    <Text size="sm" c="dimmed">
-                      {
-                        USER_LEVEL_RENDER[
-                          (entry.user.profile
-                            ?.level as keyof typeof USER_LEVEL_RENDER) ||
-                            USER_LEVEL_ENUM.JAMAAH
-                        ]
-                      }
-                    </Text>
+                    <Stack gap="xs">
+                      <Text size="sm" c="dimmed">
+                        {
+                          USER_LEVEL_RENDER[
+                            (entry.user.profile
+                              ?.level as keyof typeof USER_LEVEL_RENDER) ||
+                              USER_LEVEL_ENUM.JAMAAH
+                          ]
+                        }
+                      </Text>
+                      {entry.user.profile?.university?.name && (
+                        <Text size="xs" c="dimmed">
+                          {entry.user.profile.university.name}
+                        </Text>
+                      )}
+                    </Stack>
                   </div>
                 </Group>
                 <Text fw={700} size="lg" c="blue">
