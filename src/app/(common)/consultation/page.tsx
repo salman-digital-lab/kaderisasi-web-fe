@@ -88,7 +88,12 @@ export default async function Home() {
                 Silahkan masuk ke akun anda terlebih dahulu untuk menggunakan
                 ruang curhat
               </Text>
-              <Button component={Link} fullWidth mt="md" href="/login">
+              <Button
+                component={Link}
+                fullWidth
+                mt="md"
+                href={`/login?redirect=${process.env.NEXT_PUBLIC_APP_URL}/consultation`}
+              >
                 Masuk
               </Button>
             </>
