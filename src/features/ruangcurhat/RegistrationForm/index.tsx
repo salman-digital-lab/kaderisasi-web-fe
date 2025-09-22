@@ -8,16 +8,20 @@ import { postRuangCurhat } from "@/services/ruangcurhat";
 import showNotif from "@/functions/common/notification";
 import { PROBLEM_OWNER_OPTIONS } from "@/constants/form/ruangcurhat";
 import { PROBLEM_OWNER_ENUM } from "@/types/constants/ruangcurhat";
+import { GENDER } from "@/types/constants/profile";
 import classes from "./index.module.css";
 import editProfile from "@/functions/server/editProfile";
+import { GENDER_OPTION } from "@/constants/form/profile";
 
 type RegistrationFormProps = {
   token: string;
   whatsapp?: string;
+  gender?: string;
 };
 
 type RegistrationFormItems = {
   whatsapp: string;
+  gender?: string;
   owner_name?: string;
   problem_ownership?: string;
   problem_category?: string;
@@ -29,6 +33,7 @@ type RegistrationFormItems = {
 export default function RegistrationForm({
   token,
   whatsapp,
+  gender,
 }: RegistrationFormProps) {
   const [loading, setLoading] = useState(false);
   const [isFriend, setIsFriend] = useState(false);
@@ -36,6 +41,7 @@ export default function RegistrationForm({
     mode: "uncontrolled",
     initialValues: {
       whatsapp: whatsapp || "",
+      gender: gender || undefined,
       problem_ownership: undefined,
       owner_name: undefined,
       problem_category: undefined,
@@ -46,6 +52,8 @@ export default function RegistrationForm({
     validate: {
       whatsapp: (value) =>
         value === undefined ? "Whatsapp harus diisi" : null,
+      gender: (value) =>
+        value === undefined ? "Jenis kelamin harus diisi" : null,
       problem_ownership: (value) =>
         value === undefined ? "Kepemilikan masalah harus diisi" : null,
       owner_name: (value, { ...values }) =>
@@ -71,7 +79,10 @@ export default function RegistrationForm({
   const handleRegistration = async (val: RegistrationFormItems) => {
     try {
       setLoading(true);
-      await editProfile({ whatsapp: val.whatsapp });
+      await editProfile({ 
+        whatsapp: val.whatsapp,
+        gender: val.gender === "Laki-laki" ? GENDER.Male : GENDER.Female
+      });
       const resp = await postRuangCurhat(token, {
         ...val,
         problem_ownership: Number(val.problem_ownership),
@@ -84,6 +95,7 @@ export default function RegistrationForm({
         );
         form.setValues({
           whatsapp: val.whatsapp,
+          gender: val.gender,
           problem_ownership: undefined,
           owner_name: undefined,
           problem_category: undefined,
@@ -115,6 +127,16 @@ export default function RegistrationForm({
         mt="md"
       />
       <Select
+        key={form.key("gender")}
+        {...form.getInputProps("gender")}
+        label="Jenis Kelamin"
+        placeholder="Pilih Jenis Kelamin"
+        description="Jenis kelamin kamu yang mengisi form ini"
+        data={GENDER_OPTION}
+        required
+        mt="md"
+      />
+      <Select
         key={form.key("problem_ownership")}
         {...form.getInputProps("problem_ownership")}
         label="Kepemilikan Masalah"
@@ -126,8 +148,8 @@ export default function RegistrationForm({
         <TextInput
           key={form.key("owner_name")}
           {...form.getInputProps("owner_name")}
-          label="Nama Pemilik Masalah"
-          placeholder="Nama Pemilik Masalah"
+          label="Nama Teman"
+          placeholder="Nama teman yang memiliki masalah"
           required
         />
       )}

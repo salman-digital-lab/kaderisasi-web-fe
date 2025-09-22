@@ -80,6 +80,7 @@ export default async function Home() {
             <RegistrationForm
               token={sessionData.session || ""}
               whatsapp={profileData?.profile.whatsapp}
+              gender={profileData?.profile.gender}
             />
           ) : (
             <>
