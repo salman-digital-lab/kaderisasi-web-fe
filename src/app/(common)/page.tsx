@@ -39,7 +39,7 @@ export default async function Home() {
               </Text>
             </h1>
             <Text c="dimmed" mt="md">
-              Portal Aktivis Salman yang dikelola BMKA (Bidang Kemahasiswaan,
+              Portal Aktivis Salman yang dikelola BMKA (Bidang Mahasiswa,
               Kaderisasi dan Alumni) Salman yang berfungsi sebagai pusat
               pendaftaran kegiatan di @kaderisasisalman. Program pembinaan dalam
               rangka membentuk kader teladan untuk membangun Indonesia.
