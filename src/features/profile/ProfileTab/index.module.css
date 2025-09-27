@@ -1,6 +1,16 @@
 .tab {
-  width: calc(100vw - 20rem);
-  @media (max-width: $mantine-breakpoint-md) {
-    width: 100%;
+  width: 100%;
+}
+
+.tabsList {
+  flex-wrap: wrap;
+  gap: var(--mantine-spacing-xs);
+  
+  @media (max-width: $mantine-breakpoint-sm) {
+    flex-direction: column;
+    
+    & > * {
+      flex: 1;
+    }
   }
 }

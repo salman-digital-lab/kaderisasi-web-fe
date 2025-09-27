@@ -1,17 +1,57 @@
-.container {
-  margin-top: 5rem;
+/* Hero Section - consistent with other pages */
+.inner {
+  display: flex;
+  justify-content: space-between;
+  padding-top: calc(var(--mantine-spacing-xl) * 4);
+  padding-bottom: calc(var(--mantine-spacing-xl) * 2);
 }
 
 .content {
-  flex-direction: row;
+  max-width: rem(480px);
+  margin-right: calc(var(--mantine-spacing-xl) * 3);
+
   @media (max-width: $mantine-breakpoint-md) {
-    flex-direction: column;
+    max-width: 100%;
+    margin-right: 0;
+    text-align: center;
   }
 }
 
-.tab {
-  width: calc(100vw - 20rem);
+.title {
+  color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
+  font-size: rem(44px);
+  line-height: 1.2;
+  font-weight: 900;
+
+  @media (max-width: $mantine-breakpoint-sm) {
+    font-size: rem(32px);
+  }
+}
+
+/* Profile Card Styling */
+.profileCard {
+  position: sticky;
+  top: calc(var(--mantine-spacing-xl) + 60px); /* Account for navbar height */
+  transition: all 0.3s ease;
+
   @media (max-width: $mantine-breakpoint-md) {
-    width: 100%;
+    position: static;
+    margin-bottom: var(--mantine-spacing-xl);
+  }
+
+  &:hover {
+    box-shadow: var(--mantine-shadow-md);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: $mantine-breakpoint-sm) {
+  .inner {
+    padding-top: calc(var(--mantine-spacing-xl) * 2);
+    padding-bottom: var(--mantine-spacing-xl);
+  }
+  
+  .profileCard {
+    padding: var(--mantine-spacing-md) !important;
   }
 }

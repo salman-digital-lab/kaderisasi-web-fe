@@ -1,6 +1,6 @@
 "use client";
 
-import { Tabs, TabsList, TabsPanel, TabsTab } from "@mantine/core";
+import { Tabs, TabsList, TabsPanel, TabsTab, Box } from "@mantine/core";
 import PersonalDataForm from "../PersonalDataForm";
 import PersonalActivityData from "../PersonalActivityData";
 import PersonalAchievementData from "../PersonalAchievementData";
@@ -18,11 +18,11 @@ import { Achievement } from "@/types/model/achievement";
 type ProfileTabProps = {
   provinceData: Province[] | undefined;
   profileData:
-  | {
-    userData: PublicUser;
-    profile: Member;
-  }
-  | undefined;
+    | {
+        userData: PublicUser;
+        profile: Member;
+      }
+    | undefined;
   activitiesRegistration: ({ activity: Activity } & Registrant)[] | undefined;
   ruangcurhatData: RuangCurhatData[] | undefined;
   achievements: Achievement[] | undefined;
@@ -53,27 +53,30 @@ export function ProfileTab({
       className={classes.tab}
       onChange={(val) => onChangeTab(val || "")}
     >
-      <TabsList>
+      <TabsList grow className={classes.tabsList}>
         <TabsTab value="profiledata">Data Diri</TabsTab>
         <TabsTab value="activity">Kegiatan</TabsTab>
         <TabsTab value="ruangcurhat">Ruang Curhat</TabsTab>
         <TabsTab value="achievements">Prestasi</TabsTab>
       </TabsList>
-      <TabsPanel value="profiledata" mt="md">
-        <PersonalDataForm
-          provinces={provinceData}
-          profileData={profileData}
-        />
-      </TabsPanel>
-      <TabsPanel value="activity" mt="md">
-        <PersonalActivityData activities={activitiesRegistration || []} />
-      </TabsPanel>
-      <TabsPanel value="ruangcurhat" mt="md">
-        <RuangCurhatList data={ruangcurhatData || []} />
-      </TabsPanel>
-      <TabsPanel value="achievements" mt="md">
-        <PersonalAchievementData achievements={achievements || []} />
-      </TabsPanel>
+
+      <Box mt="xl">
+        <TabsPanel value="profiledata">
+          <PersonalDataForm
+            provinces={provinceData}
+            profileData={profileData}
+          />
+        </TabsPanel>
+        <TabsPanel value="activity">
+          <PersonalActivityData activities={activitiesRegistration || []} />
+        </TabsPanel>
+        <TabsPanel value="ruangcurhat">
+          <RuangCurhatList data={ruangcurhatData || []} />
+        </TabsPanel>
+        <TabsPanel value="achievements">
+          <PersonalAchievementData achievements={achievements || []} />
+        </TabsPanel>
+      </Box>
     </Tabs>
   );
 }

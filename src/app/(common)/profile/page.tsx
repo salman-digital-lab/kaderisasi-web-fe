@@ -6,7 +6,18 @@ import {
   Flex,
   Group,
   Badge,
+  Title,
+  Stack,
+  Grid,
+  GridCol,
+  Card,
+  ThemeIcon,
+  Box,
+  Center,
+  Divider,
 } from "@mantine/core";
+import { IconUser, IconLogout, IconTrophy, IconActivity, IconHeart } from "@tabler/icons-react";
+import Link from "next/link";
 
 import { getProfile, getProvinces } from "../../../services/profile";
 
@@ -64,44 +75,128 @@ export default async function Page() {
     if (typeof error === "string") return <ErrorWrapper message={error} />;
   }
 
-  return (
-    <main className={classes.container}>
-      <Container size="lg">
-        <Flex gap="xl" className={classes.content}>
-          <Paper radius="md" withBorder p="lg" miw="20rem" h="fit-content">
-            <ProfilePicture
-              src={profileData?.profile.picture}
-              token={sessionData.session || ""}
-            />
-            <Text ta="center" fz="lg" fw={500} mt="md">
-              {profileData?.profile.name}
-            </Text>
-            <Text ta="center" c="dimmed" fz="sm">
-              {profileData &&
-                USER_LEVEL_RENDER[
-                  profileData.profile.level || USER_LEVEL_ENUM.JAMAAH
-                ]}
-            </Text>
-            <Group gap="xs" justify="center" mt="md">
-              {profileData?.profile.badges?.map((badge) => (
-                <Badge key={badge} variant="outline">
-                  {badge}
-                </Badge>
-              ))}
-            </Group>
-            <Button variant="default" c="red" fullWidth mt="md">
-              Keluar
-            </Button>
-          </Paper>
+  // Quick stats calculation
+  const totalActivities = activitiesRegistration?.length || 0;
+  const totalAchievements = achievements?.length || 0;
+  const totalCurhatSessions = ruangCurhatData?.length || 0;
 
-          <ProfileTab
-            profileData={profileData}
-            provinceData={provinceData}
-            activitiesRegistration={activitiesRegistration}
-            ruangcurhatData={ruangCurhatData}
-            achievements={achievements}
-          />
-        </Flex>
+  return (
+    <main>
+      <Container size="lg" py="xl">
+        <Grid gutter="xl">
+          {/* Profile Card */}
+          <GridCol span={{ base: 12, md: 4 }}>
+            <Card shadow="sm" padding="xl" radius="md" withBorder className={classes.profileCard}>
+              <Stack align="center" gap="md">
+                <ProfilePicture
+                  src={profileData?.profile.picture}
+                  token={sessionData.session || ""}
+                  size={140}
+                />
+                
+                <Stack align="center" gap="xs">
+                  <Title order={2} ta="center" size="h3">
+                    {profileData?.profile.name}
+                  </Title>
+                  <Badge 
+                    variant="light" 
+                    size="lg" 
+                    leftSection={<IconUser size={16} />}
+                  >
+                    {profileData &&
+                      USER_LEVEL_RENDER[
+                        profileData.profile.level || USER_LEVEL_ENUM.JAMAAH
+                      ]}
+                  </Badge>
+                </Stack>
+
+                {/* Badges */}
+                {profileData?.profile.badges && profileData.profile.badges.length > 0 && (
+                  <Box w="100%">
+                    <Text size="sm" fw={500} mb="xs" ta="center" c="dimmed">
+                      Badges
+                    </Text>
+                    <Group gap="xs" justify="center">
+                      {profileData.profile.badges.map((badge) => (
+                        <Badge key={badge} variant="outline" size="sm">
+                          {badge}
+                        </Badge>
+                      ))}
+                    </Group>
+                  </Box>
+                )}
+
+                <Divider w="100%" />
+
+                {/* Quick Stats */}
+                <Grid w="100%" gutter="xs">
+                  <GridCol span={4}>
+                    <Stack align="center" gap="xs">
+                      <ThemeIcon variant="light" color="blue" size="lg">
+                        <IconActivity size={18} />
+                      </ThemeIcon>
+                      <Text size="xl" fw={700} c="blue">
+                        {totalActivities}
+                      </Text>
+                      <Text size="xs" c="dimmed" ta="center">
+                        Kegiatan
+                      </Text>
+                    </Stack>
+                  </GridCol>
+                  <GridCol span={4}>
+                    <Stack align="center" gap="xs">
+                      <ThemeIcon variant="light" color="yellow" size="lg">
+                        <IconTrophy size={18} />
+                      </ThemeIcon>
+                      <Text size="xl" fw={700} c="yellow">
+                        {totalAchievements}
+                      </Text>
+                      <Text size="xs" c="dimmed" ta="center">
+                        Prestasi
+                      </Text>
+                    </Stack>
+                  </GridCol>
+                  <GridCol span={4}>
+                    <Stack align="center" gap="xs">
+                      <ThemeIcon variant="light" color="pink" size="lg">
+                        <IconHeart size={18} />
+                      </ThemeIcon>
+                      <Text size="xl" fw={700} c="pink">
+                        {totalCurhatSessions}
+                      </Text>
+                      <Text size="xs" c="dimmed" ta="center">
+                        Curhat
+                      </Text>
+                    </Stack>
+                  </GridCol>
+                </Grid>
+
+                <Button 
+                  variant="light" 
+                  color="red" 
+                  fullWidth 
+                  leftSection={<IconLogout size={16} />}
+                  size="md"
+                  component={Link}
+                  href="/api/logout"
+                >
+                  Keluar
+                </Button>
+              </Stack>
+            </Card>
+          </GridCol>
+
+          {/* Profile Content */}
+          <GridCol span={{ base: 12, md: 8 }}>
+            <ProfileTab
+              profileData={profileData}
+              provinceData={provinceData}
+              activitiesRegistration={activitiesRegistration}
+              ruangcurhatData={ruangCurhatData}
+              achievements={achievements}
+            />
+          </GridCol>
+        </Grid>
       </Container>
     </main>
   );
