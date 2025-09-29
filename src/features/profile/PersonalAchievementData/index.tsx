@@ -118,7 +118,7 @@ export default function PersonalAchievementData({
             </Box>
             <Button
               component={Link}
-              href="/leaderboard/add"
+              href="/leaderboard/submit"
               leftSection={<IconPlus size={16} />}
               variant="light"
               size="sm"
