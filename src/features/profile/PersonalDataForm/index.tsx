@@ -4,9 +4,9 @@ import {
   Button,
   Fieldset,
   NumberInput,
-  Paper,
   Select,
   TextInput,
+  Paper,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 
@@ -77,13 +77,15 @@ export default function PersonalDataForm({
 
   return (
     <Paper radius="md" withBorder p="lg">
+
       <form onSubmit={form.onSubmit((val) => handleEditProfile(val))}>
-        <Fieldset legend="Personal">
+        <Fieldset legend="Personal" mb="xl" p="md" style={{ border: '1px solid #e9ecef', borderRadius: '8px' }}>
           <TextInput
             {...form.getInputProps("name")}
             key={form.key("name")}
             label="Nama Lengkap"
             placeholder="Nama Lengkap"
+            radius="md"
           />
           <Select
             {...form.getInputProps("gender")}
@@ -92,6 +94,7 @@ export default function PersonalDataForm({
             placeholder="Pilih Jenis Kelamin"
             data={GENDER_OPTION}
             mt="md"
+            radius="md"
           />
           <TextInput
             {...form.getInputProps("email")}
@@ -100,6 +103,7 @@ export default function PersonalDataForm({
             label="Alamat Email"
             placeholder="Alamat Email"
             mt="md"
+            radius="md"
           />
           <TextInput
             {...form.getInputProps("personal_id")}
@@ -107,9 +111,11 @@ export default function PersonalDataForm({
             label="Nomor Identitas"
             placeholder="Nomor Identitas"
             mt="md"
+            radius="md"
           />
         </Fieldset>
-        <Fieldset legend="Domisili" mt="md">
+
+        <Fieldset legend="Domisili" mb="xl" p="md" style={{ border: '1px solid #e9ecef', borderRadius: '8px' }}>
           <Select
             {...form.getInputProps("province_id")}
             key={form.key("province_id")}
@@ -119,16 +125,18 @@ export default function PersonalDataForm({
               label: province.name,
               value: province.id.toString(),
             }))}
-            mt="md"
             searchable
+            radius="md"
           />
         </Fieldset>
-        <Fieldset legend="Sosial Media" mt="md">
+
+        <Fieldset legend="Sosial Media" mb="xl" p="md" style={{ border: '1px solid #e9ecef', borderRadius: '8px' }}>
           <TextInput
             {...form.getInputProps("line")}
             key={form.key("line")}
             label="ID Line"
             placeholder="ID Line"
+            radius="md"
           />
           <TextInput
             {...form.getInputProps("whatsapp")}
@@ -137,6 +145,7 @@ export default function PersonalDataForm({
             description="Cth: 6281234567890. Pastikan nomor whatsapp kamu aktif."
             placeholder="Cth: 6281234567890"
             mt="md"
+            radius="md"
           />
           <TextInput
             {...form.getInputProps("linkedin")}
@@ -144,6 +153,7 @@ export default function PersonalDataForm({
             label="Akun Linkedin"
             placeholder="Akun Linkedin"
             mt="md"
+            radius="md"
           />
           <TextInput
             {...form.getInputProps("instagram")}
@@ -151,6 +161,7 @@ export default function PersonalDataForm({
             label="Akun Instagram"
             placeholder="Akun Instagram"
             mt="md"
+            radius="md"
           />
           <TextInput
             {...form.getInputProps("tiktok")}
@@ -158,9 +169,11 @@ export default function PersonalDataForm({
             label="Akun Tiktok"
             placeholder="Akun Tiktok"
             mt="md"
+            radius="md"
           />
         </Fieldset>
-        <Fieldset legend="Pendidikan" mt="md">
+
+        <Fieldset legend="Pendidikan" mb="xl" p="md" style={{ border: '1px solid #e9ecef', borderRadius: '8px' }}>
           <UniversitySelect
             {...form.getInputProps("university_id")}
             key={form.key("university_id")}
@@ -174,6 +187,7 @@ export default function PersonalDataForm({
             label="Jurusan"
             placeholder="Jurusan"
             mt="md"
+            radius="md"
           />
           <NumberInput
             {...form.getInputProps("intake_year")}
@@ -181,10 +195,18 @@ export default function PersonalDataForm({
             label="Angkatan"
             placeholder="Angkatan"
             mt="md"
+            radius="md"
           />
         </Fieldset>
 
-        <Button type="submit" mt="md" loading={form.submitting}>
+        <Button 
+          type="submit" 
+          size="md"
+          radius="md"
+          loading={form.submitting}
+          fullWidth
+          style={{ marginTop: '1rem' }}
+        >
           Ubah Data Diri
         </Button>
       </form>

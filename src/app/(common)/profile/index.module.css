@@ -1,17 +1,33 @@
 .container {
-  margin-top: 5rem;
+  min-height: calc(100vh - 80px);
 }
 
 .content {
-  flex-direction: row;
   @media (max-width: $mantine-breakpoint-md) {
-    flex-direction: column;
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
   }
 }
 
-.tab {
-  width: calc(100vw - 20rem);
+.profileSection {
+  @media (min-width: $mantine-breakpoint-md) {
+    grid-column: 1;
+  }
+}
+
+.contentSection {
+  @media (min-width: $mantine-breakpoint-md) {
+    grid-column: 2 / 4;
+  }
+}
+
+.profileCard {
+  position: sticky;
+  top: 2rem;
+  background: white;
+  
   @media (max-width: $mantine-breakpoint-md) {
-    width: 100%;
+    position: static;
+    margin-bottom: 1rem;
   }
 }

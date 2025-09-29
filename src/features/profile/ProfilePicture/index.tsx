@@ -45,14 +45,14 @@ export function ProfilePicture({
   };
 
   return (
-    <Stack>
+    <Stack align="center">
       <FileButton onChange={handleUploadPicture} accept="image/png,image/jpeg">
         {(props) => (
           <Indicator
             {...props}
-            offset={18}
-            label={<IconPencil size={20} />}
-            size={30}
+            offset={16}
+            label={<IconPencil size={16} />}
+            size={28}
             w="fit-content"
             mx="auto"
             style={{ cursor: "pointer" }}
@@ -60,7 +60,7 @@ export function ProfilePicture({
             <LoadingOverlay
               visible={loading}
               zIndex={1000}
-              overlayProps={{ radius: "sm", blur: 2 }}
+              overlayProps={{ radius: "50%", blur: 2 }}
             />
             <Avatar
               size={size}
