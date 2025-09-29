@@ -11,7 +11,12 @@ import {
   Divider,
   Card,
 } from "@mantine/core";
-import { IconLogout, IconUser, IconTrophy, IconCalendar } from "@tabler/icons-react";
+import {
+  IconLogout,
+  IconUser,
+  IconTrophy,
+  IconCalendar,
+} from "@tabler/icons-react";
 
 import { getProfile, getProvinces } from "../../../services/profile";
 
@@ -82,7 +87,11 @@ export default async function Page() {
           </Text>
         </Box>
 
-        <SimpleGrid cols={{ base: 1, md: 3 }} spacing="xl" className={classes.content}>
+        <SimpleGrid
+          cols={{ base: 1, md: 3 }}
+          spacing="xl"
+          className={classes.content}
+        >
           {/* Profile Card */}
           <Box className={classes.profileSection}>
             <Card radius="lg" withBorder p="xl" className={classes.profileCard}>
@@ -93,70 +102,75 @@ export default async function Page() {
                   size={120}
                   radius={60}
                 />
-                
+
                 <Box ta="center">
                   <Title order={2} size="h3" mb="xs">
                     {profileData?.profile.name || "Nama Pengguna"}
                   </Title>
-                  <Text c="dimmed" size="sm" mb="md">
-                    {profileData &&
-                      USER_LEVEL_RENDER[
-                        profileData.profile.level || USER_LEVEL_ENUM.JAMAAH
-                      ]}
-                  </Text>
                 </Box>
 
-                {profileData?.profile.badges && profileData.profile.badges.length > 0 && (
-                  <>
-                    <Divider w="100%" />
-                    <Box w="100%">
-                      <Text size="sm" fw={500} mb="xs" ta="center">
-                        Lencana
-                      </Text>
-                      <Group gap="xs" justify="center">
-                        {profileData.profile.badges.map((badge) => (
-                          <Badge key={badge} variant="light" size="sm">
-                            {badge}
-                          </Badge>
-                        ))}
-                      </Group>
-                    </Box>
-                  </>
-                )}
+                {profileData?.profile.badges &&
+                  profileData.profile.badges.length > 0 && (
+                    <>
+                      <Divider w="100%" />
+                      <Box w="100%">
+                        <Text size="sm" fw={500} mb="xs" ta="center">
+                          Lencana
+                        </Text>
+                        <Group gap="xs" justify="center">
+                          {profileData.profile.badges.map((badge) => (
+                            <Badge key={badge} variant="light" size="sm">
+                              {badge}
+                            </Badge>
+                          ))}
+                        </Group>
+                      </Box>
+                    </>
+                  )}
 
                 <Divider w="100%" />
-                
+
                 {/* Quick Stats */}
                 <SimpleGrid cols={3} w="100%" spacing="xs">
                   <Box ta="center">
-                    <IconCalendar size={20} style={{ margin: '0 auto 4px' }} />
-                    <Text size="xs" c="dimmed">Kegiatan</Text>
+                    <IconCalendar size={20} style={{ margin: "0 auto 4px" }} />
+                    <Text size="xs" c="dimmed">
+                      Kegiatan
+                    </Text>
                     <Text fw={500} size="sm">
                       {activitiesRegistration?.length || 0}
                     </Text>
                   </Box>
                   <Box ta="center">
-                    <IconTrophy size={20} style={{ margin: '0 auto 4px' }} />
-                    <Text size="xs" c="dimmed">Prestasi</Text>
+                    <IconTrophy size={20} style={{ margin: "0 auto 4px" }} />
+                    <Text size="xs" c="dimmed">
+                      Prestasi
+                    </Text>
                     <Text fw={500} size="sm">
                       {achievements?.length || 0}
                     </Text>
                   </Box>
                   <Box ta="center">
-                    <IconUser size={20} style={{ margin: '0 auto 4px' }} />
-                    <Text size="xs" c="dimmed">Level</Text>
+                    <IconUser size={20} style={{ margin: "0 auto 4px" }} />
+                    <Text size="xs" c="dimmed">
+                      Level
+                    </Text>
                     <Text fw={500} size="sm">
-                      {profileData?.profile.level || "Jamaah"}
+                      {
+                        USER_LEVEL_RENDER[
+                          profileData?.profile.level || USER_LEVEL_ENUM.JAMAAH
+                        ]
+                      }
                     </Text>
                   </Box>
                 </SimpleGrid>
 
                 <Divider w="100%" />
 
-                <Button 
-                  variant="light" 
-                  color="red" 
-                  fullWidth 
+                <Button
+                  variant="light"
+                  color="red"
+                  fullWidth
                   leftSection={<IconLogout size={16} />}
                   radius="md"
                 >
