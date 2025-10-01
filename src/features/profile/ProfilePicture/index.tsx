@@ -2,6 +2,7 @@
 
 import showNotif from "@/functions/common/notification";
 import { postProfilePicture } from "@/services/profile";
+import updateProfilePictureCookie from "@/functions/server/updateProfilePictureCookie";
 import {
   Avatar,
   FileButton,
@@ -36,6 +37,8 @@ export function ProfilePicture({
       if (resp) {
         showNotif(resp.message);
         setFileName(resp.data.picture);
+        // Update the profile picture cookie
+        await updateProfilePictureCookie(resp.data.picture);
       }
     } catch (error: unknown) {
       if (error instanceof Error) showNotif(error.message, true);

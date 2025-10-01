@@ -24,7 +24,7 @@ import logout from "../../../../functions/server/logout";
 type NavDrawer = {
   drawerOpened: boolean;
   closeDrawer: () => void;
-  session: { name?: string; session?: string };
+  session: { name?: string; session?: string; profilePicture?: string };
 };
 
 export default function NavDrawer({
@@ -73,7 +73,14 @@ export default function NavDrawer({
               <AccordionItem value="profile">
                 <AccordionControl>
                   <Group>
-                    <Avatar radius="xl" />
+                    <Avatar 
+                      radius="xl" 
+                      src={
+                        session.profilePicture && session.profilePicture !== ""
+                          ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${session.profilePicture}`
+                          : undefined
+                      }
+                    />
                     <Text size="md">{session.name}</Text>
                   </Group>
                 </AccordionControl>

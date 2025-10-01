@@ -6,7 +6,7 @@ import { LoginResp } from "../../types/api/auth";
 
 import fetcher from "../common/fetcher";
 import { handleCatchError } from "../common/handler";
-import { NAME_COOKIE_NAME, SESSION_COOKIE_NAME } from "../../constants";
+import { NAME_COOKIE_NAME, PROFILE_PICTURE_COOKIE_NAME, SESSION_COOKIE_NAME } from "../../constants";
 
 type LoginFormData = {
   email: string;
@@ -16,6 +16,7 @@ type LoginFormData = {
 export default async function login({ email, password }: LoginFormData) {
   (await cookies()).delete(SESSION_COOKIE_NAME);
   (await cookies()).delete(NAME_COOKIE_NAME);
+  (await cookies()).delete(PROFILE_PICTURE_COOKIE_NAME);
 
   const rawFormData = {
     email,
@@ -41,6 +42,9 @@ export default async function login({ email, password }: LoginFormData) {
       expires: tomorrow,
     });
     (await cookies()).set(NAME_COOKIE_NAME, response?.data?.data?.name, {
+      expires: tomorrow,
+    });
+    (await cookies()).set(PROFILE_PICTURE_COOKIE_NAME, response?.data?.data?.picture || "", {
       expires: tomorrow,
     });
 

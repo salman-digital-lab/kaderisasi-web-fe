@@ -66,7 +66,7 @@ export default async function Navbar() {
               <Menu shadow="md" width={200}>
                 <MenuTarget>
                   <Group>
-                    <ProfilePictureNav token={sessionData.session || ""} />
+                    <ProfilePictureNav token={sessionData.session || ""} src={sessionData.profilePicture} />
                     <Text size="md">{sessionData.name}</Text>
                   </Group>
                 </MenuTarget>

@@ -7,7 +7,7 @@ import { useDisclosure } from "@mantine/hooks";
 export default function ClientNavbar({
   session,
 }: {
-  session: { name?: string; session?: string };
+  session: { name?: string; session?: string; profilePicture?: string };
 }) {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
     useDisclosure(false);
