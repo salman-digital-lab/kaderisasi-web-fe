@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import NextImage from "next/image";
-import { Card, Image, Text, Group, Badge, Button, rem } from "@mantine/core";
-import classes from "./index.module.css";
+import { Card, Image, Text, Group, Badge, Button, Stack, Box } from "@mantine/core";
 
 type ActivityCardProps = {
   activityName: string;
@@ -19,7 +18,7 @@ export default function ActivityPersonalCard({
   imageUrl,
 }: ActivityCardProps) {
   return (
-    <Card withBorder radius="md" p="md" className={classes.card}>
+    <Card withBorder radius="md" p="md" h="100%">
       <Card.Section>
         <Image
           component={NextImage}
@@ -31,48 +30,49 @@ export default function ActivityPersonalCard({
               : "https://placehold.co/350x400?text=" + activityName
           }
           alt={activityName}
-          height={350}
+          height={200}
           width={400}
+          fit="cover"
         />
       </Card.Section>
 
-      <Card.Section className={classes.section} mt="md" flex="1">
-        <Group justify="apart">
-          <Text fz="lg" fw={500}>
-            {activityName}
-          </Text>
-        </Group>
-      </Card.Section>
-
-      <Card.Section className={classes.section}>
-        <Text mt="lg" className={classes.label} c="dimmed">
-          Status
+      <Stack gap="sm" mt="md" flex="1">
+        <Text fz="lg" fw={500} lineClamp={2}>
+          {activityName}
         </Text>
-        <Group gap={7} mt={5}>
-          <Badge size="lg" variant="light">
-            {registrationStatus}
-          </Badge>
-        </Group>
-      </Card.Section>
+        
+        <Box>
+          <Text size="xs" c="dimmed" tt="uppercase" fw={700}>
+            Status
+          </Text>
+          <Group gap="xs" mt={4}>
+            <Badge size="sm" variant="light">
+              {registrationStatus}
+            </Badge>
+          </Group>
+        </Box>
+      </Stack>
 
-      <Group mt="xs">
+      <Stack mt="md" gap="xs">
         <Button
           component={Link}
           href={`/activity/${slug}`}
           radius="md"
-          style={{ flex: 1 }}
+          variant="filled"
+          fullWidth
         >
-          Lihat
+          Lihat Detail
         </Button>
         <Button
           component={Link}
           href={`/activity/register/${slug}/edit-activity-form`}
           radius="md"
-          style={{ flex: 1 }}
+          variant="outline"
+          fullWidth
         >
-          Ubah Formulir
+          Edit Formulir
         </Button>
-      </Group>
+      </Stack>
     </Card>
   );
 }
