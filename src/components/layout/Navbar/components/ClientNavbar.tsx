@@ -14,7 +14,7 @@ export default function ClientNavbar({
 
   return (
     <>
-      <Burger opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" />
+      <Burger opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="md" />
       <NavDrawer
         drawerOpened={drawerOpened}
         closeDrawer={closeDrawer}

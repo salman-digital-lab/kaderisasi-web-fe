@@ -18,7 +18,7 @@
   font-size: var(--mantine-font-size-sm);
   cursor: pointer;
 
-  @media (max-width: $mantine-breakpoint-sm) {
+  @media (max-width: $mantine-breakpoint-md) {
     height: rem(42px);
     width: 100%;
   }

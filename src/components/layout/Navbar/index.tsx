@@ -10,7 +10,6 @@ import {
   MenuDropdown,
   MenuItem,
   MenuDivider,
-  Avatar,
   Text,
   Button,
 } from "@mantine/core";
@@ -28,14 +27,12 @@ export default async function Navbar() {
   return (
     <Box>
       <header className={classes.header}>
-        <Group justify="space-between" h="100%">
-          <Image src={logo} alt="bmka" width={100} />
+        <Group justify="space-between" h="100%" wrap="nowrap">
+          <Link href="/">
+            <Image src={logo} alt="bmka" width={100} />
+          </Link>
 
-          <Group h="100%" gap={0} visibleFrom="sm">
-            <Anchor href="/" className={classes.link} underline="never">
-              Beranda
-            </Anchor>
-
+          <Group h="100%" gap={0} visibleFrom="md">
             <Anchor href="/activity" className={classes.link} underline="never">
               Kegiatan
             </Anchor>
@@ -62,11 +59,14 @@ export default async function Navbar() {
           </Group>
 
           {sessionData.session ? (
-            <Group visibleFrom="sm" className={classes.link}>
+            <Group visibleFrom="md" className={classes.link}>
               <Menu shadow="md" width={200}>
                 <MenuTarget>
                   <Group>
-                    <ProfilePictureNav token={sessionData.session || ""} src={sessionData.profilePicture} />
+                    <ProfilePictureNav
+                      token={sessionData.session || ""}
+                      src={sessionData.profilePicture}
+                    />
                     <Text size="md">{sessionData.name}</Text>
                   </Group>
                 </MenuTarget>
@@ -91,7 +91,7 @@ export default async function Navbar() {
               </Menu>
             </Group>
           ) : (
-            <Group visibleFrom="sm">
+            <Group visibleFrom="md">
               <Button component={Link} variant="default" href="/login">
                 Masuk
               </Button>

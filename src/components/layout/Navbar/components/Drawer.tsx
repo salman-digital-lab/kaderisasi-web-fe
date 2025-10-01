@@ -6,7 +6,6 @@ import {
   Drawer,
   ScrollArea,
   rem,
-  Anchor,
   Avatar,
   Text,
   Stack,
@@ -72,7 +71,7 @@ export default function NavDrawer({
           Menu
         </Text>
       }
-      hiddenFrom="sm"
+      hiddenFrom="md"
       zIndex={1000000}
     >
       <ScrollArea h={`calc(100vh - ${rem(80)})`} mx="-md">
@@ -186,11 +185,6 @@ export default function NavDrawer({
                   <Text size="sm" fw={isActive ? 600 : 500} style={{ flex: 1 }}>
                     {item.label}
                   </Text>
-                  {isActive && (
-                    <IconChevronRight
-                      style={{ width: rem(16), height: rem(16) }}
-                    />
-                  )}
                 </UnstyledButton>
               );
             })}
