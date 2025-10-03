@@ -63,6 +63,23 @@ export default function ActivityForm({
     }, 50);
   }, 500);
 
+  // Helper function to render labels with newlines
+  const renderLabel = (label: string) => {
+    const lines = label.split('\n');
+    if (lines.length === 1) return label;
+    
+    return (
+      <>
+        {lines.map((line, index) => (
+          <span key={index}>
+            {line}
+            {index < lines.length - 1 && <br />}
+          </span>
+        ))}
+      </>
+    );
+  };
+
   // Moved renderForm inside the component to access localStorageKey
   const renderForm = (
     schema: Questionnaire,
@@ -83,7 +100,7 @@ export default function ActivityForm({
             key={form.key(schema.name)}
             {...inputProps}
             name={schema.name}
-            label={schema.label}
+            label={renderLabel(schema.label)}
             placeholder={schema.label}
             required={schema.required}
           />
@@ -95,7 +112,7 @@ export default function ActivityForm({
             key={form.key(schema.name)}
             {...inputProps}
             name={schema.name}
-            label={schema.label}
+            label={renderLabel(schema.label)}
             placeholder={schema.label}
             required={schema.required}
             resize="vertical"
@@ -108,7 +125,7 @@ export default function ActivityForm({
             key={form.key(schema.name)}
             {...inputProps}
             name={schema.name}
-            label={schema.label}
+            label={renderLabel(schema.label)}
             placeholder={schema.label}
             required={schema.required}
           />
@@ -120,7 +137,7 @@ export default function ActivityForm({
             key={form.key(schema.name)}
             {...inputProps}
             name={schema.name}
-            label={schema.label}
+            label={renderLabel(schema.label)}
             placeholder={schema.label}
             required={schema.required}
             data={schema.data}
