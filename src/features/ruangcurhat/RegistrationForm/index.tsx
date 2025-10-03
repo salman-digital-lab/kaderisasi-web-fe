@@ -79,9 +79,19 @@ export default function RegistrationForm({
   const handleRegistration = async (val: RegistrationFormItems) => {
     try {
       setLoading(true);
-      await editProfile({ 
-        whatsapp: val.whatsapp,
-        gender: val.gender === "Laki-laki" ? GENDER.Male : GENDER.Female
+
+      // Convert WhatsApp number format from 0812... to 62812...
+      let whatsappNumber = val.whatsapp;
+      if (whatsappNumber && typeof whatsappNumber === "string") {
+        const whatsappStr = whatsappNumber.trim();
+        if (whatsappStr.startsWith("0")) {
+          whatsappNumber = "62" + whatsappStr.slice(1);
+        }
+      }
+
+      await editProfile({
+        whatsapp: whatsappNumber,
+        gender: val.gender === "Laki-laki" ? GENDER.Male : GENDER.Female,
       });
       const resp = await postRuangCurhat(token, {
         ...val,
@@ -118,12 +128,25 @@ export default function RegistrationForm({
       onSubmit={form.onSubmit((val) => handleRegistration(val))}
     >
       <TextInput
-        key={form.key("whatsapp")}
         {...form.getInputProps("whatsapp")}
-        label="Nomor Whatsapp"
+        key={form.key("whatsapp")}
+        label="Nomor Whatsapp Aktif "
+        description="Cth: 6281234567890. Pastikan nomor whatsapp kamu aktif."
         placeholder="Cth: 6281234567890"
-        description="Cth: 6281234567890. Pastikan nomor whatsapp kamu aktif. Jangan khawatir, datamu aman."
         required
+        type="tel"
+        pattern="[0-9]*"
+        inputMode="numeric"
+        onKeyDown={(e) => {
+          if (
+            !/[0-9]/.test(e.key) &&
+            !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(
+              e.key,
+            )
+          ) {
+            e.preventDefault();
+          }
+        }}
         mt="md"
       />
       <Select

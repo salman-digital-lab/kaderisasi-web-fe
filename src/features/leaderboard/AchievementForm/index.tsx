@@ -24,7 +24,11 @@ type AchievementFormProps = {
   university_id?: string;
 };
 
-export default function AchievementForm({ token, whatsapp, university_id }: AchievementFormProps) {
+export default function AchievementForm({
+  token,
+  whatsapp,
+  university_id,
+}: AchievementFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
@@ -57,7 +61,19 @@ export default function AchievementForm({ token, whatsapp, university_id }: Achi
         throw new Error("Bukti prestasi harus diisi");
       }
 
-      await editProfile({ whatsapp: values.whatsapp, university_id: Number(values.university_id) });
+      // Convert WhatsApp number format from 0812... to 62812...
+      let whatsappNumber = values.whatsapp;
+      if (whatsappNumber && typeof whatsappNumber === "string") {
+        const whatsappStr = whatsappNumber.trim();
+        if (whatsappStr.startsWith("0")) {
+          whatsappNumber = "62" + whatsappStr.slice(1);
+        }
+      }
+
+      await editProfile({
+        whatsapp: whatsappNumber,
+        university_id: Number(values.university_id),
+      });
 
       await submitAchievement(
         {
@@ -84,11 +100,29 @@ export default function AchievementForm({ token, whatsapp, university_id }: Achi
     <form onSubmit={form.onSubmit(handleSubmit)}>
       <Stack gap="md">
         <TextInput
-          label="Nomor Whatsapp"
-          placeholder="Cth: 6281234567890"
-          description="Cth: 6281234567890. Pastikan nomor whatsapp kamu aktif. Jangan khawatir, datamu aman."
-          required
           {...form.getInputProps("whatsapp")}
+          key={form.key("whatsapp")}
+          label="Nomor Whatsapp Aktif "
+          description="Cth: 6281234567890. Pastikan nomor whatsapp kamu aktif."
+          placeholder="Cth: 6281234567890"
+          required
+          type="tel"
+          pattern="[0-9]*"
+          inputMode="numeric"
+          onKeyDown={(e) => {
+            if (
+              !/[0-9]/.test(e.key) &&
+              ![
+                "Backspace",
+                "Delete",
+                "ArrowLeft",
+                "ArrowRight",
+                "Tab",
+              ].includes(e.key)
+            ) {
+              e.preventDefault();
+            }
+          }}
         />
         <UniversitySelect
           label="Universitas"
