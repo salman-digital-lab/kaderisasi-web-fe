@@ -10,7 +10,6 @@ import showNotif from "@/functions/common/notification";
 import editProfile from "@/functions/server/editProfile";
 import { Member, PublicUser } from "@/types/model/members";
 import { Province } from "@/types/model/province";
-import { University } from "@/types/model/university";
 import { MandatoryProfileData } from "@/types/model/activity";
 import UniversitySelect from "@/components/common/UniversitySelect";
 
@@ -98,6 +97,14 @@ export default function ProfileForm({
             description="Cth: 6281234567890. Pastikan nomor whatsapp kamu aktif."
             placeholder="Cth: 6281234567890"
             required={type.required}
+            type="tel"
+            pattern="[0-9]*"
+            inputMode="numeric"
+            onKeyDown={(e) => {
+              if (!/[0-9]/.test(e.key) && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(e.key)) {
+                e.preventDefault();
+              }
+            }}
           />
         );
       case "linkedin":
@@ -177,10 +184,20 @@ export default function ProfileForm({
       }
     >,
   ) => {
+    // Convert WhatsApp number format from 0812... to 62812...
+    let whatsappNumber = rawFormData.whatsapp;
+    if (whatsappNumber && typeof whatsappNumber === "string") {
+      const whatsappStr = whatsappNumber.trim();
+      if (whatsappStr.startsWith("0")) {
+        whatsappNumber = "62" + whatsappStr.slice(1);
+      }
+    }
+
     const finalFormData = {
       ...rawFormData,
       province_id: Number(rawFormData.province_id),
       university_id: Number(rawFormData.university_id),
+      whatsapp: whatsappNumber,
     };
 
     try {
