@@ -12,7 +12,6 @@ import {
   Group,
   Title,
   Text,
-  FileInput,
   Box,
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
@@ -123,9 +122,6 @@ export default function CustomFormFieldsRenderer({
 
     switch (field.type) {
       case "text":
-      case "email":
-      case "url":
-      case "tel":
         return <TextInput {...commonProps} type={field.type} />;
 
       case "textarea":
@@ -198,14 +194,6 @@ export default function CustomFormFieldsRenderer({
           <DateInput
             {...commonProps}
             valueFormat="DD/MM/YYYY"
-          />
-        );
-
-      case "file":
-        return (
-          <FileInput
-            {...commonProps}
-            accept={field.validation?.pattern}
           />
         );
 

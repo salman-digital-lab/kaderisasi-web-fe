@@ -1,7 +1,7 @@
 import { verifySession } from "@/functions/server/session";
 import { getProfile, getProvinces } from "@/services/profile";
 import { getCustomFormByFeature } from "@/services/customForm";
-import { Container, Paper, Title } from "@mantine/core";
+import { Container, Paper } from "@mantine/core";
 import { redirect } from "next/navigation";
 import ErrorWrapper from "@/components/layout/Error";
 import CustomFormContent from "@/features/customForm/CustomFormContent";
