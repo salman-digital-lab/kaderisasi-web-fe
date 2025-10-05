@@ -78,8 +78,8 @@ const ClubRegistrationButton: React.FC<ClubRegistrationButtonProps> = ({
     }
 
     // If custom form exists, redirect to custom form page
-    if (customForm) {
-      router.push(`/custom-form/register/club_registration/${clubId}/profile-data`);
+    if (customForm && customForm.is_active) {
+      router.push(`/custom-form/club/${clubId}`);
       return;
     }
 

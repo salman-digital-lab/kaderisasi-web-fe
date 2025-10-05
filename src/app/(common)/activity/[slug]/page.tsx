@@ -32,6 +32,7 @@ import {
   getActivityRegistration,
 } from "../../../../services/activity";
 import { getProfile } from "../../../../services/profile";
+import { getCustomFormByFeature } from "../../../../services/customForm";
 import ErrorWrapper from "../../../../components/layout/Error";
 import { ACTIVITY_REGISTRANT_STATUS_ENUM } from "@/types/constants/activity";
 import { Activity } from "@/types/model/activity";
@@ -92,6 +93,7 @@ export default async function Page(props: {
     | undefined;
 
   let activity: Activity | undefined;
+  let hasCustomForm = false;
 
   const sessionData = await verifySession();
 
@@ -103,6 +105,20 @@ export default async function Page(props: {
         sessionData.session,
         params,
       );
+    }
+    
+    // Check if activity has a custom form
+    if (activity?.id) {
+      try {
+        const customForm = await getCustomFormByFeature({
+          feature_type: "activity_registration",
+          feature_id: activity.id,
+        });
+        hasCustomForm = !!customForm && customForm.is_active;
+      } catch {
+        // No custom form found, use default flow
+        hasCustomForm = false;
+      }
     }
   } catch (error: unknown) {
     if (typeof error === "string" && error !== "Unauthorized")
@@ -238,7 +254,11 @@ export default async function Page(props: {
               ) : (
                 <Button
                   component={Link}
-                  href={`/activity/register/${params.slug}/profile-data`}
+                  href={
+                    hasCustomForm
+                      ? `/custom-form/activity/${activity?.id}`
+                      : `/activity/register/${params.slug}/profile-data`
+                  }
                 >
                   Daftar Kegiatan
                 </Button>

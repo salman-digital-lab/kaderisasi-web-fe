@@ -7,10 +7,15 @@ import {
 } from "../types/api/customForm";
 
 export const getCustomFormByFeature = async (props: GetCustomFormByFeatureReq) => {
-  const urlSearch = new URLSearchParams({
+  const params: Record<string, string> = {
     feature_type: props.feature_type,
-    feature_id: props.feature_id.toString(),
-  }).toString();
+  };
+  
+  if (props.feature_id !== undefined) {
+    params.feature_id = props.feature_id.toString();
+  }
+  
+  const urlSearch = new URLSearchParams(params).toString();
 
   const response = await fetcher<GetCustomFormByFeatureResp>(
     process.env.NEXT_PUBLIC_BE_API + "/custom-forms/by-feature?" + urlSearch,

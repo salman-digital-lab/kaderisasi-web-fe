@@ -41,8 +41,8 @@ export interface CustomForm {
   id: number
   form_name: string
   form_description: string
-  feature_type: 'activity_registration' | 'club_registration'
-  feature_id: number
+  feature_type: 'activity_registration' | 'club_registration' | 'independent_form'
+  feature_id: number | null
   form_schema: CustomFormSchema
   is_active: boolean
   created_at: string
@@ -51,8 +51,8 @@ export interface CustomForm {
 
 // API Request/Response types
 export interface GetCustomFormByFeatureReq {
-  feature_type: 'activity_registration' | 'club_registration'
-  feature_id: number
+  feature_type: 'activity_registration' | 'club_registration' | 'independent_form'
+  feature_id?: number
 }
 
 export interface GetCustomFormByFeatureResp {
@@ -61,9 +61,8 @@ export interface GetCustomFormByFeatureResp {
 }
 
 export interface PostCustomFormRegistrationReq {
-  feature_type: 'activity_registration' | 'club_registration'
-  feature_id: number
-  profile_data: Record<string, any>
+  feature_type: 'activity_registration' | 'club_registration' | 'independent_form'
+  feature_id?: number
   custom_form_data: Record<string, any>
 }
 
