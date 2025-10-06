@@ -96,20 +96,17 @@ export default function CustomFormContent({
       // Clear localStorage after successful submission
       clearStorage();
 
-      showNotif(
-        featureType === "independent_form"
-          ? "Formulir berhasil dikirim!"
-          : "Pendaftaran berhasil dikirim!"
-      );
+      // Redirect to success page to show post-submission info
+      const typeMap = {
+        activity_registration: "activity",
+        club_registration: "club",
+        independent_form: "independent",
+      } as const;
 
-      // Redirect based on form type
-      if (featureType === "activity_registration") {
-        router.push(`/activity`);
-      } else if (featureType === "club_registration") {
-        router.push(`/clubs`);
-      } else {
-        router.push("/");
-      }
+      const type = typeMap[featureType];
+      const successUrl = `/custom-form/${type}/${featureId || "0"}/success`;
+      
+      router.push(successUrl);
     } catch (error) {
       if (error instanceof Error) showNotif(error.message, true);
       if (typeof error === "string") showNotif(error, true);

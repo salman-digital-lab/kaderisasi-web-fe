@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   Button,
   Stack,
@@ -13,9 +14,11 @@ import {
   Title,
   Text,
   Box,
+  Modal,
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
+import { IconAlertCircle } from "@tabler/icons-react";
 import { CustomFormSection } from "@/types/api/customForm";
 
 type CustomFormFieldsRendererProps = {
@@ -39,6 +42,9 @@ export default function CustomFormFieldsRenderer({
   loading,
   isLastSection,
 }: CustomFormFieldsRendererProps) {
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false);
+  const [pendingValues, setPendingValues] = useState<Record<string, any> | null>(null);
+
   // Build initial values - combine all sections data
   const initialValues: Record<string, any> = { ...formData };
   
@@ -203,51 +209,113 @@ export default function CustomFormFieldsRenderer({
   };
 
   const handleSubmit = (values: Record<string, any>) => {
-    onSubmit(values);
+    // If it's the last section, show confirmation modal
+    if (isLastSection) {
+      setPendingValues(values);
+      setConfirmModalOpen(true);
+    } else {
+      // If not the last section, just proceed
+      onSubmit(values);
+    }
+  };
+
+  const handleConfirmSubmit = () => {
+    if (pendingValues) {
+      setConfirmModalOpen(false);
+      onSubmit(pendingValues);
+      setPendingValues(null);
+    }
+  };
+
+  const handleCancelSubmit = () => {
+    setConfirmModalOpen(false);
+    setPendingValues(null);
   };
 
   return (
-    <form onSubmit={form.onSubmit(handleSubmit)}>
-      <Stack gap="md">
-        <Box>
-          <Title order={4}>{section.section_name}</Title>
-          {section.fields.length > 0 && (
-            <Text size="sm" c="dimmed" mt="xs">
-              Silakan lengkapi formulir di bawah ini
-            </Text>
-          )}
-        </Box>
+    <>
+      <form onSubmit={form.onSubmit(handleSubmit)}>
+        <Stack gap="md">
+          <Box>
+            <Title order={4}>{section.section_name}</Title>
+            {section.fields.length > 0 && (
+              <Text size="sm" c="dimmed" mt="xs">
+                Silakan lengkapi formulir di bawah ini
+              </Text>
+            )}
+          </Box>
 
-        {section.fields.map((field) => (
-          <div key={field.key}>{renderField(field)}</div>
-        ))}
+          {section.fields.map((field) => (
+            <div key={field.key}>{renderField(field)}</div>
+          ))}
 
-        <Group 
-          justify="space-between" 
-          mt="xl"
-          style={{ 
-            flexDirection: 'row',
-            gap: '0.5rem'
-          }}
-        >
-          <Button 
-            variant="default" 
-            onClick={onBack} 
-            disabled={loading}
-            style={{ flex: '0 1 auto', minWidth: '100px' }}
+          <Group 
+            justify="space-between" 
+            mt="xl"
+            style={{ 
+              flexDirection: 'row',
+              gap: '0.5rem'
+            }}
           >
-            Kembali
-          </Button>
-          <Button 
-            type="submit" 
-            loading={loading}
-            style={{ flex: '1 1 auto', minWidth: '120px' }}
-          >
-            {isLastSection ? "Kirim" : "Lanjutkan"}
-          </Button>
-        </Group>
-      </Stack>
-    </form>
+            <Button 
+              variant="default" 
+              onClick={onBack} 
+              disabled={loading}
+              style={{ flex: '0 1 auto', minWidth: '100px' }}
+            >
+              Kembali
+            </Button>
+            <Button 
+              type="submit" 
+              loading={loading}
+              style={{ flex: '1 1 auto', minWidth: '120px' }}
+            >
+              {isLastSection ? "Kirim" : "Lanjutkan"}
+            </Button>
+          </Group>
+        </Stack>
+      </form>
+
+      {/* Confirmation Modal */}
+      <Modal
+        opened={confirmModalOpen}
+        onClose={handleCancelSubmit}
+        title={
+          <Group gap="xs">
+            <IconAlertCircle size={24} color="var(--mantine-color-blue-6)" />
+            <Text fw={600}>Konfirmasi Pengiriman</Text>
+          </Group>
+        }
+        centered
+        size="md"
+      >
+        <Stack gap="lg">
+          <Text size="sm">
+            Pastikan semua data yang Anda isi sudah benar. Setelah mengirim,
+            data tidak dapat diubah kembali.
+          </Text>
+          <Text size="sm" fw={500}>
+            Apakah Anda yakin ingin mengirim formulir ini?
+          </Text>
+
+          <Group justify="flex-end" gap="sm">
+            <Button 
+              variant="default" 
+              onClick={handleCancelSubmit}
+              disabled={loading}
+            >
+              Batal
+            </Button>
+            <Button 
+              onClick={handleConfirmSubmit}
+              loading={loading}
+            >
+              Ya, Kirim
+            </Button>
+          </Group>
+        </Stack>
+      </Modal>
+    </>
   );
 }
 

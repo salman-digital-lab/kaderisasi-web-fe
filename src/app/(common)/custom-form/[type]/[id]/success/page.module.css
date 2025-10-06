@@ -1,0 +1,81 @@
+/* Rich text content styling */
+.richTextContent {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.richTextContent p {
+  margin: 0 0 12px 0;
+}
+
+.richTextContent p:last-child {
+  margin-bottom: 0;
+}
+
+.richTextContent ul,
+.richTextContent ol {
+  padding-left: 24px;
+  margin: 12px 0;
+}
+
+.richTextContent li {
+  margin: 6px 0;
+}
+
+.richTextContent a {
+  color: var(--mantine-color-blue-6);
+  text-decoration: underline;
+}
+
+.richTextContent a:hover {
+  color: var(--mantine-color-blue-7);
+}
+
+.richTextContent strong {
+  font-weight: 600;
+}
+
+.richTextContent em {
+  font-style: italic;
+}
+
+.richTextContent u {
+  text-decoration: underline;
+}
+
+.richTextContent s {
+  text-decoration: line-through;
+}
+
+.richTextContent [style*="text-align: center"] {
+  text-align: center;
+}
+
+.richTextContent [style*="text-align: right"] {
+  text-align: right;
+}
+
+.richTextContent [style*="text-align: left"] {
+  text-align: left;
+}
+
+.richTextContent h1,
+.richTextContent h2,
+.richTextContent h3,
+.richTextContent h4,
+.richTextContent h5,
+.richTextContent h6 {
+  margin-top: 16px;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.richTextContent h1:first-child,
+.richTextContent h2:first-child,
+.richTextContent h3:first-child,
+.richTextContent h4:first-child,
+.richTextContent h5:first-child,
+.richTextContent h6:first-child {
+  margin-top: 0;
+}
+
