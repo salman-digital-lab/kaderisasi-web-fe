@@ -177,13 +177,11 @@ export default function ActivityForm({
         <Title order={3}>Form Pendaftaran Kegiatan </Title>
         {formSchemas?.map((item) => renderForm(item, form))}
         <Group>
-          <Button
-            component={Link}
-            flex="1"
-            href={`/activity/register/${slug}/profile-data`}
-          >
-            Sebelumnya
-          </Button>
+          <Link href={`/activity/register/${slug}/profile-data`} style={{ flex: 1, textDecoration: 'none' }}>
+            <Button flex="1" fullWidth>
+              Sebelumnya
+            </Button>
+          </Link>
           <Button type="submit" flex="1" loading={loading}>
             Selanjutnya
           </Button>

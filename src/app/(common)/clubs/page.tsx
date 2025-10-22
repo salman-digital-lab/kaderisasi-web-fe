@@ -122,9 +122,11 @@ export default async function ClubsPage(props: Props) {
                     : "Belum ada unit kegiatan atau kepanitiaan yang tersedia"}
                 </Text>
                 {search && (
-                  <Button component={Link} href="/clubs" variant="outline">
-                    Lihat Semua Unit Kegiatan & Kepanitiaan
-                  </Button>
+                  <Link href="/clubs" style={{ textDecoration: 'none' }}>
+                    <Button variant="outline">
+                      Lihat Semua Unit Kegiatan & Kepanitiaan
+                    </Button>
+                  </Link>
                 )}
               </Stack>
             </Center>

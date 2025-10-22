@@ -28,7 +28,7 @@ export default async function Navbar() {
     <Box>
       <header className={classes.header}>
         <Group justify="space-between" h="100%" wrap="nowrap">
-          <Link href="/">
+          <Link href="/" style={{ textDecoration: 'none' }}>
             <Image src={logo} alt="bmka" width={100} />
           </Link>
 
@@ -72,17 +72,17 @@ export default async function Navbar() {
                 </MenuTarget>
 
                 <MenuDropdown>
-                  <MenuItem
-                    leftSection={
-                      <IconSettings
-                        style={{ width: rem(14), height: rem(14) }}
-                      />
-                    }
-                    component={Link}
-                    href="/profile"
-                  >
-                    Profile
-                  </MenuItem>
+                  <Link href="/profile" style={{ textDecoration: 'none' }}>
+                    <MenuItem
+                      leftSection={
+                        <IconSettings
+                          style={{ width: rem(14), height: rem(14) }}
+                        />
+                      }
+                    >
+                      Profile
+                    </MenuItem>
+                  </Link>
 
                   <MenuDivider />
 
@@ -92,12 +92,12 @@ export default async function Navbar() {
             </Group>
           ) : (
             <Group visibleFrom="md">
-              <Button component={Link} variant="default" href="/login">
-                Masuk
-              </Button>
-              <Button component={Link} href="/register">
-                Daftar
-              </Button>
+              <Link href="/login" style={{ textDecoration: 'none' }}>
+                <Button variant="default">Masuk</Button>
+              </Link>
+              <Link href="/register" style={{ textDecoration: 'none' }}>
+                <Button>Daftar</Button>
+              </Link>
             </Group>
           )}
           <ClientNavbar session={sessionData} />

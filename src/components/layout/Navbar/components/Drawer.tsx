@@ -113,26 +113,26 @@ export default function NavDrawer({
         ) : (
           <Box px="md" py="lg">
             <Stack gap="xs">
-              <Button
-                component={Link}
-                variant="filled"
-                href="/login"
-                radius="md"
-                fullWidth
-                onClick={closeDrawer}
-              >
-                Masuk
-              </Button>
-              <Button
-                component={Link}
-                variant="default"
-                href="/register"
-                radius="md"
-                fullWidth
-                onClick={closeDrawer}
-              >
-                Daftar
-              </Button>
+              <Link href="/login" style={{ textDecoration: 'none' }}>
+                <Button
+                  variant="filled"
+                  radius="md"
+                  fullWidth
+                  onClick={closeDrawer}
+                >
+                  Masuk
+                </Button>
+              </Link>
+              <Link href="/register" style={{ textDecoration: 'none' }}>
+                <Button
+                  variant="default"
+                  radius="md"
+                  fullWidth
+                  onClick={closeDrawer}
+                >
+                  Daftar
+                </Button>
+              </Link>
             </Stack>
           </Box>
         )}
@@ -147,45 +147,44 @@ export default function NavDrawer({
               const Icon = item.icon;
 
               return (
-                <UnstyledButton
-                  key={item.href}
-                  component={Link}
-                  href={item.href}
-                  onClick={closeDrawer}
-                  px="md"
-                  py="sm"
-                  style={(theme) => ({
-                    display: "flex",
-                    alignItems: "center",
-                    width: "100%",
-                    borderRadius: theme.radius.md,
-                    transition: "all 150ms ease",
-                    backgroundColor: isActive
-                      ? theme.colors.blue[0]
-                      : "transparent",
-                    color: isActive
-                      ? theme.colors.blue[7]
-                      : theme.colors.gray[7],
-                    "&:hover": {
+                <Link key={item.href} href={item.href} style={{ textDecoration: 'none' }}>
+                  <UnstyledButton
+                    onClick={closeDrawer}
+                    px="md"
+                    py="sm"
+                    style={(theme) => ({
+                      display: "flex",
+                      alignItems: "center",
+                      width: "100%",
+                      borderRadius: theme.radius.md,
+                      transition: "all 150ms ease",
                       backgroundColor: isActive
-                        ? theme.colors.blue[1]
-                        : theme.colors.gray[0],
-                    },
-                  })}
-                >
-                  <ThemeIcon
-                    variant={isActive ? "light" : "transparent"}
-                    color={isActive ? "blue" : "gray"}
-                    size="md"
-                    radius="md"
-                    mr="sm"
+                        ? theme.colors.blue[0]
+                        : "transparent",
+                      color: isActive
+                        ? theme.colors.blue[7]
+                        : theme.colors.gray[7],
+                      "&:hover": {
+                        backgroundColor: isActive
+                          ? theme.colors.blue[1]
+                          : theme.colors.gray[0],
+                      },
+                    })}
                   >
-                    <Icon style={{ width: rem(18), height: rem(18) }} />
-                  </ThemeIcon>
-                  <Text size="sm" fw={isActive ? 600 : 500} style={{ flex: 1 }}>
-                    {item.label}
-                  </Text>
-                </UnstyledButton>
+                    <ThemeIcon
+                      variant={isActive ? "light" : "transparent"}
+                      color={isActive ? "blue" : "gray"}
+                      size="md"
+                      radius="md"
+                      mr="sm"
+                    >
+                      <Icon style={{ width: rem(18), height: rem(18) }} />
+                    </ThemeIcon>
+                    <Text size="sm" fw={isActive ? 600 : 500} style={{ flex: 1 }}>
+                      {item.label}
+                    </Text>
+                  </UnstyledButton>
+                </Link>
               );
             })}
           </Stack>
@@ -197,18 +196,18 @@ export default function NavDrawer({
             <Divider my="sm" />
             <Box px="md" py="sm">
               <Stack gap="xs">
-                <Button
-                  component={Link}
-                  href="/profile"
-                  variant="light"
-                  color="blue"
-                  leftSection={<IconSettings size={16} />}
-                  radius="md"
-                  fullWidth
-                  onClick={closeDrawer}
-                >
-                  Profil Saya
-                </Button>
+                <Link href="/profile" style={{ textDecoration: 'none' }}>
+                  <Button
+                    variant="light"
+                    color="blue"
+                    leftSection={<IconSettings size={16} />}
+                    radius="md"
+                    fullWidth
+                    onClick={closeDrawer}
+                  >
+                    Profil Saya
+                  </Button>
+                </Link>
                 <Button
                   variant="light"
                   color="red"

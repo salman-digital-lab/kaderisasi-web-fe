@@ -103,14 +103,14 @@ export default async function SuccessPage(props: {
               </Paper>
             )}
 
-            <Button 
-              component={Link} 
-              href={redirectUrl}
-              size="md"
-              mt="md"
-            >
-              {redirectLabel}
-            </Button>
+            <Link href={redirectUrl} style={{ textDecoration: 'none' }}>
+              <Button
+                size="md"
+                mt="md"
+              >
+                {redirectLabel}
+              </Button>
+            </Link>
           </Stack>
         </Paper>
       </Container>

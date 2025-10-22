@@ -27,14 +27,11 @@ const LeaderboardPage = async () => {
               dan organisasi mu disini!
             </Text>
             <Group mt={30}>
-              <Button
-                component={Link}
-                href="/leaderboard/submit"
-                size="md"
-                className={classes.control}
-              >
-                Masukkan Prestasi Anda Disini
-              </Button>
+              <Link href="/leaderboard/submit" style={{ textDecoration: 'none' }}>
+                <Button size="md" className={classes.control}>
+                  Masukkan Prestasi Anda Disini
+                </Button>
+              </Link>
             </Group>
           </div>
           <Image

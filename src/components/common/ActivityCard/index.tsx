@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import "dayjs/locale/id";
 import Link from "next/link";
 import NextImage from "next/image";
-import { Image, Text, Group, Badge, Button, rem, Card } from "@mantine/core";
+import { Text, Group, Badge, Button, rem, Card } from "@mantine/core";
 import classes from "./index.module.css";
 import { USER_LEVEL_RENDER } from "../../../constants/render/activity";
 import { IconCalendarTime } from "@tabler/icons-react";
@@ -35,8 +35,7 @@ export default function ActivityCard({
   return (
     <Card withBorder radius="md" p="md" className={classes.card}>
       <Card.Section>
-        <Image
-          component={NextImage}
+        <NextImage
           placeholder="blur"
           blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mN0qAcAAQUAwRZaSmYAAAAASUVORK5CYII="
           src={
@@ -47,6 +46,7 @@ export default function ActivityCard({
           alt={activityName}
           height={350}
           width={400}
+          style={{ width: '100%', height: 'auto' }}
         />
       </Card.Section>
 
@@ -81,14 +81,11 @@ export default function ActivityCard({
       </Card.Section>
 
       <Group mt="xs">
-        <Button
-          component={Link}
-          href={`/activity/${slug}`}
-          radius="md"
-          style={{ flex: 1 }}
-        >
-          Lihat Selengkapnya
-        </Button>
+        <Link href={`/activity/${slug}`} style={{ flex: 1, textDecoration: 'none' }}>
+          <Button radius="md" fullWidth>
+            Lihat Selengkapnya
+          </Button>
+        </Link>
       </Group>
     </Card>
   );

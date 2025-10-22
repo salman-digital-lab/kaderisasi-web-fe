@@ -100,15 +100,15 @@ export default function PersonalActivityData({
               Mulai daftarkan diri Anda pada kegiatan-kegiatan menarik untuk mengembangkan kemampuan dan jaringan
             </Text>
           </Stack>
-          <Button
-            component={Link}
-            href="/activity"
-            leftSection={<IconPlus size={16} />}
-            variant="filled"
-            size="md"
-          >
-            Jelajahi Kegiatan
-          </Button>
+          <Link href="/activity" style={{ textDecoration: 'none' }}>
+            <Button
+              leftSection={<IconPlus size={16} />}
+              variant="filled"
+              size="md"
+            >
+              Jelajahi Kegiatan
+            </Button>
+          </Link>
         </Stack>
       </Paper>
     );

@@ -29,9 +29,11 @@ export default function NothingFoundBackground() {
             laporkan kepada admin jika telah terjadi kesalahan.
           </Text>
           <Group justify="center">
-            <Button component={Link} href="/" size="md">
-              Kembali ke halaman beranda
-            </Button>
+            <Link href="/" style={{ textDecoration: 'none' }}>
+              <Button size="md">
+                Kembali ke halaman beranda
+              </Button>
+            </Link>
           </Group>
         </div>
       </div>

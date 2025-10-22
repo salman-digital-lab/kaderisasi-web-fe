@@ -92,14 +92,11 @@ export default function ClubCard({
       )}
 
       <Group mt="xs" className={classes.buttonSection}>
-        <Button
-          component={Link}
-          href={`/clubs/${id}`}
-          radius="md"
-          style={{ flex: 1 }}
-        >
-          Lihat Detail
-        </Button>
+        <Link href={`/clubs/${id}`} style={{ flex: 1, textDecoration: 'none' }}>
+          <Button radius="md" fullWidth>
+            Lihat Detail
+          </Button>
+        </Link>
       </Group>
     </Card>
   );

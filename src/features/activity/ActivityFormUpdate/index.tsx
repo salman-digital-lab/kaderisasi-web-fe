@@ -125,9 +125,11 @@ export default function ActivityFormUpdate({
         <Title order={3}>Ubah Form Pendaftaran Kegiatan </Title>
         {formSchemas?.map((item) => renderForm(item, form))}
         <Group>
-          <Button component={Link} flex="1" href={`/profile?tab=activity`}>
-            Kembali
-          </Button>
+          <Link href="/profile?tab=activity" style={{ flex: 1, textDecoration: 'none' }}>
+            <Button flex="1" fullWidth>
+              Kembali
+            </Button>
+          </Link>
           <Button type="submit" flex="1" loading={loading}>
             Ubah Formulir
           </Button>

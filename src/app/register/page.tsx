@@ -29,9 +29,15 @@ export default async function Page({
       </Title>
       <Text c="dimmed" size="sm" ta="center" mt={5}>
         Sudah Punya Akun?{" "}
-        <Anchor size="sm" component={Link} href={`/login?redirect=${redirect}`}>
+        <Link
+          style={{
+            textDecoration: "none",
+            color: "var(--mantine-color-blue-6)",
+          }}
+          href={`/login?redirect=${redirect}`}
+        >
           Silahkan Masuk Disini
-        </Anchor>
+        </Link>
       </Text>
 
       <Text c="dimmed" size="sm" ta="center" mt={5}>
@@ -39,7 +45,7 @@ export default async function Page({
         Whatsapp di{" "}
         <Anchor
           size="sm"
-          component={Link}
+          component="a"
           href="https://wa.me/6285156168499?text=Hai%20Kak%2C%20saya%20ingin%20bertanya...%0A%0ANama%20lengkap%20%3A%20%0AEmail%20%3A%20%0AAsal%20Universitas%20%3A%20%0APertanyaan%2FMasalah%20%3A%20"
         >
           +62 851 5616 8499
@@ -48,9 +54,11 @@ export default async function Page({
 
       <Paper withBorder shadow="md" p={30} mt={24} radius="md">
         <RegistrationForm />
-        <Button variant="default" fullWidth mt="xl" component={Link} href="/">
-          Kembali ke Beranda
-        </Button>
+        <Link href="/" style={{ textDecoration: 'none' }}>
+          <Button variant="default" fullWidth mt="xl">
+            Kembali ke Beranda
+          </Button>
+        </Link>
       </Paper>
     </Container>
   );

@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
 
     // Revalidate each valid tag
     validTags.forEach(tag => {
-      revalidateTag(tag);
+      revalidateTag(tag, {});
     });
 
     return NextResponse.json({

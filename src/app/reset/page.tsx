@@ -25,9 +25,11 @@ export default function Page() {
       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
         <ResetPasswordForm />
 
-        <Button variant="default" fullWidth mt="xl" component={Link} href="/">
-          Kembali ke Beranda
-        </Button>
+        <Link href="/" style={{ textDecoration: 'none' }}>
+          <Button variant="default" fullWidth mt="xl">
+            Kembali ke Beranda
+          </Button>
+        </Link>
       </Paper>
     </Container>
   );

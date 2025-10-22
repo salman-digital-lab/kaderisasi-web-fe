@@ -170,23 +170,23 @@ export default async function ClubDetailPage(props: Props) {
                   </Title>
                 </Stack>
 
-                <Button
-                  size="lg"
-                  variant="white"
-                  color="blue"
-                  component={Link}
-                  href={`/clubs/registration-info/${club.id}`}
-                  rightSection={<IconArrowRight size={20} />}
-                  style={{
-                    fontWeight: 600,
-                    fontSize: "16px",
-                    height: "50px",
-                    paddingLeft: "32px",
-                    paddingRight: "32px",
-                  }}
-                >
-                  Daftar Sekarang
-                </Button>
+                <Link href={`/clubs/registration-info/${club.id}`} style={{ textDecoration: 'none' }}>
+                  <Button
+                    size="lg"
+                    variant="white"
+                    color="blue"
+                    rightSection={<IconArrowRight size={20} />}
+                    style={{
+                      fontWeight: 600,
+                      fontSize: "16px",
+                      height: "50px",
+                      paddingLeft: "32px",
+                      paddingRight: "32px",
+                    }}
+                  >
+                    Daftar Sekarang
+                  </Button>
+                </Link>
               </Stack>
             </Paper>
           </Container>

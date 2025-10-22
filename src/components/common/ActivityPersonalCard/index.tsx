@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import NextImage from "next/image";
-import { Card, Image, Text, Group, Badge, Button, Stack, Box } from "@mantine/core";
+import { Card, Text, Group, Badge, Button, Stack, Box } from "@mantine/core";
 
 type ActivityCardProps = {
   activityName: string;
@@ -20,8 +20,7 @@ export default function ActivityPersonalCard({
   return (
     <Card withBorder radius="md" p="md" h="100%">
       <Card.Section>
-        <Image
-          component={NextImage}
+        <NextImage
           blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mN0qAcAAQUAwRZaSmYAAAAASUVORK5CYII="
           placeholder="blur"
           src={
@@ -32,7 +31,7 @@ export default function ActivityPersonalCard({
           alt={activityName}
           height={200}
           width={400}
-          fit="cover"
+          style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
         />
       </Card.Section>
 
@@ -54,24 +53,16 @@ export default function ActivityPersonalCard({
       </Stack>
 
       <Stack mt="md" gap="xs">
-        <Button
-          component={Link}
-          href={`/activity/${slug}`}
-          radius="md"
-          variant="filled"
-          fullWidth
-        >
-          Lihat Detail
-        </Button>
-        <Button
-          component={Link}
-          href={`/activity/register/${slug}/edit-activity-form`}
-          radius="md"
-          variant="outline"
-          fullWidth
-        >
-          Edit Formulir
-        </Button>
+        <Link href={`/activity/${slug}`} style={{ textDecoration: 'none' }}>
+          <Button radius="md" variant="filled" fullWidth>
+            Lihat Detail
+          </Button>
+        </Link>
+        <Link href={`/activity/register/${slug}/edit-activity-form`} style={{ textDecoration: 'none' }}>
+          <Button radius="md" variant="outline" fullWidth>
+            Edit Formulir
+          </Button>
+        </Link>
       </Stack>
     </Card>
   );

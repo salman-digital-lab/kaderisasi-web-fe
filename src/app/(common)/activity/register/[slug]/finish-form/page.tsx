@@ -52,9 +52,11 @@ export default async function Page(props: {
             Silahkan menunggu hasil pendaftaran anda dan mengecek bagian
             kegiatan pada profil anda secara berkala.
           </Text>
-          <Button component={Link} href="/">
-            Kembali ke Beranda
-          </Button>
+          <Link href="/" style={{ textDecoration: 'none' }}>
+            <Button>
+              Kembali ke Beranda
+            </Button>
+          </Link>
         </Stack>
       </Paper>
     </Container>

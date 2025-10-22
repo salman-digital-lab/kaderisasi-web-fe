@@ -91,15 +91,15 @@ export default function RuangCurhatList({ data }: PersonalActivityDataProps) {
               Mulai konseling untuk mendapatkan dukungan dan bimbingan dalam mengatasi masalah Anda
             </Text>
           </Stack>
-          <Button
-            component={Link}
-            href="/consultation"
-            leftSection={<IconPlus size={16} />}
-            variant="filled"
-            size="md"
-          >
-            Mulai Konseling Pertama
-          </Button>
+          <Link href="/consultation" style={{ textDecoration: 'none' }}>
+            <Button
+              leftSection={<IconPlus size={16} />}
+              variant="filled"
+              size="md"
+            >
+              Mulai Konseling Pertama
+            </Button>
+          </Link>
         </Stack>
       </Paper>
     );
@@ -119,15 +119,15 @@ export default function RuangCurhatList({ data }: PersonalActivityDataProps) {
                 Total {stats.totalSessions} sesi • {stats.recentSessions} sesi dalam 30 hari terakhir
               </Text>
             </Box>
-            <Button
-              component={Link}
-              href="/consultation"
-              leftSection={<IconPlus size={16} />}
-              variant="light"
-              size="sm"
-            >
-              Curhat Baru
-            </Button>
+            <Link href="/consultation" style={{ textDecoration: 'none' }}>
+              <Button
+                leftSection={<IconPlus size={16} />}
+                variant="light"
+                size="sm"
+              >
+                Curhat Baru
+              </Button>
+            </Link>
           </Flex>
         </Box>
 

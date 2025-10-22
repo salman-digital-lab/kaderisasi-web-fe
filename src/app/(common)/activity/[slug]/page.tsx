@@ -252,16 +252,18 @@ export default async function Page(props: {
               !isLevelEligible ? (
                 <Button disabled>Jenjang Tidak Cukup</Button>
               ) : (
-                <Button
-                  component={Link}
+                <Link
                   href={
                     hasCustomForm
                       ? `/custom-form/activity/${activity?.id}`
                       : `/activity/register/${params.slug}/profile-data`
                   }
+                  style={{ textDecoration: 'none' }}
                 >
-                  Daftar Kegiatan
-                </Button>
+                  <Button>
+                    Daftar Kegiatan
+                  </Button>
+                </Link>
               )
             ) : null
           ) : (
@@ -269,12 +271,11 @@ export default async function Page(props: {
               <Text size="xs" c="dimmed">
                 Silahkan masuk terlebih dahulu
               </Text>
-              <Button
-                component={Link}
-                href={`/login?redirect=${process.env.NEXT_PUBLIC_APP_URL}/activity/${params.slug}`}
-              >
-                Masuk
-              </Button>
+              <Link href={`/login?redirect=${process.env.NEXT_PUBLIC_APP_URL}/activity/${params.slug}`} style={{ textDecoration: 'none'}}>
+                <Button fullWidth>
+                  Masuk
+                </Button>
+              </Link>
             </Stack>
           )}
         </Card>

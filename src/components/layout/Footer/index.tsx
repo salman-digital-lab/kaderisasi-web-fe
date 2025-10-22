@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import Image from "next/image";
 import { Text, Container, ActionIcon, Group, rem } from "@mantine/core";
 import {
@@ -10,7 +11,6 @@ import {
 import logo from "@/assets/bmka_logo_color.png";
 
 import classes from "./index.module.css";
-import Link from "next/link";
 
 const data = [
   {
@@ -59,7 +59,7 @@ export default function Footer() {
           wrap="nowrap"
         >
           <ActionIcon
-            component={Link}
+            component="a"
             href="#"
             size="lg"
             color="gray"
@@ -71,7 +71,7 @@ export default function Footer() {
             />
           </ActionIcon>
           <ActionIcon
-            component={Link}
+            component="a"
             href="#"
             size="lg"
             color="gray"
@@ -83,7 +83,7 @@ export default function Footer() {
             />
           </ActionIcon>
           <ActionIcon
-            component={Link}
+            component="a"
             href="#"
             size="lg"
             color="gray"

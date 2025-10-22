@@ -140,15 +140,15 @@ export default async function ClubRegistrationInfoPage(props: Props) {
 
         {/* Header Section with Club Info and Registration Status */}
         <Container size="md" className={classes.header}>
-          <Button
-            variant="light"
-            leftSection={<IconArrowLeft size={16} />}
-            component={Link}
-            href={`/clubs/${club.id}`}
-            mt="sm"
-          >
-            Kembali ke Detail
-          </Button>
+          <Link href={`/clubs/${club.id}`} style={{ textDecoration: 'none' }}>
+            <Button
+              variant="light"
+              leftSection={<IconArrowLeft size={16} />}
+              mt="sm"
+            >
+              Kembali ke Detail
+            </Button>
+          </Link>
           <Card className={classes.title} padding="lg" radius="md" withBorder>
             <Title order={1} size="h2">
               {club.name}
@@ -211,12 +211,11 @@ export default async function ClubRegistrationInfoPage(props: Props) {
                 <Text size="xs" c="dimmed" ta="center">
                   Silahkan masuk terlebih dahulu
                 </Text>
-                <Button
-                  component={Link}
-                  href={`/login?redirect=/clubs/registration-info/${params.id}`}
-                >
-                  Masuk
-                </Button>
+                <Link href={`/login?redirect=/clubs/registration-info/${params.id}`} style={{ textDecoration: 'none' }}>
+                  <Button>
+                    Masuk
+                  </Button>
+                </Link>
               </Stack>
             )}
           </Card>

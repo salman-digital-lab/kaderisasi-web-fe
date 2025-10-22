@@ -46,9 +46,11 @@ export default async function Home() {
             </Text>
 
             <Group mt={30}>
-              <Button size="md" component={Link} href="/activity">
-                Daftar Kegiatan Sekarang
-              </Button>
+              <Link href="/activity" style={{ textDecoration: 'none' }}>
+                <Button size="md">
+                  Daftar Kegiatan Sekarang
+                </Button>
+              </Link>
             </Group>
           </div>
           <Image
@@ -133,9 +135,11 @@ export default async function Home() {
         </SimpleGrid>
         {activities.length > 3 && (
           <Center>
-            <Button size="md" mt="md" component={Link} href="/activity">
-              Lihat Kegiatan Lainnya
-            </Button>
+            <Link href="/activity" style={{ textDecoration: 'none' }}>
+              <Button size="md" mt="md">
+                Lihat Kegiatan Lainnya
+              </Button>
+            </Link>
           </Center>
         )}
       </Container>
@@ -173,9 +177,11 @@ export default async function Home() {
             </SimpleGrid>
             {clubs.length > 3 && (
               <Center>
-                <Button size="md" mt="md" component={Link} href="/clubs">
-                  Lihat Unit Lainnya
-                </Button>
+                <Link href="/clubs" style={{ textDecoration: 'none' }}>
+                  <Button size="md" mt="md">
+                    Lihat Unit Lainnya
+                  </Button>
+                </Link>
               </Center>
             )}
           </>
@@ -205,14 +211,11 @@ export default async function Home() {
             sudah mendapatkan pelatihan dan bekal-bekal pengetahuan psikologi
             praktis untuk menjadi seorang konselor lho.
           </Text>
-          <Button
-            component={Link}
-            size="md"
-            href="/consultation"
-            w="max-content"
-          >
-            Ayo Curhat
-          </Button>
+          <Link href="/consultation" style={{ textDecoration: 'none' }}>
+            <Button size="md" w="max-content">
+              Ayo Curhat
+            </Button>
+          </Link>
         </Stack>
       </Container>
     </main>
