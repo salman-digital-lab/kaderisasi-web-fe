@@ -250,7 +250,7 @@ export default async function Page(props: {
           {sessionData.session ? (
             !isRegistered ? (
               !isLevelEligible ? (
-                <Button disabled>Jenjang Tidak Cukup</Button>
+                <Button disabled fullWidth>Jenjang Tidak Cukup</Button>
               ) : (
                 <Link
                   href={
@@ -260,7 +260,7 @@ export default async function Page(props: {
                   }
                   style={{ textDecoration: 'none' }}
                 >
-                  <Button>
+                  <Button fullWidth>
                     Daftar Kegiatan
                   </Button>
                 </Link>
