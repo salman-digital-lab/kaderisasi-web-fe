@@ -62,15 +62,9 @@ export default async function SuccessPage(props: {
         >
           <Stack gap="lg" align="center">
             <Alert 
-              icon={<IconCheck size={24} />} 
-              color="green" 
+              color="blue" 
               variant="light"
               w="100%"
-              styles={{
-                root: { 
-                  border: '2px solid var(--mantine-color-green-6)',
-                }
-              }}
             >
               <Title order={3} mb="xs">
                 {featureType === "independent_form"

@@ -1,14 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  Stack,
-  Title,
-  Text,
-  Stepper,
-  Box,
-  Alert,
-} from "@mantine/core";
+import { Stack, Title, Text, Stepper, Box, Alert } from "@mantine/core";
 import { IconInfoCircle } from "@tabler/icons-react";
 import { CustomForm } from "@/types/api/customForm";
 import { Member, PublicUser } from "@/types/model/members";
@@ -27,7 +20,10 @@ type CustomFormContentProps = {
     profile: Member;
   };
   provinceData?: Province[];
-  featureType: "activity_registration" | "club_registration" | "independent_form";
+  featureType:
+    | "activity_registration"
+    | "club_registration"
+    | "independent_form";
   featureId?: number;
 };
 
@@ -39,10 +35,10 @@ export default function CustomFormContent({
   featureId,
 }: CustomFormContentProps) {
   const router = useRouter();
-  
+
   // Create a unique storage key for this form
-  const storageKey = `customForm_${featureType}_${featureId || 'independent'}`;
-  
+  const storageKey = `customForm_${featureType}_${featureId || "independent"}`;
+
   // Use localStorage hook to persist form data
   const {
     formData: customFormData,
@@ -86,7 +82,7 @@ export default function CustomFormContent({
     // Submit the form
     try {
       setLoading(true);
-      
+
       await registerCustomForm({
         feature_type: featureType,
         feature_id: featureId,
@@ -105,7 +101,7 @@ export default function CustomFormContent({
 
       const type = typeMap[featureType];
       const successUrl = `/custom-form/${type}/${featureId || "0"}/success`;
-      
+
       router.push(successUrl);
     } catch (error) {
       if (error instanceof Error) showNotif(error.message, true);
@@ -140,24 +136,16 @@ export default function CustomFormContent({
             {customForm.form_name}
           </Title>
           {customForm.form_description && (
-            <Alert icon={<IconInfoCircle size={20} />} color="blue" variant="light" mb="md">
-              <Text size="sm" style={{ whiteSpace: "pre-wrap" }}>
-                {customForm.form_description}
-              </Text>
-            </Alert>
+            <Text size="sm" pb="md" style={{ whiteSpace: "pre-wrap" }}>
+              {customForm.form_description}
+            </Text>
           )}
-          <Text size="sm" c="dimmed" mb="md" hiddenFrom="sm">
+          <Text size="sm" c="dimmed" hiddenFrom="sm" mt="md">
             Langkah 1 dari {totalSteps}: Data Diri
           </Text>
         </Box>
 
-        <Stepper 
-          active={0} 
-          size="sm" 
-          mb="lg"
-          iconSize={32}
-          visibleFrom="sm"
-        >
+        <Stepper active={0} size="sm" mb="lg" iconSize={32} visibleFrom="sm">
           <Stepper.Step label="Data Diri" description="Lengkapi data diri" />
           {customFormSections.map((section, idx) => (
             <Stepper.Step
@@ -189,14 +177,15 @@ export default function CustomFormContent({
         <Title order={3} mb="xs">
           {customForm.form_name}
         </Title>
-        <Text size="sm" c="dimmed" mb="md" hiddenFrom="sm">
-          Langkah {currentStep + 1} dari {totalSteps}: {currentSection.section_name}
+        <Text size="sm" c="dimmed" hiddenFrom="sm">
+          Langkah {currentStep + 1} dari {totalSteps}:{" "}
+          {currentSection.section_name}
         </Text>
       </Box>
 
-      <Stepper 
-        active={currentStep} 
-        size="sm" 
+      <Stepper
+        active={currentStep}
+        size="sm"
         mb="lg"
         iconSize={32}
         visibleFrom="sm"
@@ -238,4 +227,3 @@ export default function CustomFormContent({
     </Stack>
   );
 }
-

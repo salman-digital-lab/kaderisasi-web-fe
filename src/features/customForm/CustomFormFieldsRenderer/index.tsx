@@ -21,6 +21,24 @@ import { useForm } from "@mantine/form";
 import { IconAlertCircle } from "@tabler/icons-react";
 import { CustomFormSection } from "@/types/api/customForm";
 
+// Helper function to render text with newlines
+const renderTextWithNewlines = (text: string) => {
+  if (!text) return text;
+  const lines = text.split("\n");
+  if (lines.length === 1) return text;
+
+  return (
+    <>
+      {lines.map((line, index) => (
+        <span key={index}>
+          {line}
+          {index < lines.length - 1 && <br />}
+        </span>
+      ))}
+    </>
+  );
+};  
+
 type CustomFormFieldsRendererProps = {
   section: CustomFormSection;
   sections: CustomFormSection[];
@@ -43,15 +61,23 @@ export default function CustomFormFieldsRenderer({
   isLastSection,
 }: CustomFormFieldsRendererProps) {
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
-  const [pendingValues, setPendingValues] = useState<Record<string, any> | null>(null);
+  const [pendingValues, setPendingValues] = useState<Record<
+    string,
+    any
+  > | null>(null);
 
   // Build initial values - combine all sections data
   const initialValues: Record<string, any> = { ...formData };
-  
+
   section.fields.forEach((field) => {
     if (initialValues[field.key] === undefined) {
       if (field.type === "checkbox") {
-        initialValues[field.key] = field.defaultValue || false;
+        // If checkbox has options, treat it as an array (multiple selection)
+        // Otherwise, treat it as a boolean (single checkbox)
+        initialValues[field.key] =
+          (field.options?.length ?? 0) > 0
+            ? field.defaultValue || []
+            : field.defaultValue || false;
       } else if (field.type === "multiselect") {
         initialValues[field.key] = field.defaultValue || [];
       } else {
@@ -65,51 +91,66 @@ export default function CustomFormFieldsRenderer({
     initialValues,
     validate: (values) => {
       const errors: Record<string, string> = {};
-      
+
       section.fields.forEach((field) => {
         if (field.required && !values[field.key]) {
           errors[field.key] = `${field.label} wajib diisi`;
         }
-        
+
         if (field.validation) {
           const val = values[field.key];
-          
+
           if (val !== undefined && val !== null && val !== "") {
-            if (field.validation.min !== undefined && Number(val) < field.validation.min) {
-              errors[field.key] = field.validation.customMessage || 
+            if (
+              field.validation.min !== undefined &&
+              Number(val) < field.validation.min
+            ) {
+              errors[field.key] =
+                field.validation.customMessage ||
                 `Minimal ${field.validation.min}`;
             }
-            
-            if (field.validation.max !== undefined && Number(val) > field.validation.max) {
-              errors[field.key] = field.validation.customMessage || 
+
+            if (
+              field.validation.max !== undefined &&
+              Number(val) > field.validation.max
+            ) {
+              errors[field.key] =
+                field.validation.customMessage ||
                 `Maksimal ${field.validation.max}`;
             }
-            
-            if (field.validation.minLength !== undefined && 
-                typeof val === "string" && 
-                val.length < field.validation.minLength) {
-              errors[field.key] = field.validation.customMessage || 
+
+            if (
+              field.validation.minLength !== undefined &&
+              typeof val === "string" &&
+              val.length < field.validation.minLength
+            ) {
+              errors[field.key] =
+                field.validation.customMessage ||
                 `Minimal ${field.validation.minLength} karakter`;
             }
-            
-            if (field.validation.maxLength !== undefined && 
-                typeof val === "string" && 
-                val.length > field.validation.maxLength) {
-              errors[field.key] = field.validation.customMessage || 
+
+            if (
+              field.validation.maxLength !== undefined &&
+              typeof val === "string" &&
+              val.length > field.validation.maxLength
+            ) {
+              errors[field.key] =
+                field.validation.customMessage ||
                 `Maksimal ${field.validation.maxLength} karakter`;
             }
-            
+
             if (field.validation.pattern) {
               const regex = new RegExp(field.validation.pattern);
               if (typeof val === "string" && !regex.test(val)) {
-                errors[field.key] = field.validation.customMessage || 
+                errors[field.key] =
+                  field.validation.customMessage ||
                   `Format ${field.label} tidak valid`;
               }
             }
           }
         }
       });
-      
+
       return errors;
     },
   });
@@ -118,9 +159,9 @@ export default function CustomFormFieldsRenderer({
     if (field.hidden) return null;
 
     const commonProps = {
-      label: field.label,
-      placeholder: field.placeholder || field.label,
-      description: field.helpText || field.description,
+      label: renderTextWithNewlines(field.label),
+      placeholder: (field.placeholder || field.label)?.replace(/\n/g, " "),
+      description: renderTextWithNewlines(field.helpText || field.description),
       required: field.required,
       disabled: field.disabled,
       ...form.getInputProps(field.key),
@@ -147,11 +188,13 @@ export default function CustomFormFieldsRenderer({
         return (
           <Select
             {...commonProps}
-            data={field.options?.map((opt: any) => ({
-              label: opt.label,
-              value: opt.value?.toString() || opt.label,
-              disabled: opt.disabled,
-            })) || []}
+            data={
+              field.options?.map((opt: any) => ({
+                label: opt.label,
+                value: opt.value?.toString() || opt.label,
+                disabled: opt.disabled,
+              })) || []
+            }
             searchable
           />
         );
@@ -160,11 +203,13 @@ export default function CustomFormFieldsRenderer({
         return (
           <Select
             {...commonProps}
-            data={field.options?.map((opt: any) => ({
-              label: opt.label,
-              value: opt.value?.toString() || opt.label,
-              disabled: opt.disabled,
-            })) || []}
+            data={
+              field.options?.map((opt: any) => ({
+                label: opt.label,
+                value: opt.value?.toString() || opt.label,
+                disabled: opt.disabled,
+              })) || []
+            }
             multiple
             searchable
           />
@@ -187,21 +232,34 @@ export default function CustomFormFieldsRenderer({
         );
 
       case "checkbox":
+        // If checkbox has options, render as Checkbox.Group (multiple selection)
+        // Otherwise, render as single checkbox
+        if (field.options?.length > 0) {
+          return (
+            <Checkbox.Group {...commonProps}>
+              <Stack gap="xs" mt="xs">
+                {field.options?.map((opt: any, idx: number) => (
+                  <Checkbox
+                    key={idx}
+                    value={opt.value?.toString() || opt.label}
+                    label={opt.label}
+                    disabled={opt.disabled}
+                  />
+                ))}
+              </Stack>
+            </Checkbox.Group>
+          );
+        }
         return (
           <Checkbox
             {...commonProps}
-            label={field.label}
-            description={field.helpText || field.description}
+            label={renderTextWithNewlines(field.label)}
+            description={renderTextWithNewlines(field.helpText || field.description)}
           />
         );
 
       case "date":
-        return (
-          <DateInput
-            {...commonProps}
-            valueFormat="DD/MM/YYYY"
-          />
-        );
+        return <DateInput {...commonProps} valueFormat="DD/MM/YYYY" />;
 
       default:
         return <TextInput {...commonProps} />;
@@ -249,26 +307,26 @@ export default function CustomFormFieldsRenderer({
             <div key={field.key}>{renderField(field)}</div>
           ))}
 
-          <Group 
-            justify="space-between" 
+          <Group
+            justify="space-between"
             mt="xl"
-            style={{ 
-              flexDirection: 'row',
-              gap: '0.5rem'
+            style={{
+              flexDirection: "row",
+              gap: "0.5rem",
             }}
           >
-            <Button 
-              variant="default" 
-              onClick={onBack} 
+            <Button
+              variant="default"
+              onClick={onBack}
               disabled={loading}
-              style={{ flex: '0 1 auto', minWidth: '100px' }}
+              style={{ flex: "0 1 auto", minWidth: "100px" }}
             >
               Kembali
             </Button>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               loading={loading}
-              style={{ flex: '1 1 auto', minWidth: '120px' }}
+              style={{ flex: "1 1 auto", minWidth: "120px" }}
             >
               {isLastSection ? "Kirim" : "Lanjutkan"}
             </Button>
@@ -299,17 +357,14 @@ export default function CustomFormFieldsRenderer({
           </Text>
 
           <Group justify="flex-end" gap="sm">
-            <Button 
-              variant="default" 
+            <Button
+              variant="default"
               onClick={handleCancelSubmit}
               disabled={loading}
             >
               Batal
             </Button>
-            <Button 
-              onClick={handleConfirmSubmit}
-              loading={loading}
-            >
+            <Button onClick={handleConfirmSubmit} loading={loading}>
               Ya, Kirim
             </Button>
           </Group>
@@ -318,4 +373,3 @@ export default function CustomFormFieldsRenderer({
     </>
   );
 }
-
