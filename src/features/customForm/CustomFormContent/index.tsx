@@ -58,7 +58,8 @@ export default function CustomFormContent({
   // Rest of the sections are custom form sections
   const customFormSections = customForm.form_schema.fields.slice(1);
 
-  const totalSteps = customFormSections.length + 1; // profile + custom sections
+  const hasCustomSections = customFormSections.length > 0;
+  const totalSteps = hasCustomSections ? customFormSections.length + 1 : 1; // profile + custom sections
 
   // Show notification when data is restored from localStorage
   useEffect(() => {
@@ -68,10 +69,43 @@ export default function CustomFormContent({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoaded]);
 
-  const handleProfileSubmit = () => {
-    // Profile data is already saved in CustomFormProfileSection
-    // Just move to the next step
-    setCurrentStep(1); // Move to first custom form section
+  const handleProfileSubmit = async (data?: Record<string, any>) => {
+    // If there are no custom sections, submit the form directly
+    if (!hasCustomSections) {
+      try {
+        setLoading(true);
+
+        await registerCustomForm({
+          feature_type: featureType,
+          feature_id: featureId,
+          custom_form_data: data || customFormData,
+        });
+
+        // Clear localStorage after successful submission
+        clearStorage();
+
+        // Redirect to success page
+        const typeMap = {
+          activity_registration: "activity",
+          club_registration: "club",
+          independent_form: "independent",
+        } as const;
+
+        const type = typeMap[featureType];
+        const successUrl = `/custom-form/${type}/${featureId || "0"}/success`;
+
+        router.push(successUrl);
+      } catch (error) {
+        if (error instanceof Error) showNotif(error.message, true);
+        if (typeof error === "string") showNotif(error, true);
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+
+    // If there are custom sections, move to the next step
+    setCurrentStep(1);
   };
 
   const handleCustomFormSubmit = async (data: Record<string, any>) => {
@@ -140,27 +174,33 @@ export default function CustomFormContent({
               {customForm.form_description}
             </Text>
           )}
-          <Text size="sm" c="dimmed" hiddenFrom="sm" mt="md">
-            Langkah 1 dari {totalSteps}: Data Diri
-          </Text>
+          {hasCustomSections && (
+            <Text size="sm" c="dimmed" hiddenFrom="sm" mt="md">
+              Langkah 1 dari {totalSteps}: Data Diri
+            </Text>
+          )}
         </Box>
 
-        <Stepper active={0} size="sm" mb="lg" iconSize={32} visibleFrom="sm">
-          <Stepper.Step label="Data Diri" description="Lengkapi data diri" />
-          {customFormSections.map((section, idx) => (
-            <Stepper.Step
-              key={idx}
-              label={section.section_name}
-              description={`Bagian ${idx + 1}`}
-            />
-          ))}
-        </Stepper>
+        {hasCustomSections && (
+          <Stepper active={0} size="sm" mb="lg" iconSize={32} visibleFrom="sm">
+            <Stepper.Step label="Data Diri" description="Lengkapi data diri" />
+            {customFormSections.map((section, idx) => (
+              <Stepper.Step
+                key={idx}
+                label={section.section_name}
+                description={`Bagian ${idx + 1}`}
+              />
+            ))}
+          </Stepper>
+        )}
 
         <CustomFormProfileSection
           profileFields={profileFields}
           profileData={profileData}
           provinceData={provinceData}
           onSubmit={handleProfileSubmit}
+          loading={loading}
+          isSingleSection={!hasCustomSections}
         />
       </Stack>
     );

@@ -1,6 +1,7 @@
 "use client";
 
-import { Button, Stack, TextInput, Select, Group, Title } from "@mantine/core";
+import { useState } from "react";
+import { Button, Stack, TextInput, Select, Group, Title, Modal, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { CustomFormField } from "@/types/api/customForm";
 import { Member, PublicUser } from "@/types/model/members";
@@ -17,8 +18,10 @@ type CustomFormProfileSectionProps = {
     profile: Member;
   };
   provinceData?: Province[];
-  onSubmit: () => void;
+  onSubmit: (data?: Record<string, any>) => void;
   onBack?: () => void;
+  loading?: boolean;
+  isSingleSection?: boolean;
 };
 
 export default function CustomFormProfileSection({
@@ -27,7 +30,11 @@ export default function CustomFormProfileSection({
   provinceData,
   onSubmit,
   onBack,
+  loading = false,
+  isSingleSection = false,
 }: CustomFormProfileSectionProps) {
+  const [confirmModalOpened, setConfirmModalOpened] = useState(false);
+  const [pendingValues, setPendingValues] = useState<Record<string, any> | null>(null);
   // Build initial values from profile data
   const initialValues: Record<string, any> = {};
   
@@ -207,6 +214,18 @@ export default function CustomFormProfileSection({
     }
   };
 
+  const handleFormSubmit = async (values: Record<string, any>) => {
+    // If single section, show confirmation modal
+    if (isSingleSection) {
+      setPendingValues(values);
+      setConfirmModalOpened(true);
+      return;
+    }
+    
+    // Otherwise, proceed with submission
+    await handleSubmit(values);
+  };
+
   const handleSubmit = async (values: Record<string, any>) => {
     // Save profile data directly to profile table
     try {
@@ -235,49 +254,88 @@ export default function CustomFormProfileSection({
 
       await editProfile(profileUpdateData);
       
-      // Just continue to next step
-      onSubmit();
+      // Pass form values to onSubmit (needed for single-section forms)
+      onSubmit(values);
     } catch (error) {
       if (error instanceof Error) showNotif(error.message, true);
       if (typeof error === "string") showNotif(error, true);
     }
   };
 
-  return (
-    <form onSubmit={form.onSubmit(handleSubmit)}>
-      <Stack gap="md">
-        <Title order={4}>Data Diri</Title>
-        
-        {profileFields.filter(f => !f.hidden).map((field) => (
-          <div key={field.key}>{renderField(field)}</div>
-        ))}
+  const handleConfirmSubmit = async () => {
+    if (pendingValues) {
+      setConfirmModalOpened(false);
+      await handleSubmit(pendingValues);
+    }
+  };
 
-        <Group 
-          justify={onBack ? "space-between" : "flex-end"} 
-          mt="xl"
-          style={{ 
-            flexDirection: 'row',
-            gap: '0.5rem'
-          }}
-        >
-          {onBack && (
-            <Button 
-              variant="default" 
-              onClick={onBack}
-              style={{ flex: '0 1 auto', minWidth: '100px' }}
-            >
-              Kembali
-            </Button>
-          )}
-          <Button 
-            type="submit"
-            style={{ flex: '1 1 auto', minWidth: '120px' }}
+  return (
+    <>
+      <form onSubmit={form.onSubmit(handleFormSubmit)}>
+        <Stack gap="md">
+          <Title order={4}>Data Diri</Title>
+          
+          {profileFields.filter(f => !f.hidden).map((field) => (
+            <div key={field.key}>{renderField(field)}</div>
+          ))}
+
+          <Group 
+            justify={onBack ? "space-between" : "flex-end"} 
+            mt="xl"
+            style={{ 
+              flexDirection: 'row',
+              gap: '0.5rem'
+            }}
           >
-            Lanjutkan
-          </Button>
-        </Group>
-      </Stack>
-    </form>
+            {onBack && (
+              <Button 
+                variant="default" 
+                onClick={onBack}
+                disabled={loading}
+                style={{ flex: '0 1 auto', minWidth: '100px' }}
+              >
+                Kembali
+              </Button>
+            )}
+            <Button 
+              type="submit"
+              loading={loading}
+              style={{ flex: '1 1 auto', minWidth: '120px' }}
+            >
+              {isSingleSection ? "Kirim" : "Lanjutkan"}
+            </Button>
+          </Group>
+        </Stack>
+      </form>
+
+      <Modal
+        opened={confirmModalOpened}
+        onClose={() => setConfirmModalOpened(false)}
+        title="Konfirmasi Pengiriman"
+        centered
+      >
+        <Stack gap="md">
+          <Text>
+            Apakah Anda yakin ingin mengirim formulir ini? Pastikan semua data yang Anda masukkan sudah benar.
+          </Text>
+          <Group justify="flex-end" mt="md">
+            <Button
+              variant="default"
+              onClick={() => setConfirmModalOpened(false)}
+              disabled={loading}
+            >
+              Batal
+            </Button>
+            <Button
+              onClick={handleConfirmSubmit}
+              loading={loading}
+            >
+              Ya, Kirim
+            </Button>
+          </Group>
+        </Stack>
+      </Modal>
+    </>
   );
 }
 
