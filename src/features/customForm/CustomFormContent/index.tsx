@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { Stack, Title, Text, Stepper, Box, Alert } from "@mantine/core";
-import { IconInfoCircle } from "@tabler/icons-react";
 import { CustomForm } from "@/types/api/customForm";
 import { Member, PublicUser } from "@/types/model/members";
 import { Province } from "@/types/model/province";
@@ -69,7 +68,7 @@ export default function CustomFormContent({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoaded]);
 
-  const handleProfileSubmit = async (data?: Record<string, any>) => {
+  const handleProfileSubmit = async () => {
     // If there are no custom sections, submit the form directly
     if (!hasCustomSections) {
       try {
@@ -78,7 +77,7 @@ export default function CustomFormContent({
         await registerCustomForm({
           feature_type: featureType,
           feature_id: featureId,
-          custom_form_data: data || customFormData,
+          custom_form_data: {},
         });
 
         // Clear localStorage after successful submission
