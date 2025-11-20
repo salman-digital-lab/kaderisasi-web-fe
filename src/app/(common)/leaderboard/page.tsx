@@ -1,10 +1,10 @@
 import LifetimeLeaderboard from "@/features/leaderboard/LifetimeLeaderboard";
 import illustration from "@/assets/leaderboardpage-1.svg";
 import Image from "next/image";
-import { Button, Group } from "@mantine/core";
+// import { Button, Group } from "@mantine/core";
 import classes from "./page.module.css";
 import { Container, Text } from "@mantine/core";
-import Link from "next/link";
+// import Link from "next/link";
 import { verifySession } from "@/functions/server/session";
 
 const LeaderboardPage = async () => {
@@ -26,13 +26,13 @@ const LeaderboardPage = async () => {
               besar sepanjang masa. Ayo submit prestasi akademik, kompetisi,
               dan organisasi mu disini!
             </Text>
-            <Group mt={30}>
+            {/* <Group mt={30}>
               <Link href="/leaderboard/submit" style={{ textDecoration: 'none' }}>
                 <Button size="md" className={classes.control}>
                   Masukkan Prestasi Anda Disini
                 </Button>
               </Link>
-            </Group>
+            </Group> */}
           </div>
           <Image
             width={400}
