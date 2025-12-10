@@ -46,10 +46,8 @@ export default async function Home() {
             </Text>
 
             <Group mt={30}>
-              <Link href="/activity" style={{ textDecoration: 'none' }}>
-                <Button size="md">
-                  Daftar Kegiatan Sekarang
-                </Button>
+              <Link href="/activity" style={{ textDecoration: "none" }}>
+                <Button size="md">Daftar Kegiatan Sekarang</Button>
               </Link>
             </Group>
           </div>
@@ -135,7 +133,7 @@ export default async function Home() {
         </SimpleGrid>
         {activities.length > 3 && (
           <Center>
-            <Link href="/activity" style={{ textDecoration: 'none' }}>
+            <Link href="/activity" style={{ textDecoration: "none" }}>
               <Button size="md" mt="md">
                 Lihat Kegiatan Lainnya
               </Button>
@@ -177,7 +175,7 @@ export default async function Home() {
             </SimpleGrid>
             {clubs.length > 3 && (
               <Center>
-                <Link href="/clubs" style={{ textDecoration: 'none' }}>
+                <Link href="/clubs" style={{ textDecoration: "none" }}>
                   <Button size="md" mt="md">
                     Lihat Unit Lainnya
                   </Button>
@@ -211,7 +209,7 @@ export default async function Home() {
             sudah mendapatkan pelatihan dan bekal-bekal pengetahuan psikologi
             praktis untuk menjadi seorang konselor lho.
           </Text>
-          <Link href="/consultation" style={{ textDecoration: 'none' }}>
+          <Link href="/consultation" style={{ textDecoration: "none" }}>
             <Button size="md" w="max-content">
               Ayo Curhat
             </Button>
