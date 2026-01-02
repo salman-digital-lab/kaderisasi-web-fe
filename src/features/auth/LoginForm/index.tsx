@@ -25,7 +25,10 @@ export default function LoginForm() {
     password: string;
   }) => {
     try {
-      const response = await login(loginFormData);
+      const response = await login({
+        ...loginFormData,
+        email: loginFormData.email.toLowerCase(),
+      });
       
       if (response.success) {
         showNotif("Anda berhasil masuk");
