@@ -1,4 +1,4 @@
-import { SimpleGrid, Center } from "@mantine/core";
+import { SimpleGrid, Center, Text } from "@mantine/core";
 import ActivityCard from "@/components/common/ActivityCard";
 import ActivityPagination from "@/features/activity/ActivityPagination";
 import { getActivities } from "@/services/activity";
@@ -10,10 +10,18 @@ type ActivityListContentProps = {
 export async function ActivityListContent({ searchParams }: ActivityListContentProps) {
   const activities = await getActivities({ per_page: "8", ...searchParams });
 
+  if (!activities?.data?.length) {
+    return (
+      <Center mt={50} py="xl">
+        <Text c="dimmed" size="lg">Tidak ada kegiatan</Text>
+      </Center>
+    );
+  }
+
   return (
     <>
       <SimpleGrid cols={{ base: 1, md: 4 }} spacing="md" mt={50}>
-        {activities?.data.map((activity) => (
+        {activities.data.map((activity) => (
           <ActivityCard
             key={activity.id}
             activityName={activity.name}
