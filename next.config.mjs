@@ -5,16 +5,16 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'minio.nzcodenplay.xyz',
+        hostname: 'nos.wjv-1.neo.id',
         port: '',
-        pathname: '/kaderisasi-test/**',
+        pathname: '/kaderisasi-prod/**',
         search: '',
       },
       {
         protocol: 'https',
         hostname: 'nos.wjv-1.neo.id',
         port: '',
-        pathname: '/kaderisasi-prod/**',
+        pathname: '/kaderisasi-test/**',
         search: '',
       },
       {
