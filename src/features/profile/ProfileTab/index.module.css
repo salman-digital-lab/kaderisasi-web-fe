@@ -94,3 +94,15 @@
   background: var(--mantine-color-blue-6) !important;
   color: var(--mantine-color-white) !important;
 }
+
+/* Mobile Profile Card - only visible on mobile */
+.mobileProfileCard {
+  display: none;
+  margin-top: 1rem;
+}
+
+@media (max-width: $mantine-breakpoint-md) {
+  .mobileProfileCard {
+    display: block;
+  }
+}

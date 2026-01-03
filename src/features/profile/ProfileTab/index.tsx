@@ -4,6 +4,7 @@ import { Tabs, TabsList, TabsPanel, TabsTab } from "@mantine/core";
 import PersonalDataForm from "../PersonalDataForm";
 import PersonalActivityData from "../PersonalActivityData";
 import PersonalAchievementData from "../PersonalAchievementData";
+import { ProfileCard } from "../ProfileCard";
 
 import classes from "./index.module.css";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -26,6 +27,7 @@ type ProfileTabProps = {
   activitiesRegistration: ({ activity: Activity } & Registrant)[] | undefined;
   ruangcurhatData: RuangCurhatData[] | undefined;
   achievements: Achievement[] | undefined;
+  token: string;
 };
 
 export function ProfileTab({
@@ -34,10 +36,12 @@ export function ProfileTab({
   activitiesRegistration,
   ruangcurhatData,
   achievements,
+  token,
 }: ProfileTabProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentTab = searchParams.get("tab");
+  const activeTab = currentTab ?? "profiledata";
 
   const onChangeTab = (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -49,7 +53,7 @@ export function ProfileTab({
   return (
     <Tabs
       variant="pills"
-      defaultValue={currentTab ?? "profiledata"}
+      value={activeTab}
       className={classes.tab}
       onChange={(val) => onChangeTab(val || "")}
     >
@@ -59,6 +63,19 @@ export function ProfileTab({
         <TabsTab value="ruangcurhat">Ruang Curhat</TabsTab>
         <TabsTab value="achievements">Prestasi</TabsTab>
       </TabsList>
+
+      {/* Profile Card - Mobile only, shown when Data Diri tab is active */}
+      {activeTab === "profiledata" && (
+        <ProfileCard
+          profileData={profileData}
+          activitiesRegistration={activitiesRegistration}
+          achievements={achievements}
+          token={token}
+          className={classes.mobileProfileCard}
+          showLogoutButton={false}
+        />
+      )}
+
       <TabsPanel value="profiledata" mt="md">
         <PersonalDataForm
           provinces={provinceData}

@@ -78,7 +78,7 @@ export default async function Page() {
     <main className={classes.container}>
       <Container size="lg" py="xl">
         {/* Header Section */}
-        <Box mb="xl">
+        <Box mb="xl" className={classes.headerSection}>
           <Title order={1} ta="center" mb="xs">
             Profil Saya
           </Title>
@@ -188,6 +188,7 @@ export default async function Page() {
               activitiesRegistration={activitiesRegistration}
               ruangcurhatData={ruangCurhatData}
               achievements={achievements}
+              token={sessionData.session || ""}
             />
           </Box>
         </SimpleGrid>
