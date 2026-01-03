@@ -1,20 +1,18 @@
 import Image from "next/image";
+import { Suspense } from "react";
 import {
   Container,
   Text,
-  Button,
   Title,
-  SimpleGrid,
   Stack,
   Center,
   TextInput,
 } from "@mantine/core";
 import classes from "./page.module.css";
-import ClubCard from "../../../components/common/ClubCard";
 import illustration from "@/assets/activitiespage-1.svg";
-import Link from "next/link";
-import { getClubs } from "../../../services/club";
 import { IconSearch } from "@tabler/icons-react";
+import ClubsListContent from "@/components/clubs/ClubsListContent";
+import ClubsListSkeleton from "@/components/clubs/ClubsListSkeleton";
 
 export const metadata = {
   title: "Unit Kegiatan & Kepanitiaan",
@@ -30,17 +28,9 @@ export default async function ClubsPage(props: Props) {
     ? searchParams.search[0]
     : searchParams.search || "";
 
-  // Request a very high number to get all clubs where is_show is true
-  // The backend will filter by isShow: true and return all matching clubs
-  // This ensures we display all available clubs instead of limiting to 12
-  const { data: clubs } = await getClubs({
-    page: "1",
-    per_page: "9999", // High number to ensure we get all clubs
-    search,
-  });
-
   return (
     <main>
+      {/* Hero Section - Static content, renders immediately */}
       <Container size="md">
         <div className={classes.inner}>
           <div className={classes.content}>
@@ -67,6 +57,7 @@ export default async function ClubsPage(props: Props) {
 
       <Container size="lg" py="xl">
         <Stack gap="xl">
+          {/* Header - Static content */}
           <div>
             <Title ta="center" mt="sm">
               Jelajahi Unit Kegiatan dan Kepanitiaan
@@ -84,6 +75,7 @@ export default async function ClubsPage(props: Props) {
             </Text>
           </div>
 
+          {/* Search - Client component, renders immediately */}
           <Center>
             <form style={{ width: "100%", maxWidth: "400px" }}>
               <TextInput
@@ -97,40 +89,10 @@ export default async function ClubsPage(props: Props) {
             </form>
           </Center>
 
-          {clubs.length > 0 ? (
-            <>
-              <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing="md">
-                {clubs.map((club) => (
-                  <ClubCard
-                    key={club.id}
-                    id={club.id}
-                    name={club.name}
-                    short_description={club.short_description}
-                    logo={club.logo}
-                    start_period={club.start_period}
-                    end_period={club.end_period}
-                  />
-                ))}
-              </SimpleGrid>
-            </>
-          ) : (
-            <Center py="xl">
-              <Stack align="center" gap="md">
-                <Text size="lg" c="dimmed">
-                  {search
-                    ? "Tidak ada unit kegiatan atau kepanitiaan yang ditemukan"
-                    : "Belum ada unit kegiatan atau kepanitiaan yang tersedia"}
-                </Text>
-                {search && (
-                  <Link href="/clubs" style={{ textDecoration: 'none' }}>
-                    <Button variant="outline">
-                      Lihat Semua Unit Kegiatan & Kepanitiaan
-                    </Button>
-                  </Link>
-                )}
-              </Stack>
-            </Center>
-          )}
+          {/* Clubs Grid - Streamed with Suspense */}
+          <Suspense key={search} fallback={<ClubsListSkeleton />}>
+            <ClubsListContent search={search} />
+          </Suspense>
         </Stack>
       </Container>
     </main>

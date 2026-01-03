@@ -1,16 +1,22 @@
-import LifetimeLeaderboard from "@/features/leaderboard/LifetimeLeaderboard";
 import illustration from "@/assets/leaderboardpage-1.svg";
 import Image from "next/image";
-// import { Button, Group } from "@mantine/core";
+import { Suspense } from "react";
 import classes from "./page.module.css";
 import { Container, Text } from "@mantine/core";
-// import Link from "next/link";
 import { verifySession } from "@/functions/server/session";
+import LeaderboardContent from "@/components/leaderboard/LeaderboardContent";
+import { LeaderboardSkeleton } from "@/components/skeletons";
 
-const LeaderboardPage = async () => {
+export const metadata = {
+  title: "Leaderboard",
+};
+
+export default async function LeaderboardPage() {
   const sessionData = await verifySession();
+
   return (
     <main>
+      {/* Hero Section - Static content, renders immediately */}
       <Container size="md">
         <div className={classes.inner}>
           <div className={classes.content}>
@@ -26,13 +32,6 @@ const LeaderboardPage = async () => {
               besar sepanjang masa. Ayo submit prestasi akademik, kompetisi,
               dan organisasi mu disini!
             </Text>
-            {/* <Group mt={30}>
-              <Link href="/leaderboard/submit" style={{ textDecoration: 'none' }}>
-                <Button size="md" className={classes.control}>
-                  Masukkan Prestasi Anda Disini
-                </Button>
-              </Link>
-            </Group> */}
           </div>
           <Image
             width={400}
@@ -43,12 +42,14 @@ const LeaderboardPage = async () => {
           />
         </div>
       </Container>
-      <LifetimeLeaderboard 
-        userSession={sessionData.session} 
-        userName={sessionData.name} 
-      />
+
+      {/* Leaderboard Content - Streamed with Suspense */}
+      <Suspense fallback={<LeaderboardSkeleton />}>
+        <LeaderboardContent
+          userSession={sessionData.session}
+          userName={sessionData.name}
+        />
+      </Suspense>
     </main>
   );
-};
-
-export default LeaderboardPage;
+}

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Suspense } from "react";
 import {
   Container,
   Text,
@@ -7,28 +8,23 @@ import {
   Title,
   SimpleGrid,
   Stack,
-  Center,
 } from "@mantine/core";
 import classes from "./index.module.css";
-import ActivityCard from "../../components/common/ActivityCard";
-import ClubCard from "../../components/common/ClubCard";
 import illustration from "@/assets/homepage-1.svg";
 import Link from "next/link";
-import { getActivities } from "../../services/activity";
-import { getClubs } from "../../services/club";
+import ActivitiesSection from "@/components/home/ActivitiesSection";
+import ClubsSection from "@/components/home/ClubsSection";
+import ActivitiesSectionSkeleton from "@/components/home/ActivitiesSectionSkeleton";
+import ClubsSectionSkeleton from "@/components/home/ClubsSectionSkeleton";
 
 export const metadata = {
   title: "Beranda",
 };
 
-export default async function Home() {
-  const [{ data: activities }, { data: clubs }] = await Promise.all([
-    getActivities({ per_page: "4" }),
-    getClubs({ per_page: "4" }),
-  ]);
-
+export default function Home() {
   return (
     <main>
+      {/* Hero Section - No data fetching, renders immediately */}
       <Container size="md">
         <div className={classes.inner}>
           <div className={classes.content}>
@@ -61,6 +57,7 @@ export default async function Home() {
         </div>
       </Container>
 
+      {/* Statistics Section - Static content, no data fetching */}
       <Container size="lg" py="xl">
         <Title ta="center" mt="sm" order={1}>
           Bersama Membangun Generasi Pemimpin Masa Depan
@@ -98,100 +95,17 @@ export default async function Home() {
         </SimpleGrid>
       </Container>
 
-      <Container size="lg" py="xl">
-        <Title ta="center" mt="sm">
-          Kegiatan Baru
-        </Title>
+      {/* Activities Section - Streamed with Suspense */}
+      <Suspense fallback={<ActivitiesSectionSkeleton />}>
+        <ActivitiesSection />
+      </Suspense>
 
-        <Text
-          c="dimmed"
-          className={classes.description_list}
-          ta="center"
-          mt="md"
-        >
-          Jelajahi dan saksikan peluang kegiatan yang dapat membantu Anda
-          mengasah potensi dan kontribusi unik Anda dalam lingkungan yang
-          mendukung.
-        </Text>
+      {/* Clubs Section - Streamed with Suspense */}
+      <Suspense fallback={<ClubsSectionSkeleton />}>
+        <ClubsSection />
+      </Suspense>
 
-        <SimpleGrid cols={{ base: 1, md: 4 }} spacing="md" mt={50}>
-          {activities.map((activity) => (
-            <ActivityCard
-              key={activity.id}
-              activityName={activity.name}
-              minimumLevel={activity.minimum_level}
-              registrationEnd={activity.registration_end}
-              slug={activity.slug}
-              imageUrl={
-                activity.additional_config?.images?.length &&
-                activity.additional_config?.images?.length > 0
-                  ? activity.additional_config.images[0]
-                  : undefined
-              }
-            />
-          ))}
-        </SimpleGrid>
-        {activities.length > 3 && (
-          <Center>
-            <Link href="/activity" style={{ textDecoration: "none" }}>
-              <Button size="md" mt="md">
-                Lihat Kegiatan Lainnya
-              </Button>
-            </Link>
-          </Center>
-        )}
-      </Container>
-
-      <Container size="lg" py="xl">
-        <Title ta="center" mt="sm">
-          Unit Kegiatan dan Kepanitiaan
-        </Title>
-
-        <Text
-          c="dimmed"
-          className={classes.description_list}
-          ta="center"
-          mt="md"
-        >
-          Bergabunglah dengan berbagai unit kegiatan dan kepanitiaan untuk
-          mengembangkan minat dan bakat Anda serta berkontribusi dalam membangun
-          generasi pemimpin masa depan.
-        </Text>
-
-        {clubs.length > 0 ? (
-          <>
-            <SimpleGrid cols={{ base: 1, md: 4 }} spacing="md" mt={50}>
-              {clubs.map((club) => (
-                <ClubCard
-                  key={club.id}
-                  id={club.id}
-                  name={club.name}
-                  short_description={club.short_description}
-                  logo={club.logo}
-                  start_period={club.start_period}
-                  end_period={club.end_period}
-                />
-              ))}
-            </SimpleGrid>
-            {clubs.length > 3 && (
-              <Center>
-                <Link href="/clubs" style={{ textDecoration: "none" }}>
-                  <Button size="md" mt="md">
-                    Lihat Unit Lainnya
-                  </Button>
-                </Link>
-              </Center>
-            )}
-          </>
-        ) : (
-          <Center py="xl">
-            <Text size="lg" c="dimmed">
-              Belum ada unit yang tersedia
-            </Text>
-          </Center>
-        )}
-      </Container>
-
+      {/* CTA Section - Static content, no data fetching */}
       <Container size="lg" py="xl">
         <Stack
           mt={150}
