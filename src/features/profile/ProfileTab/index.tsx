@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useTransition, useEffect } from "react";
 import { Tabs, TabsList, TabsPanel, TabsTab } from "@mantine/core";
 import PersonalDataForm from "../PersonalDataForm";
 import PersonalActivityData from "../PersonalActivityData";
@@ -15,6 +16,11 @@ import { RuangCurhatData } from "@/types/model/ruangcurhat";
 import { Activity, Registrant } from "@/types/model/activity";
 import { Member } from "@/types/model/members";
 import { Achievement } from "@/types/model/achievement";
+import {
+  PersonalDataFormSkeleton,
+  ActivityListSkeleton,
+  AchievementListSkeleton,
+} from "@/components/skeletons/ProfileTabSkeleton";
 
 type ProfileTabProps = {
   provinceData: Province[] | undefined;
@@ -40,14 +46,28 @@ export function ProfileTab({
 }: ProfileTabProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const currentTab = searchParams.get("tab");
-  const activeTab = currentTab ?? "profiledata";
+  const [isPending, startTransition] = useTransition();
+  
+  const urlTab = searchParams.get("tab") ?? "profiledata";
+  const [activeTab, setActiveTab] = useState(urlTab);
 
-  const onChangeTab = (value: string) => {
+  // Sync activeTab when URL changes (e.g., browser back/forward)
+  useEffect(() => {
+    if (!isPending) {
+      setActiveTab(urlTab);
+    }
+  }, [urlTab, isPending]);
+
+  const onChangeTab = (value: string | null) => {
+    const newTab = value || "profiledata";
+    setActiveTab(newTab); // Update immediately for instant feedback
+    
     const params = new URLSearchParams(searchParams.toString());
-    params.set("tab", String(value));
+    params.set("tab", newTab);
 
-    router.push("/profile?" + params, { scroll: false });
+    startTransition(() => {
+      router.push("/profile?" + params, { scroll: false });
+    });
   };
 
   return (
@@ -55,7 +75,7 @@ export function ProfileTab({
       variant="pills"
       value={activeTab}
       className={classes.tab}
-      onChange={(val) => onChangeTab(val || "")}
+      onChange={onChangeTab}
     >
       <TabsList>
         <TabsTab value="profiledata">Data Diri</TabsTab>
@@ -77,19 +97,35 @@ export function ProfileTab({
       )}
 
       <TabsPanel value="profiledata" mt="md">
-        <PersonalDataForm
-          provinces={provinceData}
-          profileData={profileData}
-        />
+        {isPending ? (
+          <PersonalDataFormSkeleton />
+        ) : (
+          <PersonalDataForm
+            provinces={provinceData}
+            profileData={profileData}
+          />
+        )}
       </TabsPanel>
       <TabsPanel value="activity" mt="md">
-        <PersonalActivityData activities={activitiesRegistration || []} />
+        {isPending ? (
+          <ActivityListSkeleton />
+        ) : (
+          <PersonalActivityData activities={activitiesRegistration || []} />
+        )}
       </TabsPanel>
       <TabsPanel value="ruangcurhat" mt="md">
-        <RuangCurhatList data={ruangcurhatData || []} />
+        {isPending ? (
+          <ActivityListSkeleton />
+        ) : (
+          <RuangCurhatList data={ruangcurhatData || []} />
+        )}
       </TabsPanel>
       <TabsPanel value="achievements" mt="md">
-        <PersonalAchievementData achievements={achievements || []} />
+        {isPending ? (
+          <AchievementListSkeleton />
+        ) : (
+          <PersonalAchievementData achievements={achievements || []} />
+        )}
       </TabsPanel>
     </Tabs>
   );
