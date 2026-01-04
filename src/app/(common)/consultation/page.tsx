@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Button, Container, Text, Title } from "@mantine/core";
+import { Button, Card, Container, Text, Title } from "@mantine/core";
 import classes from "./index.module.css";
 import illustration from "@/assets/ruangcurhatpage-1.svg";
 import RegistrationForm from "../../../features/ruangcurhat/RegistrationForm";
@@ -41,7 +41,7 @@ export default async function Home() {
                 Kaderisasi Salman
               </Text>
             </h1>
-            <Text c="dimmed" mt="md">
+            <Text c="dimmed" mt="md" className={classes.heroDescription}>
               Ruang Curhat merupakan layanan konseling sebaya yang diberikan
               oleh sesama Aktivis Salman. Aktivis Salman yang akan membersamai
               kamu, sudah mendapatkan pelatihan dan bekal-bekal pengetahuan
@@ -59,13 +59,13 @@ export default async function Home() {
       </Container>
 
       <Container size="lg" py="xl">
-        <Title ta="center" mt="sm">
+        <Title ta="center" mt="sm" className={classes.sectionTitle}>
           Pendaftaran Sesi Curhat
         </Title>
 
         <Text
           c="dimmed"
-          className={classes.description_list}
+          className={`${classes.description_list} ${classes.sectionDescription}`}
           ta="center"
           mt="md"
         >
@@ -83,17 +83,17 @@ export default async function Home() {
               gender={profileData?.profile.gender}
             />
           ) : (
-            <>
-              <Text ta="center" c="dimmed" fw="bold" fz="xl" mt="xl">
+            <Card padding="xl" radius="md" withBorder mt="xl">
+              <Text ta="center" c="dimmed" fw="bold" className={classes.loginPrompt}>
                 Silahkan masuk ke akun anda terlebih dahulu untuk menggunakan
-                ruang curhat
+                layanan Ruang Curhat
               </Text>
               <Link href={`/login?redirect=${process.env.NEXT_PUBLIC_APP_URL}/consultation`} style={{ textDecoration: 'none' }}>
                 <Button fullWidth mt="md">
                   Masuk
                 </Button>
               </Link>
-            </>
+            </Card>
           )}
         </Container>
       </Container>

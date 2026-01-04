@@ -40,7 +40,7 @@ export default async function ClubsPage(props: Props) {
                 Kaderisasi Salman
               </Text>
             </h1>
-            <Text c="dimmed" mt="md">
+            <Text c="dimmed" mt="md" className={classes.heroDescription}>
               Ayo bergabung dengan Unit yang sesuai dengan minat dan bakat kamu,
               untuk mengembangkan potensi diri dan berkontribusi bagi sesama.
             </Text>
@@ -59,12 +59,12 @@ export default async function ClubsPage(props: Props) {
         <Stack gap="xl">
           {/* Header - Static content */}
           <div>
-            <Title ta="center" mt="sm">
+            <Title ta="center" mt="sm" className={classes.sectionTitle}>
               Jelajahi Unit Kegiatan dan Kepanitiaan
             </Title>
             <Text
               c="dimmed"
-              className={classes.description_list}
+              className={`${classes.description_list} ${classes.sectionDescription}`}
               ta="center"
               mt="md"
               mb="xl"

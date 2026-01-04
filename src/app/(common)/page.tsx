@@ -34,7 +34,7 @@ export default function Home() {
                 Kaderisasi Salman
               </Text>
             </h1>
-            <Text c="dimmed" mt="md">
+            <Text c="dimmed" mt="md" className={classes.heroDescription}>
               Portal Aktivis Salman yang dikelola BMKA (Bidang Mahasiswa,
               Kaderisasi dan Alumni) Salman yang berfungsi sebagai pusat
               pendaftaran kegiatan di @kaderisasisalman. Program pembinaan dalam
@@ -59,12 +59,12 @@ export default function Home() {
 
       {/* Statistics Section - Static content, no data fetching */}
       <Container size="lg" py="xl">
-        <Title ta="center" mt="sm" order={1}>
+        <Title ta="center" mt="sm" order={1} className={classes.sectionTitle}>
           Bersama Membangun Generasi Pemimpin Masa Depan
         </Title>
         <Text
           c="dimmed"
-          className={classes.description_list}
+          className={`${classes.description_list} ${classes.sectionDescription}`}
           ta="center"
           mt="md"
           mb="xl"
@@ -75,20 +75,20 @@ export default function Home() {
           melalui Kaderisasi Salman. Kami telah membentuk generasi pemimpin masa
           depan yang siap menghadapi tantangan masa depan.
         </Text>
-        <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="xl" mb="xl">
+        <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="xl">
           <Stack align="center" justify="center">
-            <Title order={2} c="blue" size="h1">
+            <Title order={2} c="blue" size="h1" className={classes.statNumber}>
               45.000+
             </Title>
-            <Text c="dimmed" size="lg" ta="center">
+            <Text c="dimmed" size="lg" ta="center" className={classes.statLabel}>
               Mahasiswa
             </Text>
           </Stack>
           <Stack align="center" justify="center">
-            <Title order={2} c="blue" size="h1">
+            <Title order={2} c="blue" size="h1" className={classes.statNumber}>
               320+
             </Title>
-            <Text c="dimmed" size="lg" ta="center">
+            <Text c="dimmed" size="lg" ta="center" className={classes.statLabel}>
               Kampus
             </Text>
           </Stack>
@@ -114,10 +114,10 @@ export default function Home() {
           justify="center"
           gap="md"
         >
-          <Title className={classes.description_list} ta="center">
+          <Title className={`${classes.description_list} ${classes.sectionTitle}`} ta="center">
             Butuh Dukungan Kesehatan Mental? Ruang Curhat Ada Untukmu.
           </Title>
-          <Text ta="center">
+          <Text ta="center" className={classes.sectionDescription}>
             Ruang Curhat merupakan layanan konseling sebaya yang diberikan oleh
             sesama aktivis salman. Aktivis salman yang akan membersamai kamu,
             sudah mendapatkan pelatihan dan bekal-bekal pengetahuan psikologi

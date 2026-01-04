@@ -26,7 +26,7 @@ export default async function LeaderboardPage() {
                 Kaderisasi Salman
               </Text>
             </h1>
-            <Text c="dimmed" mt="md">
+            <Text c="dimmed" mt="md" className={classes.heroDescription}>
               Leaderboard merupakan website tempat menghimpun prestasi aktivis
               Salman. Pengguna dengan skoring tertinggi akan tampil dalam 10
               besar sepanjang masa. Ayo submit prestasi akademik, kompetisi,

@@ -3,6 +3,11 @@
   justify-content: space-between;
   padding-top: calc(var(--mantine-spacing-xl) * 4);
   padding-bottom: calc(var(--mantine-spacing-xl) * 4);
+
+  @media (max-width: $mantine-breakpoint-md) {
+    padding-top: calc(var(--mantine-spacing-xl) * 1.5);
+    padding-bottom: calc(var(--mantine-spacing-xl) * 1.5);
+  }
 }
 
 .content {
@@ -21,7 +26,7 @@
   line-height: 1.2;
   font-weight: 900;
 
-  @media (max-width: $mantine-breakpoint-xs) {
+  @media (max-width: $mantine-breakpoint-md) {
     font-size: rem(28px);
   }
 }
@@ -52,5 +57,23 @@
 
   @media (max-width: $mantine-breakpoint-xs) {
     font-size: var(--mantine-font-size-md);
+  }
+}
+
+.sectionTitle {
+  @media (max-width: $mantine-breakpoint-md) {
+    font-size: rem(20px);
+  }
+}
+
+.heroDescription {
+  @media (max-width: $mantine-breakpoint-md) {
+    font-size: var(--mantine-font-size-sm);
+  }
+}
+
+.sectionDescription {
+  @media (max-width: $mantine-breakpoint-md) {
+    font-size: var(--mantine-font-size-sm);
   }
 }

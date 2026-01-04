@@ -3,6 +3,11 @@
   justify-content: space-between;
   padding-top: calc(var(--mantine-spacing-xl) * 4);
   padding-bottom: calc(var(--mantine-spacing-xl) * 4);
+
+  @media (max-width: $mantine-breakpoint-md) {
+    padding-top: calc(var(--mantine-spacing-xl) * 1.5);
+    padding-bottom: calc(var(--mantine-spacing-xl) * 1.5);
+  }
 }
 
 .content {
@@ -20,6 +25,10 @@
   font-size: rem(44px);
   line-height: 1.2;
   font-weight: 900;
+
+  @media (max-width: $mantine-breakpoint-md) {
+    font-size: rem(28px);
+  }
 }
 
 .image {
@@ -44,5 +53,11 @@
     margin-top: var(--mantine-spacing-sm);
     margin-left: auto;
     margin-right: auto;
+  }
+}
+
+.heroDescription {
+  @media (max-width: $mantine-breakpoint-md) {
+    font-size: var(--mantine-font-size-sm);
   }
 }

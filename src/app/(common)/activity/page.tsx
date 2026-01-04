@@ -30,7 +30,7 @@ export default async function Page(
                 Kaderisasi Salman
               </Text>
             </h1>
-            <Text c="dimmed" mt="md">
+            <Text c="dimmed" mt="md" className={classes.heroDescription}>
               Kegiatan di kaderisasi salman merupakan kegiatan yang diperuntukan
               untuk aktivis yang terdaftar menjadi kader salman. Kegiatan
               meliputi kegiatan kaderisasi, pelatihan, keasramaan dan lain-lain.

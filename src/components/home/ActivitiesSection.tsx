@@ -1,4 +1,4 @@
-import { SimpleGrid, Center, Button, Title, Text, Container } from "@mantine/core";
+import { SimpleGrid, Center, Button, Title, Text, Container, Card } from "@mantine/core";
 import Link from "next/link";
 import ActivityCard from "@/components/common/ActivityCard";
 import { getActivities } from "@/services/activity";
@@ -24,31 +24,41 @@ export async function ActivitiesSection() {
         mendukung.
       </Text>
 
-      <SimpleGrid cols={{ base: 1, md: 4 }} spacing="md" mt={50}>
-        {activities.map((activity) => (
-          <ActivityCard
-            key={activity.id}
-            activityName={activity.name}
-            minimumLevel={activity.minimum_level}
-            registrationEnd={activity.registration_end}
-            slug={activity.slug}
-            imageUrl={
-              activity.additional_config?.images?.length &&
-              activity.additional_config?.images?.length > 0
-                ? activity.additional_config.images[0]
-                : undefined
-            }
-          />
-        ))}
-      </SimpleGrid>
-      {activities.length > 3 && (
-        <Center>
-          <Link href="/activity" style={{ textDecoration: "none" }}>
-            <Button size="md" mt="md">
-              Lihat Kegiatan Lainnya
-            </Button>
-          </Link>
-        </Center>
+      {activities.length > 0 ? (
+        <>
+          <SimpleGrid cols={{ base: 1, md: 4 }} spacing="md" mt={50}>
+            {activities.map((activity) => (
+              <ActivityCard
+                key={activity.id}
+                activityName={activity.name}
+                minimumLevel={activity.minimum_level}
+                registrationEnd={activity.registration_end}
+                slug={activity.slug}
+                imageUrl={
+                  activity.additional_config?.images?.length &&
+                  activity.additional_config?.images?.length > 0
+                    ? activity.additional_config.images[0]
+                    : undefined
+                }
+              />
+            ))}
+          </SimpleGrid>
+          {activities.length > 3 && (
+            <Center>
+              <Link href="/activity" style={{ textDecoration: "none" }}>
+                <Button size="md" mt="md">
+                  Lihat Kegiatan Lainnya
+                </Button>
+              </Link>
+            </Center>
+          )}
+        </>
+      ) : (
+        <Card padding="xl" radius="md" withBorder mt="xl" w="fit-content" mx="auto">
+          <Text ta="center" c="dimmed" fz="md">
+            Belum ada kegiatan baru saat ini. Nantikan kegiatan menarik dari kami!
+          </Text>
+        </Card>
       )}
     </Container>
   );
