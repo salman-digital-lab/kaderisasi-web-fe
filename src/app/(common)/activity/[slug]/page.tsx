@@ -106,7 +106,7 @@ export default async function Page(props: {
         params,
       );
     }
-    
+
     // Check if activity has a custom form
     if (activity?.id) {
       try {
@@ -249,7 +249,9 @@ export default async function Page(props: {
           {sessionData.session ? (
             !isRegistered ? (
               !isLevelEligible ? (
-                <Button disabled fullWidth>Jenjang Tidak Cukup</Button>
+                <Button disabled fullWidth>
+                  Jenjang Tidak Cukup
+                </Button>
               ) : (
                 <Link
                   href={
@@ -257,30 +259,21 @@ export default async function Page(props: {
                       ? `/custom-form/activity/${activity?.id}`
                       : `/activity/register/${params.slug}/profile-data`
                   }
-                  style={{ textDecoration: 'none' }}
+                  style={{ textDecoration: "none" }}
                 >
-                  <Button fullWidth>
-                    Daftar Kegiatan
-                  </Button>
+                  <Button fullWidth>Daftar Kegiatan</Button>
                 </Link>
               )
             ) : null
           ) : (
             <Stack gap="xs">
-              <Text size="xs" c="dimmed">
-                Silahkan masuk terlebih dahulu
-              </Text>
-              <Link 
-                href={`/login?redirect=${process.env.NEXT_PUBLIC_APP_URL}${
-                  hasCustomForm
-                    ? `/custom-form/activity/${activity?.id}`
-                    : `/activity/register/${params.slug}/profile-data`
-                }`} 
-                style={{ textDecoration: 'none'}}
+              <Link
+                href={`/login?redirect=${
+                  process.env.NEXT_PUBLIC_APP_URL
+                }${`/custom-form/activity/${activity?.id}`}`}
+                style={{ textDecoration: "none" }}
               >
-                <Button fullWidth>
-                  Daftar Kegiatan
-                </Button>
+                <Button fullWidth>Daftar Kegiatan</Button>
               </Link>
             </Stack>
           )}
