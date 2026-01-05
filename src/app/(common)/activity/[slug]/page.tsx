@@ -270,9 +270,16 @@ export default async function Page(props: {
               <Text size="xs" c="dimmed">
                 Silahkan masuk terlebih dahulu
               </Text>
-              <Link href={`/login?redirect=${process.env.NEXT_PUBLIC_APP_URL}/activity/${params.slug}`} style={{ textDecoration: 'none'}}>
+              <Link 
+                href={`/login?redirect=${process.env.NEXT_PUBLIC_APP_URL}${
+                  hasCustomForm
+                    ? `/custom-form/activity/${activity?.id}`
+                    : `/activity/register/${params.slug}/profile-data`
+                }`} 
+                style={{ textDecoration: 'none'}}
+              >
                 <Button fullWidth>
-                  Masuk
+                  Daftar Kegiatan
                 </Button>
               </Link>
             </Stack>
