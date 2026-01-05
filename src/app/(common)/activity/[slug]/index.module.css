@@ -1,6 +1,24 @@
+.carousel-container {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+
+  @media (max-width: $mantine-breakpoint-sm) {
+    max-width: 100%;
+    padding: 0;
+  }
+}
+
 .carousel-control {
   background-color: var(--mantine-color-blue-3);
   opacity: 50%;
+
+  @media (max-width: $mantine-breakpoint-sm) {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+  }
 }
 
 .carousel-control:hover {
@@ -16,6 +34,26 @@
 .carousel-indicator[data-active] {
   background-color: var(--mantine-color-blue-6);
   opacity: 75%;
+}
+
+.carousel-image {
+  height: 700px;
+  object-fit: contain;
+
+  @media (max-width: $mantine-breakpoint-sm) {
+    height: auto;
+    aspect-ratio: 4 / 5;
+    object-fit: contain;
+    width: 100%;
+  }
+}
+
+.carousel-slide {
+  @media (max-width: $mantine-breakpoint-sm) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 .header {
@@ -62,4 +100,12 @@
   text-transform: uppercase;
   font-size: var(--mantine-font-size-xs);
   font-weight: 700;
+}
+
+.main-stack {
+  margin-top: var(--mantine-spacing-xl);
+
+  @media (max-width: $mantine-breakpoint-sm) {
+    margin-top: var(--mantine-spacing-sm);
+  }
 }

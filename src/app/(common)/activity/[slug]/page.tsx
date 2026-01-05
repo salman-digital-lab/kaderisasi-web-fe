@@ -137,12 +137,13 @@ export default async function Page(props: {
   );
 
   return (
-    <Stack component="main" mt="xl">
-      <Container size="xs">
+    <Stack component="main" className={classes["main-stack"]}>
+      <Container size="xs" className={classes["carousel-container"]}>
         <Carousel
           classNames={{
             control: classes["carousel-control"],
             indicator: classes["carousel-indicator"],
+            slide: classes["carousel-slide"],
           }}
           slideGap="md"
           withIndicators
@@ -162,8 +163,7 @@ export default async function Page(props: {
                 <Image
                   src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${image}`}
                   alt="Activity Banner"
-                  h={700}
-                  fit="contain"
+                  className={classes["carousel-image"]}
                   fallbackSrc={
                     "https://placehold.co/700x700?text=" + activity?.name
                   }
@@ -175,8 +175,7 @@ export default async function Page(props: {
               <Image
                 src={"https://placehold.co/700x700?text=" + activity?.name}
                 alt="Activity Banner"
-                h={700}
-                fit="contain"
+                className={classes["carousel-image"]}
               />
             </CarouselSlide>
           )}
