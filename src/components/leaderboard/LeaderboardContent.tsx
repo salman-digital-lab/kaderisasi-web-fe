@@ -41,17 +41,21 @@ export async function LeaderboardContent({
   let error: string | null = null;
 
   try {
-    const response = await getLifetimeLeaderboard(1, 10);
-    leaderboard = response.data.data;
+    const leaderboardPromise = getLifetimeLeaderboard(1, 10);
+    const userRankPromise = userSession
+      ? getMyLifetimeRank(userSession)
+      : Promise.resolve(null);
 
-    if (userSession) {
-      try {
-        const rankResponse = await getMyLifetimeRank(userSession);
-        userRank = rankResponse.data.rank;
-        userScore = rankResponse.data.score;
-      } catch (rankError) {
-        console.error("Error fetching user rank:", rankError);
-      }
+    const [leaderboardResponse, rankResponse] = await Promise.all([
+      leaderboardPromise,
+      userRankPromise,
+    ]);
+
+    leaderboard = leaderboardResponse.data.data;
+
+    if (rankResponse && rankResponse.data) {
+      userRank = rankResponse.data.rank;
+      userScore = rankResponse.data.score;
     }
   } catch (err) {
     error = "Gagal memuat data leaderboard. Silakan coba lagi nanti.";
@@ -111,9 +115,9 @@ export async function LeaderboardContent({
             shadow="xs"
             p="md"
             withBorder
-            className={`${styles.leaderboardItem} ${getPositionClass(
-              index
-            )} ${isCurrentUser(entry) ? styles.currentUser : ""}`}
+            className={`${styles.leaderboardItem} ${getPositionClass(index)} ${
+              isCurrentUser(entry) ? styles.currentUser : ""
+            }`}
           >
             <Group w="100%" justify="space-between">
               <Group flex={1} gap="md">
@@ -177,4 +181,3 @@ export async function LeaderboardContent({
 }
 
 export default LeaderboardContent;
-

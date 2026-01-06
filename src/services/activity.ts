@@ -25,7 +25,7 @@ export const getActivities = async (props: GetActivitiesReq) => {
       headers: {
         "Content-Type": "application/json",
       },
-      cache: "no-store",
+      next: { revalidate: 60 },
     },
   );
 
@@ -40,7 +40,7 @@ export const getActivity = async (props: GetActivityReq) => {
       headers: {
         "Content-Type": "application/json",
       },
-      cache: "no-store",
+      next: { revalidate: 60 },
     },
   );
 
@@ -71,7 +71,10 @@ export const getActivityRegistrationData = async (
   props: GetActivityRegistrationDataReq,
 ) => {
   const response = await fetcher<GetActivityRegistrationDataResp>(
-    process.env.NEXT_PUBLIC_BE_API + "/activities/" + props.slug + "/registration",
+    process.env.NEXT_PUBLIC_BE_API +
+      "/activities/" +
+      props.slug +
+      "/registration",
     {
       method: "GET",
       headers: {

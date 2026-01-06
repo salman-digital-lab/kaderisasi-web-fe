@@ -22,7 +22,7 @@ export const getMonthlyLeaderboard = async (
     process.env.NEXT_PUBLIC_BE_API +
       `/achievements/monthly?${params.toString()}`,
     {
-      cache: "no-store",
+      next: { revalidate: 60 },
     },
   );
 
@@ -42,7 +42,7 @@ export const getLifetimeLeaderboard = async (
     process.env.NEXT_PUBLIC_BE_API +
       `/achievements/lifetime?${params.toString()}`,
     {
-      cache: "no-store",
+      next: { revalidate: 60 },
     },
   );
 
@@ -106,15 +106,12 @@ export const getMyLifetimeRank = async (token: string) => {
       score: number;
       message?: string;
     };
-  }>(
-    process.env.NEXT_PUBLIC_BE_API + `/achievements/my-rank`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      cache: "no-store",
+  }>(process.env.NEXT_PUBLIC_BE_API + `/achievements/my-rank`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
     },
-  );
+    next: { revalidate: 60 },
+  });
 
   return response;
 };
