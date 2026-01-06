@@ -5,41 +5,33 @@ export type FetcherOptions = RequestInit & {
 
 export default async function fetcher<T>(input: string, init?: FetcherOptions) {
   try {
-    // Default cache settings based on HTTP method
-    const defaultCacheSettings = {
-      GET: {
-        cache: 'force-cache' as RequestCache,
-        revalidate: 3600, // 1 hour default for GET requests
-      },
-      POST: {
-        cache: 'no-store' as RequestCache,
-      },
-      PUT: {
-        cache: 'no-store' as RequestCache,
-      },
-      DELETE: {
-        cache: 'no-store' as RequestCache,
-      },
-    };
+    // Extract custom properties that need special handling
+    const { revalidate, tags, ...fetchInit } = init || {};
 
-    const method = init?.method || 'GET';
-    const cacheSettings = defaultCacheSettings[method as keyof typeof defaultCacheSettings];
+    // Build next config only if custom properties are provided
+    const nextConfig =
+      revalidate !== undefined || tags !== undefined
+        ? {
+            next: {
+              ...init?.next, // Preserve any existing next config
+              ...(revalidate !== undefined && { revalidate }),
+              ...(tags !== undefined && { tags }),
+            },
+          }
+        : init?.next
+        ? { next: init.next }
+        : {};
 
-    // Merge default cache settings with provided options
     const fetchOptions: RequestInit = {
-      ...cacheSettings,
-      ...init,
-      next: {
-        revalidate: init?.revalidate,
-        tags: init?.tags,
-      },
+      ...fetchInit,
+      ...nextConfig,
     };
 
     const response = await fetch(input, fetchOptions);
-    
+
     try {
-      const parsedResponse = await response.json() as T;
-      
+      const parsedResponse = (await response.json()) as T;
+
       if (response.ok) {
         return parsedResponse;
       } else {
@@ -49,14 +41,16 @@ export default async function fetcher<T>(input: string, init?: FetcherOptions) {
             "message" in parsedResponse &&
             parsedResponse?.message) ||
           response.statusText;
-          
+
         return Promise.reject(error);
       }
     } catch (error) {
-      return Promise.reject(response.statusText || 'Failed to parse response');
+      return Promise.reject(response.statusText || "Failed to parse response");
     }
   } catch (error) {
     // Handle network-level errors like ECONNREFUSED
-    return Promise.reject(error instanceof Error ? error.message : 'Network error occurred');
+    return Promise.reject(
+      error instanceof Error ? error.message : "Network error occurred",
+    );
   }
 }
