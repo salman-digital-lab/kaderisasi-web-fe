@@ -24,12 +24,10 @@ import {
   IconUsers,
   IconMessageCircle,
   IconTrophy,
-  IconChevronRight,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import classes from "../index.module.css";
 import logout from "../../../../functions/server/logout";
 
 type NavDrawer = {
@@ -87,18 +85,18 @@ export default function NavDrawer({
                   "light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6))",
               }}
             >
-              <Stack gap="sm">
-                <Group gap="sm">
+              <Stack gap="md">
+                <Group gap="sm" wrap="nowrap">
                   <Avatar
                     radius="xl"
-                    size="md"
+                    size={48}
                     src={
                       session.profilePicture && session.profilePicture !== ""
                         ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${session.profilePicture}`
                         : undefined
                     }
                   />
-                  <Box style={{ flex: 1 }}>
+                  <Box style={{ flex: 1, minWidth: 0 }}>
                     <Text size="sm" fw={600} lineClamp={1}>
                       {session.name}
                     </Text>
@@ -107,13 +105,41 @@ export default function NavDrawer({
                     </Text>
                   </Box>
                 </Group>
+                <Group gap="xs" grow>
+                  <Link href="/profile" style={{ textDecoration: "none" }}>
+                    <Button
+                      variant="light"
+                      color="blue"
+                      leftSection={<IconSettings size={16} />}
+                      radius="md"
+                      size="sm"
+                      fullWidth
+                      onClick={closeDrawer}
+                    >
+                      Profil
+                    </Button>
+                  </Link>
+                  <Button
+                    variant="light"
+                    color="red"
+                    leftSection={<IconLogout size={16} />}
+                    radius="md"
+                    size="sm"
+                    onClick={() => {
+                      logout();
+                      closeDrawer();
+                    }}
+                  >
+                    Keluar
+                  </Button>
+                </Group>
               </Stack>
             </Card>
           </Box>
         ) : (
           <Box px="md" py="lg">
             <Stack gap="xs">
-              <Link href="/login" style={{ textDecoration: 'none' }}>
+              <Link href="/login" style={{ textDecoration: "none" }}>
                 <Button
                   variant="filled"
                   radius="md"
@@ -123,7 +149,7 @@ export default function NavDrawer({
                   Masuk
                 </Button>
               </Link>
-              <Link href="/register" style={{ textDecoration: 'none' }}>
+              <Link href="/register" style={{ textDecoration: "none" }}>
                 <Button
                   variant="default"
                   radius="md"
@@ -147,7 +173,11 @@ export default function NavDrawer({
               const Icon = item.icon;
 
               return (
-                <Link key={item.href} href={item.href} style={{ textDecoration: 'none' }}>
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  style={{ textDecoration: "none" }}
+                >
                   <UnstyledButton
                     onClick={closeDrawer}
                     px="md"
@@ -180,7 +210,11 @@ export default function NavDrawer({
                     >
                       <Icon style={{ width: rem(18), height: rem(18) }} />
                     </ThemeIcon>
-                    <Text size="sm" fw={isActive ? 600 : 500} style={{ flex: 1 }}>
+                    <Text
+                      size="sm"
+                      fw={isActive ? 600 : 500}
+                      style={{ flex: 1 }}
+                    >
                       {item.label}
                     </Text>
                   </UnstyledButton>
@@ -189,42 +223,6 @@ export default function NavDrawer({
             })}
           </Stack>
         </Box>
-
-        {/* Profile Actions (only if logged in) */}
-        {session.session && (
-          <>
-            <Divider my="sm" />
-            <Box px="md" py="sm">
-              <Stack gap="xs">
-                <Link href="/profile" style={{ textDecoration: 'none' }}>
-                  <Button
-                    variant="light"
-                    color="blue"
-                    leftSection={<IconSettings size={16} />}
-                    radius="md"
-                    fullWidth
-                    onClick={closeDrawer}
-                  >
-                    Profil Saya
-                  </Button>
-                </Link>
-                <Button
-                  variant="light"
-                  color="red"
-                  leftSection={<IconLogout size={16} />}
-                  radius="md"
-                  fullWidth
-                  onClick={() => {
-                    logout();
-                    closeDrawer();
-                  }}
-                >
-                  Keluar
-                </Button>
-              </Stack>
-            </Box>
-          </>
-        )}
       </ScrollArea>
     </Drawer>
   );
