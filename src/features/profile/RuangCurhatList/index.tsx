@@ -41,19 +41,24 @@ export default function RuangCurhatList({ data }: PersonalActivityDataProps) {
   // Calculate statistics
   const stats = useMemo(() => {
     const totalSessions = data.length;
-    const completedCount = data.filter(session => session.status === PROBLEM_STATUS_ENUM.SUDAH_DITANGANI).length;
-    const pendingCount = data.filter(session => 
-      session.status === PROBLEM_STATUS_ENUM.SEDANG_MEMILIH_JADWAL || 
-      session.status === PROBLEM_STATUS_ENUM.SEDANG_DITANGANI
+    const completedCount = data.filter(
+      (session) => session.status === PROBLEM_STATUS_ENUM.SUDAH_DITANGANI,
     ).length;
-    const cancelledCount = data.filter(session => session.status === PROBLEM_STATUS_ENUM.BATAL).length;
-    const recentSessions = data.filter(session => {
+    const pendingCount = data.filter(
+      (session) =>
+        session.status === PROBLEM_STATUS_ENUM.SEDANG_MEMILIH_JADWAL ||
+        session.status === PROBLEM_STATUS_ENUM.SEDANG_DITANGANI,
+    ).length;
+    const cancelledCount = data.filter(
+      (session) => session.status === PROBLEM_STATUS_ENUM.BATAL,
+    ).length;
+    const recentSessions = data.filter((session) => {
       const sessionDate = new Date(session.created_at);
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
       return sessionDate >= thirtyDaysAgo;
     }).length;
-    
+
     return {
       totalSessions,
       completedCount,
@@ -71,7 +76,8 @@ export default function RuangCurhatList({ data }: PersonalActivityDataProps) {
         session.problem_category.toLowerCase().includes(searchLower) ||
         session.problem_description.toLowerCase().includes(searchLower) ||
         session.handling_technic.toLowerCase().includes(searchLower) ||
-        (session.owner_name && session.owner_name.toLowerCase().includes(searchLower))
+        (session.owner_name &&
+          session.owner_name.toLowerCase().includes(searchLower))
       );
     });
   }, [data, searchQuery]);
@@ -88,10 +94,11 @@ export default function RuangCurhatList({ data }: PersonalActivityDataProps) {
               Belum Ada Sesi Konseling
             </Text>
             <Text size="sm" c="dimmed" ta="center" maw={300}>
-              Mulai konseling untuk mendapatkan dukungan dan bimbingan dalam mengatasi masalah Anda
+              Mulai konseling untuk mendapatkan dukungan dan bimbingan dalam
+              mengatasi masalah Anda
             </Text>
           </Stack>
-          <Link href="/consultation" style={{ textDecoration: 'none' }}>
+          <Link href="/consultation" style={{ textDecoration: "none" }}>
             <Button
               leftSection={<IconPlus size={16} />}
               variant="filled"
@@ -106,7 +113,19 @@ export default function RuangCurhatList({ data }: PersonalActivityDataProps) {
   }
 
   return (
-    <Paper radius="md" withBorder p="lg">
+    <Paper
+      p={{ base: 0, sm: "lg" }}
+      styles={{
+        root: {
+          border: "none",
+          borderRadius: 0,
+          "@media (min-width: 576px)": {
+            border: "1px solid var(--mantine-color-default-border)",
+            borderRadius: "var(--mantine-radius-md)",
+          },
+        },
+      }}
+    >
       <Stack gap="md">
         {/* Header with Statistics */}
         <Box>
@@ -116,10 +135,11 @@ export default function RuangCurhatList({ data }: PersonalActivityDataProps) {
                 Sesi Ruang Curhat Saya
               </Text>
               <Text size="sm" c="dimmed">
-                Total {stats.totalSessions} sesi • {stats.recentSessions} sesi dalam 30 hari terakhir
+                Total {stats.totalSessions} sesi • {stats.recentSessions} sesi
+                dalam 30 hari terakhir
               </Text>
             </Box>
-            <Link href="/consultation" style={{ textDecoration: 'none' }}>
+            <Link href="/consultation" style={{ textDecoration: "none" }}>
               <Button
                 leftSection={<IconPlus size={16} />}
                 variant="light"
@@ -140,8 +160,12 @@ export default function RuangCurhatList({ data }: PersonalActivityDataProps) {
                   <IconCheck size={14} />
                 </ThemeIcon>
                 <Box>
-                  <Text size="xs" c="dimmed">Selesai</Text>
-                  <Text size="sm" fw={600}>{stats.completedCount}</Text>
+                  <Text size="xs" c="dimmed">
+                    Selesai
+                  </Text>
+                  <Text size="sm" fw={600}>
+                    {stats.completedCount}
+                  </Text>
                 </Box>
               </Group>
             </Card>
@@ -153,8 +177,12 @@ export default function RuangCurhatList({ data }: PersonalActivityDataProps) {
                   <IconClock size={14} />
                 </ThemeIcon>
                 <Box>
-                  <Text size="xs" c="dimmed">Berlangsung</Text>
-                  <Text size="sm" fw={600}>{stats.pendingCount}</Text>
+                  <Text size="xs" c="dimmed">
+                    Berlangsung
+                  </Text>
+                  <Text size="sm" fw={600}>
+                    {stats.pendingCount}
+                  </Text>
                 </Box>
               </Group>
             </Card>
@@ -166,8 +194,12 @@ export default function RuangCurhatList({ data }: PersonalActivityDataProps) {
                   <IconX size={14} />
                 </ThemeIcon>
                 <Box>
-                  <Text size="xs" c="dimmed">Dibatalkan</Text>
-                  <Text size="sm" fw={600}>{stats.cancelledCount}</Text>
+                  <Text size="xs" c="dimmed">
+                    Dibatalkan
+                  </Text>
+                  <Text size="sm" fw={600}>
+                    {stats.cancelledCount}
+                  </Text>
                 </Box>
               </Group>
             </Card>
@@ -179,8 +211,12 @@ export default function RuangCurhatList({ data }: PersonalActivityDataProps) {
                   <IconCalendar size={14} />
                 </ThemeIcon>
                 <Box>
-                  <Text size="xs" c="dimmed">30 Hari Terakhir</Text>
-                  <Text size="sm" fw={600}>{stats.recentSessions}</Text>
+                  <Text size="xs" c="dimmed">
+                    30 Hari Terakhir
+                  </Text>
+                  <Text size="sm" fw={600}>
+                    {stats.recentSessions}
+                  </Text>
                 </Box>
               </Group>
             </Card>
@@ -200,10 +236,11 @@ export default function RuangCurhatList({ data }: PersonalActivityDataProps) {
         {/* Results Count */}
         {filteredSessions.length !== data.length && (
           <Text size="sm" c="dimmed">
-            Menampilkan {filteredSessions.length} dari {data.length} sesi konseling
+            Menampilkan {filteredSessions.length} dari {data.length} sesi
+            konseling
           </Text>
         )}
-        
+
         {/* Sessions List */}
         <Stack gap="md">
           {filteredSessions.map((session) => (
@@ -214,7 +251,13 @@ export default function RuangCurhatList({ data }: PersonalActivityDataProps) {
         {/* No Results */}
         {filteredSessions.length === 0 && data.length > 0 && (
           <Box ta="center" py="xl">
-            <ThemeIcon size={60} radius="xl" variant="light" color="gray" mb="md">
+            <ThemeIcon
+              size={60}
+              radius="xl"
+              variant="light"
+              color="gray"
+              mb="md"
+            >
               <IconSearch size={30} />
             </ThemeIcon>
             <Text size="lg" c="dimmed" mb="xs">

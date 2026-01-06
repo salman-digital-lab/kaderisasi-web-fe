@@ -40,19 +40,21 @@ export default function PersonalActivityData({
   // Calculate statistics
   const stats = useMemo(() => {
     const totalActivities = activities.length;
-    
+
     // Rejected: Tidak diterima & Tidak lulus
-    const rejectedCount = activities.filter(a => 
-      a.status === ACTIVITY_REGISTRANT_STATUS_ENUM.TIDAK_DITERIMA || 
-      a.status === ACTIVITY_REGISTRANT_STATUS_ENUM.TIDAK_LULUS
+    const rejectedCount = activities.filter(
+      (a) =>
+        a.status === ACTIVITY_REGISTRANT_STATUS_ENUM.TIDAK_DITERIMA ||
+        a.status === ACTIVITY_REGISTRANT_STATUS_ENUM.TIDAK_LULUS,
     ).length;
-    
+
     // Registered: All except rejected
-    const registeredCount = activities.filter(a => 
-      a.status !== ACTIVITY_REGISTRANT_STATUS_ENUM.TIDAK_DITERIMA && 
-      a.status !== ACTIVITY_REGISTRANT_STATUS_ENUM.TIDAK_LULUS
+    const registeredCount = activities.filter(
+      (a) =>
+        a.status !== ACTIVITY_REGISTRANT_STATUS_ENUM.TIDAK_DITERIMA &&
+        a.status !== ACTIVITY_REGISTRANT_STATUS_ENUM.TIDAK_LULUS,
     ).length;
-    
+
     return {
       totalActivities,
       registeredCount,
@@ -77,7 +79,7 @@ export default function PersonalActivityData({
   const totalPages = Math.ceil(filteredActivities.length / itemsPerPage);
   const paginatedActivities = filteredActivities.slice(
     (page - 1) * itemsPerPage,
-    page * itemsPerPage
+    page * itemsPerPage,
   );
 
   // Reset page when search changes
@@ -97,10 +99,11 @@ export default function PersonalActivityData({
               Belum Ada Kegiatan
             </Text>
             <Text size="sm" c="dimmed" ta="center" maw={300}>
-              Mulai daftarkan diri Anda pada kegiatan-kegiatan menarik untuk mengembangkan kemampuan dan jaringan
+              Mulai daftarkan diri Anda pada kegiatan-kegiatan menarik untuk
+              mengembangkan kemampuan dan jaringan
             </Text>
           </Stack>
-          <Link href="/activity" style={{ textDecoration: 'none' }}>
+          <Link href="/activity" style={{ textDecoration: "none" }}>
             <Button
               leftSection={<IconPlus size={16} />}
               variant="filled"
@@ -115,7 +118,19 @@ export default function PersonalActivityData({
   }
 
   return (
-    <Paper radius="md" withBorder p="lg">
+    <Paper
+      p={{ base: 0, sm: "lg" }}
+      styles={{
+        root: {
+          border: "none",
+          borderRadius: 0,
+          "@media (min-width: 576px)": {
+            border: "1px solid var(--mantine-color-default-border)",
+            borderRadius: "var(--mantine-radius-md)",
+          },
+        },
+      }}
+    >
       <Stack gap="lg">
         {/* Statistics Cards */}
         <Grid>
@@ -126,8 +141,12 @@ export default function PersonalActivityData({
                   <IconActivity size={14} />
                 </ThemeIcon>
                 <Box>
-                  <Text size="xs" c="dimmed">Total Kegiatan</Text>
-                  <Text size="sm" fw={600}>{stats.totalActivities}</Text>
+                  <Text size="xs" c="dimmed">
+                    Total Kegiatan
+                  </Text>
+                  <Text size="sm" fw={600}>
+                    {stats.totalActivities}
+                  </Text>
                 </Box>
               </Group>
             </Card>
@@ -139,8 +158,12 @@ export default function PersonalActivityData({
                   <IconCheck size={14} />
                 </ThemeIcon>
                 <Box>
-                  <Text size="xs" c="dimmed">Terdaftar</Text>
-                  <Text size="sm" fw={600}>{stats.registeredCount}</Text>
+                  <Text size="xs" c="dimmed">
+                    Terdaftar
+                  </Text>
+                  <Text size="sm" fw={600}>
+                    {stats.registeredCount}
+                  </Text>
                 </Box>
               </Group>
             </Card>
@@ -152,8 +175,12 @@ export default function PersonalActivityData({
                   <IconX size={14} />
                 </ThemeIcon>
                 <Box>
-                  <Text size="xs" c="dimmed">Ditolak</Text>
-                  <Text size="sm" fw={600}>{stats.rejectedCount}</Text>
+                  <Text size="xs" c="dimmed">
+                    Ditolak
+                  </Text>
+                  <Text size="sm" fw={600}>
+                    {stats.rejectedCount}
+                  </Text>
                 </Box>
               </Group>
             </Card>
@@ -173,14 +200,18 @@ export default function PersonalActivityData({
         {/* Results Count */}
         {filteredActivities.length !== activities.length && (
           <Text size="sm" c="dimmed">
-            Menampilkan {filteredActivities.length} dari {activities.length} kegiatan
+            Menampilkan {filteredActivities.length} dari {activities.length}{" "}
+            kegiatan
           </Text>
         )}
 
         {/* Activities Grid */}
         <Grid>
           {paginatedActivities.map((activity) => (
-            <Grid.Col key={activity.activity_id} span={{ base: 12, sm: 6, lg: 4 }}>
+            <Grid.Col
+              key={activity.activity_id}
+              span={{ base: 12, sm: 6, lg: 4 }}
+            >
               <ActivityPersonalCard
                 activityName={activity.activity.name}
                 slug={activity.activity.slug}
@@ -194,7 +225,13 @@ export default function PersonalActivityData({
         {/* No Results */}
         {filteredActivities.length === 0 && activities.length > 0 && (
           <Box ta="center" py="xl">
-            <ThemeIcon size={60} radius="xl" variant="light" color="gray" mb="md">
+            <ThemeIcon
+              size={60}
+              radius="xl"
+              variant="light"
+              color="gray"
+              mb="md"
+            >
               <IconSearch size={30} />
             </ThemeIcon>
             <Text size="lg" c="dimmed" mb="xs">

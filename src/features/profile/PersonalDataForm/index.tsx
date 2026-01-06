@@ -76,10 +76,26 @@ export default function PersonalDataForm({
   };
 
   return (
-    <Paper radius="md" withBorder p="lg">
-
+    <Paper
+      p={{ base: 0, sm: "lg" }}
+      styles={{
+        root: {
+          border: "none",
+          borderRadius: 0,
+          "@media (min-width: 576px)": {
+            border: "1px solid var(--mantine-color-default-border)",
+            borderRadius: "var(--mantine-radius-md)",
+          },
+        },
+      }}
+    >
       <form onSubmit={form.onSubmit((val) => handleEditProfile(val))}>
-        <Fieldset legend="Personal" mb="xl" p="md" style={{ border: '1px solid #e9ecef', borderRadius: '8px' }}>
+        <Fieldset
+          legend="Personal"
+          mb="xl"
+          p="md"
+          style={{ border: "1px solid #e9ecef", borderRadius: "8px" }}
+        >
           <TextInput
             {...form.getInputProps("name")}
             key={form.key("name")}
@@ -115,7 +131,12 @@ export default function PersonalDataForm({
           />
         </Fieldset>
 
-        <Fieldset legend="Domisili" mb="xl" p="md" style={{ border: '1px solid #e9ecef', borderRadius: '8px' }}>
+        <Fieldset
+          legend="Domisili"
+          mb="xl"
+          p="md"
+          style={{ border: "1px solid #e9ecef", borderRadius: "8px" }}
+        >
           <Select
             {...form.getInputProps("province_id")}
             key={form.key("province_id")}
@@ -130,7 +151,12 @@ export default function PersonalDataForm({
           />
         </Fieldset>
 
-        <Fieldset legend="Sosial Media" mb="xl" p="md" style={{ border: '1px solid #e9ecef', borderRadius: '8px' }}>
+        <Fieldset
+          legend="Sosial Media"
+          mb="xl"
+          p="md"
+          style={{ border: "1px solid #e9ecef", borderRadius: "8px" }}
+        >
           <TextInput
             {...form.getInputProps("line")}
             key={form.key("line")}
@@ -173,7 +199,12 @@ export default function PersonalDataForm({
           />
         </Fieldset>
 
-        <Fieldset legend="Pendidikan" mb="xl" p="md" style={{ border: '1px solid #e9ecef', borderRadius: '8px' }}>
+        <Fieldset
+          legend="Pendidikan"
+          mb="xl"
+          p="md"
+          style={{ border: "1px solid #e9ecef", borderRadius: "8px" }}
+        >
           <UniversitySelect
             {...form.getInputProps("university_id")}
             key={form.key("university_id")}
@@ -199,13 +230,13 @@ export default function PersonalDataForm({
           />
         </Fieldset>
 
-        <Button 
-          type="submit" 
+        <Button
+          type="submit"
           size="md"
           radius="md"
           loading={form.submitting}
           fullWidth
-          style={{ marginTop: '1rem' }}
+          style={{ marginTop: "1rem" }}
         >
           Ubah Data Diri
         </Button>

@@ -52,11 +52,20 @@ export default function PersonalAchievementData({
 
   // Calculate statistics
   const stats = useMemo(() => {
-    const totalScore = achievements.reduce((sum, achievement) => sum + achievement.score, 0);
-    const approvedCount = achievements.filter(a => a.status === ACHIEVEMENT_STATUS_ENUM.APPROVED).length;
-    const pendingCount = achievements.filter(a => a.status === ACHIEVEMENT_STATUS_ENUM.PENDING).length;
-    const rejectedCount = achievements.filter(a => a.status === ACHIEVEMENT_STATUS_ENUM.REJECTED).length;
-    
+    const totalScore = achievements.reduce(
+      (sum, achievement) => sum + achievement.score,
+      0,
+    );
+    const approvedCount = achievements.filter(
+      (a) => a.status === ACHIEVEMENT_STATUS_ENUM.APPROVED,
+    ).length;
+    const pendingCount = achievements.filter(
+      (a) => a.status === ACHIEVEMENT_STATUS_ENUM.PENDING,
+    ).length;
+    const rejectedCount = achievements.filter(
+      (a) => a.status === ACHIEVEMENT_STATUS_ENUM.REJECTED,
+    ).length;
+
     return {
       totalScore,
       approvedCount,
@@ -85,7 +94,8 @@ export default function PersonalAchievementData({
               Belum Ada Prestasi
             </Text>
             <Text size="sm" c="dimmed" ta="center" maw={300}>
-              Mulai tambahkan prestasi Anda untuk meningkatkan skor leaderboard dan membangun portfolio yang mengesankan
+              Mulai tambahkan prestasi Anda untuk meningkatkan skor leaderboard
+              dan membangun portfolio yang mengesankan
             </Text>
           </Stack>
           <Button
@@ -103,7 +113,19 @@ export default function PersonalAchievementData({
   }
 
   return (
-    <Paper radius="md" withBorder p="lg">
+    <Paper
+      p={{ base: 0, sm: "lg" }}
+      styles={{
+        root: {
+          border: "none",
+          borderRadius: 0,
+          "@media (min-width: 576px)": {
+            border: "1px solid var(--mantine-color-default-border)",
+            borderRadius: "var(--mantine-radius-md)",
+          },
+        },
+      }}
+    >
       <Stack gap="md">
         {/* Header with Statistics */}
         <Box>
@@ -137,8 +159,12 @@ export default function PersonalAchievementData({
                   <IconAward size={14} />
                 </ThemeIcon>
                 <Box>
-                  <Text size="xs" c="dimmed">Disetujui</Text>
-                  <Text size="sm" fw={600}>{stats.approvedCount}</Text>
+                  <Text size="xs" c="dimmed">
+                    Disetujui
+                  </Text>
+                  <Text size="sm" fw={600}>
+                    {stats.approvedCount}
+                  </Text>
                 </Box>
               </Group>
             </Card>
@@ -150,8 +176,12 @@ export default function PersonalAchievementData({
                   <IconClock size={14} />
                 </ThemeIcon>
                 <Box>
-                  <Text size="xs" c="dimmed">Menunggu</Text>
-                  <Text size="sm" fw={600}>{stats.pendingCount}</Text>
+                  <Text size="xs" c="dimmed">
+                    Menunggu
+                  </Text>
+                  <Text size="sm" fw={600}>
+                    {stats.pendingCount}
+                  </Text>
                 </Box>
               </Group>
             </Card>
@@ -163,8 +193,12 @@ export default function PersonalAchievementData({
                   <IconExclamationCircle size={14} />
                 </ThemeIcon>
                 <Box>
-                  <Text size="xs" c="dimmed">Ditolak</Text>
-                  <Text size="sm" fw={600}>{stats.rejectedCount}</Text>
+                  <Text size="xs" c="dimmed">
+                    Ditolak
+                  </Text>
+                  <Text size="sm" fw={600}>
+                    {stats.rejectedCount}
+                  </Text>
                 </Box>
               </Group>
             </Card>
@@ -176,8 +210,12 @@ export default function PersonalAchievementData({
                   <IconTrendingUp size={14} />
                 </ThemeIcon>
                 <Box>
-                  <Text size="xs" c="dimmed">Total Poin</Text>
-                  <Text size="sm" fw={600}>{stats.totalScore}</Text>
+                  <Text size="xs" c="dimmed">
+                    Total Poin
+                  </Text>
+                  <Text size="sm" fw={600}>
+                    {stats.totalScore}
+                  </Text>
                 </Box>
               </Group>
             </Card>
@@ -197,10 +235,11 @@ export default function PersonalAchievementData({
         {/* Results Count */}
         {filteredAchievements.length !== achievements.length && (
           <Text size="sm" c="dimmed">
-            Menampilkan {filteredAchievements.length} dari {achievements.length} prestasi
+            Menampilkan {filteredAchievements.length} dari {achievements.length}{" "}
+            prestasi
           </Text>
         )}
-        
+
         {/* Achievements List */}
         <Accordion variant="separated" radius="md">
           {filteredAchievements.map((achievement) => (
@@ -209,7 +248,12 @@ export default function PersonalAchievementData({
               value={achievement.id.toString()}
             >
               <Accordion.Control>
-                <Flex justify="space-between" align="center" wrap="wrap" gap="sm">
+                <Flex
+                  justify="space-between"
+                  align="center"
+                  wrap="wrap"
+                  gap="sm"
+                >
                   <Group gap="sm" wrap="nowrap">
                     <ThemeIcon
                       size="sm"
@@ -232,7 +276,8 @@ export default function PersonalAchievementData({
                           variant="outline"
                           color={ACHIEVEMENT_STATUS_COLOR[achievement.status]}
                           leftSection={
-                            achievement.status === ACHIEVEMENT_STATUS_ENUM.REJECTED ? (
+                            achievement.status ===
+                            ACHIEVEMENT_STATUS_ENUM.REJECTED ? (
                               <IconExclamationCircle size={10} />
                             ) : undefined
                           }
@@ -249,7 +294,7 @@ export default function PersonalAchievementData({
                   </Group>
                 </Flex>
               </Accordion.Control>
-              
+
               <Accordion.Panel>
                 <Stack gap="md">
                   {/* Description */}
@@ -274,7 +319,9 @@ export default function PersonalAchievementData({
                             Tanggal Prestasi
                           </Text>
                           <Text size="sm" fw={500}>
-                            {new Date(achievement.achievement_date).toLocaleDateString('id-ID')}
+                            {new Date(
+                              achievement.achievement_date,
+                            ).toLocaleDateString("id-ID")}
                           </Text>
                         </Box>
                       </Group>
@@ -400,7 +447,13 @@ export default function PersonalAchievementData({
         {/* No Results */}
         {filteredAchievements.length === 0 && achievements.length > 0 && (
           <Box ta="center" py="xl">
-            <ThemeIcon size={60} radius="xl" variant="light" color="gray" mb="md">
+            <ThemeIcon
+              size={60}
+              radius="xl"
+              variant="light"
+              color="gray"
+              mb="md"
+            >
               <IconSearch size={30} />
             </ThemeIcon>
             <Text size="lg" c="dimmed" mb="xs">
