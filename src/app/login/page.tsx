@@ -63,9 +63,9 @@ export default async function Page({
         </Anchor>
       </Text>
 
-      <Paper withBorder shadow="md" p={30} mt={24} radius="md">
-        <LoginForm />
-        <Link href="/" style={{ textDecoration: 'none' }}>
+      <Paper withBorder p={30} mt={24} radius="md">
+        <LoginForm redirect={redirect as string | undefined} />
+        <Link href="/" style={{ textDecoration: "none" }}>
           <Button variant="default" fullWidth mt="xl">
             Kembali ke Beranda
           </Button>

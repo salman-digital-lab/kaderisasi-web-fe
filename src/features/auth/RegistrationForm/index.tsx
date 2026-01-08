@@ -1,15 +1,14 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Button, PasswordInput, TextInput } from "@mantine/core";
 import { hasLength, isEmail, matchesField, useForm } from "@mantine/form";
 
 import showNotif from "@/functions/common/notification";
 import register from "@/functions/server/register";
 
-export default function RegistrationForm() {
+export default function RegistrationForm({ redirect }: { redirect?: string }) {
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const form = useForm({
     mode: "controlled",
@@ -39,7 +38,7 @@ export default function RegistrationForm() {
 
       if (response.success) {
         showNotif("Registrasi berhasil. Silahkan masuk ke akun anda.");
-        router.push("/login?" + searchParams.toString());
+        router.push(redirect ? `/login?redirect=${redirect}` : "/login");
       } else {
         showNotif(response.message, true);
       }

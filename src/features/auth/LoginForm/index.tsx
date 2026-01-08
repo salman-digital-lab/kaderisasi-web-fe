@@ -1,16 +1,14 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Button, PasswordInput, TextInput } from "@mantine/core";
 import { isEmail, useForm } from "@mantine/form";
 
 import showNotif from "@/functions/common/notification";
 import login from "@/functions/server/login";
 
-export default function LoginForm() {
+export default function LoginForm({ redirect }: { redirect?: string }) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const redirect = searchParams.get("redirect");
 
   const form = useForm({
     mode: "controlled",
@@ -29,7 +27,7 @@ export default function LoginForm() {
         ...loginFormData,
         email: loginFormData.email.toLowerCase(),
       });
-      
+
       if (response.success) {
         showNotif("Anda berhasil masuk");
         router.push(redirect || "/");
