@@ -1,7 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Stack, TextInput, Select, Group, Title, Modal, Text } from "@mantine/core";
+import {
+  Button,
+  Stack,
+  TextInput,
+  Select,
+  Group,
+  Title,
+  Modal,
+  Text,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { CustomFormField } from "@/types/api/customForm";
 import { Member, PublicUser } from "@/types/model/members";
@@ -34,14 +43,17 @@ export default function CustomFormProfileSection({
   isSingleSection = false,
 }: CustomFormProfileSectionProps) {
   const [confirmModalOpened, setConfirmModalOpened] = useState(false);
-  const [pendingValues, setPendingValues] = useState<Record<string, any> | null>(null);
+  const [pendingValues, setPendingValues] = useState<Record<
+    string,
+    any
+  > | null>(null);
   // Build initial values from profile data
   const initialValues: Record<string, any> = {};
-  
+
   profileFields.forEach((field) => {
     const profile = profileData?.profile;
     const userData = profileData?.userData;
-    
+
     switch (field.key) {
       case "name":
         initialValues[field.key] = profile?.name || "";
@@ -92,35 +104,46 @@ export default function CustomFormProfileSection({
     initialValues,
     validate: (values) => {
       const errors: Record<string, string> = {};
-      
+
       profileFields.forEach((field) => {
         if (field.required && !values[field.key]) {
           errors[field.key] = `${field.label} wajib diisi`;
         }
-        
+
         if (field.validation) {
           const val = values[field.key];
-          
-          if (val && field.validation.minLength && val.length < field.validation.minLength) {
-            errors[field.key] = field.validation.customMessage || 
+
+          if (
+            val &&
+            field.validation.minLength &&
+            val.length < field.validation.minLength
+          ) {
+            errors[field.key] =
+              field.validation.customMessage ||
               `Minimal ${field.validation.minLength} karakter`;
           }
-          
-          if (val && field.validation.maxLength && val.length > field.validation.maxLength) {
-            errors[field.key] = field.validation.customMessage || 
+
+          if (
+            val &&
+            field.validation.maxLength &&
+            val.length > field.validation.maxLength
+          ) {
+            errors[field.key] =
+              field.validation.customMessage ||
               `Maksimal ${field.validation.maxLength} karakter`;
           }
-          
+
           if (val && field.validation.pattern) {
             const regex = new RegExp(field.validation.pattern);
             if (!regex.test(val)) {
-              errors[field.key] = field.validation.customMessage || 
+              errors[field.key] =
+                field.validation.customMessage ||
                 `Format ${field.label} tidak valid`;
             }
           }
         }
       });
-      
+
       return errors;
     },
   });
@@ -138,45 +161,42 @@ export default function CustomFormProfileSection({
     switch (field.key) {
       case "name":
         return <TextInput {...commonProps} />;
-      
+
       case "gender":
-        return (
-          <Select
-            {...commonProps}
-            data={GENDER_OPTION}
-          />
-        );
-      
+        return <Select {...commonProps} data={GENDER_OPTION} />;
+
       case "email":
         return <TextInput {...commonProps} type="email" disabled />;
-      
+
       case "personal_id":
         return <TextInput {...commonProps} />;
-      
+
       case "province_id":
         return (
           <Select
             {...commonProps}
-            data={provinceData?.map((province) => ({
-              label: province.name,
-              value: province.id.toString(),
-            })) || []}
+            data={
+              provinceData?.map((province) => ({
+                label: province.name,
+                value: province.id.toString(),
+              })) || []
+            }
             searchable
           />
         );
-      
+
       case "line":
         return <TextInput {...commonProps} />;
-      
+
       case "instagram":
         return <TextInput {...commonProps} />;
-      
+
       case "tiktok":
         return <TextInput {...commonProps} />;
-      
+
       case "linkedin":
         return <TextInput {...commonProps} />;
-      
+
       case "whatsapp":
         return (
           <TextInput
@@ -187,14 +207,20 @@ export default function CustomFormProfileSection({
             onKeyDown={(e) => {
               if (
                 !/[0-9]/.test(e.key) &&
-                !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(e.key)
+                ![
+                  "Backspace",
+                  "Delete",
+                  "ArrowLeft",
+                  "ArrowRight",
+                  "Tab",
+                ].includes(e.key)
               ) {
                 e.preventDefault();
               }
             }}
           />
         );
-      
+
       case "university_id":
         return (
           <UniversitySelect
@@ -202,13 +228,13 @@ export default function CustomFormProfileSection({
             showedValue={profileData?.profile.university?.name}
           />
         );
-      
+
       case "major":
         return <TextInput {...commonProps} />;
-      
+
       case "intake_year":
         return <TextInput {...commonProps} />;
-      
+
       default:
         return <TextInput {...commonProps} />;
     }
@@ -221,7 +247,7 @@ export default function CustomFormProfileSection({
       setConfirmModalOpened(true);
       return;
     }
-    
+
     // Otherwise, proceed with submission
     await handleSubmit(values);
   };
@@ -239,26 +265,34 @@ export default function CustomFormProfileSection({
       }
 
       const profileUpdateData: Record<string, any> = {};
-      
+
       profileFields.forEach((field) => {
         if (values[field.key] !== undefined) {
           if (field.key === "province_id" || field.key === "university_id") {
-            profileUpdateData[field.key] = values[field.key] ? Number(values[field.key]) : undefined;
+            profileUpdateData[field.key] = values[field.key]
+              ? Number(values[field.key])
+              : undefined;
           } else if (field.key === "whatsapp") {
             profileUpdateData[field.key] = whatsappNumber;
-          } else if (field.key !== "email") { // Don't update email
+          } else if (field.key !== "email") {
+            // Don't update email
             profileUpdateData[field.key] = values[field.key];
           }
         }
       });
 
-      await editProfile(profileUpdateData);
-      
+      const response = await editProfile(profileUpdateData);
+
+      if (!response.success) {
+        showNotif(response.message, true);
+        return;
+      }
+
       // Pass form values to onSubmit (needed for single-section forms)
       onSubmit(values);
     } catch (error) {
-      if (error instanceof Error) showNotif(error.message, true);
-      if (typeof error === "string") showNotif(error, true);
+      // Handle unexpected errors (network failures, etc.)
+      showNotif("Terjadi kesalahan jaringan. Silakan coba lagi.", true);
     }
   };
 
@@ -274,33 +308,35 @@ export default function CustomFormProfileSection({
       <form onSubmit={form.onSubmit(handleFormSubmit)}>
         <Stack gap="md">
           <Title order={4}>Data Diri</Title>
-          
-          {profileFields.filter(f => !f.hidden).map((field) => (
-            <div key={field.key}>{renderField(field)}</div>
-          ))}
 
-          <Group 
-            justify={onBack ? "space-between" : "flex-end"} 
+          {profileFields
+            .filter((f) => !f.hidden)
+            .map((field) => (
+              <div key={field.key}>{renderField(field)}</div>
+            ))}
+
+          <Group
+            justify={onBack ? "space-between" : "flex-end"}
             mt="xl"
-            style={{ 
-              flexDirection: 'row',
-              gap: '0.5rem'
+            style={{
+              flexDirection: "row",
+              gap: "0.5rem",
             }}
           >
             {onBack && (
-              <Button 
-                variant="default" 
+              <Button
+                variant="default"
                 onClick={onBack}
                 disabled={loading}
-                style={{ flex: '0 1 auto', minWidth: '100px' }}
+                style={{ flex: "0 1 auto", minWidth: "100px" }}
               >
                 Kembali
               </Button>
             )}
-            <Button 
+            <Button
               type="submit"
               loading={loading}
-              style={{ flex: '1 1 auto', minWidth: '120px' }}
+              style={{ flex: "1 1 auto", minWidth: "120px" }}
             >
               {isSingleSection ? "Kirim" : "Lanjutkan"}
             </Button>
@@ -316,7 +352,8 @@ export default function CustomFormProfileSection({
       >
         <Stack gap="md">
           <Text>
-            Apakah Anda yakin ingin mengirim formulir ini? Pastikan semua data yang Anda masukkan sudah benar.
+            Apakah Anda yakin ingin mengirim formulir ini? Pastikan semua data
+            yang Anda masukkan sudah benar.
           </Text>
           <Group justify="flex-end" mt="md">
             <Button
@@ -326,10 +363,7 @@ export default function CustomFormProfileSection({
             >
               Batal
             </Button>
-            <Button
-              onClick={handleConfirmSubmit}
-              loading={loading}
-            >
+            <Button onClick={handleConfirmSubmit} loading={loading}>
               Ya, Kirim
             </Button>
           </Group>
@@ -338,4 +372,3 @@ export default function CustomFormProfileSection({
     </>
   );
 }
-

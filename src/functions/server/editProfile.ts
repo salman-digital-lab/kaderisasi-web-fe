@@ -1,14 +1,16 @@
 "use server";
 
-import { handleCatchError } from "../common/handler";
 import { putProfile } from "../../services/profile";
 import { PutProfileReq } from "../../types/api/user";
+import { ServerActionResult, getErrorMessage } from "../../types/server-action";
 
 import { verifySession } from "./session";
 
 type LoginFormData = PutProfileReq;
 
-export default async function editProfile(data: LoginFormData) {
+export default async function editProfile(
+  data: LoginFormData,
+): Promise<ServerActionResult> {
   const formData = {
     ...data,
     province_id: data.province_id ? Number(data.province_id) : undefined,
@@ -18,8 +20,20 @@ export default async function editProfile(data: LoginFormData) {
 
   try {
     const response = await putProfile(session || "", formData);
-    return response;
+    return {
+      success: true,
+      message: response.message || "Profil berhasil diperbarui",
+      data: response.data,
+    };
   } catch (error: unknown) {
-    handleCatchError(error);
+    // Return error as data instead of throwing
+    // This ensures the error message reaches the frontend in production
+    return {
+      success: false,
+      message: getErrorMessage(
+        error,
+        "Terjadi kesalahan saat memperbarui profil",
+      ),
+    };
   }
 }

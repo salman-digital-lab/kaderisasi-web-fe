@@ -74,11 +74,16 @@ export default function CustomFormContent({
       try {
         setLoading(true);
 
-        await registerCustomForm({
+        const response = await registerCustomForm({
           feature_type: featureType,
           feature_id: featureId,
           custom_form_data: {},
         });
+
+        if (!response.success) {
+          showNotif(response.message, true);
+          return;
+        }
 
         // Clear localStorage after successful submission
         clearStorage();
@@ -95,8 +100,8 @@ export default function CustomFormContent({
 
         router.push(successUrl);
       } catch (error) {
-        if (error instanceof Error) showNotif(error.message, true);
-        if (typeof error === "string") showNotif(error, true);
+        // Handle unexpected errors (network failures, etc.)
+        showNotif("Terjadi kesalahan jaringan. Silakan coba lagi.", true);
       } finally {
         setLoading(false);
       }
@@ -116,11 +121,16 @@ export default function CustomFormContent({
     try {
       setLoading(true);
 
-      await registerCustomForm({
+      const response = await registerCustomForm({
         feature_type: featureType,
         feature_id: featureId,
         custom_form_data: allFormData,
       });
+
+      if (!response.success) {
+        showNotif(response.message, true);
+        return;
+      }
 
       // Clear localStorage after successful submission
       clearStorage();
@@ -137,8 +147,8 @@ export default function CustomFormContent({
 
       router.push(successUrl);
     } catch (error) {
-      if (error instanceof Error) showNotif(error.message, true);
-      if (typeof error === "string") showNotif(error, true);
+      // Handle unexpected errors (network failures, etc.)
+      showNotif("Terjadi kesalahan jaringan. Silakan coba lagi.", true);
     } finally {
       setLoading(false);
     }
