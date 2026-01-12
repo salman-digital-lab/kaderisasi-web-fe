@@ -12,6 +12,7 @@ import {
   Text,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { DateInput } from "@mantine/dates";
 import { CustomFormField } from "@/types/api/customForm";
 import { Member, PublicUser } from "@/types/model/members";
 import { Province } from "@/types/model/province";
@@ -93,6 +94,11 @@ export default function CustomFormProfileSection({
         break;
       case "intake_year":
         initialValues[field.key] = profile?.intake_year || "";
+        break;
+      case "birth_date":
+        initialValues[field.key] = profile?.birth_date
+          ? new Date(profile.birth_date)
+          : undefined;
         break;
       default:
         initialValues[field.key] = field.defaultValue || "";
@@ -235,6 +241,9 @@ export default function CustomFormProfileSection({
       case "intake_year":
         return <TextInput {...commonProps} />;
 
+      case "birth_date":
+        return <DateInput {...commonProps} valueFormat="YYYY-MM-DD" />;
+
       default:
         return <TextInput {...commonProps} />;
     }
@@ -276,7 +285,17 @@ export default function CustomFormProfileSection({
             profileUpdateData[field.key] = whatsappNumber;
           } else if (field.key !== "email") {
             // Don't update email
-            profileUpdateData[field.key] = values[field.key];
+            // Convert birth_date Date to string
+            if (
+              field.key === "birth_date" &&
+              values[field.key] instanceof Date
+            ) {
+              profileUpdateData[field.key] = values[field.key]
+                .toISOString()
+                .split("T")[0];
+            } else {
+              profileUpdateData[field.key] = values[field.key];
+            }
           }
         }
       });

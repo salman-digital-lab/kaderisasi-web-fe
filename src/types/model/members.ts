@@ -28,6 +28,7 @@ export type Member = {
 
   major: string | undefined;
   intake_year: number | undefined;
+  birth_date: string | undefined;
 
   created_at: string;
   updated_at: string;

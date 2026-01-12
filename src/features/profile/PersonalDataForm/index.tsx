@@ -9,6 +9,7 @@ import {
   Paper,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { DateInput } from "@mantine/dates";
 
 import { GENDER_OPTION } from "@/constants/form/profile";
 import showNotif from "@/functions/common/notification";
@@ -46,14 +47,18 @@ export default function PersonalDataForm({
       university_id: profileData?.profile.university_id?.toString(),
       major: profileData?.profile.major,
       intake_year: profileData?.profile.intake_year,
+      birth_date: profileData?.profile.birth_date
+        ? new Date(profileData.profile.birth_date)
+        : undefined,
     },
   });
 
   const handleEditProfile = async (
     rawFormData: Partial<
-      Omit<Member, "province_id" | "university_id"> & {
+      Omit<Member, "province_id" | "university_id" | "birth_date"> & {
         province_id: string;
         university_id: string;
+        birth_date: Date | undefined;
       }
     >,
   ) => {
@@ -64,6 +69,9 @@ export default function PersonalDataForm({
         : undefined,
       university_id: rawFormData.university_id
         ? Number(rawFormData.university_id)
+        : undefined,
+      birth_date: rawFormData.birth_date
+        ? rawFormData.birth_date.toISOString().split("T")[0]
         : undefined,
     };
 
@@ -114,6 +122,15 @@ export default function PersonalDataForm({
             key={form.key("personal_id")}
             label="Nomor Identitas"
             placeholder="Nomor Identitas"
+            mt="md"
+            radius="md"
+          />
+          <DateInput
+            {...form.getInputProps("birth_date")}
+            key={form.key("birth_date")}
+            label="Tanggal Lahir"
+            placeholder="Pilih tanggal lahir"
+            valueFormat="YYYY-MM-DD"
             mt="md"
             radius="md"
           />
