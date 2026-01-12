@@ -26,7 +26,10 @@ export type GetActivityRegistrationReq = {
   slug: string;
 };
 
-export type GetActivityRegistrationResp = APIResponse<{ status: string }>;
+export type GetActivityRegistrationResp = APIResponse<{
+  status: string;
+  visible_at?: string;
+}>;
 
 export type GetActivityRegistrationDataReq = {
   slug: string;

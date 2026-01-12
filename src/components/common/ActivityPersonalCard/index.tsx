@@ -3,12 +3,45 @@
 import Link from "next/link";
 import NextImage from "next/image";
 import { Card, Text, Group, Badge, Button, Stack, Box } from "@mantine/core";
+import { IconClock } from "@tabler/icons-react";
+import { ACTIVITY_REGISTRANT_STATUS_ENUM } from "@/types/constants/activity";
 
 type ActivityCardProps = {
   activityName: string;
   registrationStatus: string;
   slug: string;
   imageUrl?: string;
+  visibleAt?: string;
+};
+
+// Format date to readable string
+const formatDate = (dateString: string): string => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
+// Get badge color based on status
+const getStatusColor = (status: string): string => {
+  switch (status) {
+    case ACTIVITY_REGISTRANT_STATUS_ENUM.DITERIMA:
+    case ACTIVITY_REGISTRANT_STATUS_ENUM.LULUS_KEGIATAN:
+      return "green";
+    case ACTIVITY_REGISTRANT_STATUS_ENUM.TIDAK_DITERIMA:
+    case ACTIVITY_REGISTRANT_STATUS_ENUM.TIDAK_LULUS:
+      return "red";
+    case ACTIVITY_REGISTRANT_STATUS_ENUM.TERDAFTAR:
+      return "blue";
+    case ACTIVITY_REGISTRANT_STATUS_ENUM.BELUM_DIUMUMKAN:
+      return "orange";
+    default:
+      return "gray";
+  }
 };
 
 export default function ActivityPersonalCard({
@@ -16,7 +49,11 @@ export default function ActivityPersonalCard({
   registrationStatus,
   slug,
   imageUrl,
+  visibleAt,
 }: ActivityCardProps) {
+  const isUnannounced =
+    registrationStatus === ACTIVITY_REGISTRANT_STATUS_ENUM.BELUM_DIUMUMKAN;
+
   return (
     <Card withBorder radius="md" p="md" h="100%">
       <Card.Section>
@@ -31,7 +68,7 @@ export default function ActivityPersonalCard({
           alt={activityName}
           height={200}
           width={400}
-          style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
+          style={{ width: "100%", height: "auto", objectFit: "cover" }}
         />
       </Card.Section>
 
@@ -39,26 +76,41 @@ export default function ActivityPersonalCard({
         <Text fz="lg" fw={500} lineClamp={2}>
           {activityName}
         </Text>
-        
+
         <Box>
           <Text size="xs" c="dimmed" tt="uppercase" fw={700}>
             Status
           </Text>
           <Group gap="xs" mt={4}>
-            <Badge size="sm" variant="light">
+            <Badge
+              size="sm"
+              variant="light"
+              color={getStatusColor(registrationStatus)}
+            >
               {registrationStatus}
             </Badge>
           </Group>
+          {isUnannounced && visibleAt && (
+            <Group gap={4} mt={8}>
+              <IconClock size={14} color="var(--mantine-color-orange-6)" />
+              <Text size="xs" c="orange.6">
+                Diumumkan: {formatDate(visibleAt)}
+              </Text>
+            </Group>
+          )}
         </Box>
       </Stack>
 
       <Stack mt="md" gap="xs">
-        <Link href={`/activity/${slug}`} style={{ textDecoration: 'none' }}>
+        <Link href={`/activity/${slug}`} style={{ textDecoration: "none" }}>
           <Button radius="md" variant="filled" fullWidth>
             Lihat Detail
           </Button>
         </Link>
-        <Link href={`/activity/register/${slug}/edit-activity-form`} style={{ textDecoration: 'none' }}>
+        <Link
+          href={`/activity/register/${slug}/edit-activity-form`}
+          style={{ textDecoration: "none" }}
+        >
           <Button radius="md" variant="outline" fullWidth>
             Edit Formulir
           </Button>

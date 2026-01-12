@@ -118,19 +118,7 @@ export default function PersonalActivityData({
   }
 
   return (
-    <Paper
-      p={{ base: 0, sm: "lg" }}
-      styles={{
-        root: {
-          border: "none",
-          borderRadius: 0,
-          "@media (min-width: 576px)": {
-            border: "1px solid var(--mantine-color-default-border)",
-            borderRadius: "var(--mantine-radius-md)",
-          },
-        },
-      }}
-    >
+    <Paper p={{ base: "md", sm: "lg" }} radius="md" withBorder>
       <Stack gap="lg">
         {/* Statistics Cards */}
         <Grid>
@@ -217,6 +205,7 @@ export default function PersonalActivityData({
                 slug={activity.activity.slug}
                 registrationStatus={activity.status}
                 imageUrl={activity.activity.additional_config?.images?.[0]}
+                visibleAt={activity.visible_at}
               />
             </Grid.Col>
           ))}

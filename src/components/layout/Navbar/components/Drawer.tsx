@@ -11,19 +11,20 @@ import {
   Stack,
   Button,
   Box,
-  Card,
   UnstyledButton,
   ThemeIcon,
 } from "@mantine/core";
 
 import {
   IconLogout,
-  IconSettings,
+  IconUser,
   IconHome,
   IconCalendarEvent,
   IconUsers,
   IconMessageCircle,
   IconTrophy,
+  IconActivity,
+  IconChevronRight,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -50,6 +51,66 @@ const navItems: NavItem[] = [
   { label: "Leaderboard", href: "/leaderboard", icon: IconTrophy },
 ];
 
+// User-specific menu items (only shown when logged in)
+const userMenuItems: NavItem[] = [
+  { label: "Kegiatan Saya", href: "/status", icon: IconActivity },
+  { label: "Profil Saya", href: "/profile", icon: IconUser },
+];
+
+// Reusable menu item component
+function MenuItem({
+  item,
+  isActive,
+  onClick,
+}: {
+  item: NavItem;
+  isActive: boolean;
+  onClick: () => void;
+}) {
+  const Icon = item.icon;
+  return (
+    <Link href={item.href} style={{ textDecoration: "none" }}>
+      <UnstyledButton
+        onClick={onClick}
+        px="md"
+        py="xs"
+        style={(theme) => ({
+          display: "flex",
+          alignItems: "center",
+          width: "100%",
+          borderRadius: theme.radius.md,
+          transition: "all 150ms ease",
+          backgroundColor: isActive ? theme.colors.blue[0] : "transparent",
+          color: isActive ? theme.colors.blue[7] : theme.colors.gray[7],
+          "&:hover": {
+            backgroundColor: isActive
+              ? theme.colors.blue[1]
+              : theme.colors.gray[0],
+          },
+        })}
+      >
+        <ThemeIcon
+          variant={isActive ? "light" : "transparent"}
+          color={isActive ? "blue" : "gray"}
+          size="sm"
+          radius="md"
+          mr="sm"
+        >
+          <Icon style={{ width: rem(16), height: rem(16) }} />
+        </ThemeIcon>
+        <Text size="sm" fw={isActive ? 600 : 400} style={{ flex: 1 }}>
+          {item.label}
+        </Text>
+        <IconChevronRight
+          size={14}
+          style={{ opacity: 0.4 }}
+          color="currentColor"
+        />
+      </UnstyledButton>
+    </Link>
+  );
+}
+
 export default function NavDrawer({
   drawerOpened,
   closeDrawer,
@@ -61,83 +122,114 @@ export default function NavDrawer({
     <Drawer
       opened={drawerOpened}
       onClose={closeDrawer}
-      size="280px"
-      padding="md"
+      size="300px"
+      padding={0}
       position="right"
-      title={
-        <Text fw={600} size="lg">
-          Menu
-        </Text>
-      }
       hiddenFrom="md"
       zIndex={1000000}
+      withCloseButton={false}
     >
-      <ScrollArea h={`calc(100vh - ${rem(80)})`} mx="-md">
-        {/* User Profile Section */}
-        {session.session ? (
-          <Box px="md" py="lg">
-            <Card
-              radius="lg"
-              withBorder
-              p="md"
-              style={{
-                background:
-                  "light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6))",
+      <Stack h="100vh" gap={0}>
+        {/* Header */}
+        <Box
+          px="md"
+          py="sm"
+          style={{
+            borderBottom: "1px solid var(--mantine-color-gray-2)",
+          }}
+        >
+          {session.session ? (
+            <Group gap="sm" wrap="nowrap">
+              <Avatar
+                radius="xl"
+                size={40}
+                src={
+                  session.profilePicture && session.profilePicture !== ""
+                    ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${session.profilePicture}`
+                    : undefined
+                }
+              />
+              <Box style={{ flex: 1, minWidth: 0 }}>
+                <Text size="sm" fw={600} lineClamp={1}>
+                  {session.name}
+                </Text>
+                <Text size="xs" c="dimmed">
+                  Aktivis Salman
+                </Text>
+              </Box>
+            </Group>
+          ) : (
+            <Text fw={600} size="md">
+              Menu
+            </Text>
+          )}
+        </Box>
+
+        {/* Scrollable Content */}
+        <ScrollArea style={{ flex: 1 }}>
+          {/* User Menu Section - Only for logged in users */}
+          {session.session && (
+            <>
+              <Box px="sm" py="sm">
+                <Text size="xs" c="dimmed" fw={600} px="sm" mb="xs">
+                  AKUN SAYA
+                </Text>
+                <Stack gap={2}>
+                  {userMenuItems.map((item) => (
+                    <MenuItem
+                      key={item.href}
+                      item={item}
+                      isActive={pathname === item.href}
+                      onClick={closeDrawer}
+                    />
+                  ))}
+                </Stack>
+              </Box>
+              <Divider />
+            </>
+          )}
+
+          {/* Navigation Section */}
+          <Box px="sm" py="sm">
+            <Text size="xs" c="dimmed" fw={600} px="sm" mb="xs">
+              JELAJAHI
+            </Text>
+            <Stack gap={2}>
+              {navItems.map((item) => (
+                <MenuItem
+                  key={item.href}
+                  item={item}
+                  isActive={pathname === item.href}
+                  onClick={closeDrawer}
+                />
+              ))}
+            </Stack>
+          </Box>
+        </ScrollArea>
+
+        {/* Footer */}
+        <Box
+          px="md"
+          py="md"
+          style={{
+            borderTop: "1px solid var(--mantine-color-gray-2)",
+          }}
+        >
+          {session.session ? (
+            <Button
+              variant="light"
+              color="red"
+              leftSection={<IconLogout size={16} />}
+              radius="md"
+              fullWidth
+              onClick={() => {
+                logout();
+                closeDrawer();
               }}
             >
-              <Stack gap="md">
-                <Group gap="sm" wrap="nowrap">
-                  <Avatar
-                    radius="xl"
-                    size={48}
-                    src={
-                      session.profilePicture && session.profilePicture !== ""
-                        ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${session.profilePicture}`
-                        : undefined
-                    }
-                  />
-                  <Box style={{ flex: 1, minWidth: 0 }}>
-                    <Text size="sm" fw={600} lineClamp={1}>
-                      {session.name}
-                    </Text>
-                    <Text size="xs" c="dimmed">
-                      Aktivis Salman
-                    </Text>
-                  </Box>
-                </Group>
-                <Group gap="xs" grow>
-                  <Link href="/profile" style={{ textDecoration: "none" }}>
-                    <Button
-                      variant="light"
-                      color="blue"
-                      leftSection={<IconSettings size={16} />}
-                      radius="md"
-                      size="sm"
-                      fullWidth
-                      onClick={closeDrawer}
-                    >
-                      Profil
-                    </Button>
-                  </Link>
-                  <Button
-                    variant="light"
-                    color="red"
-                    leftSection={<IconLogout size={16} />}
-                    radius="md"
-                    size="sm"
-                    onClick={() => {
-                      logout();
-                      closeDrawer();
-                    }}
-                  >
-                    Keluar
-                  </Button>
-                </Group>
-              </Stack>
-            </Card>
-          </Box>
-        ) : (
-          <Box px="md" py="lg">
+              Keluar
+            </Button>
+          ) : (
             <Stack gap="xs">
               <Link href="/login" style={{ textDecoration: "none" }}>
                 <Button
@@ -160,70 +252,9 @@ export default function NavDrawer({
                 </Button>
               </Link>
             </Stack>
-          </Box>
-        )}
-
-        <Divider />
-
-        {/* Navigation Items */}
-        <Box py="sm">
-          <Stack gap={4}>
-            {navItems.map((item) => {
-              const isActive = pathname === item.href;
-              const Icon = item.icon;
-
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  style={{ textDecoration: "none" }}
-                >
-                  <UnstyledButton
-                    onClick={closeDrawer}
-                    px="md"
-                    py="sm"
-                    style={(theme) => ({
-                      display: "flex",
-                      alignItems: "center",
-                      width: "100%",
-                      borderRadius: theme.radius.md,
-                      transition: "all 150ms ease",
-                      backgroundColor: isActive
-                        ? theme.colors.blue[0]
-                        : "transparent",
-                      color: isActive
-                        ? theme.colors.blue[7]
-                        : theme.colors.gray[7],
-                      "&:hover": {
-                        backgroundColor: isActive
-                          ? theme.colors.blue[1]
-                          : theme.colors.gray[0],
-                      },
-                    })}
-                  >
-                    <ThemeIcon
-                      variant={isActive ? "light" : "transparent"}
-                      color={isActive ? "blue" : "gray"}
-                      size="md"
-                      radius="md"
-                      mr="sm"
-                    >
-                      <Icon style={{ width: rem(18), height: rem(18) }} />
-                    </ThemeIcon>
-                    <Text
-                      size="sm"
-                      fw={isActive ? 600 : 500}
-                      style={{ flex: 1 }}
-                    >
-                      {item.label}
-                    </Text>
-                  </UnstyledButton>
-                </Link>
-              );
-            })}
-          </Stack>
+          )}
         </Box>
-      </ScrollArea>
+      </Stack>
     </Drawer>
   );
 }

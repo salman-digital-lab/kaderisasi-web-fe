@@ -57,4 +57,5 @@ export type Registrant = {
   questionnaire_answer: Record<string, string>;
   created_at: string;
   updated_at: string;
+  visible_at?: string; // ISO datetime when status will be revealed
 };

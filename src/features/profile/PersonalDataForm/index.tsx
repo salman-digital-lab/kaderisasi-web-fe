@@ -76,19 +76,7 @@ export default function PersonalDataForm({
   };
 
   return (
-    <Paper
-      p={{ base: 0, sm: "lg" }}
-      styles={{
-        root: {
-          border: "none",
-          borderRadius: 0,
-          "@media (min-width: 576px)": {
-            border: "1px solid var(--mantine-color-default-border)",
-            borderRadius: "var(--mantine-radius-md)",
-          },
-        },
-      }}
-    >
+    <Paper p={{ base: "md", sm: "lg" }} radius="md" withBorder>
       <form onSubmit={form.onSubmit((val) => handleEditProfile(val))}>
         <Fieldset
           legend="Personal"

@@ -16,6 +16,7 @@ import {
   IconCalendarMonth,
   IconArrowLeft,
   IconArrowRight,
+  IconClock,
 } from "@tabler/icons-react";
 import { Carousel, CarouselSlide } from "@mantine/carousel";
 import Link from "next/link";
@@ -82,6 +83,7 @@ export default async function Page(props: {
   let activityRegistration:
     | {
         status: string;
+        visible_at?: string;
       }
     | undefined;
 
@@ -232,17 +234,37 @@ export default async function Page(props: {
               >
                 {activityRegistration?.status}
               </Badge>
+              {activityRegistration?.status ===
+                ACTIVITY_REGISTRANT_STATUS_ENUM.BELUM_DIUMUMKAN &&
+                activityRegistration?.visible_at && (
+                  <Group gap={6} justify="center" mt="xs">
+                    <IconClock
+                      size={14}
+                      color="var(--mantine-color-orange-6)"
+                    />
+                    <Text size="xs" c="orange.6" fw={500}>
+                      Estimasi pengumuman:{" "}
+                      {dayjs(activityRegistration.visible_at)
+                        .locale("id")
+                        .format("DD MMMM YYYY, HH:mm")}
+                    </Text>
+                  </Group>
+                )}
             </Stack>
           ) : (
             <Stack gap="xs">
               <Title order={5} ta="center">
-                Tutup Pendaftaran
+                {dayjs().isAfter(activity?.registration_end)
+                  ? "Cek Status Pendaftaran"
+                  : "Tutup Pendaftaran"}
               </Title>
-              <Badge m="auto" color="red" leftSection={calendarIcon}>
-                {dayjs(activity?.registration_end)
-                  .locale("id")
-                  .format("DD MMMM YYYY")}
-              </Badge>
+              {dayjs().isAfter(activity?.registration_end) ? null : (
+                <Badge m="auto" color="red" leftSection={calendarIcon}>
+                  {dayjs(activity?.registration_end)
+                    .locale("id")
+                    .format("DD MMMM YYYY")}
+                </Badge>
+              )}
             </Stack>
           )}
 
@@ -268,12 +290,20 @@ export default async function Page(props: {
           ) : (
             <Stack gap="xs">
               <Link
-                href={`/login?redirect=${
-                  process.env.NEXT_PUBLIC_APP_URL
-                }${`/custom-form/activity/${activity?.id}`}`}
+                href={
+                  dayjs().isAfter(activity?.registration_end)
+                    ? `/login?redirect=${process.env.NEXT_PUBLIC_APP_URL}/activity/${params.slug}`
+                    : `/login?redirect=${
+                        process.env.NEXT_PUBLIC_APP_URL
+                      }${`/custom-form/activity/${activity?.id}`}`
+                }
                 style={{ textDecoration: "none" }}
               >
-                <Button fullWidth>Daftar Kegiatan</Button>
+                <Button fullWidth>
+                  {dayjs().isAfter(activity?.registration_end)
+                    ? "Masuk"
+                    : "Daftar Kegiatan"}
+                </Button>
               </Link>
             </Stack>
           )}
