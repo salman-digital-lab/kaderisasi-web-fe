@@ -1,5 +1,4 @@
 import { MetadataRoute } from "next";
-import { serverApiConfig } from "../config/apiConfig";
 
 const BASE_URL = "https://kaderisasi.salmanitb.com";
 
@@ -32,7 +31,7 @@ async function getPublishedActivities(): Promise<Activity[]> {
 
     while (hasMore) {
       const response = await fetch(
-        `${serverApiConfig.beApi}/activities?page=${page}&per_page=100`,
+        `${process.env.NEXT_PUBLIC_BE_API}/activities?page=${page}&per_page=100`,
         {
           method: "GET",
           headers: { "Content-Type": "application/json" },
@@ -69,7 +68,7 @@ async function getVisibleClubs(): Promise<Club[]> {
 
     while (hasMore) {
       const response = await fetch(
-        `${serverApiConfig.beApi}/clubs?page=${page}&per_page=100`,
+        `${process.env.NEXT_PUBLIC_BE_API}/clubs?page=${page}&per_page=100`,
         {
           method: "GET",
           headers: { "Content-Type": "application/json" },
