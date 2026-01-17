@@ -3,7 +3,6 @@
 import { RegisterResp } from "../../types/api/auth";
 import { serverApiConfig } from "../../config/apiConfig";
 import fetcher from "../common/fetcher";
-import { handleCatchError } from "../common/handler";
 
 type RegisterFormData = {
   fullname: string;
