@@ -1,4 +1,5 @@
 import fetcher from "../functions/common/fetcher";
+import { getApiConfig } from "../config/apiConfig";
 import { cleanEmptyKeyFromObject } from "../functions/common/helper";
 import {
   GetProfileResp,
@@ -9,24 +10,23 @@ import {
 } from "../types/api/user";
 
 export const getProvinces = async () => {
-  const response = await fetcher<GetProvincesResp>(
-    process.env.NEXT_PUBLIC_BE_ADMIN_API + "/provinces",
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      revalidate: 86400, // Cache for 24 hours since provinces rarely change
-      tags: ["provinces"],
+  const { beAdminApi } = getApiConfig();
+  const response = await fetcher<GetProvincesResp>(beAdminApi + "/provinces", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
     },
-  );
+    revalidate: 86400, // Cache for 24 hours since provinces rarely change
+    tags: ["provinces"],
+  });
 
   return response.data;
 };
 
 export const getUniversities = async (search?: string) => {
+  const { beAdminApi } = getApiConfig();
   const response = await fetcher<GetUniversitiesResp>(
-    process.env.NEXT_PUBLIC_BE_ADMIN_API +
+    beAdminApi +
       "/universities?per_page=20" +
       (search ? "&search=" + search : ""),
     {
@@ -42,46 +42,43 @@ export const getUniversities = async (search?: string) => {
 };
 
 export const getProfile = async (token: string) => {
-  const response = await fetcher<GetProfileResp>(
-    process.env.NEXT_PUBLIC_BE_API + "/profiles",
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
-      },
-      cache: "no-store",
+  const { beApi } = getApiConfig();
+  const response = await fetcher<GetProfileResp>(beApi + "/profiles", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + token,
     },
-  );
+    cache: "no-store",
+  });
 
   return response.data;
 };
 
 export const putProfile = async (token: string, data: PutProfileReq) => {
+  const { beApi } = getApiConfig();
   const finalData = cleanEmptyKeyFromObject(data);
-  const response = await fetcher<PutProfileResp>(
-    process.env.NEXT_PUBLIC_BE_API + "/profiles",
-    {
-      method: "PUT",
-      body: JSON.stringify(finalData),
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
-      },
+  const response = await fetcher<PutProfileResp>(beApi + "/profiles", {
+    method: "PUT",
+    body: JSON.stringify(finalData),
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + token,
     },
-  );
+  });
 
   return response;
 };
 
 export const postProfilePicture = async (token: string, picture: File) => {
+  const { beApi } = getApiConfig();
   const formData = new FormData();
   formData.append("file", picture);
 
   const response = await fetcher<{
     message: string;
     data: { picture: string };
-  }>(process.env.NEXT_PUBLIC_BE_API + "/profiles/picture", {
+  }>(beApi + "/profiles/picture", {
     method: "POST",
     body: formData,
     headers: {

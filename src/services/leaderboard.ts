@@ -1,4 +1,5 @@
 import fetcher from "@/functions/common/fetcher";
+import { getApiConfig } from "@/config/apiConfig";
 import {
   GetMonthlyLeaderboardResp,
   GetLifetimeLeaderboardResp,
@@ -12,6 +13,7 @@ export const getMonthlyLeaderboard = async (
   perPage: number = 10,
   month: string,
 ) => {
+  const { beApi } = getApiConfig();
   const params = new URLSearchParams({
     page: page.toString(),
     per_page: perPage.toString(),
@@ -19,8 +21,7 @@ export const getMonthlyLeaderboard = async (
   });
 
   const response = await fetcher<GetMonthlyLeaderboardResp>(
-    process.env.NEXT_PUBLIC_BE_API +
-      `/achievements/monthly?${params.toString()}`,
+    beApi + `/achievements/monthly?${params.toString()}`,
     {
       next: { revalidate: 60 },
     },
@@ -33,14 +34,14 @@ export const getLifetimeLeaderboard = async (
   page: number = 1,
   perPage: number = 10,
 ) => {
+  const { beApi } = getApiConfig();
   const params = new URLSearchParams({
     page: page.toString(),
     per_page: perPage.toString(),
   });
 
   const response = await fetcher<GetLifetimeLeaderboardResp>(
-    process.env.NEXT_PUBLIC_BE_API +
-      `/achievements/lifetime?${params.toString()}`,
+    beApi + `/achievements/lifetime?${params.toString()}`,
     {
       next: { revalidate: 60 },
     },
@@ -53,6 +54,7 @@ export const submitAchievement = async (
   payload: SubmitAchievementReq,
   token: string,
 ) => {
+  const { beApi } = getApiConfig();
   const formData = new FormData();
   formData.append("name", payload.name);
   formData.append("description", payload.description);
@@ -60,16 +62,13 @@ export const submitAchievement = async (
   formData.append("type", payload.type);
   formData.append("proof", payload.proof);
 
-  return await fetcher<SubmitAchievementResp>(
-    `${process.env.NEXT_PUBLIC_BE_API}/achievements`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
+  return await fetcher<SubmitAchievementResp>(`${beApi}/achievements`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
     },
-  );
+    body: formData,
+  });
 };
 
 export const editAchievement = async (
@@ -77,6 +76,7 @@ export const editAchievement = async (
   payload: Omit<SubmitAchievementReq, "proof"> & { proof?: File },
   token: string,
 ) => {
+  const { beApi } = getApiConfig();
   const formData = new FormData();
   formData.append("name", payload.name);
   formData.append("description", payload.description);
@@ -86,19 +86,17 @@ export const editAchievement = async (
     formData.append("proof", payload.proof);
   }
 
-  return await fetcher<SubmitAchievementResp>(
-    `${process.env.NEXT_PUBLIC_BE_API}/achievements/${id}`,
-    {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
+  return await fetcher<SubmitAchievementResp>(`${beApi}/achievements/${id}`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${token}`,
     },
-  );
+    body: formData,
+  });
 };
 
 export const getMyLifetimeRank = async (token: string) => {
+  const { beApi } = getApiConfig();
   const response = await fetcher<{
     message: string;
     data: {
@@ -106,7 +104,7 @@ export const getMyLifetimeRank = async (token: string) => {
       score: number;
       message?: string;
     };
-  }>(process.env.NEXT_PUBLIC_BE_API + `/achievements/my-rank`, {
+  }>(beApi + `/achievements/my-rank`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -121,13 +119,14 @@ export const getMyAchievements = async (
   page: number = 1,
   perPage: number = 100,
 ) => {
+  const { beApi } = getApiConfig();
   const params = new URLSearchParams({
     page: page.toString(),
     per_page: perPage.toString(),
   });
 
   const response = await fetcher<GetMyAchievementsResp>(
-    process.env.NEXT_PUBLIC_BE_API + `/achievements?${params.toString()}`,
+    beApi + `/achievements?${params.toString()}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,

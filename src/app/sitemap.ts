@@ -1,6 +1,7 @@
-import { MetadataRoute } from 'next';
+import { MetadataRoute } from "next";
+import { serverApiConfig } from "../config/apiConfig";
 
-const BASE_URL = 'https://kaderisasi.salmanitb.com';
+const BASE_URL = "https://kaderisasi.salmanitb.com";
 
 type Activity = {
   slug: string;
@@ -31,12 +32,12 @@ async function getPublishedActivities(): Promise<Activity[]> {
 
     while (hasMore) {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BE_API}/activities?page=${page}&per_page=100`,
+        `${serverApiConfig.beApi}/activities?page=${page}&per_page=100`,
         {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
           next: { revalidate: 3600 }, // Cache for 1 hour
-        }
+        },
       );
 
       if (!response.ok) {
@@ -45,7 +46,7 @@ async function getPublishedActivities(): Promise<Activity[]> {
 
       const data = (await response.json()) as APIPagiResponse<Activity>;
       const publishedActivities = data.data.data.filter(
-        (activity) => activity.is_published === 1
+        (activity) => activity.is_published === 1,
       );
       activities.push(...publishedActivities);
 
@@ -55,7 +56,7 @@ async function getPublishedActivities(): Promise<Activity[]> {
 
     return activities;
   } catch (error) {
-    console.error('Failed to fetch activities for sitemap:', error);
+    console.error("Failed to fetch activities for sitemap:", error);
     return [];
   }
 }
@@ -68,12 +69,12 @@ async function getVisibleClubs(): Promise<Club[]> {
 
     while (hasMore) {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BE_API}/clubs?page=${page}&per_page=100`,
+        `${serverApiConfig.beApi}/clubs?page=${page}&per_page=100`,
         {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
           next: { revalidate: 3600 }, // Cache for 1 hour
-        }
+        },
       );
 
       if (!response.ok) {
@@ -90,7 +91,7 @@ async function getVisibleClubs(): Promise<Club[]> {
 
     return clubs;
   } catch (error) {
-    console.error('Failed to fetch clubs for sitemap:', error);
+    console.error("Failed to fetch clubs for sitemap:", error);
     return [];
   }
 }
@@ -108,49 +109,49 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     {
       url: BASE_URL,
       lastModified: currentDate,
-      changeFrequency: 'daily',
+      changeFrequency: "daily",
       priority: 1,
     },
     {
       url: `${BASE_URL}/activity`,
       lastModified: currentDate,
-      changeFrequency: 'daily',
+      changeFrequency: "daily",
       priority: 0.9,
     },
     {
       url: `${BASE_URL}/clubs`,
       lastModified: currentDate,
-      changeFrequency: 'daily',
+      changeFrequency: "daily",
       priority: 0.85,
     },
     {
       url: `${BASE_URL}/leaderboard`,
       lastModified: currentDate,
-      changeFrequency: 'daily',
+      changeFrequency: "daily",
       priority: 0.8,
     },
     {
       url: `${BASE_URL}/consultation`,
       lastModified: currentDate,
-      changeFrequency: 'weekly',
+      changeFrequency: "weekly",
       priority: 0.7,
     },
     {
       url: `${BASE_URL}/login`,
       lastModified: currentDate,
-      changeFrequency: 'monthly',
+      changeFrequency: "monthly",
       priority: 0.5,
     },
     {
       url: `${BASE_URL}/register`,
       lastModified: currentDate,
-      changeFrequency: 'monthly',
+      changeFrequency: "monthly",
       priority: 0.5,
     },
     {
       url: `${BASE_URL}/forgot`,
       lastModified: currentDate,
-      changeFrequency: 'yearly',
+      changeFrequency: "yearly",
       priority: 0.3,
     },
   ];
@@ -159,7 +160,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const activityPages: MetadataRoute.Sitemap = activities.map((activity) => ({
     url: `${BASE_URL}/activity/${activity.slug}`,
     lastModified: new Date(activity.updated_at),
-    changeFrequency: 'weekly',
+    changeFrequency: "weekly",
     priority: 0.8,
   }));
 
@@ -167,7 +168,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const clubPages: MetadataRoute.Sitemap = clubs.map((club) => ({
     url: `${BASE_URL}/clubs/${club.id}`,
     lastModified: new Date(club.updated_at),
-    changeFrequency: 'weekly',
+    changeFrequency: "weekly",
     priority: 0.75,
   }));
 

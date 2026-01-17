@@ -1,4 +1,5 @@
 import fetcher from "../functions/common/fetcher";
+import { getApiConfig } from "../config/apiConfig";
 import {
   GetCustomFormByFeatureReq,
   GetCustomFormByFeatureResp,
@@ -6,19 +7,22 @@ import {
   PostCustomFormRegistrationResp,
 } from "../types/api/customForm";
 
-export const getCustomFormByFeature = async (props: GetCustomFormByFeatureReq) => {
+export const getCustomFormByFeature = async (
+  props: GetCustomFormByFeatureReq,
+) => {
+  const { beApi } = getApiConfig();
   const params: Record<string, string> = {
     feature_type: props.feature_type,
   };
-  
+
   if (props.feature_id !== undefined) {
     params.feature_id = props.feature_id.toString();
   }
-  
+
   const urlSearch = new URLSearchParams(params).toString();
 
   const response = await fetcher<GetCustomFormByFeatureResp>(
-    process.env.NEXT_PUBLIC_BE_API + "/custom-forms/by-feature?" + urlSearch,
+    beApi + "/custom-forms/by-feature?" + urlSearch,
     {
       method: "GET",
       headers: {
@@ -35,8 +39,9 @@ export const registerWithCustomForm = async (
   token: string,
   props: PostCustomFormRegistrationReq,
 ) => {
+  const { beApi } = getApiConfig();
   const response = await fetcher<PostCustomFormRegistrationResp>(
-    process.env.NEXT_PUBLIC_BE_API + "/custom-forms/register",
+    beApi + "/custom-forms/register",
     {
       method: "POST",
       body: JSON.stringify(props),

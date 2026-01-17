@@ -1,8 +1,10 @@
 import fetcher from "@/functions/common/fetcher";
+import { getApiConfig } from "@/config/apiConfig";
 
 export const postForgotPassword = async (props: { email: string }) => {
+  const { beApi } = getApiConfig();
   const response = await fetcher<{ message: string }>(
-    process.env.NEXT_PUBLIC_BE_API + "/auth/forgot-password",
+    beApi + "/auth/forgot-password",
     {
       method: "POST",
       body: JSON.stringify(props),
@@ -19,8 +21,9 @@ export const putResetPassword = async (
   token: string,
   props: { password: string },
 ) => {
+  const { beApi } = getApiConfig();
   const response = await fetcher<{ message: string }>(
-    process.env.NEXT_PUBLIC_BE_API + "/auth/reset-password?token=" + token,
+    beApi + "/auth/reset-password?token=" + token,
     {
       method: "PUT",
       body: JSON.stringify(props),

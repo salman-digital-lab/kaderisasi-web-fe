@@ -1,4 +1,5 @@
 import fetcher from "../functions/common/fetcher";
+import { getApiConfig } from "../config/apiConfig";
 import {
   GetActivitiesRegistrationResp,
   GetActivitiesReq,
@@ -16,10 +17,11 @@ import {
 } from "../types/api/activity";
 
 export const getActivities = async (props: GetActivitiesReq) => {
+  const { beApi } = getApiConfig();
   const urlSearch = new URLSearchParams(props).toString();
 
   const response = await fetcher<GetActivitiesResp>(
-    process.env.NEXT_PUBLIC_BE_API + "/activities?" + urlSearch,
+    beApi + "/activities?" + urlSearch,
     {
       method: "GET",
       headers: {
@@ -33,8 +35,9 @@ export const getActivities = async (props: GetActivitiesReq) => {
 };
 
 export const getActivity = async (props: GetActivityReq) => {
+  const { beApi } = getApiConfig();
   const response = await fetcher<GetActivityResp>(
-    process.env.NEXT_PUBLIC_BE_API + "/activities/" + props.slug,
+    beApi + "/activities/" + props.slug,
     {
       method: "GET",
       headers: {
@@ -51,8 +54,9 @@ export const getActivityRegistration = async (
   token: string,
   props: GetActivityRegistrationReq,
 ) => {
+  const { beApi } = getApiConfig();
   const response = await fetcher<GetActivityRegistrationResp>(
-    process.env.NEXT_PUBLIC_BE_API + "/profiles/activities/" + props.slug,
+    beApi + "/profiles/activities/" + props.slug,
     {
       method: "GET",
       headers: {
@@ -70,11 +74,9 @@ export const getActivityRegistrationData = async (
   token: string,
   props: GetActivityRegistrationDataReq,
 ) => {
+  const { beApi } = getApiConfig();
   const response = await fetcher<GetActivityRegistrationDataResp>(
-    process.env.NEXT_PUBLIC_BE_API +
-      "/activities/" +
-      props.slug +
-      "/registration",
+    beApi + "/activities/" + props.slug + "/registration",
     {
       method: "GET",
       headers: {
@@ -89,8 +91,9 @@ export const getActivityRegistrationData = async (
 };
 
 export const getActivitiesRegistration = async (token: string) => {
+  const { beApi } = getApiConfig();
   const response = await fetcher<GetActivitiesRegistrationResp>(
-    process.env.NEXT_PUBLIC_BE_API + "/profiles/activities",
+    beApi + "/profiles/activities",
     {
       method: "GET",
       headers: {
@@ -105,8 +108,9 @@ export const getActivitiesRegistration = async (token: string) => {
 };
 
 export const postActivity = async (token: string, props: PostActivityReq) => {
+  const { beApi } = getApiConfig();
   const response = await fetcher<PostActivityResp>(
-    process.env.NEXT_PUBLIC_BE_API + "/activities/" + props.slug + "/register",
+    beApi + "/activities/" + props.slug + "/register",
     {
       method: "POST",
       body: JSON.stringify(props.data),
@@ -121,11 +125,9 @@ export const postActivity = async (token: string, props: PostActivityReq) => {
 };
 
 export const putActivity = async (token: string, props: PutActivityReq) => {
+  const { beApi } = getApiConfig();
   const response = await fetcher<PutActivityResp>(
-    process.env.NEXT_PUBLIC_BE_API +
-      "/activities/" +
-      props.slug +
-      "/registration",
+    beApi + "/activities/" + props.slug + "/registration",
     {
       method: "PUT",
       body: JSON.stringify(props.data),

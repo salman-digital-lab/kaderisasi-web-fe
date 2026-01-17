@@ -1,6 +1,7 @@
 "use server";
 
 import { RegisterResp } from "../../types/api/auth";
+import { serverApiConfig } from "../../config/apiConfig";
 import fetcher from "../common/fetcher";
 import { handleCatchError } from "../common/handler";
 
@@ -23,7 +24,7 @@ export default async function register({
 
   try {
     const response = await fetcher<RegisterResp>(
-      process.env.NEXT_PUBLIC_BE_API + "/auth/register",
+      serverApiConfig.beApi + "/auth/register",
       {
         method: "POST",
         body: JSON.stringify(rawFormData),
