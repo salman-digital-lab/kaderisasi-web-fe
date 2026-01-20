@@ -81,14 +81,23 @@ export default async function Home() {
               token={sessionData.session || ""}
               whatsapp={profileData?.profile.whatsapp}
               gender={profileData?.profile.gender}
+              birthDate={profileData?.profile.birth_date}
             />
           ) : (
             <Card padding="xl" radius="md" withBorder mt="xl">
-              <Text ta="center" c="dimmed" fw="bold" className={classes.loginPrompt}>
+              <Text
+                ta="center"
+                c="dimmed"
+                fw="bold"
+                className={classes.loginPrompt}
+              >
                 Silahkan masuk ke akun anda terlebih dahulu untuk menggunakan
                 layanan Ruang Curhat
               </Text>
-              <Link href={`/login?redirect=${process.env.NEXT_PUBLIC_APP_URL}/consultation`} style={{ textDecoration: 'none' }}>
+              <Link
+                href={`/login?redirect=${process.env.NEXT_PUBLIC_APP_URL}/consultation`}
+                style={{ textDecoration: "none" }}
+              >
                 <Button fullWidth mt="md">
                   Masuk
                 </Button>

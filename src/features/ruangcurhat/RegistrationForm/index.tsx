@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button, Select, Textarea, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { DateInput } from "@mantine/dates";
 
 import { postRuangCurhat } from "@/services/ruangcurhat";
 import showNotif from "@/functions/common/notification";
@@ -17,11 +18,13 @@ type RegistrationFormProps = {
   token: string;
   whatsapp?: string;
   gender?: string;
+  birthDate?: string;
 };
 
 type RegistrationFormItems = {
   whatsapp: string;
   gender?: string;
+  birth_date?: Date;
   owner_name?: string;
   problem_ownership?: string;
   problem_category?: string;
@@ -34,6 +37,7 @@ export default function RegistrationForm({
   token,
   whatsapp,
   gender,
+  birthDate,
 }: RegistrationFormProps) {
   const [loading, setLoading] = useState(false);
   const [isFriend, setIsFriend] = useState(false);
@@ -42,6 +46,7 @@ export default function RegistrationForm({
     initialValues: {
       whatsapp: whatsapp || "",
       gender: gender || undefined,
+      birth_date: birthDate ? new Date(birthDate) : undefined,
       problem_ownership: undefined,
       owner_name: undefined,
       problem_category: undefined,
@@ -54,6 +59,8 @@ export default function RegistrationForm({
         value === undefined ? "Whatsapp harus diisi" : null,
       gender: (value) =>
         value === undefined ? "Jenis kelamin harus diisi" : null,
+      birth_date: (value) =>
+        value === undefined ? "Tanggal lahir harus diisi" : null,
       problem_ownership: (value) =>
         value === undefined ? "Kepemilikan masalah harus diisi" : null,
       owner_name: (value, { ...values }) =>
@@ -92,6 +99,9 @@ export default function RegistrationForm({
       await editProfile({
         whatsapp: whatsappNumber,
         gender: val.gender === "Laki-laki" ? GENDER.Male : GENDER.Female,
+        birth_date: val.birth_date
+          ? val.birth_date.toISOString().split("T")[0]
+          : undefined,
       });
       const resp = await postRuangCurhat(token, {
         ...val,
@@ -106,6 +116,7 @@ export default function RegistrationForm({
         form.setValues({
           whatsapp: val.whatsapp,
           gender: val.gender,
+          birth_date: val.birth_date,
           problem_ownership: undefined,
           owner_name: undefined,
           problem_category: undefined,
@@ -159,6 +170,16 @@ export default function RegistrationForm({
         required
         mt="md"
       />
+      <DateInput
+        {...form.getInputProps("birth_date")}
+        key={form.key("birth_date")}
+        label="Tanggal Lahir"
+        placeholder="Pilih tanggal lahir"
+        description="Tanggal lahir kamu yang mengisi form ini"
+        valueFormat="YYYY-MM-DD"
+        required
+        mt="md"
+      />
       <Select
         key={form.key("problem_ownership")}
         {...form.getInputProps("problem_ownership")}
@@ -166,6 +187,7 @@ export default function RegistrationForm({
         placeholder="Pilih Kepemilikan Masalah"
         data={PROBLEM_OWNER_OPTIONS}
         required
+        mt="md"
       />
       {isFriend && (
         <TextInput
