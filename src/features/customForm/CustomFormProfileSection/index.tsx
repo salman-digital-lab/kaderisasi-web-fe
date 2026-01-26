@@ -20,6 +20,7 @@ import { GENDER_OPTION } from "@/constants/form/profile";
 import UniversitySelect from "@/components/common/UniversitySelect";
 import editProfile from "@/functions/server/editProfile";
 import showNotif from "@/functions/common/notification";
+import { toISODateString } from "@/utils/dateUtils";
 
 type CustomFormProfileSectionProps = {
   profileFields: CustomFormField[];
@@ -285,14 +286,8 @@ export default function CustomFormProfileSection({
             profileUpdateData[field.key] = whatsappNumber;
           } else if (field.key !== "email") {
             // Don't update email
-            // Convert birth_date Date to string
-            if (
-              field.key === "birth_date" &&
-              values[field.key] instanceof Date
-            ) {
-              profileUpdateData[field.key] = values[field.key]
-                .toISOString()
-                .split("T")[0];
+            if (field.key === "birth_date") {
+              profileUpdateData[field.key] = toISODateString(values[field.key]);
             } else {
               profileUpdateData[field.key] = values[field.key];
             }

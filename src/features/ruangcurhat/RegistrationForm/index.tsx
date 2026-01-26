@@ -13,6 +13,7 @@ import { GENDER } from "@/types/constants/profile";
 import classes from "./index.module.css";
 import editProfile from "@/functions/server/editProfile";
 import { GENDER_OPTION } from "@/constants/form/profile";
+import { toISODateString } from "@/utils/dateUtils";
 
 type RegistrationFormProps = {
   token: string;
@@ -99,9 +100,7 @@ export default function RegistrationForm({
       await editProfile({
         whatsapp: whatsappNumber,
         gender: val.gender === "Laki-laki" ? GENDER.Male : GENDER.Female,
-        birth_date: val.birth_date
-          ? val.birth_date.toISOString().split("T")[0]
-          : undefined,
+        birth_date: toISODateString(val.birth_date),
       });
       const resp = await postRuangCurhat(token, {
         ...val,

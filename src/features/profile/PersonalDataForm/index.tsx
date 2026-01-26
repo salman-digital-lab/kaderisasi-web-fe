@@ -18,6 +18,7 @@ import { PublicUser } from "@/types/model/members";
 import { Member } from "@/types/model/members";
 import { Province } from "@/types/model/province";
 import UniversitySelect from "@/components/common/UniversitySelect";
+import { toISODateString } from "@/utils/dateUtils";
 
 type PersonalDataFormProps = {
   provinces?: Province[];
@@ -70,9 +71,7 @@ export default function PersonalDataForm({
       university_id: rawFormData.university_id
         ? Number(rawFormData.university_id)
         : undefined,
-      birth_date: rawFormData.birth_date
-        ? rawFormData.birth_date.toISOString().split("T")[0]
-        : undefined,
+      birth_date: toISODateString(rawFormData.birth_date),
     };
 
     try {
