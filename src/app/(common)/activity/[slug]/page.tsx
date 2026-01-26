@@ -55,23 +55,35 @@ export async function generateMetadata(props: {
   const param = await props.params;
 
   const activity = await getActivity(param);
+  const activityDescription = `${activity?.name} - Ayo daftar kegiatan ini di Kaderisasi Salman`;
+  const activityImage = activity?.additional_config?.images?.length
+    ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${activity.additional_config.images[0]}`
+    : undefined;
+
   return {
     title: activity?.name,
+    description: activityDescription,
     openGraph: {
       title: activity?.name,
-      description: `${activity?.name} - Ayo daftar kegiatan ini di Kaderisasi Salman`,
+      description: activityDescription,
       url: `${process.env.NEXT_PUBLIC_APP_URL}/activity/${param.slug}`,
       type: "website",
-      images: activity?.additional_config?.images?.length
+      images: activityImage
         ? [
             {
-              url: `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${activity.additional_config.images[0]}`,
+              url: activityImage,
               width: 800,
               height: 800,
               alt: activity?.name,
             },
           ]
         : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: activity?.name,
+      description: activityDescription,
+      images: activityImage ? [activityImage] : undefined,
     },
   };
 }
@@ -134,8 +146,8 @@ export default async function Page(props: {
 
   const isLevelEligible = Boolean(
     activity &&
-      profileData?.profile?.level !== undefined &&
-      profileData?.profile?.level >= activity.minimum_level,
+    profileData?.profile?.level !== undefined &&
+    profileData?.profile?.level >= activity.minimum_level,
   );
 
   return (

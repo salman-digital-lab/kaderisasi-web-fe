@@ -9,6 +9,8 @@ import { LeaderboardSkeleton } from "@/components/skeletons";
 
 export const metadata = {
   title: "Leaderboard",
+  description:
+    "Leaderboard Aktivis Salman - Himpunan prestasi akademik, kompetisi, dan organisasi aktivis. Lihat 10 besar aktivis berprestasi dan submit prestasimu!",
 };
 
 export default async function LeaderboardPage() {
@@ -29,8 +31,8 @@ export default async function LeaderboardPage() {
             <Text c="dimmed" mt="md" className={classes.heroDescription}>
               Leaderboard merupakan website tempat menghimpun prestasi aktivis
               Salman. Pengguna dengan skoring tertinggi akan tampil dalam 10
-              besar sepanjang masa. Ayo submit prestasi akademik, kompetisi,
-              dan organisasi mu disini!
+              besar sepanjang masa. Ayo submit prestasi akademik, kompetisi, dan
+              organisasi mu disini!
             </Text>
           </div>
           <Image

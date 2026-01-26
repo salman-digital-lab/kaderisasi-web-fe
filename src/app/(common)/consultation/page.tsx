@@ -11,6 +11,8 @@ import Link from "next/link";
 
 export const metadata = {
   title: "Ruang Curhat",
+  description:
+    "Ruang Curhat Kaderisasi Salman - Layanan konseling sebaya oleh Aktivis Salman terlatih. Ceritakan masalahmu, kami siap mendengarkan dan membersamai.",
 };
 
 export default async function Home() {

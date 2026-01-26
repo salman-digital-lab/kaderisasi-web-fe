@@ -9,6 +9,8 @@ import classes from "./index.module.css";
 
 export const metadata = {
   title: "Masuk",
+  description:
+    "Masuk ke akun Kaderisasi Salman untuk mendaftar kegiatan, mengakses Ruang Curhat, dan melihat status pendaftaran Anda.",
 };
 
 export default async function Page({

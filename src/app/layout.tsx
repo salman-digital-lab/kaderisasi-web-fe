@@ -16,28 +16,70 @@ import ScrollToTop from "@/components/common/ScrollToTop";
 
 const inter = Inter({ subsets: ["latin"] });
 
+const BASE_URL =
+  process.env.NEXT_PUBLIC_APP_URL || "https://kaderisasi.salmanitb.com";
+
 export const metadata = {
+  metadataBase: new URL(BASE_URL),
   title: {
     template: "%s | Kaderisasi Salman",
     default: "Kaderisasi Salman",
   },
   description:
     "Portal Aktivis Salman yang dikelola BMKA (Bidang Kemahasiswaan, Kaderisasi dan Alumni) Salman yang berfungsi sebagai pusat pendaftaran kegiatan di @kaderisasisalman.",
+  keywords: [
+    "Kaderisasi Salman",
+    "Masjid Salman ITB",
+    "BMKA Salman",
+    "Aktivis Salman",
+    "Kaderisasi Mahasiswa",
+    "Pendaftaran Kegiatan",
+    "Pembinaan Mahasiswa Islam",
+    "Salman ITB",
+  ],
+  authors: [{ name: "BMKA Salman ITB" }],
+  creator: "BMKA Salman ITB",
+  publisher: "BMKA Salman ITB",
   openGraph: {
     title: "Kaderisasi Salman",
     description:
       "Portal Aktivis Salman yang dikelola BMKA (Bidang Kemahasiswaan, Kaderisasi dan Alumni) Salman yang berfungsi sebagai pusat pendaftaran kegiatan di @kaderisasisalman.",
     type: "website",
+    locale: "id_ID",
     images: [
       {
         url: "https://nos.wjv-1.neo.id/kaderisasi-static/kaderisasi-main-banner.png",
         width: 2034,
         height: 1152,
-        alt: "Kaderisasi Salman",
+        alt: "Kaderisasi Salman - Portal Aktivis Salman ITB",
       },
     ],
-    url: process.env.NEXT_PUBLIC_APP_URL,
+    url: BASE_URL,
     siteName: "Kaderisasi Salman",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Kaderisasi Salman",
+    description:
+      "Portal Aktivis Salman yang dikelola BMKA Salman sebagai pusat pendaftaran kegiatan kaderisasi.",
+    images: [
+      "https://nos.wjv-1.neo.id/kaderisasi-static/kaderisasi-main-banner.png",
+    ],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  verification: {
+    // Add your Google Search Console verification here if you have one
+    // google: "your-google-verification-code",
   },
 };
 
@@ -49,7 +91,7 @@ export default function RootLayout({
   const isProduction = process.env.NEXT_PUBLIC_APP_ENV === "production";
 
   return (
-    <html lang="en" className={inter.className} {...mantineHtmlProps}>
+    <html lang="id" className={inter.className} {...mantineHtmlProps}>
       <head>
         {isProduction && (
           <Script

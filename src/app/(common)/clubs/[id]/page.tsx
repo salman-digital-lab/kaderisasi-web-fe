@@ -11,7 +11,6 @@ import {
   Divider,
   Box,
   Flex,
-  Card,
   ThemeIcon,
   Button,
 } from "@mantine/core";
@@ -25,8 +24,6 @@ import {
   IconArrowRight,
 } from "@tabler/icons-react";
 import MediaCarousel from "../../../../components/common/MediaCarousel";
-import ClubRegistrationButtonServerWrapper from "../../../../components/common/ClubRegistrationButton/ServerWrapper";
-import { verifySession } from "../../../../functions/server/session";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
 
@@ -38,13 +35,57 @@ type Props = {
   params: Promise<{ id: string }>;
 };
 
+export async function generateMetadata(props: Props) {
+  const params = await props.params;
+
+  try {
+    const club = await getClub({ id: params.id });
+    const clubDescription =
+      club.short_description ||
+      `${club.name} - Unit Kegiatan/Kepanitiaan di Kaderisasi Salman`;
+    const clubImage = club.logo
+      ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${club.logo}`
+      : undefined;
+
+    return {
+      title: club.name,
+      description: clubDescription,
+      openGraph: {
+        title: club.name,
+        description: clubDescription,
+        url: `${process.env.NEXT_PUBLIC_APP_URL}/clubs/${params.id}`,
+        type: "website",
+        images: clubImage
+          ? [
+              {
+                url: clubImage,
+                width: 400,
+                height: 400,
+                alt: club.name,
+              },
+            ]
+          : undefined,
+      },
+      twitter: {
+        card: "summary",
+        title: club.name,
+        description: clubDescription,
+        images: clubImage ? [clubImage] : undefined,
+      },
+    };
+  } catch {
+    return {
+      title: "Unit Kegiatan",
+      description: "Detail Unit Kegiatan atau Kepanitiaan di Kaderisasi Salman",
+    };
+  }
+}
+
 export default async function ClubDetailPage(props: Props) {
   const params = await props.params;
 
   try {
     const club = await getClub({ id: params.id });
-    const sessionData = await verifySession();
-    const isAuthenticated = !!sessionData.session;
 
     // Check if custom form exists for this club
     let customForm = null;
@@ -125,8 +166,7 @@ export default async function ClubDetailPage(props: Props) {
                     color="blue"
                     leftSection={<IconCalendarTime size={16} />}
                   >
-                    Mulai{" "}
-                    {dayjs(club.start_period).format("MMMM YYYY")}
+                    Mulai {dayjs(club.start_period).format("MMMM YYYY")}
                   </Badge>
                 )}
                 {club.end_period && (
@@ -136,8 +176,7 @@ export default async function ClubDetailPage(props: Props) {
                     color="orange"
                     leftSection={<IconCalendarTime size={16} />}
                   >
-                    Hingga{" "}
-                    {dayjs(club.end_period).format("MMMM YYYY")}
+                    Hingga {dayjs(club.end_period).format("MMMM YYYY")}
                   </Badge>
                 )}
               </Group>
@@ -170,7 +209,10 @@ export default async function ClubDetailPage(props: Props) {
                   </Title>
                 </Stack>
 
-                <Link href={`/clubs/registration-info/${club.id}`} style={{ textDecoration: 'none' }}>
+                <Link
+                  href={`/clubs/registration-info/${club.id}`}
+                  style={{ textDecoration: "none" }}
+                >
                   <Button
                     size="lg"
                     variant="white"

@@ -16,6 +16,8 @@ import ClubsListSkeleton from "@/components/clubs/ClubsListSkeleton";
 
 export const metadata = {
   title: "Unit Kegiatan & Kepanitiaan",
+  description:
+    "Jelajahi Unit Kegiatan dan Kepanitiaan di Kaderisasi Salman. Bergabung dengan komunitas yang sesuai minat dan bakat untuk mengembangkan potensi diri.",
 };
 
 type Props = {

@@ -9,6 +9,8 @@ import RegistrationForm from "../../features/auth/RegistrationForm";
 
 export const metadata = {
   title: "Daftar",
+  description:
+    "Daftar akun Kaderisasi Salman untuk mengakses seluruh kegiatan pembinaan, pelatihan, dan layanan konseling Ruang Curhat.",
 };
 
 export default async function Page({

@@ -19,6 +19,8 @@ import ClubsSectionSkeleton from "@/components/home/ClubsSectionSkeleton";
 
 export const metadata = {
   title: "Beranda",
+  description:
+    "Portal Aktivis Salman - Pusat pendaftaran kegiatan kaderisasi, pembinaan mahasiswa, dan pengembangan diri bersama lebih dari 45.000 mahasiswa dari 320 kampus di Indonesia.",
 };
 
 export default function Home() {
@@ -80,7 +82,12 @@ export default function Home() {
             <Title order={2} c="blue" size="h1" className={classes.statNumber}>
               45.000+
             </Title>
-            <Text c="dimmed" size="lg" ta="center" className={classes.statLabel}>
+            <Text
+              c="dimmed"
+              size="lg"
+              ta="center"
+              className={classes.statLabel}
+            >
               Mahasiswa
             </Text>
           </Stack>
@@ -88,7 +95,12 @@ export default function Home() {
             <Title order={2} c="blue" size="h1" className={classes.statNumber}>
               320+
             </Title>
-            <Text c="dimmed" size="lg" ta="center" className={classes.statLabel}>
+            <Text
+              c="dimmed"
+              size="lg"
+              ta="center"
+              className={classes.statLabel}
+            >
               Kampus
             </Text>
           </Stack>
@@ -114,7 +126,10 @@ export default function Home() {
           justify="center"
           gap="md"
         >
-          <Title className={`${classes.description_list} ${classes.sectionTitle}`} ta="center">
+          <Title
+            className={`${classes.description_list} ${classes.sectionTitle}`}
+            ta="center"
+          >
             Butuh Dukungan Kesehatan Mental? Ruang Curhat Ada Untukmu.
           </Title>
           <Text ta="center" className={classes.sectionDescription}>

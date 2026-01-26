@@ -9,13 +9,13 @@ import ActivityListSkeleton from "@/components/activity/ActivityListSkeleton";
 
 export const metadata = {
   title: "Kegiatan",
+  description:
+    "Daftar kegiatan kaderisasi Salman meliputi pelatihan, keasramaan, dan pembinaan mahasiswa Islam. Temukan kegiatan yang sesuai dengan level dan minat Anda.",
 };
 
-export default async function Page(
-  props: {
-    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-  }
-) {
+export default async function Page(props: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
   const searchParams = await props.searchParams;
 
   return (
@@ -49,9 +49,12 @@ export default async function Page(
       <Container size="lg" py="xl">
         {/* Filter - Client component, renders immediately */}
         <ActivityFilter />
-        
+
         {/* Activity Grid - Streamed with Suspense */}
-        <Suspense key={JSON.stringify(searchParams)} fallback={<ActivityListSkeleton />}>
+        <Suspense
+          key={JSON.stringify(searchParams)}
+          fallback={<ActivityListSkeleton />}
+        >
           <ActivityListContent searchParams={searchParams} />
         </Suspense>
       </Container>
