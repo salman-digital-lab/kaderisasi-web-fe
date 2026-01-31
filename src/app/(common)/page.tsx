@@ -55,6 +55,7 @@ export default function Home() {
             alt="Selamat Datang di BMKA Salman ITB"
             priority
             className={classes.image}
+            sizes="(max-width: 768px) 90vw, 400px"
           />
         </div>
       </Container>

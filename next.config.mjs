@@ -33,6 +33,7 @@ const nextConfig = {
       "@mantine/form",
       "@mantine/carousel",
       "@mantine/notifications",
+      "@tabler/icons-react",
     ],
   },
 };

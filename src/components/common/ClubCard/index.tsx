@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import "dayjs/locale/id";
 import Link from "next/link";
 import NextImage from "next/image";
-import { Image, Text, Group, Badge, Button, rem, Card } from "@mantine/core";
+import { Text, Group, Badge, Button, rem, Card } from "@mantine/core";
 import classes from "./index.module.css";
 import { IconCalendarTime, IconUsers } from "@tabler/icons-react";
 
@@ -32,9 +32,7 @@ export default function ClubCard({
     <IconCalendarTime style={{ width: rem(12), height: rem(12) }} />
   );
 
-  const clubIcon = (
-    <IconUsers style={{ width: rem(12), height: rem(12) }} />
-  );
+  const clubIcon = <IconUsers style={{ width: rem(12), height: rem(12) }} />;
 
   return (
     <Card withBorder radius="md" p="md" className={classes.card}>
@@ -47,6 +45,7 @@ export default function ClubCard({
               height={80}
               alt={name}
               className={classes.logo}
+              sizes="80px"
             />
           ) : (
             <div
@@ -80,19 +79,18 @@ export default function ClubCard({
           </Text>
           <Group gap={7} mt={5} justify="center">
             <Badge variant="light" color="blue" leftSection={calendarIcon}>
-              {start_period && end_period 
+              {start_period && end_period
                 ? `${dayjs(start_period).format("MMM YYYY")} - ${dayjs(end_period).format("MMM YYYY")}`
-                : start_period 
+                : start_period
                   ? dayjs(start_period).format("MMM YYYY")
-                  : `s/d ${dayjs(end_period).format("MMM YYYY")}`
-              }
+                  : `s/d ${dayjs(end_period).format("MMM YYYY")}`}
             </Badge>
           </Group>
         </Card.Section>
       )}
 
       <Group mt="xs" className={classes.buttonSection}>
-        <Link href={`/clubs/${id}`} style={{ flex: 1, textDecoration: 'none' }}>
+        <Link href={`/clubs/${id}`} style={{ flex: 1, textDecoration: "none" }}>
           <Button radius="md" fullWidth>
             Lihat Detail
           </Button>

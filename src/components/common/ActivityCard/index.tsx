@@ -46,7 +46,8 @@ export default function ActivityCard({
           alt={activityName}
           height={350}
           width={400}
-          style={{ width: '100%', height: 'auto' }}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+          style={{ width: "100%", height: "auto" }}
         />
       </Card.Section>
 
@@ -81,7 +82,10 @@ export default function ActivityCard({
       </Card.Section>
 
       <Group mt="xs">
-        <Link href={`/activity/${slug}`} style={{ flex: 1, textDecoration: 'none' }}>
+        <Link
+          href={`/activity/${slug}`}
+          style={{ flex: 1, textDecoration: "none" }}
+        >
           <Button radius="md" fullWidth>
             Lihat Selengkapnya
           </Button>
