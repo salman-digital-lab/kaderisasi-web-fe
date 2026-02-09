@@ -27,8 +27,8 @@ type Props = {
 export default async function ClubsPage(props: Props) {
   const searchParams = await props.searchParams;
   const search = Array.isArray(searchParams.search)
-    ? searchParams.search[0]
-    : searchParams.search || "";
+    ? (searchParams.search[0] ?? "")
+    : (searchParams.search ?? "");
 
   return (
     <main>

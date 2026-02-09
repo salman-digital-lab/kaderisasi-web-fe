@@ -220,6 +220,11 @@ export default function CustomFormContent({
   const currentSection = customFormSections[sectionIndex];
   const isLastSection = sectionIndex === customFormSections.length - 1;
 
+  // Guard against undefined section
+  if (!currentSection) {
+    return null;
+  }
+
   return (
     <Stack gap="lg">
       <Box>

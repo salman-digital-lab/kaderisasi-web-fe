@@ -1,3 +1,17 @@
+/**
+ * Custom error class for fetch errors with status code and optional error code
+ */
+export class FetcherError extends Error {
+  constructor(
+    message: string,
+    public readonly status: number,
+    public readonly code?: string,
+  ) {
+    super(message);
+    this.name = "FetcherError";
+  }
+}
+
 export type FetcherOptions = RequestInit & {
   revalidate?: number | false;
   tags?: string[];
@@ -19,8 +33,8 @@ export default async function fetcher<T>(input: string, init?: FetcherOptions) {
             },
           }
         : init?.next
-        ? { next: init.next }
-        : {};
+          ? { next: init.next }
+          : {};
 
     const fetchOptions: RequestInit = {
       ...fetchInit,
@@ -35,22 +49,42 @@ export default async function fetcher<T>(input: string, init?: FetcherOptions) {
       if (response.ok) {
         return parsedResponse;
       } else {
-        const error =
+        const errorMessage =
           (parsedResponse &&
             typeof parsedResponse === "object" &&
             "message" in parsedResponse &&
-            parsedResponse?.message) ||
+            typeof parsedResponse.message === "string" &&
+            parsedResponse.message) ||
           response.statusText;
 
-        return Promise.reject(error);
+        const errorCode =
+          parsedResponse &&
+          typeof parsedResponse === "object" &&
+          "code" in parsedResponse &&
+          typeof parsedResponse.code === "string"
+            ? parsedResponse.code
+            : undefined;
+
+        throw new FetcherError(errorMessage, response.status, errorCode);
       }
     } catch (error) {
-      return Promise.reject(response.statusText || "Failed to parse response");
+      if (error instanceof FetcherError) {
+        throw error;
+      }
+      throw new FetcherError(
+        response.statusText || "Failed to parse response",
+        response.status,
+      );
     }
   } catch (error) {
+    if (error instanceof FetcherError) {
+      throw error;
+    }
     // Handle network-level errors like ECONNREFUSED
-    return Promise.reject(
+    throw new FetcherError(
       error instanceof Error ? error.message : "Network error occurred",
+      0,
+      "NETWORK_ERROR",
     );
   }
 }

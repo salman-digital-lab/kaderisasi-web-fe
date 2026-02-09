@@ -8,7 +8,9 @@ import {
   Title,
   Text,
   Container,
+  Group,
 } from "@mantine/core";
+import Link from "next/link";
 import { useEffect } from "react";
 
 export default function Error({
@@ -18,28 +20,55 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const isProduction = process.env.NEXT_PUBLIC_APP_ENV === "production";
+
   useEffect(() => {
-    console.error(error);
+    // Log error for debugging (always runs)
+    console.error("Application error:", error);
+
+    // In production, you might want to send to error tracking service
+    // e.g., Sentry.captureException(error);
   }, [error]);
 
   return (
     <Container>
       <Center h="98vh">
-        <Stack>
+        <Stack align="center">
           <Title ta="center">Telah Terjadi Kesalahan</Title>
-          <Title order={3} c="dimmed">
-            Detil Kesalahan :
-          </Title>
-          <Code p="md">{error.message}</Code>
-          <Stack gap="xs">
-            <Button color="red" onClick={() => reset()}>
-              Silahkan Ulangi Kembali
-            </Button>
-            <Text ta="center" c="dimmed" size="sm">
-              Atau
+
+          {/* Only show detailed error in development */}
+          {!isProduction && (
+            <>
+              <Title order={3} c="dimmed">
+                Detil Kesalahan:
+              </Title>
+              <Code p="md">{error.message}</Code>
+              {error.digest && (
+                <Text c="dimmed" size="xs">
+                  Error ID: {error.digest}
+                </Text>
+              )}
+            </>
+          )}
+
+          {isProduction && (
+            <Text c="dimmed" ta="center">
+              Mohon maaf, terjadi kesalahan pada sistem. Silakan coba lagi.
             </Text>
-            <Text ta="center" size="sm">
-              Laporkan Kepada Admin Melalui Media Sosial
+          )}
+
+          <Stack gap="xs" mt="md">
+            <Group justify="center">
+              <Button color="red" onClick={() => reset()}>
+                Coba Lagi
+              </Button>
+              <Button component={Link} href="/" variant="outline">
+                Ke Beranda
+              </Button>
+            </Group>
+            <Text ta="center" c="dimmed" size="sm" mt="md">
+              Jika masalah berlanjut, laporkan kepada admin melalui media
+              sosial.
             </Text>
           </Stack>
         </Stack>
