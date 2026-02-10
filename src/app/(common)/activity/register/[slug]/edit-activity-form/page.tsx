@@ -1,14 +1,12 @@
 import { redirect } from "next/navigation";
-import ActivityFormUpdate from "../../../../../../features/activity/ActivityFormUpdate";
-import { verifySession } from "../../../../../../functions/server/session";
-import {
-  getActivity,
-  getActivityRegistrationData,
-} from "../../../../../../services/activity";
-import { Container, Paper, Title } from "@mantine/core";
+import CustomFormContentEdit from "@/features/customForm/CustomFormContentEdit";
+import { verifySession } from "@/functions/server/session";
+import { getActivity, getActivityRegistrationData } from "@/services/activity";
+import { getCustomFormByFeature } from "@/services/customForm";
+import { Container, Paper, Title, Text } from "@mantine/core";
 
 export const metadata = {
-  title: "Daftar Kegiatan",
+  title: "Ubah Data Pendaftaran",
 };
 
 export default async function Page(props: {
@@ -19,10 +17,33 @@ export default async function Page(props: {
   const sessionData = await verifySession();
 
   if (sessionData.session === null) redirect("/api/logout");
+
   const registrationData = await getActivityRegistrationData(
     sessionData.session || "",
     { slug: params.slug },
   );
+
+  // Fetch custom form definition
+  // We use the activity ID as the feature_id
+  const customForm = await getCustomFormByFeature({
+    feature_type: "activity_registration",
+    feature_id: activity?.id,
+  });
+
+  if (!customForm) {
+    return (
+      <Container size="sm" component="main" mt="xl">
+        <Title ta="center" m="xl">
+          {activity?.name}
+        </Title>
+        <Paper radius="md" withBorder p="lg" mt="xl">
+          <Text c="dimmed" ta="center">
+            Formulir tidak ditemukan atau belum dikonfigurasi.
+          </Text>
+        </Paper>
+      </Container>
+    );
+  }
 
   return (
     <Container size="sm" component="main" mt="xl">
@@ -31,13 +52,10 @@ export default async function Page(props: {
       </Title>
 
       <Paper radius="md" withBorder p="lg" mt="xl">
-        <ActivityFormUpdate
+        <CustomFormContentEdit
+          customForm={customForm}
           registrationData={registrationData}
-          token={sessionData.session || ""}
           slug={params.slug}
-          formSchemas={
-            activity?.additional_config?.additional_questionnaire || []
-          }
         />
       </Paper>
     </Container>
