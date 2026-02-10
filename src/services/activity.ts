@@ -14,7 +14,24 @@ import {
   PostActivityResp,
   PutActivityReq,
   PutActivityResp,
+  GetActivityCategoriesResp,
 } from "../types/api/activity";
+
+export const getActivityCategories = async () => {
+  const { beApi } = getApiConfig();
+  const response = await fetcher<GetActivityCategoriesResp>(
+    beApi + "/activities/categories",
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      next: { revalidate: 60 },
+    },
+  );
+
+  return response.data;
+};
 
 export const getActivities = async (props: GetActivitiesReq) => {
   const { beApi } = getApiConfig();

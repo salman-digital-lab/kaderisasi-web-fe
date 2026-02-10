@@ -41,6 +41,8 @@ export type GetActivitiesRegistrationResp = APIResponse<
   ({ activity: Activity } & Registrant)[]
 >;
 
+export type GetActivityCategoriesResp = APIResponse<number[]>;
+
 export type PutActivityReq = {
   slug: string;
   data: { questionnaire_answer: Record<string, string> };

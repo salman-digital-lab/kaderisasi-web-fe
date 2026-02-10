@@ -1,17 +1,38 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ACTIVITY_CATEGORY_OPTIONS } from "../../../constants/form/activity";
 import { Chip, ChipGroup, Group, rem, TextInput } from "@mantine/core";
 import { useDebouncedCallback } from "@mantine/hooks";
 import { IconSearch } from "@tabler/icons-react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { getActivityCategories } from "@/services/activity";
 
 export default function ActivityFilter() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [availableCategories, setAvailableCategories] = useState<number[]>([]);
 
   const category = searchParams.get("category");
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const categories = await getActivityCategories();
+        if (categories) {
+          setAvailableCategories(categories);
+        }
+      } catch (error) {
+        console.error("Failed to fetch activity categories", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  const filteredOptions = ACTIVITY_CATEGORY_OPTIONS.filter((option) =>
+    availableCategories.includes(option.value),
+  );
 
   const onChangeCategory = (value: string, key: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -52,7 +73,7 @@ export default function ActivityFilter() {
           <Chip key="semua" radius="xs" value="">
             Semua
           </Chip>
-          {ACTIVITY_CATEGORY_OPTIONS.map((option) => (
+          {filteredOptions.map((option) => (
             <Chip
               key={option.value}
               radius="xs"
