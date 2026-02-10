@@ -286,7 +286,7 @@ export default async function Page(props: {
                 <Button disabled fullWidth>
                   Jenjang Tidak Cukup
                 </Button>
-              ) : (
+              ) : activity?.is_registration_open ? (
                 <Link
                   href={
                     hasCustomForm
@@ -297,26 +297,28 @@ export default async function Page(props: {
                 >
                   <Button fullWidth>Daftar Kegiatan</Button>
                 </Link>
-              )
+              ) : null
             ) : null
           ) : (
             <Stack gap="xs">
-              <Link
-                href={
-                  dayjs().isAfter(activity?.registration_end)
-                    ? `/login?redirect=${process.env.NEXT_PUBLIC_APP_URL}/activity/${params.slug}`
-                    : `/login?redirect=${
-                        process.env.NEXT_PUBLIC_APP_URL
-                      }${`/custom-form/activity/${activity?.id}`}`
-                }
-                style={{ textDecoration: "none" }}
-              >
-                <Button fullWidth>
-                  {dayjs().isAfter(activity?.registration_end)
-                    ? "Masuk"
-                    : "Daftar Kegiatan"}
-                </Button>
-              </Link>
+              {activity?.is_registration_open ? (
+                <Link
+                  href={
+                    dayjs().isAfter(activity?.registration_end)
+                      ? `/login?redirect=${process.env.NEXT_PUBLIC_APP_URL}/activity/${params.slug}`
+                      : `/login?redirect=${
+                          process.env.NEXT_PUBLIC_APP_URL
+                        }${`/custom-form/activity/${activity?.id}`}`
+                  }
+                  style={{ textDecoration: "none" }}
+                >
+                  <Button fullWidth>
+                    {dayjs().isAfter(activity?.registration_end)
+                      ? "Masuk"
+                      : "Daftar Kegiatan"}
+                  </Button>
+                </Link>
+              ) : null}
             </Stack>
           )}
         </Card>
