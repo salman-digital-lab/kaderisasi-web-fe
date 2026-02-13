@@ -1,22 +1,29 @@
 /**
- * Centralized cache/revalidation configuration
- * Use these constants in fetcher calls for consistency
+ * Centralized cache tag constants
+ * Used with cacheTag() in 'use cache' functions for targeted invalidation
  */
-export const CACHE = {
-  /** Activities list and details - 1 minute */
-  ACTIVITIES: 60,
+export const CACHE_TAGS = {
+  /** All activities list */
+  ACTIVITIES: "activities",
 
-  /** Clubs list and details - 1 minute */
-  CLUBS: 60,
+  /** Single activity by slug */
+  ACTIVITY: (slug: string) => `activity-${slug}`,
 
-  /** Static content - 1 hour */
-  STATIC: 3600,
+  /** Activity categories */
+  ACTIVITY_CATEGORIES: "activity-categories",
 
-  /** User-specific data - no caching */
-  USER_DATA: 0,
+  /** All clubs list */
+  CLUBS: "clubs",
 
-  /** Leaderboard data - 5 minutes */
-  LEADERBOARD: 300,
+  /** Single club by id */
+  CLUB: (id: number | string) => `club-${id}`,
+
+  /** Monthly leaderboard */
+  LEADERBOARD_MONTHLY: "leaderboard-monthly",
+
+  /** Lifetime leaderboard */
+  LEADERBOARD_LIFETIME: "leaderboard-lifetime",
+
+  /** Province reference data */
+  PROVINCES: "provinces",
 } as const;
-
-export type CacheConfig = (typeof CACHE)[keyof typeof CACHE];

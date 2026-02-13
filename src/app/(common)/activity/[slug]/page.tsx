@@ -28,10 +28,8 @@ import {
   USER_LEVEL_RENDER,
 } from "../../../../constants/render/activity";
 import { verifySession } from "../../../../functions/server/session";
-import {
-  getActivity,
-  getActivityRegistration,
-} from "../../../../services/activity";
+import { getActivity } from "../../../../services/activity.cache";
+import { getActivityRegistration } from "../../../../services/activity";
 import { getProfile } from "../../../../services/profile";
 import { getCustomFormByFeature } from "../../../../services/customForm";
 import ErrorWrapper from "../../../../components/layout/Error";

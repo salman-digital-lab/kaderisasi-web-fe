@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Footer from "../../components/layout/Footer";
 import Navbar from "../../components/layout/Navbar";
 
@@ -8,7 +9,9 @@ export default function CommonLayout({
 }) {
   return (
     <>
-      <Navbar />
+      <Suspense>
+        <Navbar />
+      </Suspense>
       {children}
       <Footer />
     </>

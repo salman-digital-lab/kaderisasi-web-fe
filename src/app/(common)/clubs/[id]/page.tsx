@@ -14,7 +14,7 @@ import {
   ThemeIcon,
   Button,
 } from "@mantine/core";
-import { getClub } from "../../../../services/club";
+import { getClub } from "../../../../services/club.cache";
 import { getCustomFormByFeature } from "../../../../services/customForm";
 import {
   IconCalendarTime,

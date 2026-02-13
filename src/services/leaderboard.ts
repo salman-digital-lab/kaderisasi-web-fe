@@ -22,9 +22,6 @@ export const getMonthlyLeaderboard = async (
 
   const response = await fetcher<GetMonthlyLeaderboardResp>(
     beApi + `/achievements/monthly?${params.toString()}`,
-    {
-      next: { revalidate: 60 },
-    },
   );
 
   return response;
@@ -42,9 +39,6 @@ export const getLifetimeLeaderboard = async (
 
   const response = await fetcher<GetLifetimeLeaderboardResp>(
     beApi + `/achievements/lifetime?${params.toString()}`,
-    {
-      next: { revalidate: 60 },
-    },
   );
 
   return response;
@@ -108,7 +102,7 @@ export const getMyLifetimeRank = async (token: string) => {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-    next: { revalidate: 60 },
+    cache: "no-store",
   });
 
   return response;
@@ -131,8 +125,7 @@ export const getMyAchievements = async (
       headers: {
         Authorization: `Bearer ${token}`,
       },
-      revalidate: 60, // Cache for 1 minute since it's personal data
-      tags: ["achievements", "personal"],
+      cache: "no-store",
     },
   );
 

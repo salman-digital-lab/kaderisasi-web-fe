@@ -1,19 +1,23 @@
 import { SimpleGrid, Center, Text } from "@mantine/core";
 import ActivityCard from "@/components/common/ActivityCard";
 import ActivityPagination from "@/features/activity/ActivityPagination";
-import { getActivities } from "@/services/activity";
+import { getActivities } from "@/services/activity.cache";
 
 type ActivityListContentProps = {
   searchParams: { [key: string]: string | string[] | undefined };
 };
 
-export async function ActivityListContent({ searchParams }: ActivityListContentProps) {
+export async function ActivityListContent({
+  searchParams,
+}: ActivityListContentProps) {
   const activities = await getActivities({ per_page: "8", ...searchParams });
 
   if (!activities?.data?.length) {
     return (
       <Center mt={50} py="xl">
-        <Text c="dimmed" size="lg">Tidak ada kegiatan</Text>
+        <Text c="dimmed" size="lg">
+          Tidak ada kegiatan
+        </Text>
       </Center>
     );
   }
@@ -46,4 +50,3 @@ export async function ActivityListContent({ searchParams }: ActivityListContentP
 }
 
 export default ActivityListContent;
-

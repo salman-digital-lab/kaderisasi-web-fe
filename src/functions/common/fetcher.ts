@@ -12,36 +12,9 @@ export class FetcherError extends Error {
   }
 }
 
-export type FetcherOptions = RequestInit & {
-  revalidate?: number | false;
-  tags?: string[];
-};
-
-export default async function fetcher<T>(input: string, init?: FetcherOptions) {
+export default async function fetcher<T>(input: string, init?: RequestInit) {
   try {
-    // Extract custom properties that need special handling
-    const { revalidate, tags, ...fetchInit } = init || {};
-
-    // Build next config only if custom properties are provided
-    const nextConfig =
-      revalidate !== undefined || tags !== undefined
-        ? {
-            next: {
-              ...init?.next, // Preserve any existing next config
-              ...(revalidate !== undefined && { revalidate }),
-              ...(tags !== undefined && { tags }),
-            },
-          }
-        : init?.next
-          ? { next: init.next }
-          : {};
-
-    const fetchOptions: RequestInit = {
-      ...fetchInit,
-      ...nextConfig,
-    };
-
-    const response = await fetch(input, fetchOptions);
+    const response = await fetch(input, init);
 
     try {
       const parsedResponse = (await response.json()) as T;

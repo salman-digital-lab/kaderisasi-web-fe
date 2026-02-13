@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import CustomFormContentEdit from "@/features/customForm/CustomFormContentEdit";
 import { verifySession } from "@/functions/server/session";
-import { getActivity, getActivityRegistrationData } from "@/services/activity";
+import { getActivity } from "@/services/activity.cache";
+import { getActivityRegistrationData } from "@/services/activity";
 import { getCustomFormByFeature } from "@/services/customForm";
 import { Container, Paper, Title, Text } from "@mantine/core";
 

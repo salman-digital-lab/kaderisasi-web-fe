@@ -16,7 +16,6 @@ export const getClubs = async (props: GetClubsReq) => {
     headers: {
       "Content-Type": "application/json",
     },
-    next: { revalidate: 60 },
   });
 
   return response.data;
@@ -29,7 +28,6 @@ export const getClub = async (props: GetClubReq) => {
     headers: {
       "Content-Type": "application/json",
     },
-    next: { revalidate: 60 },
   });
 
   return response.data;

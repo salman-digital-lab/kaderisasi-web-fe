@@ -1,7 +1,15 @@
-import { SimpleGrid, Center, Button, Title, Text, Container, Card } from "@mantine/core";
+import {
+  SimpleGrid,
+  Center,
+  Button,
+  Title,
+  Text,
+  Container,
+  Card,
+} from "@mantine/core";
 import Link from "next/link";
 import ActivityCard from "@/components/common/ActivityCard";
-import { getActivities } from "@/services/activity";
+import { getActivities } from "@/services/activity.cache";
 
 export async function ActivitiesSection() {
   const { data: activities } = await getActivities({ per_page: "4" });
@@ -12,16 +20,9 @@ export async function ActivitiesSection() {
         Kegiatan Baru
       </Title>
 
-      <Text
-        c="dimmed"
-        ta="center"
-        mt="md"
-        maw={600}
-        mx="auto"
-      >
-        Jelajahi dan saksikan peluang kegiatan yang dapat membantu Anda
-        mengasah potensi dan kontribusi unik Anda dalam lingkungan yang
-        mendukung.
+      <Text c="dimmed" ta="center" mt="md" maw={600} mx="auto">
+        Jelajahi dan saksikan peluang kegiatan yang dapat membantu Anda mengasah
+        potensi dan kontribusi unik Anda dalam lingkungan yang mendukung.
       </Text>
 
       {activities.length > 0 ? (
@@ -54,9 +55,17 @@ export async function ActivitiesSection() {
           )}
         </>
       ) : (
-        <Card padding="xl" radius="md" withBorder mt="xl" w="fit-content" mx="auto">
+        <Card
+          padding="xl"
+          radius="md"
+          withBorder
+          mt="xl"
+          w="fit-content"
+          mx="auto"
+        >
           <Text ta="center" c="dimmed" fz="md">
-            Belum ada kegiatan baru saat ini. Nantikan kegiatan menarik dari kami!
+            Belum ada kegiatan baru saat ini. Nantikan kegiatan menarik dari
+            kami!
           </Text>
         </Card>
       )}
@@ -65,4 +74,3 @@ export async function ActivitiesSection() {
 }
 
 export default ActivitiesSection;
-

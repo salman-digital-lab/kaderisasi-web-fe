@@ -1,6 +1,8 @@
 "use server";
 
+import { revalidateTag } from "next/cache";
 import { putActivity } from "../../services/activity";
+import { CACHE_TAGS } from "../../constants/cache";
 import { ServerActionResult, getErrorMessage } from "../../types/server-action";
 import { verifySession } from "./session";
 
@@ -15,6 +17,7 @@ export default async function updateActivityCustomForm(
       slug,
       data: { questionnaire_answer: customFormData },
     });
+    revalidateTag(CACHE_TAGS.ACTIVITIES, {});
     return {
       success: true,
       message: response.message || "Formulir berhasil diperbarui",

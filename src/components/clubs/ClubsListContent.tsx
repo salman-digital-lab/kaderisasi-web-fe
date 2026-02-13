@@ -1,7 +1,7 @@
 import { SimpleGrid, Center, Stack, Text, Button } from "@mantine/core";
 import Link from "next/link";
 import ClubCard from "@/components/common/ClubCard";
-import { getClubs } from "@/services/club";
+import { getClubs } from "@/services/club.cache";
 
 type ClubsListContentProps = {
   search: string;
@@ -53,4 +53,3 @@ export async function ClubsListContent({ search }: ClubsListContentProps) {
 }
 
 export default ClubsListContent;
-

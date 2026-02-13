@@ -16,7 +16,8 @@ import {
   IconCalendar,
 } from "@tabler/icons-react";
 
-import { getProfile, getProvinces } from "@/services/profile";
+import { getProfile } from "@/services/profile";
+import { getProvinces } from "@/services/profile.cache";
 import { verifySession } from "@/functions/server/session";
 import { USER_LEVEL_RENDER } from "@/constants/render/activity";
 import { getActivitiesRegistration } from "@/services/activity";
@@ -34,14 +35,19 @@ export async function ProfileContent() {
   const sessionData = await verifySession();
 
   try {
-    const [provinceData, profileData, activitiesRegistration, ruangCurhatData, achievements] = 
-      await Promise.all([
-        getProvinces(),
-        getProfile(sessionData.session || ""),
-        getActivitiesRegistration(sessionData.session || ""),
-        getRuangCurhat(sessionData.session || ""),
-        getMyAchievements(sessionData.session || ""),
-      ]);
+    const [
+      provinceData,
+      profileData,
+      activitiesRegistration,
+      ruangCurhatData,
+      achievements,
+    ] = await Promise.all([
+      getProvinces(),
+      getProfile(sessionData.session || ""),
+      getActivitiesRegistration(sessionData.session || ""),
+      getRuangCurhat(sessionData.session || ""),
+      getMyAchievements(sessionData.session || ""),
+    ]);
 
     return (
       <SimpleGrid
@@ -159,4 +165,3 @@ export async function ProfileContent() {
 }
 
 export default ProfileContent;
-

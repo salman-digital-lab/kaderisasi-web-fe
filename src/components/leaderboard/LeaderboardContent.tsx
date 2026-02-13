@@ -11,10 +11,8 @@ import {
   Badge,
 } from "@mantine/core";
 
-import {
-  getLifetimeLeaderboard,
-  getMyLifetimeRank,
-} from "@/services/leaderboard";
+import { getLifetimeLeaderboard } from "@/services/leaderboard.cache";
+import { getMyLifetimeRank } from "@/services/leaderboard";
 import { LifetimeLeaderboard } from "@/types/model/achievement";
 
 import styles from "@/features/leaderboard/LifetimeLeaderboard/style.module.css";

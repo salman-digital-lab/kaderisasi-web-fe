@@ -1,7 +1,14 @@
-import { SimpleGrid, Center, Button, Title, Text, Container } from "@mantine/core";
+import {
+  SimpleGrid,
+  Center,
+  Button,
+  Title,
+  Text,
+  Container,
+} from "@mantine/core";
 import Link from "next/link";
 import ClubCard from "@/components/common/ClubCard";
-import { getClubs } from "@/services/club";
+import { getClubs } from "@/services/club.cache";
 
 export async function ClubsSection() {
   const { data: clubs } = await getClubs({ per_page: "4" });
@@ -12,13 +19,7 @@ export async function ClubsSection() {
         Unit Kegiatan dan Kepanitiaan
       </Title>
 
-      <Text
-        c="dimmed"
-        ta="center"
-        mt="md"
-        maw={600}
-        mx="auto"
-      >
+      <Text c="dimmed" ta="center" mt="md" maw={600} mx="auto">
         Bergabunglah dengan berbagai unit kegiatan dan kepanitiaan untuk
         mengembangkan minat dan bakat Anda serta berkontribusi dalam membangun
         generasi pemimpin masa depan.
@@ -61,4 +62,3 @@ export async function ClubsSection() {
 }
 
 export default ClubsSection;
-

@@ -1,5 +1,6 @@
 import { verifySession } from "@/functions/server/session";
-import { getProfile, getProvinces } from "@/services/profile";
+import { getProfile } from "@/services/profile";
+import { getProvinces } from "@/services/profile.cache";
 import { getCustomFormByFeature } from "@/services/customForm";
 import { Container, Paper, Title, Text } from "@mantine/core";
 import { redirect } from "next/navigation";
@@ -25,9 +26,7 @@ export default async function Page(props: {
   const sessionData = await verifySession();
 
   // Validate type
-  if (
-    !["activity", "club", "independent"].includes(type)
-  ) {
+  if (!["activity", "club", "independent"].includes(type)) {
     return <ErrorWrapper message="Invalid form type" />;
   }
 
@@ -56,10 +55,15 @@ export default async function Page(props: {
     profileData = await getProfile(sessionData.session || "");
 
     return (
-      <Container size="md" component="main" py={{ base: "md", sm: "xl" }} px={{ base: "xs", sm: "md" }}>
-        <Paper 
-          radius="md" 
-          withBorder 
+      <Container
+        size="md"
+        component="main"
+        py={{ base: "md", sm: "xl" }}
+        px={{ base: "xs", sm: "md" }}
+      >
+        <Paper
+          radius="md"
+          withBorder
           p={{ base: "md", sm: "xl" }}
           style={{ width: "100%", maxWidth: "100%" }}
         >
@@ -80,4 +84,3 @@ export default async function Page(props: {
     return <ErrorWrapper message="An error occurred" />;
   }
 }
-

@@ -26,7 +26,6 @@ export const getActivityCategories = async () => {
       headers: {
         "Content-Type": "application/json",
       },
-      next: { revalidate: 60 },
     },
   );
 
@@ -44,7 +43,6 @@ export const getActivities = async (props: GetActivitiesReq) => {
       headers: {
         "Content-Type": "application/json",
       },
-      next: { revalidate: 60 },
     },
   );
 
@@ -60,7 +58,6 @@ export const getActivity = async (props: GetActivityReq) => {
       headers: {
         "Content-Type": "application/json",
       },
-      next: { revalidate: 60 },
     },
   );
 

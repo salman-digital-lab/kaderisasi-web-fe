@@ -5,12 +5,14 @@ import { Member, PublicUser } from "@/types/model/members";
 import { getProfile } from "@/services/profile";
 import ErrorWrapper from "@/components/layout/Error";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
+import { Skeleton } from "@mantine/core";
 
 export const metadata = {
   title: "Kirim Prestasi Anda",
 };
 
-export default async function Page() {
+async function AchievementFormContent() {
   let profileData:
     | {
         userData: PublicUser;
@@ -30,20 +32,41 @@ export default async function Page() {
   }
 
   return (
+    <>
+      <Text c="dimmed" mb="lg">
+        Isi form dibawah ini untuk mengirim prestasi anda. Prestasi anda akan
+        diperiksa oleh admin sebelum ditambahkan ke leaderboard.
+      </Text>
+      <AchievementForm
+        token={sessionData.session || ""}
+        whatsapp={profileData?.profile.whatsapp}
+        university_id={profileData?.profile.university_id?.toString()}
+      />
+    </>
+  );
+}
+
+export default function Page() {
+  return (
     <Container size="sm" component="main" mt={rem(80)}>
       <Title ta="center" mb="xl">
         Kirim Prestasi Anda
       </Title>
       <Paper radius="md" withBorder p="lg">
-        <Text c="dimmed" mb="lg">
-          Isi form dibawah ini untuk mengirim prestasi anda. Prestasi anda akan
-          diperiksa oleh admin sebelum ditambahkan ke leaderboard.
-        </Text>
-        <AchievementForm
-          token={sessionData.session || ""}
-          whatsapp={profileData?.profile.whatsapp}
-          university_id={profileData?.profile.university_id?.toString()}
-        />
+        <Suspense
+          fallback={
+            <>
+              <Skeleton height={16} width="70%" mb="lg" />
+              <Skeleton height={40} mb="md" />
+              <Skeleton height={40} mb="md" />
+              <Skeleton height={40} mb="md" />
+              <Skeleton height={100} mb="md" />
+              <Skeleton height={40} width="30%" />
+            </>
+          }
+        >
+          <AchievementFormContent />
+        </Suspense>
       </Paper>
     </Container>
   );

@@ -1,8 +1,9 @@
 import ErrorWrapper from "@/components/layout/Error";
 import ProfileForm from "@/features/activity/ProfileForm";
 import { verifySession } from "@/functions/server/session";
-import { getActivity } from "@/services/activity";
-import { getProfile, getProvinces } from "@/services/profile";
+import { getActivity } from "@/services/activity.cache";
+import { getProfile } from "@/services/profile";
+import { getProvinces } from "@/services/profile.cache";
 import { PublicUser, Member } from "@/types/model/members";
 import { Province } from "@/types/model/province";
 

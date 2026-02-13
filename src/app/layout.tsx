@@ -12,6 +12,7 @@ import { Notifications } from "@mantine/notifications";
 import { ModalsProvider } from "@mantine/modals";
 import Script from "next/script";
 import { Inter } from "next/font/google";
+import { Suspense } from "react";
 import ScrollToTop from "@/components/common/ScrollToTop";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -104,7 +105,9 @@ export default function RootLayout({
       </head>
       <body>
         <MantineProvider theme={{ fontFamily: inter.style.fontFamily }}>
-          <ScrollToTop />
+          <Suspense>
+            <ScrollToTop />
+          </Suspense>
           <Notifications position="top-center" />
           <ModalsProvider>{children}</ModalsProvider>
         </MantineProvider>
