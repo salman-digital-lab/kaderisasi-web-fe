@@ -115,6 +115,7 @@ export default function CustomFormContentEdit({
       )}
 
       <CustomFormFieldsRenderer
+        key={currentStep}
         section={currentSection}
         sections={customFormSections}
         currentSectionIndex={currentStep}

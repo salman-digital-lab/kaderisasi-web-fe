@@ -159,6 +159,7 @@ export default function CustomFormFieldsRenderer({
     if (field.hidden) return null;
 
     const commonProps = {
+      key: form.key(field.key),
       label: renderTextWithNewlines(field.label),
       placeholder: (field.placeholder || field.label)?.replace(/\n/g, " "),
       description: renderTextWithNewlines(field.helpText || field.description),

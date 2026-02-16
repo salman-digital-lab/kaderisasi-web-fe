@@ -255,6 +255,7 @@ export default function CustomFormContent({
       </Stepper>
 
       <CustomFormFieldsRenderer
+        key={sectionIndex}
         section={currentSection}
         sections={customFormSections}
         currentSectionIndex={sectionIndex}
