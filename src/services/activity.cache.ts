@@ -27,7 +27,11 @@ export async function getActivityCategories() {
 export async function getActivities(props: GetActivitiesReq) {
   cacheLife("minutes");
   cacheTag(CACHE_TAGS.ACTIVITIES);
-  return _getActivities(props);
+  try {
+    return await _getActivities(props);
+  } catch {
+    return { meta: {} as any, data: [] };
+  }
 }
 
 /**

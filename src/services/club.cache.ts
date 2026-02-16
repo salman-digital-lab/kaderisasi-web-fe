@@ -12,7 +12,11 @@ import type { GetClubsReq, GetClubReq } from "@/types/api/club";
 export async function getClubs(props: GetClubsReq) {
   cacheLife("minutes");
   cacheTag(CACHE_TAGS.CLUBS);
-  return _getClubs(props);
+  try {
+    return await _getClubs(props);
+  } catch {
+    return { meta: {} as any, data: [] };
+  }
 }
 
 /**
