@@ -3,6 +3,7 @@
 import { RegisterResp } from "../../types/api/auth";
 import { serverApiConfig } from "../../config/apiConfig";
 import fetcher from "../common/fetcher";
+import { getErrorMessage } from "../../types/server-action";
 
 type RegisterFormData = {
   fullname: string;
@@ -35,10 +36,9 @@ export default async function register({
 
     return { success: true, message: response.message };
   } catch (error: unknown) {
-    const errorMessage =
-      typeof error === "string"
-        ? error
-        : "An error occurred during registration";
-    return { success: false, message: errorMessage };
+    return {
+      success: false,
+      message: getErrorMessage(error, "Terjadi kesalahan saat registrasi"),
+    };
   }
 }

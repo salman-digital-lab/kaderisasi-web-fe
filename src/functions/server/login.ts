@@ -6,7 +6,7 @@ import { LoginResp } from "../../types/api/auth";
 import { serverApiConfig } from "../../config/apiConfig";
 
 import fetcher from "../common/fetcher";
-import { handleCatchError } from "../common/handler";
+import { getErrorMessage } from "../../types/server-action";
 import {
   NAME_COOKIE_NAME,
   PROFILE_PICTURE_COOKIE_NAME,
@@ -59,8 +59,9 @@ export default async function login({ email, password }: LoginFormData) {
 
     return { success: true, message: response.message };
   } catch (error: unknown) {
-    const errorMessage =
-      typeof error === "string" ? error : "An error occurred during login";
-    return { success: false, message: errorMessage };
+    return {
+      success: false,
+      message: getErrorMessage(error, "Terjadi kesalahan saat login"),
+    };
   }
 }
