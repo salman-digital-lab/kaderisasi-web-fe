@@ -43,6 +43,7 @@ export type Activity = {
     custom_selection_data?: string[];
     mandatory_profile_data?: MandatoryProfileData[];
     images?: string[];
+    certificate_template_id?: number;
   };
   is_published: number;
   is_registration_open: boolean;

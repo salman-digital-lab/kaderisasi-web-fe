@@ -17,6 +17,7 @@ import {
   IconArrowLeft,
   IconArrowRight,
   IconClock,
+  IconCertificate,
 } from "@tabler/icons-react";
 import { Carousel, CarouselSlide } from "@mantine/carousel";
 import Link from "next/link";
@@ -94,6 +95,7 @@ export default async function Page(props: {
     | {
         status: string;
         visible_at?: string;
+        registration_id?: number;
       }
     | undefined;
 
@@ -259,6 +261,22 @@ export default async function Page(props: {
                         .format("DD MMMM YYYY, HH:mm")}
                     </Text>
                   </Group>
+                )}
+              {activityRegistration?.status ===
+                ACTIVITY_REGISTRANT_STATUS_ENUM.LULUS_KEGIATAN &&
+                activityRegistration?.registration_id && (
+                  <Link
+                    href={`/certificate/${activityRegistration.registration_id}`}
+                    style={{ textDecoration: "none" }}
+                  >
+                    <Button
+                      fullWidth
+                      color="green"
+                      leftSection={<IconCertificate size={16} />}
+                    >
+                      Lihat Sertifikat
+                    </Button>
+                  </Link>
                 )}
             </Stack>
           ) : (

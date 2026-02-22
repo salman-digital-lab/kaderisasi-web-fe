@@ -29,6 +29,7 @@ export type GetActivityRegistrationReq = {
 export type GetActivityRegistrationResp = APIResponse<{
   status: string;
   visible_at?: string;
+  registration_id?: number;
 }>;
 
 export type GetActivityRegistrationDataReq = {

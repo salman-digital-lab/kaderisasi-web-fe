@@ -24,6 +24,7 @@ import {
   IconX,
   IconClock,
   IconExternalLink,
+  IconCertificate,
 } from "@tabler/icons-react";
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
@@ -316,6 +317,22 @@ export default function StatusCheckContent({
                       </Text>
                     </Group>
                   )}
+                {activity.status ===
+                  ACTIVITY_REGISTRANT_STATUS_ENUM.LULUS_KEGIATAN && (
+                  <Link
+                    href={`/certificate/${activity.id}`}
+                    style={{ textDecoration: "none" }}
+                  >
+                    <Button
+                      size="xs"
+                      color="green"
+                      variant="light"
+                      leftSection={<IconCertificate size={14} />}
+                    >
+                      Lihat Sertifikat
+                    </Button>
+                  </Link>
+                )}
               </Stack>
             </Card>
           ))}
