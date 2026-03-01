@@ -11,11 +11,14 @@ import {
   Paper,
   Tooltip,
 } from "@mantine/core";
-import { IconArrowLeft, IconPrinter, IconLogin } from "@tabler/icons-react";
+import { IconArrowLeft, IconDownload, IconLogin } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import QRCode from "react-qr-code";
+import { useState, useRef } from "react";
 import { CertificateData, CertificateElement } from "@/types/model/certificate";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 type CertificateViewProps = {
   data: CertificateData;
@@ -145,6 +148,8 @@ export default function CertificateView({
   isLoggedIn,
 }: CertificateViewProps) {
   const router = useRouter();
+  const [isDownloading, setIsDownloading] = useState(false);
+  const certificateRef = useRef<HTMLDivElement>(null);
   const { template, participant, activity } = data;
   const { template_data, background_image } = template;
 
@@ -155,37 +160,76 @@ export default function CertificateView({
   const certificateUrl = `${appUrl}/certificate/${participant.registration_id}`;
   const loginRedirect = `/login?redirect=/certificate/${participant.registration_id}`;
 
-  const handlePrint = () => {
-    window.print();
+  const handleDownloadPdf = async () => {
+    if (!certificateRef.current) return;
+
+    setIsDownloading(true);
+    try {
+      const canvas = await html2canvas(certificateRef.current, {
+        scale: 4,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: "#ffffff",
+        logging: false,
+        imageTimeout: 0,
+        onclone: (clonedDoc) => {
+          const clonedElement = clonedDoc.querySelector('[data-certificate-content]') as HTMLElement;
+          if (clonedElement) {
+            (clonedElement.style as any).fontSmooth = "always";
+            (clonedElement.style as any).webkitFontSmoothing = "antialiased";
+            (clonedElement.style as any).mozFontSmoothing = "grayscale";
+            (clonedElement.style as any).fontRendering = "optimizeLegibility";
+          }
+        },
+      });
+
+      const imgData = canvas.toDataURL("image/png", 1.0);
+      const pdf = new jsPDF({
+        orientation: template_data.canvasWidth > template_data.canvasHeight ? "landscape" : "portrait",
+        unit: "px",
+        format: [template_data.canvasWidth, template_data.canvasHeight],
+        hotfixes: ["px_scaling"],
+      });
+
+      pdf.addImage(imgData, "PNG", 0, 0, template_data.canvasWidth, template_data.canvasHeight, undefined, "FAST");
+      pdf.save(`sertifikat-${participant.name.replace(/\s+/g, "-")}.pdf`);
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+    } finally {
+      setIsDownloading(false);
+    }
   };
+
+  if (!template_data || !template_data.elements) {
+    return (
+      <Container size="lg" py="xl">
+        <Paper withBorder p="md" radius="md">
+          <Text c="red">Template sertifikat tidak tersedia</Text>
+        </Paper>
+      </Container>
+    );
+  }
 
   return (
     <>
-      {/* Print-only styles */}
       <style>{`
-        @media print {
-          body * { visibility: hidden; }
-          .certificate-printable,
-          .certificate-printable * { visibility: visible; }
-          .certificate-printable {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: white;
-          }
-          .no-print { display: none !important; }
+        .certificate-content {
+          font-smooth: always;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          font-rendering: optimizeLegibility;
+        }
+        .certificate-content * {
+          font-smooth: always;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          font-rendering: optimizeLegibility;
         }
       `}</style>
-
       <Container size="lg" py="xl">
-        <Stack gap="xl">
+        <Stack gap="lg">
           {/* Header actions */}
-          <Group justify="space-between" className="no-print">
+          <Group justify="space-between">
             <Button
               variant="subtle"
               leftSection={<IconArrowLeft size={16} />}
@@ -195,10 +239,11 @@ export default function CertificateView({
             </Button>
             {isLoggedIn ? (
               <Button
-                leftSection={<IconPrinter size={16} />}
-                onClick={handlePrint}
+                leftSection={<IconDownload size={16} />}
+                onClick={handleDownloadPdf}
+                loading={isDownloading}
               >
-                Cetak / Unduh
+                Unduh PDF
               </Button>
             ) : (
               <Tooltip label="Masuk terlebih dahulu untuk mengunduh sertifikat">
@@ -212,7 +257,7 @@ export default function CertificateView({
           </Group>
 
           {/* Certificate info */}
-          <Paper withBorder p="md" radius="md" className="no-print">
+          <Paper withBorder p="md" radius="sm">
             <Stack gap="xs">
               <Title order={3}>{activity.name}</Title>
               <Text c="dimmed">
@@ -227,16 +272,21 @@ export default function CertificateView({
             </Stack>
           </Paper>
 
-          {/* Certificate canvas */}
+          {/* Certificate canvas - flatter design with small border */}
           <Box
             style={{
               display: "flex",
               justifyContent: "center",
               overflowX: "auto",
+              padding: "16px",
+              backgroundColor: "#f8f9fa",
+              borderRadius: "8px",
             }}
           >
             <div
-              className="certificate-printable"
+              ref={certificateRef}
+              data-certificate-content
+              className="certificate-content"
               style={{
                 position: "relative",
                 width: template_data.canvasWidth,
@@ -248,7 +298,7 @@ export default function CertificateView({
                   : undefined,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
-                boxShadow: "0 4px 20px rgba(0, 0, 0, 0.15)",
+                border: "1px solid #e0e0e0",
                 overflow: "hidden",
               }}
             >
@@ -263,11 +313,11 @@ export default function CertificateView({
             </div>
           </Box>
 
-          {/* Print hint */}
-          <Text size="sm" c="dimmed" ta="center" className="no-print">
+          {/* Download hint */}
+          <Text size="sm" c="dimmed" ta="center">
             {isLoggedIn
-              ? 'Gunakan tombol "Cetak / Unduh" untuk menyimpan sertifikat sebagai PDF melalui dialog print browser Anda.'
-              : "Masuk ke akun Anda untuk mengunduh atau mencetak sertifikat ini."}
+              ? 'Klik "Unduh PDF" untuk menyimpan sertifikat.'
+              : "Masuk ke akun Anda untuk mengunduh sertifikat ini."}
           </Text>
         </Stack>
       </Container>

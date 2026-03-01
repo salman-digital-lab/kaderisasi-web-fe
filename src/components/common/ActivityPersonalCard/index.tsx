@@ -3,7 +3,7 @@
 import Link from "next/link";
 import NextImage from "next/image";
 import { Card, Text, Group, Badge, Button, Stack, Box } from "@mantine/core";
-import { IconClock } from "@tabler/icons-react";
+import { IconClock, IconAward } from "@tabler/icons-react";
 import { ACTIVITY_REGISTRANT_STATUS_ENUM } from "@/types/constants/activity";
 
 type ActivityCardProps = {
@@ -12,6 +12,8 @@ type ActivityCardProps = {
   slug: string;
   imageUrl?: string;
   visibleAt?: string;
+  registrationId?: number;
+  hasCertificate?: boolean;
 };
 
 // Format date to readable string
@@ -50,9 +52,17 @@ export default function ActivityPersonalCard({
   slug,
   imageUrl,
   visibleAt,
+  registrationId,
+  hasCertificate,
 }: ActivityCardProps) {
   const isUnannounced =
     registrationStatus === ACTIVITY_REGISTRANT_STATUS_ENUM.BELUM_DIUMUMKAN;
+
+  const canViewCertificate = registrationId && hasCertificate &&
+    (registrationStatus === ACTIVITY_REGISTRANT_STATUS_ENUM.LULUS_KEGIATAN ||
+     registrationStatus === ACTIVITY_REGISTRANT_STATUS_ENUM.DITERIMA);
+
+  const canEditForm = registrationStatus === ACTIVITY_REGISTRANT_STATUS_ENUM.TERDAFTAR;
 
   return (
     <Card withBorder radius="md" p="md" h="100%">
@@ -102,19 +112,37 @@ export default function ActivityPersonalCard({
       </Stack>
 
       <Stack mt="md" gap="xs">
-        <Link href={`/activity/${slug}`} style={{ textDecoration: "none" }}>
+        <Link href={`/profile/activity/${slug}`} style={{ textDecoration: "none" }}>
           <Button radius="md" variant="filled" fullWidth>
             Lihat Detail
           </Button>
         </Link>
-        <Link
-          href={`/activity/register/${slug}/edit-activity-form`}
-          style={{ textDecoration: "none" }}
-        >
-          <Button radius="md" variant="outline" fullWidth>
-            Edit Formulir
-          </Button>
-        </Link>
+        {canEditForm && (
+          <Link
+            href={`/activity/register/${slug}/edit-activity-form`}
+            style={{ textDecoration: "none" }}
+          >
+            <Button radius="md" variant="outline" fullWidth>
+              Edit Formulir
+            </Button>
+          </Link>
+        )}
+        {canViewCertificate && (
+          <Link
+            href={`/certificate/${registrationId}`}
+            style={{ textDecoration: "none" }}
+          >
+            <Button
+              radius="md"
+              variant="light"
+              color="yellow"
+              fullWidth
+              leftSection={<IconAward size={16} />}
+            >
+              Lihat Sertifikat
+            </Button>
+          </Link>
+        )}
       </Stack>
     </Card>
   );
