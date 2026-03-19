@@ -88,8 +88,7 @@ export default async function Page(props: {
   }
 
   const canViewCertificate =
-    registrationData.status === ACTIVITY_REGISTRANT_STATUS_ENUM.LULUS_KEGIATAN ||
-    registrationData.status === ACTIVITY_REGISTRANT_STATUS_ENUM.DITERIMA;
+    registrationData.status === ACTIVITY_REGISTRANT_STATUS_ENUM.LULUS_KEGIATAN;
 
   const hasCertificate = !!activity.additional_config?.certificate_template_id;
 
