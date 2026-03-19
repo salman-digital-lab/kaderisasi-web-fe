@@ -70,6 +70,11 @@ export async function ProfileContent() {
                 <Text size="h3" fw={700} mb="xs">
                   {profileData?.profile.name || "Nama Pengguna"}
                 </Text>
+                {profileData?.userData.member_id && (
+                  <Text size="sm" c="dimmed" ff="monospace">
+                    ID: {profileData.userData.member_id}
+                  </Text>
+                )}
               </Box>
 
               {profileData?.profile.badges &&

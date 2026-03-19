@@ -65,6 +65,11 @@ export function ProfileCard({
             <Title order={2} size="h3" mb="xs">
               {profileData?.profile.name || "Nama Pengguna"}
             </Title>
+            {profileData?.userData.member_id && (
+              <Text size="sm" c="dimmed" ff="monospace">
+                ID: {profileData.userData.member_id}
+              </Text>
+            )}
           </Box>
 
           {profileData?.profile.badges &&
