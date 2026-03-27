@@ -11,7 +11,8 @@ const EXPIRATION_TIME = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
 export function useFormLocalStorage(
   storageKey: string,
   initialData: Record<string, any> = {},
-  initialStep: number = 0
+  initialStep: number = 0,
+  reset: boolean = false
 ) {
   const [formData, setFormData] = useState<Record<string, any>>(initialData);
   const [currentStep, setCurrentStep] = useState<number>(initialStep);
@@ -21,11 +22,18 @@ export function useFormLocalStorage(
   useEffect(() => {
     if (typeof window === "undefined") return;
 
+    // If reset is requested, clear any saved progress and start fresh
+    if (reset) {
+      localStorage.removeItem(storageKey);
+      setIsLoaded(true);
+      return;
+    }
+
     try {
       const stored = localStorage.getItem(storageKey);
       if (stored) {
         const parsed: StoredFormData = JSON.parse(stored);
-        
+
         // Check if data has expired
         if (Date.now() < parsed.expiresAt) {
           setFormData(parsed.data);
@@ -41,7 +49,7 @@ export function useFormLocalStorage(
     } finally {
       setIsLoaded(true);
     }
-  }, [storageKey]);
+  }, [storageKey]); // reset is intentionally omitted — only matters on first mount
 
   // Save data to localStorage whenever it changes
   useEffect(() => {

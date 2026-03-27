@@ -88,6 +88,7 @@ export default async function Page(props: {
           featureId={type === "independent" ? undefined : Number(id)}
           isGuest={isGuest}
           activitySlug={activitySlug}
+          resetOnMount={searchParams.reset === "1"}
         />
       </Container>
     );

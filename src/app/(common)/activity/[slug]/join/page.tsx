@@ -67,7 +67,7 @@ export default async function Page(props: {
     !!activity.additional_config?.allow_guest_registration;
 
   const formUrl = `${process.env.NEXT_PUBLIC_APP_URL}/custom-form/activity/${activity.id}`;
-  const guestFormUrl = `/custom-form/activity/${activity.id}?slug=${params.slug}`;
+  const guestFormUrl = `/custom-form/activity/${activity.id}?slug=${params.slug}&reset=1`;
 
   const options = [
     {

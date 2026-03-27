@@ -25,6 +25,7 @@ type CustomFormContentProps = {
   featureId?: number;
   isGuest?: boolean;
   activitySlug?: string;
+  resetOnMount?: boolean;
 };
 
 const GUEST_FIELD_LABELS: Record<string, string> = {
@@ -72,6 +73,7 @@ export default function CustomFormContent({
   featureId,
   isGuest = false,
   activitySlug,
+  resetOnMount = false,
 }: CustomFormContentProps) {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
@@ -84,7 +86,16 @@ export default function CustomFormContent({
     setCurrentStep,
     clearStorage,
     isLoaded,
-  } = useFormLocalStorage(storageKey);
+  } = useFormLocalStorage(storageKey, {}, 0, resetOnMount);
+
+  // Strip the reset param from the URL so a page refresh doesn't re-reset
+  useEffect(() => {
+    if (!resetOnMount) return;
+    const url = new URL(window.location.href);
+    url.searchParams.delete("reset");
+    router.replace(url.pathname + url.search, { scroll: false });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [loading, setLoading] = useState(false);
 
