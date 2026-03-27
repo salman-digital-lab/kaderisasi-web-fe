@@ -112,9 +112,9 @@ export default function CustomFormGuestSection({
   });
 
   const renderField = (field: CustomFormField) => {
+    const fieldKey = form.key(field.key);
     const inputProps = {
       ...form.getInputProps(field.key),
-      key: form.key(field.key),
       label: field.label,
       placeholder: field.placeholder ?? field.label,
       description: field.helpText,
@@ -124,14 +124,15 @@ export default function CustomFormGuestSection({
 
     switch (field.key) {
       case "email":
-        return <TextInput {...inputProps} type="email" required />;
+        return <TextInput key={fieldKey} {...inputProps} type="email" required />;
 
       case "gender":
-        return <Select {...inputProps} data={GENDER_OPTION} />;
+        return <Select key={fieldKey} {...inputProps} data={GENDER_OPTION} />;
 
       case "province_id":
         return (
           <Select
+            key={fieldKey}
             {...inputProps}
             data={
               provinceData?.map((p) => ({
@@ -144,11 +145,12 @@ export default function CustomFormGuestSection({
         );
 
       case "university_id":
-        return <UniversitySelect {...inputProps} allowDeselect={false} />;
+        return <UniversitySelect key={fieldKey} {...inputProps} allowDeselect={false} />;
 
       case "whatsapp":
         return (
           <TextInput
+            key={fieldKey}
             {...inputProps}
             type="tel"
             inputMode="numeric"
@@ -162,10 +164,10 @@ export default function CustomFormGuestSection({
         );
 
       case "birth_date":
-        return <DateInput {...inputProps} valueFormat="YYYY-MM-DD" />;
+        return <DateInput key={fieldKey} {...inputProps} valueFormat="YYYY-MM-DD" />;
 
       default:
-        return <TextInput {...inputProps} />;
+        return <TextInput key={fieldKey} {...inputProps} />;
     }
   };
 
