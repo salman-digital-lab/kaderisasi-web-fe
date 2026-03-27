@@ -13,6 +13,7 @@ import {
   Box,
   UnstyledButton,
   ThemeIcon,
+  ActionIcon,
 } from "@mantine/core";
 
 import {
@@ -25,6 +26,7 @@ import {
   IconTrophy,
   IconActivity,
   IconChevronRight,
+  IconX,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -157,11 +159,19 @@ export default function NavDrawer({
                   Aktivis Salman
                 </Text>
               </Box>
+              <ActionIcon variant="subtle" color="gray" onClick={closeDrawer} aria-label="Tutup menu">
+                <IconX size={18} />
+              </ActionIcon>
             </Group>
           ) : (
-            <Text fw={600} size="md">
-              Menu
-            </Text>
+            <Group justify="space-between">
+              <Text fw={600} size="md">
+                Menu
+              </Text>
+              <ActionIcon variant="subtle" color="gray" onClick={closeDrawer} aria-label="Tutup menu">
+                <IconX size={18} />
+              </ActionIcon>
+            </Group>
           )}
         </Box>
 
