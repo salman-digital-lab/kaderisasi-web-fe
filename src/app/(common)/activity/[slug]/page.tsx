@@ -29,7 +29,7 @@ import {
   USER_LEVEL_RENDER,
 } from "../../../../constants/render/activity";
 import { verifySession } from "../../../../functions/server/session";
-import { getActivity } from "../../../../services/activity.cache";
+import { getActivity, preloadActivity } from "../../../../services/activity.cache";
 import { getActivityRegistration } from "../../../../services/activity";
 import { getProfile } from "../../../../services/profile";
 import { getCustomFormByFeature } from "../../../../services/customForm";
@@ -52,6 +52,7 @@ export async function generateMetadata(props: {
   params: Promise<{ slug: string }>;
 }) {
   const param = await props.params;
+  preloadActivity(param);
 
   const activity = await getActivity(param);
   const activityDescription = `${activity?.name} - Ayo daftar kegiatan ini di Kaderisasi Salman`;
@@ -112,16 +113,19 @@ export default async function Page(props: {
   const sessionData = await verifySession();
 
   try {
-    activity = await getActivity(params);
-    profileData = await getProfile(sessionData.session || "");
-    if (sessionData.session) {
-      activityRegistration = await getActivityRegistration(
-        sessionData.session,
-        params,
-      );
-    }
+    // Run independent fetches in parallel
+    const [activityResult, profileResult, activityRegistrationResult] = await Promise.all([
+      getActivity(params),
+      getProfile(sessionData.session || ""),
+      sessionData.session
+        ? getActivityRegistration(sessionData.session, params)
+        : Promise.resolve(undefined),
+    ]);
+    activity = activityResult;
+    profileData = profileResult;
+    activityRegistration = activityRegistrationResult;
 
-    // Check if activity has a custom form
+    // Check if activity has a custom form — depends on activity.id, must be sequential
     if (activity?.id) {
       try {
         const customForm = await getCustomFormByFeature({

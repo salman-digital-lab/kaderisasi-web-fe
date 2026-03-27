@@ -1,8 +1,9 @@
 import { Suspense } from "react";
-import { Container, Box, Title, Text } from "@mantine/core";
+import { Container, Box, Title, Text, SimpleGrid } from "@mantine/core";
 
-import ProfileContent from "@/components/profile/ProfileContent";
-import ProfileContentSkeleton from "@/components/profile/ProfileContentSkeleton";
+import ProfileCardSection from "@/components/profile/ProfileCardSection";
+import ProfileTabSection from "@/components/profile/ProfileTabSection";
+import { ProfileCardSkeleton, ProfileTabContentSkeleton } from "@/components/skeletons";
 
 import classes from "./index.module.css";
 
@@ -24,10 +25,19 @@ export default function Page() {
           </Text>
         </Box>
 
-        {/* Profile Content - Streamed with Suspense */}
-        <Suspense fallback={<ProfileContentSkeleton />}>
-          <ProfileContent />
-        </Suspense>
+        {/* Profile Content - each column streams independently */}
+        <SimpleGrid cols={{ base: 1, md: 3 }} spacing="xl" className={classes.content}>
+          <Box className={classes.profileSection}>
+            <Suspense fallback={<ProfileCardSkeleton />}>
+              <ProfileCardSection />
+            </Suspense>
+          </Box>
+          <Box className={classes.contentSection}>
+            <Suspense fallback={<ProfileTabContentSkeleton />}>
+              <ProfileTabSection />
+            </Suspense>
+          </Box>
+        </SimpleGrid>
       </Container>
     </main>
   );

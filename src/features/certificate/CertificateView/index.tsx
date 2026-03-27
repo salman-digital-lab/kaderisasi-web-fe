@@ -17,8 +17,6 @@ import Link from "next/link";
 import QRCode from "react-qr-code";
 import { useState, useRef } from "react";
 import { CertificateData, CertificateElement } from "@/types/model/certificate";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
 
 type CertificateViewProps = {
   data: CertificateData;
@@ -165,6 +163,11 @@ export default function CertificateView({
 
     setIsDownloading(true);
     try {
+      const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
+        import("html2canvas"),
+        import("jspdf"),
+      ]);
+
       const canvas = await html2canvas(certificateRef.current, {
         scale: 4,
         useCORS: true,

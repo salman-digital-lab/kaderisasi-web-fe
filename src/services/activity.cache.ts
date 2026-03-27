@@ -43,3 +43,11 @@ export async function getActivity(props: GetActivityReq) {
   cacheTag(CACHE_TAGS.ACTIVITIES, CACHE_TAGS.ACTIVITY(props.slug));
   return _getActivity(props);
 }
+
+/**
+ * Preload helper — fires getActivity early so generateMetadata and Page
+ * share the same cache entry within the same request.
+ */
+export function preloadActivity(props: GetActivityReq): void {
+  void getActivity(props);
+}
