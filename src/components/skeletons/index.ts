@@ -13,4 +13,5 @@ export {
 export { ActivityDetailSkeleton } from "./ActivityDetailSkeleton";
 export { ClubDetailSkeleton } from "./ClubDetailSkeleton";
 export { JoinPageSkeleton } from "./JoinPageSkeleton";
+export { CustomFormSkeleton } from "./CustomFormSkeleton";
 
