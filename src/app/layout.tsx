@@ -3,19 +3,12 @@ import "@mantine/carousel/styles.css";
 import "@mantine/notifications/styles.css";
 import "@mantine/dates/styles.css";
 
-import {
-  ColorSchemeScript,
-  mantineHtmlProps,
-  MantineProvider,
-} from "@mantine/core";
-import { Notifications } from "@mantine/notifications";
-import { ModalsProvider } from "@mantine/modals";
+import { ColorSchemeScript, mantineHtmlProps } from "@mantine/core";
 import Script from "next/script";
-import { Inter } from "next/font/google";
 import { Suspense } from "react";
 import ScrollToTop from "@/components/common/ScrollToTop";
-
-const inter = Inter({ subsets: ["latin"] });
+import AppProvider from "@/components/providers/AppProvider";
+import { inter } from "@/lib/fonts";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_APP_URL || "https://kaderisasi.salmanitb.com";
@@ -104,24 +97,12 @@ export default function RootLayout({
         <ColorSchemeScript />
       </head>
       <body>
-        <MantineProvider
-          theme={{
-            fontFamily: inter.style.fontFamily,
-            components: {
-              Input: {
-                vars: () => ({
-                  root: { '--input-fz': 'max(16px, 1em)' },
-                }),
-              },
-            },
-          }}
-        >
+        <AppProvider>
           <Suspense>
             <ScrollToTop />
           </Suspense>
-          <Notifications position="top-center" />
-          <ModalsProvider>{children}</ModalsProvider>
-        </MantineProvider>
+          {children}
+        </AppProvider>
       </body>
     </html>
   );
