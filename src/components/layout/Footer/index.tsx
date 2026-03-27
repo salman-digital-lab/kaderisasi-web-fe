@@ -12,17 +12,11 @@ import classes from "./index.module.css";
 export default function Footer() {
   return (
     <footer className={classes.footer}>
-      <Container className={classes.inner}>
-        <div className={classes.groups}>
-          <div className={classes.wrapper}>
-            <Text className={classes.title}>Alamat</Text>
-            <Text className={classes.link}>
-              Jl. Ganesa No.7, Lb. Siliwangi, Kecamatan Coblong, Kota Bandung,
-              Jawa Barat 40132
-            </Text>
-            <Text className={classes.link}>+62 851-5616-8499</Text>
-          </div>
-        </div>
+      <Container className={classes.bottomNote}>
+        <Text c="dimmed" className={classes.description}>
+          Portal ini dikelola penuh oleh Masjid Salman ITB Bidang Mahasiswa,
+          Kaderisasi dan Alumni (BMKA).
+        </Text>
       </Container>
       <Container className={classes.afterFooter}>
         <Text c="dimmed" size="sm" className={classes.copyright}>
@@ -72,12 +66,6 @@ export default function Footer() {
             />
           </ActionIcon>
         </Group>
-      </Container>
-      <Container className={classes.bottomNote}>
-        <Text c="dimmed" className={classes.description}>
-          Portal ini dikelola penuh oleh Masjid Salman ITB Bidang Mahasiswa,
-          Kaderisasi dan Alumni (BMKA).
-        </Text>
       </Container>
     </footer>
   );
