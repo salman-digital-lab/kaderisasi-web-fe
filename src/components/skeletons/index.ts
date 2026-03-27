@@ -12,4 +12,5 @@ export {
 } from "./ProfileTabSkeleton";
 export { ActivityDetailSkeleton } from "./ActivityDetailSkeleton";
 export { ClubDetailSkeleton } from "./ClubDetailSkeleton";
+export { JoinPageSkeleton } from "./JoinPageSkeleton";
 
