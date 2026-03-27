@@ -270,6 +270,7 @@ export default function CustomFormContent({
             onSubmit={handleProfileSubmit}
             loading={loading}
             isSingleSection={!hasCustomSections}
+            initialData={customFormData}
           />
         ) : (
           <CustomFormProfileSection

@@ -27,6 +27,7 @@ type CustomFormGuestSectionProps = {
   onSubmit: (data: FormValues) => void;
   loading?: boolean;
   isSingleSection?: boolean;
+  initialData?: FormValues;
 };
 
 export default function CustomFormGuestSection({
@@ -35,6 +36,7 @@ export default function CustomFormGuestSection({
   onSubmit,
   loading = false,
   isSingleSection = false,
+  initialData = {},
 }: CustomFormGuestSectionProps) {
   const [confirmModalOpened, setConfirmModalOpened] = useState(false);
   const [pendingValues, setPendingValues] = useState<FormValues | null>(null);
@@ -42,12 +44,23 @@ export default function CustomFormGuestSection({
   const hasNameField = profileFields.some((f) => f.key === "name");
   const hasEmailField = profileFields.some((f) => f.key === "email");
 
+  const resolveInitialValue = (key: string, fallback: unknown): unknown => {
+    const stored = initialData[key];
+    if (stored === undefined || stored === null || stored === "") return fallback ?? "";
+    // DateInput requires a Date object; stored value is an ISO string after processValues
+    if (key === "birth_date" && typeof stored === "string") {
+      const parsed = new Date(stored);
+      return isNaN(parsed.getTime()) ? (fallback ?? "") : parsed;
+    }
+    return stored;
+  };
+
   const initialValues: FormValues = {};
   profileFields.forEach((field) => {
-    initialValues[field.key] = (field.defaultValue as unknown) ?? "";
+    initialValues[field.key] = resolveInitialValue(field.key, field.defaultValue as unknown);
   });
-  if (!hasNameField) initialValues["name"] = "";
-  if (!hasEmailField) initialValues["email"] = "";
+  if (!hasNameField) initialValues["name"] = resolveInitialValue("name", "");
+  if (!hasEmailField) initialValues["email"] = resolveInitialValue("email", "");
 
   const form = useForm<FormValues>({
     mode: "uncontrolled",
