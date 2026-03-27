@@ -4,8 +4,8 @@ import {
   Card,
   Container,
   Group,
-  Image,
   rem,
+  Skeleton,
   Stack,
   Title,
   Text,
@@ -14,13 +14,15 @@ import {
 import {
   IconCalendarTime,
   IconCalendarMonth,
-  IconArrowLeft,
-  IconArrowRight,
   IconClock,
   IconCertificate,
 } from "@tabler/icons-react";
-import { Carousel, CarouselSlide } from "@mantine/carousel";
+import dynamic from "next/dynamic";
 import Link from "next/link";
+
+const ActivityCarousel = dynamic(() => import("./ActivityCarousel"), {
+  loading: () => <Skeleton height={700} radius="md" />,
+});
 
 import classes from "./index.module.css";
 import {
@@ -114,31 +116,25 @@ export default async function Page(props: {
   const sessionData = await verifySession();
 
   try {
-    // Run independent fetches in parallel
-    const [activityResult, profileResult, activityRegistrationResult] = await Promise.all([
-      getActivity(params),
+    // getActivity is a near-instant cache hit (preloaded in generateMetadata)
+    activity = await getActivity(params);
+
+    // Run all remaining fetches in parallel now that we have activity.id
+    const [profileResult, activityRegistrationResult, customFormResult] = await Promise.all([
       getProfile(sessionData.session || ""),
       sessionData.session
         ? getActivityRegistration(sessionData.session, params)
         : Promise.resolve(undefined),
+      activity?.id
+        ? getCustomFormByFeature({
+            feature_type: "activity_registration",
+            feature_id: activity.id,
+          }).catch(() => null)
+        : Promise.resolve(null),
     ]);
-    activity = activityResult;
     profileData = profileResult;
     activityRegistration = activityRegistrationResult;
-
-    // Check if activity has a custom form — depends on activity.id, must be sequential
-    if (activity?.id) {
-      try {
-        const customForm = await getCustomFormByFeature({
-          feature_type: "activity_registration",
-          feature_id: activity.id,
-        });
-        hasCustomForm = !!customForm && customForm.is_active;
-      } catch {
-        // No custom form found, use default flow
-        hasCustomForm = false;
-      }
-    }
+    hasCustomForm = !!customFormResult && customFormResult.is_active;
   } catch (error: unknown) {
     if (typeof error === "string" && error !== "Unauthorized")
       return <ErrorWrapper message={error} />;
@@ -158,47 +154,11 @@ export default async function Page(props: {
   return (
     <Stack component="main" className={classes["main-stack"]}>
       <Container size="xs" className={classes["carousel-container"]}>
-        <Carousel
-          classNames={{
-            control: classes["carousel-control"],
-            indicator: classes["carousel-indicator"],
-            slide: classes["carousel-slide"],
-          }}
-          slideGap="md"
-          withIndicators
-          controlsOffset={0}
-          controlSize={40}
-          emblaOptions={{ loop: true, align: "start" }}
-          nextControlIcon={<IconArrowRight size={24} color="white" />}
-          previousControlIcon={<IconArrowLeft size={24} color="white" />}
-          withControls={
-            activity?.additional_config?.images &&
-            activity?.additional_config?.images?.length > 1
-          }
-        >
-          {activity?.additional_config?.images?.length ? (
-            activity?.additional_config.images?.map((image) => (
-              <CarouselSlide key={image}>
-                <Image
-                  src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${image}`}
-                  alt="Activity Banner"
-                  className={classes["carousel-image"]}
-                  fallbackSrc={
-                    "https://placehold.co/700x700?text=" + activity?.name
-                  }
-                />
-              </CarouselSlide>
-            ))
-          ) : (
-            <CarouselSlide>
-              <Image
-                src={"https://placehold.co/700x700?text=" + activity?.name}
-                alt="Activity Banner"
-                className={classes["carousel-image"]}
-              />
-            </CarouselSlide>
-          )}
-        </Carousel>
+        <ActivityCarousel
+          images={activity?.additional_config?.images ?? []}
+          activityName={activity?.name ?? ""}
+          imageBaseUrl={process.env.NEXT_PUBLIC_IMAGE_BASE_URL ?? ""}
+        />
       </Container>
       <Container size="md" className={classes.header}>
         <Card className={classes.title} padding="lg" radius="md" withBorder>
