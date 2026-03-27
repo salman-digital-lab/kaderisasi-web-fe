@@ -29,7 +29,8 @@ import {
   USER_LEVEL_RENDER,
 } from "../../../../constants/render/activity";
 import { verifySession } from "../../../../functions/server/session";
-import { getActivity, preloadActivity } from "../../../../services/activity.cache";
+import { getActivity } from "../../../../services/activity.cache";
+import { preloadActivity } from "../../../../services/activity.preload";
 import { getActivityRegistration } from "../../../../services/activity";
 import { getProfile } from "../../../../services/profile";
 import { getCustomFormByFeature } from "../../../../services/customForm";
