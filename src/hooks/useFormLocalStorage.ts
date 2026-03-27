@@ -60,11 +60,13 @@ export function useFormLocalStorage(
     }
   }, [formData, currentStep, storageKey, isLoaded]);
 
-  // Clear localStorage
+  // Clear localStorage and reset state to initial values
   const clearStorage = () => {
     if (typeof window === "undefined") return;
     try {
       localStorage.removeItem(storageKey);
+      setFormData(initialData);
+      setCurrentStep(initialStep);
     } catch (error) {
       console.error("Error clearing localStorage:", error);
     }

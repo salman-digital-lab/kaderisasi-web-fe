@@ -154,8 +154,8 @@ export default function CustomFormFieldsRenderer({
   const renderField = (field: any) => {
     if (field.hidden) return null;
 
+    const fieldKey = form.key(field.key);
     const commonProps = {
-      key: form.key(field.key),
       label: renderTextWithNewlines(field.label),
       placeholder: (field.placeholder || field.label)?.replace(/\n/g, " "),
       description: renderTextWithNewlines(field.helpText || field.description),
@@ -166,14 +166,15 @@ export default function CustomFormFieldsRenderer({
 
     switch (field.type) {
       case "text":
-        return <TextInput {...commonProps} type={field.type} />;
+        return <TextInput key={fieldKey} {...commonProps} type={field.type} />;
 
       case "textarea":
-        return <Textarea {...commonProps} minRows={3} autosize />;
+        return <Textarea key={fieldKey} {...commonProps} minRows={3} autosize />;
 
       case "number":
         return (
           <NumberInput
+            key={fieldKey}
             {...commonProps}
             min={field.validation?.min}
             max={field.validation?.max}
@@ -184,6 +185,7 @@ export default function CustomFormFieldsRenderer({
       case "dropdown":
         return (
           <Select
+            key={fieldKey}
             {...commonProps}
             data={
               field.options?.map((opt: any) => ({
@@ -199,6 +201,7 @@ export default function CustomFormFieldsRenderer({
       case "multiselect":
         return (
           <Select
+            key={fieldKey}
             {...commonProps}
             data={
               field.options?.map((opt: any) => ({
@@ -214,7 +217,7 @@ export default function CustomFormFieldsRenderer({
 
       case "radio":
         return (
-          <Radio.Group {...commonProps}>
+          <Radio.Group key={fieldKey} {...commonProps}>
             <Stack gap="xs" mt="xs">
               {field.options?.map((opt: any, idx: number) => (
                 <Radio
@@ -229,11 +232,9 @@ export default function CustomFormFieldsRenderer({
         );
 
       case "checkbox":
-        // If checkbox has options, render as Checkbox.Group (multiple selection)
-        // Otherwise, render as single checkbox
         if (field.options?.length > 0) {
           return (
-            <Checkbox.Group {...commonProps}>
+            <Checkbox.Group key={fieldKey} {...commonProps}>
               <Stack gap="xs" mt="xs">
                 {field.options?.map((opt: any, idx: number) => (
                   <Checkbox
@@ -249,6 +250,7 @@ export default function CustomFormFieldsRenderer({
         }
         return (
           <Checkbox
+            key={fieldKey}
             {...commonProps}
             label={renderTextWithNewlines(field.label)}
             description={renderTextWithNewlines(field.helpText || field.description)}
@@ -256,10 +258,10 @@ export default function CustomFormFieldsRenderer({
         );
 
       case "date":
-        return <DateInput {...commonProps} valueFormat="DD/MM/YYYY" />;
+        return <DateInput key={fieldKey} {...commonProps} valueFormat="DD/MM/YYYY" />;
 
       default:
-        return <TextInput {...commonProps} />;
+        return <TextInput key={fieldKey} {...commonProps} />;
     }
   };
 
