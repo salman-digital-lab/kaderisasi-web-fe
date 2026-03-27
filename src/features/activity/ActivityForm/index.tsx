@@ -1,3 +1,8 @@
+/**
+ * @deprecated Part of the old activity registration flow (/activity/register/...).
+ * The current flow uses /custom-form/activity/[id] with CustomFormContent instead.
+ * DO NOT add new features or modify this file.
+ */
 "use client";
 
 import showNotif from "@/functions/common/notification";

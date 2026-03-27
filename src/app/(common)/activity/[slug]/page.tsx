@@ -279,16 +279,32 @@ export default async function Page(props: {
                   </Link>
                 )}
             </Stack>
-          ) : (
+          ) : sessionData.session ? (
+            // Logged in but not registered — registration is closed
             <Stack gap="xs">
               <Title order={5} ta="center">
                 {dayjs().isAfter(activity?.registration_end)
                   ? "Cek Status Pendaftaran"
                   : "Tutup Pendaftaran"}
               </Title>
-              {dayjs().isAfter(activity?.registration_end) ? null : (
+              {!dayjs().isAfter(activity?.registration_end) && (
                 <Badge m="auto" color="red" leftSection={calendarIcon}>
                   {dayjs(activity?.registration_end)
+                    .locale("id")
+                    .format("DD MMMM YYYY")}
+                </Badge>
+              )}
+            </Stack>
+          ) : (
+            // Not logged in — show registration end date; never show "Cek Status Pendaftaran"
+            // since unauthenticated users have no registration status to check
+            <Stack gap="xs">
+              <Title order={5} ta="center">
+                Tutup Pendaftaran
+              </Title>
+              {activity?.registration_end && (
+                <Badge m="auto" color="red" leftSection={calendarIcon}>
+                  {dayjs(activity.registration_end)
                     .locale("id")
                     .format("DD MMMM YYYY")}
                 </Badge>
@@ -319,20 +335,10 @@ export default async function Page(props: {
             <Stack gap="xs">
               {activity?.is_registration_open ? (
                 <Link
-                  href={
-                    dayjs().isAfter(activity?.registration_end)
-                      ? `/login?redirect=${process.env.NEXT_PUBLIC_APP_URL}/activity/${params.slug}`
-                      : `/login?redirect=${
-                          process.env.NEXT_PUBLIC_APP_URL
-                        }${`/custom-form/activity/${activity?.id}`}`
-                  }
+                  href={`/activity/${params.slug}/join`}
                   style={{ textDecoration: "none" }}
                 >
-                  <Button fullWidth>
-                    {dayjs().isAfter(activity?.registration_end)
-                      ? "Masuk"
-                      : "Daftar Kegiatan"}
-                  </Button>
+                  <Button fullWidth>Daftar Kegiatan</Button>
                 </Link>
               ) : null}
             </Stack>

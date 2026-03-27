@@ -44,6 +44,7 @@ export type Activity = {
     mandatory_profile_data?: MandatoryProfileData[];
     images?: string[];
     certificate_template_id?: number;
+    allow_guest_registration?: boolean;
   };
   is_published: number;
   is_registration_open: boolean;

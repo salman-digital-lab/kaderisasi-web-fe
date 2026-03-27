@@ -12,6 +12,8 @@ import {
   GetActivityResp,
   PostActivityReq,
   PostActivityResp,
+  PostGuestActivityReq,
+  PostGuestActivityResp,
   PutActivityReq,
   PutActivityResp,
   GetActivityCategoriesResp,
@@ -131,6 +133,22 @@ export const postActivity = async (token: string, props: PostActivityReq) => {
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + token,
+      },
+    },
+  );
+
+  return response;
+};
+
+export const postGuestActivity = async (props: PostGuestActivityReq) => {
+  const { beApi } = getApiConfig();
+  const response = await fetcher<PostGuestActivityResp>(
+    beApi + "/activities/" + props.slug + "/guest-register",
+    {
+      method: "POST",
+      body: JSON.stringify(props.data),
+      headers: {
+        "Content-Type": "application/json",
       },
     },
   );

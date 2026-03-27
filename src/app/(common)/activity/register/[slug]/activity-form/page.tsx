@@ -1,3 +1,8 @@
+/**
+ * @deprecated This page is part of the old activity registration flow.
+ * The current flow uses /custom-form/activity/[id] instead.
+ * DO NOT add new features or modify this file.
+ */
 import { redirect } from "next/navigation";
 import ActivityForm from "../../../../../../features/activity/ActivityForm";
 import { verifySession } from "../../../../../../functions/server/session";

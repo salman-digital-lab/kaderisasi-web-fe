@@ -50,3 +50,13 @@ export type PutActivityReq = {
 };
 
 export type PutActivityResp = APIResponse<Registrant>;
+
+export type PostGuestActivityReq = {
+  slug: string;
+  data: {
+    guest_data: Record<string, unknown>;
+    questionnaire_answer: Record<string, unknown>;
+  };
+};
+
+export type PostGuestActivityResp = APIResponse<Registrant>;
