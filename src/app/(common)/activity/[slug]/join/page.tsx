@@ -7,6 +7,7 @@ import {
   Group,
   ThemeIcon,
   rem,
+  Button,
 } from "@mantine/core";
 import {
   IconLogin2,
@@ -104,18 +105,10 @@ export default async function Page(props: {
   return (
     <Container size="xs" py="xl">
       <Stack gap="lg">
-        <Link
-          href={`/activity/${params.slug}`}
-          style={{
-            textDecoration: "none",
-            color: "var(--mantine-color-dimmed)",
-            fontSize: "var(--mantine-font-size-sm)",
-          }}
-        >
-          <Group gap={4}>
-            <IconArrowLeft style={{ width: rem(14), height: rem(14) }} />
-            Kembali ke detail kegiatan
-          </Group>
+        <Link href={`/activity/${params.slug}`} style={{ textDecoration: "none" }}>
+          <Button variant="subtle" leftSection={<IconArrowLeft size={16} />} mb="xs" px={0}>
+            Kembali ke Kegiatan
+          </Button>
         </Link>
 
         <Stack gap="xs" ta="center">

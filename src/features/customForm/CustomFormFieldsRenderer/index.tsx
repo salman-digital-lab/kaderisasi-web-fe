@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type RefObject } from "react";
 import {
   Button,
   Stack,
@@ -41,24 +41,20 @@ const renderTextWithNewlines = (text: string) => {
 
 type CustomFormFieldsRendererProps = {
   section: CustomFormSection;
-  sections: CustomFormSection[];
-  currentSectionIndex: number;
   formData: Record<string, any>;
   onSubmit: (data: Record<string, any>) => void;
-  onBack: () => void;
   loading?: boolean;
   isLastSection: boolean;
+  formRef?: RefObject<HTMLFormElement | null>;
 };
 
 export default function CustomFormFieldsRenderer({
   section,
-  sections,
-  currentSectionIndex,
   formData,
   onSubmit,
-  onBack,
   loading,
   isLastSection,
+  formRef,
 }: CustomFormFieldsRendererProps) {
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [pendingValues, setPendingValues] = useState<Record<
@@ -293,7 +289,7 @@ export default function CustomFormFieldsRenderer({
 
   return (
     <>
-      <form onSubmit={form.onSubmit(handleSubmit)}>
+      <form ref={formRef} onSubmit={form.onSubmit(handleSubmit)}>
         <Stack gap="md">
           <Box>
             <Title order={4}>{section.section_name}</Title>
@@ -307,31 +303,6 @@ export default function CustomFormFieldsRenderer({
           {section.fields.map((field) => (
             <div key={field.key}>{renderField(field)}</div>
           ))}
-
-          <Group
-            justify="space-between"
-            mt="xl"
-            style={{
-              flexDirection: "row",
-              gap: "0.5rem",
-            }}
-          >
-            <Button
-              variant="default"
-              onClick={onBack}
-              disabled={loading}
-              style={{ flex: "0 1 auto", minWidth: "100px" }}
-            >
-              Kembali
-            </Button>
-            <Button
-              type="submit"
-              loading={loading}
-              style={{ flex: "1 1 auto", minWidth: "120px" }}
-            >
-              {isLastSection ? "Kirim" : "Lanjutkan"}
-            </Button>
-          </Group>
         </Stack>
       </form>
 

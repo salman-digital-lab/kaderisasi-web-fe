@@ -3,9 +3,10 @@ import { getProfile } from "@/services/profile";
 import { getProvinces } from "@/services/profile.cache";
 import { getCustomFormByFeature } from "@/services/customForm";
 import { getActivity } from "@/services/activity.cache";
-import { Container, Paper } from "@mantine/core";
+import { Container } from "@mantine/core";
 import { redirect } from "next/navigation";
 import ErrorWrapper from "@/components/layout/Error";
+import { FetcherError } from "@/functions/common/fetcher";
 import CustomFormContent from "@/features/customForm/CustomFormContent";
 import { PublicUser, Member } from "@/types/model/members";
 import { Province } from "@/types/model/province";
@@ -79,28 +80,24 @@ export default async function Page(props: {
         py={{ base: "md", sm: "xl" }}
         px={{ base: "xs", sm: "md" }}
       >
-        <Paper
-          radius="md"
-          withBorder
-          p={{ base: "md", sm: "xl" }}
-          style={{ width: "100%", maxWidth: "100%" }}
-        >
-          <CustomFormContent
-            customForm={customForm}
-            profileData={profileData}
-            provinceData={provinceData}
-            featureType={featureType}
-            featureId={type === "independent" ? undefined : Number(id)}
-            isGuest={isGuest}
-            activitySlug={activitySlug}
-          />
-        </Paper>
+        <CustomFormContent
+          customForm={customForm}
+          profileData={profileData}
+          provinceData={provinceData}
+          featureType={featureType}
+          featureId={type === "independent" ? undefined : Number(id)}
+          isGuest={isGuest}
+          activitySlug={activitySlug}
+        />
       </Container>
     );
   } catch (error: unknown) {
-    if (typeof error === "string" && error === "Unauthorized")
+    if (error instanceof FetcherError && error.status === 401)
       redirect("/api/logout");
-    if (typeof error === "string") return <ErrorWrapper message={error} />;
-    return <ErrorWrapper message="An error occurred" />;
+    const message =
+      error instanceof FetcherError || error instanceof Error
+        ? error.message
+        : "An error occurred";
+    return <ErrorWrapper message={message} />;
   }
 }

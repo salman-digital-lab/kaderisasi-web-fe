@@ -1,18 +1,24 @@
 "use client";
 
-import { useState } from "react";
-import { Stack, Title, Text, Stepper, Box } from "@mantine/core";
-import { CustomForm } from "@/types/api/customForm";
+import { useState, useRef } from "react";
+import { Stack, Title, Text, Stepper, Button, Paper, Group } from "@mantine/core";
+import type { CustomForm } from "@/types/api/customForm";
+import type { Registrant } from "@/types/model/activity";
 import CustomFormFieldsRenderer from "../CustomFormFieldsRenderer";
 import showNotif from "@/functions/common/notification";
 import updateActivityCustomForm from "@/functions/server/updateActivityCustomForm";
 import { useRouter } from "next/navigation";
-import { Registrant } from "@/types/model/activity";
 
 type CustomFormContentEditProps = {
   customForm: CustomForm;
   registrationData: Registrant;
   slug: string;
+};
+
+const paperProps = {
+  radius: "md" as const,
+  withBorder: true,
+  p: { base: "md", sm: "xl" } as const,
 };
 
 export default function CustomFormContentEdit({
@@ -21,123 +27,113 @@ export default function CustomFormContentEdit({
   slug,
 }: CustomFormContentEditProps) {
   const router = useRouter();
+  const formRef = useRef<HTMLFormElement>(null);
   const [loading, setLoading] = useState(false);
-
-  // Existing form data from registration
-  const existingData = registrationData.questionnaire_answer || {};
-
-  // Custom form sections (skip first section which is profile data)
-  const customFormSections = customForm.form_schema.fields.slice(1);
-
-  // For multi-section forms, track which section we're on
   const [currentStep, setCurrentStep] = useState(0);
+  const [accumulatedData, setAccumulatedData] = useState<Record<string, any>>(
+    registrationData.questionnaire_answer || {},
+  );
 
-  // Accumulated form data across sections
-  const [accumulatedData, setAccumulatedData] =
-    useState<Record<string, any>>(existingData);
+  const customFormSections = customForm.form_schema.fields.slice(1);
+  const totalSteps = customFormSections.length;
+  const isLastSection = currentStep === totalSteps - 1;
+  const currentSection = customFormSections[currentStep];
 
-  const handleCustomFormSubmit = async (data: Record<string, any>) => {
+  if (totalSteps === 0) {
+    return (
+      <Stack gap="md">
+        <Paper {...paperProps}>
+          <Title order={3} mb="xs">{customForm.form_name}</Title>
+          <Text size="sm" c="dimmed">Tidak ada formulir tambahan untuk diubah.</Text>
+        </Paper>
+      </Stack>
+    );
+  }
+
+  if (!currentSection) return null;
+
+  const handleSectionSubmit = async (data: Record<string, any>) => {
     const allFormData = { ...accumulatedData, ...data };
+    setAccumulatedData(allFormData);
+
+    if (!isLastSection) {
+      setCurrentStep(currentStep + 1);
+      return;
+    }
 
     try {
       setLoading(true);
-
       const response = await updateActivityCustomForm(slug, allFormData);
-
       if (!response.success) {
         showNotif(response.message, true);
         return;
       }
-
       showNotif(response.message);
       router.push(`/profile?tab=activity`);
-    } catch (error) {
+    } catch {
       showNotif("Terjadi kesalahan jaringan. Silakan coba lagi.", true);
     } finally {
       setLoading(false);
     }
   };
 
-  // Guard: no custom sections
-  if (customFormSections.length === 0) {
-    return (
-      <Stack gap="lg">
-        <Box>
-          <Title order={3} mb="xs">
-            {customForm.form_name}
-          </Title>
-          <Text size="sm" c="dimmed">
-            Tidak ada formulir tambahan untuk diubah.
-          </Text>
-        </Box>
-      </Stack>
-    );
-  }
-
-  const currentSection = customFormSections[currentStep];
-  const isLastSection = currentStep === customFormSections.length - 1;
-  const totalSteps = customFormSections.length;
-
-  if (!currentSection) {
-    return null;
-  }
+  const handleBack = () => {
+    if (currentStep === 0) router.push(`/profile?tab=activity`);
+    else setCurrentStep(currentStep - 1);
+  };
 
   return (
-    <Stack gap="lg">
-      <Box>
-        <Title order={3} mb="xs">
-          Ubah Formulir — {customForm.form_name}
-        </Title>
+    <Stack gap="md">
+      {/* Header card */}
+      <Paper {...paperProps}>
+        <Title order={3} mb="xs">Ubah Formulir — {customForm.form_name}</Title>
         {totalSteps > 1 && (
-          <Text size="sm" c="dimmed" hiddenFrom="sm">
-            Langkah {currentStep + 1} dari {totalSteps}:{" "}
-            {currentSection.section_name}
-          </Text>
+          <>
+            <Text size="sm" c="dimmed" hiddenFrom="sm" mt="md">
+              Langkah {currentStep + 1} dari {totalSteps}: {currentSection.section_name}
+            </Text>
+            <Stepper active={currentStep} size="sm" mt="lg" iconSize={32} visibleFrom="sm">
+              {customFormSections.map((section, idx) => (
+                <Stepper.Step key={idx} label={section.section_name} description={`Bagian ${idx + 1}`} />
+              ))}
+            </Stepper>
+          </>
         )}
-      </Box>
+      </Paper>
 
-      {totalSteps > 1 && (
-        <Stepper
-          active={currentStep}
-          size="sm"
-          mb="lg"
-          iconSize={32}
-          visibleFrom="sm"
+      {/* Form card */}
+      <Paper {...paperProps}>
+        <CustomFormFieldsRenderer
+          key={currentStep}
+          formRef={formRef}
+          section={currentSection}
+          formData={accumulatedData}
+          onSubmit={handleSectionSubmit}
+          loading={loading}
+          isLastSection={isLastSection}
+        />
+      </Paper>
+
+      {/* Navigation buttons */}
+      <Group justify="space-between">
+        <Button
+          type="button"
+          variant="default"
+          onClick={handleBack}
+          disabled={loading}
+          style={{ flex: "0 1 auto", minWidth: "100px" }}
         >
-          {customFormSections.map((section, idx) => (
-            <Stepper.Step
-              key={idx}
-              label={section.section_name}
-              description={`Bagian ${idx + 1}`}
-            />
-          ))}
-        </Stepper>
-      )}
-
-      <CustomFormFieldsRenderer
-        key={currentStep}
-        section={currentSection}
-        sections={customFormSections}
-        currentSectionIndex={currentStep}
-        formData={accumulatedData}
-        onSubmit={(data) => {
-          if (isLastSection) {
-            handleCustomFormSubmit(data);
-          } else {
-            setAccumulatedData({ ...accumulatedData, ...data });
-            setCurrentStep(currentStep + 1);
-          }
-        }}
-        onBack={() => {
-          if (currentStep === 0) {
-            router.push(`/profile?tab=activity`);
-          } else {
-            setCurrentStep(currentStep - 1);
-          }
-        }}
-        loading={loading}
-        isLastSection={isLastSection}
-      />
+          Kembali
+        </Button>
+        <Button
+          type="button"
+          loading={loading}
+          onClick={() => formRef.current?.requestSubmit()}
+          style={{ flex: "1 1 auto", minWidth: "120px" }}
+        >
+          {isLastSection ? "Simpan" : "Lanjutkan"}
+        </Button>
+      </Group>
     </Stack>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type RefObject } from "react";
 import {
   Button,
   Stack,
@@ -30,9 +30,9 @@ type CustomFormProfileSectionProps = {
   };
   provinceData?: Province[];
   onSubmit: (data?: Record<string, any>) => void;
-  onBack?: () => void;
   loading?: boolean;
   isSingleSection?: boolean;
+  formRef?: RefObject<HTMLFormElement | null>;
 };
 
 export default function CustomFormProfileSection({
@@ -40,9 +40,9 @@ export default function CustomFormProfileSection({
   profileData,
   provinceData,
   onSubmit,
-  onBack,
   loading = false,
   isSingleSection = false,
+  formRef,
 }: CustomFormProfileSectionProps) {
   const [confirmModalOpened, setConfirmModalOpened] = useState(false);
   const [pendingValues, setPendingValues] = useState<Record<
@@ -319,7 +319,7 @@ export default function CustomFormProfileSection({
 
   return (
     <>
-      <form onSubmit={form.onSubmit(handleFormSubmit)}>
+      <form ref={formRef} onSubmit={form.onSubmit(handleFormSubmit)}>
         <Stack gap="md">
           <Title order={4}>Data Diri</Title>
 
@@ -328,33 +328,6 @@ export default function CustomFormProfileSection({
             .map((field) => (
               <div key={field.key}>{renderField(field)}</div>
             ))}
-
-          <Group
-            justify={onBack ? "space-between" : "flex-end"}
-            mt="xl"
-            style={{
-              flexDirection: "row",
-              gap: "0.5rem",
-            }}
-          >
-            {onBack && (
-              <Button
-                variant="default"
-                onClick={onBack}
-                disabled={loading}
-                style={{ flex: "0 1 auto", minWidth: "100px" }}
-              >
-                Kembali
-              </Button>
-            )}
-            <Button
-              type="submit"
-              loading={loading}
-              style={{ flex: "1 1 auto", minWidth: "120px" }}
-            >
-              {isSingleSection ? "Kirim" : "Lanjutkan"}
-            </Button>
-          </Group>
         </Stack>
       </form>
 

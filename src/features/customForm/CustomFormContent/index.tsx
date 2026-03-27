@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Stack, Title, Text, Stepper, Box, Button } from "@mantine/core";
+import { useState, useEffect, useRef } from "react";
+import { Stack, Title, Text, Stepper, Button, Paper, Group } from "@mantine/core";
 import { IconArrowLeft } from "@tabler/icons-react";
 import Link from "next/link";
-import { CustomForm } from "@/types/api/customForm";
-import { Member, PublicUser } from "@/types/model/members";
-import { Province } from "@/types/model/province";
+import type { CustomForm } from "@/types/api/customForm";
+import type { Member, PublicUser } from "@/types/model/members";
+import type { Province } from "@/types/model/province";
 import CustomFormProfileSection from "../CustomFormProfileSection";
 import CustomFormGuestSection from "../CustomFormGuestSection";
 import CustomFormFieldsRenderer from "../CustomFormFieldsRenderer";
@@ -19,15 +19,9 @@ import { useFormLocalStorage } from "@/hooks/useFormLocalStorage";
 
 type CustomFormContentProps = {
   customForm: CustomForm;
-  profileData?: {
-    userData: PublicUser;
-    profile: Member;
-  };
+  profileData?: { userData: PublicUser; profile: Member };
   provinceData?: Province[];
-  featureType:
-    | "activity_registration"
-    | "club_registration"
-    | "independent_form";
+  featureType: "activity_registration" | "club_registration" | "independent_form";
   featureId?: number;
   isGuest?: boolean;
   activitySlug?: string;
@@ -37,9 +31,9 @@ const GUEST_FIELD_LABELS: Record<string, string> = {
   "guest_data.name": "Nama",
   "guest_data.email": "Email",
   "guest_data.whatsapp": "WhatsApp",
-  "name": "Nama",
-  "email": "Email",
-  "whatsapp": "WhatsApp",
+  name: "Nama",
+  email: "Email",
+  whatsapp: "WhatsApp",
 };
 
 const GUEST_BACKEND_ERRORS: Record<string, string> = {
@@ -49,27 +43,26 @@ const GUEST_BACKEND_ERRORS: Record<string, string> = {
 };
 
 function translateGuestError(message: string): string {
-  // Known business-logic error codes returned by the backend
-  if (message in GUEST_BACKEND_ERRORS) {
-    return GUEST_BACKEND_ERRORS[message]!; // `in` guard proves key exists
-  }
+  if (message in GUEST_BACKEND_ERRORS) return GUEST_BACKEND_ERRORS[message]!;
 
-  // VineJS: "The guest_data.email field must be defined"
   const requiredField = message.match(/The (.+) field must be defined/)?.[1];
   if (requiredField) {
-    const label = GUEST_FIELD_LABELS[requiredField] ?? requiredField;
-    return `${label} wajib diisi.`;
+    return `${GUEST_FIELD_LABELS[requiredField] ?? requiredField} wajib diisi.`;
   }
 
-  // VineJS: "The guest_data.email field format is invalid"
   const invalidField = message.match(/The (.+) field format is invalid/)?.[1];
   if (invalidField) {
-    const label = GUEST_FIELD_LABELS[invalidField] ?? invalidField;
-    return `Format ${label} tidak valid.`;
+    return `Format ${GUEST_FIELD_LABELS[invalidField] ?? invalidField} tidak valid.`;
   }
 
   return "Terjadi kesalahan. Periksa kembali data Anda.";
 }
+
+const paperProps = {
+  radius: "md" as const,
+  withBorder: true,
+  p: { base: "md", sm: "xl" } as const,
+};
 
 export default function CustomFormContent({
   customForm,
@@ -81,11 +74,9 @@ export default function CustomFormContent({
   activitySlug,
 }: CustomFormContentProps) {
   const router = useRouter();
+  const formRef = useRef<HTMLFormElement>(null);
 
-  // Create a unique storage key for this form
   const storageKey = `customForm_${featureType}_${featureId || "independent"}`;
-
-  // Use localStorage hook to persist form data
   const {
     formData: customFormData,
     setFormData: setCustomFormData,
@@ -97,21 +88,18 @@ export default function CustomFormContent({
 
   const [loading, setLoading] = useState(false);
 
-  // Extract profile fields from first section
-  const firstSection = customForm.form_schema.fields[0];
-  const profileFields = firstSection?.fields || [];
-
-  // Rest of the sections are custom form sections
+  const profileFields = customForm.form_schema.fields[0]?.fields ?? [];
   const customFormSections = customForm.form_schema.fields.slice(1);
-
   const hasCustomSections = customFormSections.length > 0;
-  const totalSteps = hasCustomSections ? customFormSections.length + 1 : 1; // profile + custom sections
+  const totalSteps = hasCustomSections ? customFormSections.length + 1 : 1;
+  const isLastStep = currentStep === totalSteps - 1;
 
-  // Scroll to top on step change
+  const sectionIndex = currentStep - 1;
+  const currentSection = customFormSections[sectionIndex] ?? null;
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
   }, [currentStep]);
-
 
   const getSuccessUrl = () => {
     const typeMap = {
@@ -119,30 +107,17 @@ export default function CustomFormContent({
       club_registration: "club",
       independent_form: "independent",
     } as const;
-    const type = typeMap[featureType];
-    return `/custom-form/${type}/${featureId || "0"}/success`;
+    return `/custom-form/${typeMap[featureType]}/${featureId || "0"}/success`;
   };
 
-  // Splits merged form data into guest_data (profile fields) and questionnaire_answer (rest).
-  // name and email are always routed to guest_data — CustomFormGuestSection injects them
-  // even when they are absent from the form schema.
   const buildGuestPayload = (formData: Record<string, unknown>) => {
-    const profileFieldKeys = new Set([
-      ...profileFields.map((f) => f.key),
-      "name",
-      "email",
-    ]);
+    const profileFieldKeys = new Set([...profileFields.map((f) => f.key), "name", "email"]);
     const guestData: Record<string, unknown> = {};
     const questionnaireAnswer: Record<string, unknown> = {};
-
     for (const [key, value] of Object.entries(formData)) {
-      if (profileFieldKeys.has(key)) {
-        guestData[key] = value;
-      } else {
-        questionnaireAnswer[key] = value;
-      }
+      if (profileFieldKeys.has(key)) guestData[key] = value;
+      else questionnaireAnswer[key] = value;
     }
-
     return { guestData, questionnaireAnswer };
   };
 
@@ -155,11 +130,12 @@ export default function CustomFormContent({
       });
       return !!resp;
     } catch (error) {
-      const message =
+      showNotif(
         error instanceof FetcherError
           ? translateGuestError(error.message)
-          : "Terjadi kesalahan jaringan. Silakan coba lagi.";
-      showNotif(message, true);
+          : "Terjadi kesalahan jaringan. Silakan coba lagi.",
+        true,
+      );
       return false;
     }
   };
@@ -167,10 +143,8 @@ export default function CustomFormContent({
   const finishAndRedirect = async (formData: Record<string, unknown>) => {
     try {
       setLoading(true);
-
       if (isGuest) {
-        const success = await submitGuestRegistration(formData);
-        if (!success) return;
+        if (!(await submitGuestRegistration(formData))) return;
       } else {
         const response = await registerCustomForm({
           feature_type: featureType,
@@ -182,7 +156,6 @@ export default function CustomFormContent({
           return;
         }
       }
-
       clearStorage();
       router.push(getSuccessUrl());
     } catch {
@@ -192,26 +165,23 @@ export default function CustomFormContent({
     }
   };
 
-  const handleProfileSubmit = async (profileData?: Record<string, unknown>) => {
+  const handleProfileSubmit = async (data?: Record<string, unknown>) => {
     if (!hasCustomSections) {
-      // Single-section form: merge stored data with freshly submitted profile data.
-      // profileData must take precedence — customFormData starts as {} so nullish
-      // coalescing alone would discard profileData when customFormData is an empty object.
-      await finishAndRedirect({ ...(customFormData ?? {}), ...(profileData ?? {}) });
+      await finishAndRedirect({ ...(customFormData ?? {}), ...(data ?? {}) });
       return;
     }
-
-    // Multi-section form: persist profile data and advance to the first custom section
-    if (isGuest && profileData) {
-      setCustomFormData({ ...customFormData, ...profileData });
-    }
+    if (isGuest && data) setCustomFormData({ ...customFormData, ...data });
     setCurrentStep(1);
   };
 
-  const handleCustomFormSubmit = async (sectionData: Record<string, unknown>) => {
-    const allFormData = { ...customFormData, ...sectionData };
+  const handleSectionSubmit = async (data: Record<string, unknown>) => {
+    const allFormData = { ...customFormData, ...data };
     setCustomFormData(allFormData);
-    await finishAndRedirect(allFormData);
+    if (isLastStep) {
+      await finishAndRedirect(allFormData);
+    } else {
+      setCurrentStep(currentStep + 1);
+    }
   };
 
   const activityBackUrl =
@@ -221,145 +191,108 @@ export default function CustomFormContent({
         : `/activity/${activitySlug}`
       : null;
 
-  const backToActivityButton = activityBackUrl ? (
-    <Link href={activityBackUrl} style={{ textDecoration: "none" }}>
-      <Button variant="subtle" leftSection={<IconArrowLeft size={16} />} mb="xs" px={0}>
-        Kembali ke Kegiatan
-      </Button>
-    </Link>
-  ) : null;
-
-  // Show loading state while data is being loaded
   if (!isLoaded) {
     return (
-      <Stack gap="lg">
-        <Box>
-          <Title order={3} mb="xs">
-            {customForm.form_name}
-          </Title>
-          <Text size="sm" c="dimmed">
-            Memuat formulir...
-          </Text>
-        </Box>
+      <Stack gap="md">
+        <Paper {...paperProps}>
+          <Title order={3} mb="xs">{customForm.form_name}</Title>
+          <Text size="sm" c="dimmed">Memuat formulir...</Text>
+        </Paper>
       </Stack>
     );
-  }
-
-  // Profile data step
-  if (currentStep === 0) {
-    return (
-      <Stack gap="lg">
-        {backToActivityButton}
-        <Box>
-          <Title order={3} mb="xs">
-            {customForm.form_name}
-          </Title>
-          {customForm.form_description && (
-            <Text size="sm" pb="md" style={{ whiteSpace: "pre-wrap" }}>
-              {customForm.form_description}
-            </Text>
-          )}
-          {hasCustomSections && (
-            <Text size="sm" c="dimmed" hiddenFrom="sm" mt="md">
-              Langkah 1 dari {totalSteps}: Data Diri
-            </Text>
-          )}
-        </Box>
-
-        {hasCustomSections && (
-          <Stepper active={0} size="sm" mb="lg" iconSize={32} visibleFrom="sm">
-            <Stepper.Step label="Data Diri" description="Lengkapi data diri" />
-            {customFormSections.map((section, idx) => (
-              <Stepper.Step
-                key={idx}
-                label={section.section_name}
-                description={`Bagian ${idx + 1}`}
-              />
-            ))}
-          </Stepper>
-        )}
-
-        {isGuest ? (
-          <CustomFormGuestSection
-            profileFields={profileFields}
-            provinceData={provinceData}
-            onSubmit={handleProfileSubmit}
-            loading={loading}
-            isSingleSection={!hasCustomSections}
-            initialData={customFormData}
-          />
-        ) : (
-          <CustomFormProfileSection
-            profileFields={profileFields}
-            profileData={profileData}
-            provinceData={provinceData}
-            onSubmit={handleProfileSubmit}
-            loading={loading}
-            isSingleSection={!hasCustomSections}
-          />
-        )}
-      </Stack>
-    );
-  }
-
-  // Custom form sections
-  const sectionIndex = currentStep - 1;
-  const currentSection = customFormSections[sectionIndex];
-  const isLastSection = sectionIndex === customFormSections.length - 1;
-
-  // Guard against undefined section
-  if (!currentSection) {
-    return null;
   }
 
   return (
-    <Stack gap="lg">
-      {backToActivityButton}
-      <Box>
-        <Title order={3} mb="xs">
-          {customForm.form_name}
-        </Title>
-        <Text size="sm" c="dimmed" hiddenFrom="sm">
-          Langkah {currentStep + 1} dari {totalSteps}:{" "}
-          {currentSection.section_name}
-        </Text>
-      </Box>
+    <Stack gap="md">
+      {activityBackUrl && (
+        <Link href={activityBackUrl} style={{ textDecoration: "none" }}>
+          <Button variant="subtle" leftSection={<IconArrowLeft size={16} />} mb="xs" px={0}>
+            Kembali ke Kegiatan
+          </Button>
+        </Link>
+      )}
 
-      <Stepper
-        active={currentStep}
-        size="sm"
-        mb="lg"
-        iconSize={32}
-        visibleFrom="sm"
-      >
-        <Stepper.Step label="Data Diri" description="Lengkapi data diri" />
-        {customFormSections.map((section, idx) => (
-          <Stepper.Step
-            key={idx}
-            label={section.section_name}
-            description={`Bagian ${idx + 1}`}
+      {/* Header card: title, description, stepper */}
+      <Paper {...paperProps}>
+        <Title order={3} mb="xs">{customForm.form_name}</Title>
+        {currentStep === 0 && customForm.form_description && (
+          <Text size="sm" style={{ whiteSpace: "pre-wrap" }}>{customForm.form_description}</Text>
+        )}
+        {hasCustomSections && (
+          <>
+            <Text size="sm" c="dimmed" hiddenFrom="sm" mt="md">
+              Langkah {currentStep + 1} dari {totalSteps}:{" "}
+              {currentStep === 0 ? "Data Diri" : currentSection?.section_name}
+            </Text>
+            <Stepper active={currentStep} size="sm" mt="lg" iconSize={32} visibleFrom="sm">
+              <Stepper.Step label="Data Diri" description="Lengkapi data diri" />
+              {customFormSections.map((section, idx) => (
+                <Stepper.Step key={idx} label={section.section_name} description={`Bagian ${idx + 1}`} />
+              ))}
+            </Stepper>
+          </>
+        )}
+      </Paper>
+
+      {/* Form card */}
+      <Paper {...paperProps}>
+        {currentStep === 0 ? (
+          isGuest ? (
+            <CustomFormGuestSection
+              formRef={formRef}
+              profileFields={profileFields}
+              provinceData={provinceData}
+              onSubmit={handleProfileSubmit}
+              loading={loading}
+              isSingleSection={!hasCustomSections}
+              initialData={customFormData}
+            />
+          ) : (
+            <CustomFormProfileSection
+              formRef={formRef}
+              profileFields={profileFields}
+              profileData={profileData}
+              provinceData={provinceData}
+              onSubmit={handleProfileSubmit}
+              loading={loading}
+              isSingleSection={!hasCustomSections}
+            />
+          )
+        ) : currentSection ? (
+          <CustomFormFieldsRenderer
+            key={sectionIndex}
+            formRef={formRef}
+            section={currentSection}
+            formData={customFormData}
+            onSubmit={handleSectionSubmit}
+            loading={loading}
+            isLastSection={isLastStep}
           />
-        ))}
-      </Stepper>
+        ) : null}
+      </Paper>
 
-      <CustomFormFieldsRenderer
-        key={sectionIndex}
-        section={currentSection}
-        sections={customFormSections}
-        currentSectionIndex={sectionIndex}
-        formData={customFormData}
-        onSubmit={(data) => {
-          if (isLastSection) {
-            handleCustomFormSubmit(data);
-          } else {
-            setCustomFormData({ ...customFormData, ...data });
-            setCurrentStep(currentStep + 1);
-          }
-        }}
-        onBack={() => setCurrentStep(sectionIndex === 0 ? 0 : currentStep - 1)}
-        loading={loading}
-        isLastSection={isLastSection}
-      />
+      {/* Navigation buttons */}
+      <Group justify={currentStep === 0 ? "flex-end" : "space-between"}>
+        {currentStep > 0 && (
+          <Button
+            type="button"
+            variant="default"
+            onClick={() => setCurrentStep(currentStep - 1)}
+            disabled={loading}
+            style={{ flex: "0 1 auto", minWidth: "100px" }}
+          >
+            Kembali
+          </Button>
+        )}
+        <Button
+          type="button"
+          loading={loading}
+          onClick={() => formRef.current?.requestSubmit()}
+          style={{ flex: "1 1 auto", minWidth: "120px" }}
+        >
+          {isLastStep ? "Kirim" : "Lanjutkan"}
+        </Button>
+      </Group>
     </Stack>
   );
 }

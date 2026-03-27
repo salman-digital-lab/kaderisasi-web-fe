@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type RefObject } from "react";
 import {
   Button,
   Group,
@@ -28,6 +28,7 @@ type CustomFormGuestSectionProps = {
   loading?: boolean;
   isSingleSection?: boolean;
   initialData?: FormValues;
+  formRef?: RefObject<HTMLFormElement | null>;
 };
 
 export default function CustomFormGuestSection({
@@ -37,6 +38,7 @@ export default function CustomFormGuestSection({
   loading = false,
   isSingleSection = false,
   initialData = {},
+  formRef,
 }: CustomFormGuestSectionProps) {
   const [confirmModalOpened, setConfirmModalOpened] = useState(false);
   const [pendingValues, setPendingValues] = useState<FormValues | null>(null);
@@ -196,7 +198,7 @@ export default function CustomFormGuestSection({
 
   return (
     <>
-      <form onSubmit={form.onSubmit(handleFormSubmit)}>
+      <form ref={formRef} onSubmit={form.onSubmit(handleFormSubmit)}>
         <Stack gap="md">
           <Title order={4}>Data Diri</Title>
 
@@ -224,16 +226,6 @@ export default function CustomFormGuestSection({
           {profileFields
             .filter((f) => !f.hidden)
             .map((field) => renderField(field))}
-
-          <Group justify="flex-end" mt="xl">
-            <Button
-              type="submit"
-              loading={loading}
-              style={{ flex: "1 1 auto", minWidth: "120px" }}
-            >
-              {isSingleSection ? "Kirim" : "Lanjutkan"}
-            </Button>
-          </Group>
         </Stack>
       </form>
 
