@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Stack, Title, Text, Stepper, Box } from "@mantine/core";
+import { Stack, Title, Text, Stepper, Box, Button } from "@mantine/core";
+import { IconArrowLeft } from "@tabler/icons-react";
+import Link from "next/link";
 import { CustomForm } from "@/types/api/customForm";
 import { Member, PublicUser } from "@/types/model/members";
 import { Province } from "@/types/model/province";
@@ -110,13 +112,6 @@ export default function CustomFormContent({
     window.scrollTo({ top: 0, behavior: "instant" });
   }, [currentStep]);
 
-  // Show notification when data is restored from localStorage
-  useEffect(() => {
-    if (isLoaded && currentStep > 0) {
-      showNotif("Data formulir Anda telah dipulihkan", false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoaded]);
 
   const getSuccessUrl = () => {
     const typeMap = {
@@ -219,6 +214,21 @@ export default function CustomFormContent({
     await finishAndRedirect(allFormData);
   };
 
+  const activityBackUrl =
+    featureType === "activity_registration" && activitySlug
+      ? isGuest
+        ? `/activity/${activitySlug}/join`
+        : `/activity/${activitySlug}`
+      : null;
+
+  const backToActivityButton = activityBackUrl ? (
+    <Link href={activityBackUrl} style={{ textDecoration: "none" }}>
+      <Button variant="subtle" leftSection={<IconArrowLeft size={16} />} mb="xs" px={0}>
+        Kembali ke Kegiatan
+      </Button>
+    </Link>
+  ) : null;
+
   // Show loading state while data is being loaded
   if (!isLoaded) {
     return (
@@ -239,6 +249,7 @@ export default function CustomFormContent({
   if (currentStep === 0) {
     return (
       <Stack gap="lg">
+        {backToActivityButton}
         <Box>
           <Title order={3} mb="xs">
             {customForm.form_name}
@@ -303,6 +314,7 @@ export default function CustomFormContent({
 
   return (
     <Stack gap="lg">
+      {backToActivityButton}
       <Box>
         <Title order={3} mb="xs">
           {customForm.form_name}
