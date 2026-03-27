@@ -104,7 +104,18 @@ export default function RootLayout({
         <ColorSchemeScript />
       </head>
       <body>
-        <MantineProvider theme={{ fontFamily: inter.style.fontFamily }}>
+        <MantineProvider
+          theme={{
+            fontFamily: inter.style.fontFamily,
+            components: {
+              Input: {
+                vars: () => ({
+                  root: { '--input-fz': 'max(16px, 1em)' },
+                }),
+              },
+            },
+          }}
+        >
           <Suspense>
             <ScrollToTop />
           </Suspense>
