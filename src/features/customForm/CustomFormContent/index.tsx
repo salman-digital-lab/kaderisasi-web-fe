@@ -105,6 +105,11 @@ export default function CustomFormContent({
   const hasCustomSections = customFormSections.length > 0;
   const totalSteps = hasCustomSections ? customFormSections.length + 1 : 1; // profile + custom sections
 
+  // Scroll to top on step change
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, [currentStep]);
+
   // Show notification when data is restored from localStorage
   useEffect(() => {
     if (isLoaded && currentStep > 0) {
