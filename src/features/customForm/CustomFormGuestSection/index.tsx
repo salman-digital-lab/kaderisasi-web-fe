@@ -2,9 +2,12 @@
 
 import { useState, type RefObject } from "react";
 import {
+  ActionIcon,
   Button,
   Group,
   Modal,
+  NumberInput,
+  Paper,
   Stack,
   Text,
   TextInput,
@@ -14,10 +17,17 @@ import {
 import { useForm } from "@mantine/form";
 import { DateInput } from "@mantine/dates";
 import type { CustomFormField } from "@/types/api/customForm";
+import type { EducationEntry } from "@/types/model/members";
 import type { Province } from "@/types/model/province";
 import { GENDER_OPTION } from "@/constants/form/profile";
-import UniversitySelect from "@/components/common/UniversitySelect";
 import { toISODateString } from "@/utils/dateUtils";
+import UniversityNameSelect from "@/components/common/UniversityNameSelect";
+
+const DEGREE_OPTIONS = [
+  { value: "bachelor", label: "S1 (Sarjana)" },
+  { value: "master", label: "S2 (Magister)" },
+  { value: "doctoral", label: "S3 (Doktor)" },
+];
 
 type FormValues = Record<string, unknown>;
 
@@ -59,7 +69,17 @@ export default function CustomFormGuestSection({
 
   const initialValues: FormValues = {};
   profileFields.forEach((field) => {
-    initialValues[field.key] = resolveInitialValue(field.key, field.defaultValue as unknown);
+    if (field.key === "education_history") {
+      const stored = initialData["education_history"];
+      initialValues[field.key] = Array.isArray(stored) ? stored : [];
+    } else if (field.key === "current_education") {
+      const stored = initialData["current_education"];
+      initialValues[field.key] = stored && typeof stored === "object"
+        ? stored
+        : { degree: "bachelor", institution: "", major: "", intake_year: new Date().getFullYear() };
+    } else {
+      initialValues[field.key] = resolveInitialValue(field.key, field.defaultValue as unknown);
+    }
   });
   if (!hasNameField) initialValues["name"] = resolveInitialValue("name", "");
   if (!hasEmailField) initialValues["email"] = resolveInitialValue("email", "");
@@ -86,7 +106,13 @@ export default function CustomFormGuestSection({
 
         const val = values[field.key];
 
-        if (field.required && !val) {
+        const isEmpty =
+          field.key === "education_history"
+            ? !Array.isArray(val) || (val as unknown[]).length === 0
+            : field.key === "current_education"
+            ? !(val as any)?.institution
+            : !val;
+        if (field.required && isEmpty) {
           errors[field.key] = `${field.label} wajib diisi`;
           return;
         }
@@ -144,9 +170,6 @@ export default function CustomFormGuestSection({
           />
         );
 
-      case "university_id":
-        return <UniversitySelect key={fieldKey} {...inputProps} allowDeselect={false} />;
-
       case "whatsapp":
         return (
           <TextInput
@@ -165,6 +188,147 @@ export default function CustomFormGuestSection({
 
       case "birth_date":
         return <DateInput key={fieldKey} {...inputProps} valueFormat="YYYY-MM-DD" />;
+
+      case "education_history": {
+        const entries = (form.getValues().education_history as EducationEntry[]) ?? [];
+        const educationError = form.errors["education_history"];
+        return (
+          <Stack key={fieldKey} gap="xs">
+            <Text fw={500} size="sm">
+              {field.label}
+              {field.required && <span style={{ color: "red" }}> *</span>}
+            </Text>
+            {field.helpText && (
+              <Text size="xs" c="dimmed">
+                {field.helpText}
+              </Text>
+            )}
+            {educationError && (
+              <Text size="xs" c="red">
+                {educationError}
+              </Text>
+            )}
+            {entries.map((_, index) => (
+              <Paper key={index} withBorder p="sm" radius="md">
+                <Group justify="space-between" mb="xs">
+                  <Text size="sm" fw={500}>
+                    Pendidikan {index + 1}
+                  </Text>
+                  <ActionIcon
+                    color="red"
+                    variant="subtle"
+                    size="sm"
+                    onClick={() => form.removeListItem("education_history", index)}
+                  >
+                    ×
+                  </ActionIcon>
+                </Group>
+                <Select
+                  {...form.getInputProps(`education_history.${index}.degree`)}
+                  key={form.key(`education_history.${index}.degree`)}
+                  label="Jenjang"
+                  data={DEGREE_OPTIONS}
+                  radius="md"
+                />
+                <UniversityNameSelect
+                  {...form.getInputProps(`education_history.${index}.institution`)}
+                  key={form.key(`education_history.${index}.institution`)}
+                  label="Institusi"
+                  placeholder="Cari universitas"
+                  mt="xs"
+                  radius="md"
+                />
+                <TextInput
+                  {...form.getInputProps(`education_history.${index}.major`)}
+                  key={form.key(`education_history.${index}.major`)}
+                  label="Jurusan"
+                  placeholder="Jurusan"
+                  mt="xs"
+                  radius="md"
+                />
+                <NumberInput
+                  {...form.getInputProps(`education_history.${index}.intake_year`)}
+                  key={form.key(`education_history.${index}.intake_year`)}
+                  label="Tahun Masuk"
+                  placeholder="Tahun masuk"
+                  mt="xs"
+                  radius="md"
+                />
+              </Paper>
+            ))}
+            <Button
+              variant="light"
+              size="xs"
+              mt="xs"
+              onClick={() =>
+                form.insertListItem("education_history", {
+                  degree: "bachelor",
+                  institution: "",
+                  major: "",
+                  intake_year: new Date().getFullYear(),
+                })
+              }
+            >
+              + Tambah Pendidikan
+            </Button>
+          </Stack>
+        );
+      }
+
+      case "current_education": {
+        const ceError = form.errors["current_education"];
+        return (
+          <Stack key={fieldKey} gap="xs">
+            <Text fw={500} size="sm">
+              {field.label}
+              {field.required && <span style={{ color: "red" }}> *</span>}
+            </Text>
+            {field.helpText && (
+              <Text size="xs" c="dimmed">
+                {field.helpText}
+              </Text>
+            )}
+            {ceError && (
+              <Text size="xs" c="red">
+                {ceError}
+              </Text>
+            )}
+            <Paper withBorder p="sm" radius="md">
+              <Select
+                {...form.getInputProps("current_education.degree")}
+                key={form.key("current_education.degree")}
+                label="Jenjang"
+                data={DEGREE_OPTIONS}
+                radius="md"
+              />
+              <UniversityNameSelect
+                {...form.getInputProps("current_education.institution")}
+                key={form.key("current_education.institution")}
+                label="Institusi"
+                placeholder="Cari universitas"
+                mt="xs"
+                radius="md"
+              />
+              <TextInput
+                {...form.getInputProps("current_education.major")}
+                key={form.key("current_education.major")}
+                label="Jurusan"
+                placeholder="Jurusan"
+                mt="xs"
+                radius="md"
+              />
+              <NumberInput
+                {...form.getInputProps("current_education.intake_year")}
+                key={form.key("current_education.intake_year")}
+                label="Tahun Masuk"
+                placeholder="Tahun masuk"
+                mt="xs"
+                radius="md"
+              />
+            </Paper>
+          </Stack>
+        );
+      }
 
       default:
         return <TextInput key={fieldKey} {...inputProps} />;

@@ -1,8 +1,11 @@
 "use client";
 
-import { useState, type RefObject } from "react";
+import { useState, useRef, type RefObject } from "react";
 import {
+  ActionIcon,
   Button,
+  NumberInput,
+  Paper,
   Stack,
   TextInput,
   Select,
@@ -10,17 +13,48 @@ import {
   Title,
   Modal,
   Text,
+  Divider,
 } from "@mantine/core";
+import { IconPencil } from "@tabler/icons-react";
 import { useForm } from "@mantine/form";
 import { DateInput } from "@mantine/dates";
 import { CustomFormField } from "@/types/api/customForm";
-import { Member, PublicUser } from "@/types/model/members";
+import { EducationEntry, Member, PublicUser } from "@/types/model/members";
 import { Province } from "@/types/model/province";
 import { GENDER_OPTION } from "@/constants/form/profile";
-import UniversitySelect from "@/components/common/UniversitySelect";
 import editProfile from "@/functions/server/editProfile";
 import showNotif from "@/functions/common/notification";
 import { toISODateString } from "@/utils/dateUtils";
+import UniversityNameSelect from "@/components/common/UniversityNameSelect";
+
+const DEGREE_OPTIONS = [
+  { value: "bachelor", label: "S1 (Sarjana)" },
+  { value: "master", label: "S2 (Magister)" },
+  { value: "doctoral", label: "S3 (Doktor)" },
+];
+
+const DEGREE_LABEL: Record<string, string> = {
+  bachelor: "S1",
+  master: "S2",
+  doctoral: "S3",
+};
+
+const formatEducationEntry = (e: EducationEntry): string => {
+  const parts = [
+    DEGREE_LABEL[e.degree] ?? e.degree,
+    e.institution || "-",
+    e.major || "-",
+    e.intake_year ? `(${e.intake_year})` : "",
+  ].filter(Boolean);
+  return parts.join(" · ");
+};
+
+const BLANK_EDUCATION: EducationEntry = {
+  degree: "bachelor",
+  institution: "",
+  major: "",
+  intake_year: new Date().getFullYear(),
+};
 
 type CustomFormProfileSectionProps = {
   profileFields: CustomFormField[];
@@ -45,10 +79,58 @@ export default function CustomFormProfileSection({
   formRef,
 }: CustomFormProfileSectionProps) {
   const [confirmModalOpened, setConfirmModalOpened] = useState(false);
-  const [pendingValues, setPendingValues] = useState<Record<
-    string,
-    any
-  > | null>(null);
+  const [pendingValues, setPendingValues] = useState<Record<string, any> | null>(null);
+
+  const history = profileData?.profile?.education_history ?? [];
+
+  // Default to last item (= current education) pre-selected
+  const initialCeKey = history.length > 0 ? String(history.length - 1) : null;
+
+  // current_education state — ref keeps validate closure fresh
+  const ceSelectedKeyRef = useRef<string | null>(initialCeKey);
+  const [ceSelectedKey, setCeSelectedKey] = useState<string | null>(initialCeKey);
+  const [ceFormKey, setCeFormKey] = useState(0);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  // local copy of history for in-place display updates before main form submit
+  const [localHistory, setLocalHistory] = useState<EducationEntry[]>(history);
+
+  const updateCeKey = (val: string | null) => {
+    ceSelectedKeyRef.current = val;
+    setCeSelectedKey(val);
+  };
+
+  const handleCeChange = (val: string, keepEdit = false) => {
+    if (!keepEdit) setEditingIndex(null);
+    if (val === "new") {
+      updateCeKey("new");
+      setCeFormKey((k) => k + 1);
+      form.setFieldValue("current_education", { ...BLANK_EDUCATION });
+    } else {
+      updateCeKey(val);
+      // use localHistory so previously confirmed edits are preserved
+      form.setFieldValue("current_education", localHistory[Number(val)]);
+    }
+  };
+
+  const handleToggleEdit = (i: number) => {
+    if (editingIndex === i) {
+      setEditingIndex(null);
+    } else {
+      setEditingIndex(i);
+      handleCeChange(String(i), true);
+    }
+  };
+
+  const handleConfirmEdit = () => {
+    if (editingIndex === null) return;
+    const edited = form.getValues().current_education as EducationEntry;
+    setLocalHistory((prev) =>
+      prev.map((e, i) => (i === editingIndex ? { ...edited } : e)),
+    );
+    setEditingIndex(null);
+  };
+
+
   // Build initial values from profile data
   const initialValues: Record<string, any> = {};
 
@@ -87,19 +169,18 @@ export default function CustomFormProfileSection({
       case "whatsapp":
         initialValues[field.key] = profile?.whatsapp || "";
         break;
-      case "university_id":
-        initialValues[field.key] = profile?.university_id?.toString() || "";
-        break;
-      case "major":
-        initialValues[field.key] = profile?.major || "";
-        break;
-      case "intake_year":
-        initialValues[field.key] = profile?.intake_year || "";
-        break;
       case "birth_date":
         initialValues[field.key] = profile?.birth_date
           ? new Date(profile.birth_date)
           : undefined;
+        break;
+      case "education_history":
+        initialValues[field.key] = profile?.education_history ?? [];
+        break;
+      case "current_education":
+        initialValues[field.key] = history.length > 0
+          ? { ...history[history.length - 1] }
+          : { ...BLANK_EDUCATION };
         break;
       default:
         initialValues[field.key] = field.defaultValue || "";
@@ -113,33 +194,39 @@ export default function CustomFormProfileSection({
       const errors: Record<string, string> = {};
 
       profileFields.forEach((field) => {
-        if (field.required && !values[field.key]) {
+        let isEmpty: boolean;
+        if (field.key === "education_history") {
+          isEmpty =
+            !Array.isArray(values[field.key]) ||
+            (values[field.key] as any[]).length === 0;
+        } else if (field.key === "current_education") {
+          // If history exists, user must select something
+          if (history.length > 0 && ceSelectedKeyRef.current === null) {
+            isEmpty = true;
+          } else {
+            // New entry must have at least institution filled
+            isEmpty = !(values["current_education"] as any)?.institution;
+          }
+        } else {
+          isEmpty = !values[field.key];
+        }
+
+        if (field.required && isEmpty) {
           errors[field.key] = `${field.label} wajib diisi`;
         }
 
         if (field.validation) {
           const val = values[field.key];
-
-          if (
-            val &&
-            field.validation.minLength &&
-            val.length < field.validation.minLength
-          ) {
+          if (val && field.validation.minLength && val.length < field.validation.minLength) {
             errors[field.key] =
               field.validation.customMessage ||
               `Minimal ${field.validation.minLength} karakter`;
           }
-
-          if (
-            val &&
-            field.validation.maxLength &&
-            val.length > field.validation.maxLength
-          ) {
+          if (val && field.validation.maxLength && val.length > field.validation.maxLength) {
             errors[field.key] =
               field.validation.customMessage ||
               `Maksimal ${field.validation.maxLength} karakter`;
           }
-
           if (val && field.validation.pattern) {
             const regex = new RegExp(field.validation.pattern);
             if (!regex.test(val)) {
@@ -214,13 +301,7 @@ export default function CustomFormProfileSection({
             onKeyDown={(e) => {
               if (
                 !/[0-9]/.test(e.key) &&
-                ![
-                  "Backspace",
-                  "Delete",
-                  "ArrowLeft",
-                  "ArrowRight",
-                  "Tab",
-                ].includes(e.key)
+                !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)
               ) {
                 e.preventDefault();
               }
@@ -228,22 +309,292 @@ export default function CustomFormProfileSection({
           />
         );
 
-      case "university_id":
-        return (
-          <UniversitySelect
-            {...commonProps}
-            showedValue={profileData?.profile.university?.name}
-          />
-        );
-
-      case "major":
-        return <TextInput {...commonProps} />;
-
-      case "intake_year":
-        return <TextInput {...commonProps} />;
-
       case "birth_date":
         return <DateInput {...commonProps} valueFormat="YYYY-MM-DD" />;
+
+      case "education_history": {
+        const entries = (form.getValues().education_history as EducationEntry[]) ?? [];
+        const educationError = form.errors["education_history"];
+        return (
+          <Stack gap="xs">
+            <Text fw={500} size="sm">
+              {field.label}
+              {field.required && <span style={{ color: "red" }}> *</span>}
+            </Text>
+            {field.helpText && (
+              <Text size="xs" c="dimmed">
+                {field.helpText}
+              </Text>
+            )}
+            {educationError && (
+              <Text size="xs" c="red">
+                {educationError}
+              </Text>
+            )}
+            {entries.map((_, index) => (
+              <Paper key={index} withBorder p="sm" radius="md">
+                <Group justify="space-between" mb="xs">
+                  <Text size="sm" fw={500}>
+                    Pendidikan {index + 1}
+                  </Text>
+                  <ActionIcon
+                    color="red"
+                    variant="subtle"
+                    size="sm"
+                    onClick={() => form.removeListItem("education_history", index)}
+                  >
+                    ×
+                  </ActionIcon>
+                </Group>
+                <Select
+                  {...form.getInputProps(`education_history.${index}.degree`)}
+                  key={form.key(`education_history.${index}.degree`)}
+                  label="Jenjang"
+                  data={DEGREE_OPTIONS}
+                  radius="md"
+                />
+                <UniversityNameSelect
+                  {...form.getInputProps(`education_history.${index}.institution`)}
+                  key={form.key(`education_history.${index}.institution`)}
+                  label="Institusi"
+                  placeholder="Cari universitas"
+                  mt="xs"
+                  radius="md"
+                />
+                <TextInput
+                  {...form.getInputProps(`education_history.${index}.major`)}
+                  key={form.key(`education_history.${index}.major`)}
+                  label="Jurusan"
+                  placeholder="Jurusan"
+                  mt="xs"
+                  radius="md"
+                />
+                <NumberInput
+                  {...form.getInputProps(`education_history.${index}.intake_year`)}
+                  key={form.key(`education_history.${index}.intake_year`)}
+                  label="Tahun Masuk"
+                  placeholder="Tahun masuk"
+                  mt="xs"
+                  radius="md"
+                />
+              </Paper>
+            ))}
+            <Button
+              variant="light"
+              size="xs"
+              mt="xs"
+              onClick={() =>
+                form.insertListItem("education_history", {
+                  degree: "bachelor",
+                  institution: "",
+                  major: "",
+                  intake_year: new Date().getFullYear(),
+                })
+              }
+            >
+              + Tambah Pendidikan
+            </Button>
+          </Stack>
+        );
+      }
+
+      case "current_education": {
+        const ceError = form.errors["current_education"];
+        const isCreating = ceSelectedKey === "new" || history.length === 0;
+
+        return (
+          <Stack gap="xs">
+            <Text fw={500} size="sm">
+              {field.label}
+              {field.required && <span style={{ color: "red" }}> *</span>}
+            </Text>
+            {field.helpText && (
+              <Text size="xs" c="dimmed">
+                {field.helpText}
+              </Text>
+            )}
+            {ceError && (
+              <Text size="xs" c="red">
+                {ceError}
+              </Text>
+            )}
+
+            {history.length > 0 && (
+              <Stack gap="xs">
+                {localHistory.map((e, i) => {
+                  const val = String(i);
+                  const isSelected = ceSelectedKey === val;
+                  const isEditing = editingIndex === i;
+                  return (
+                    <Paper
+                      key={i}
+                      withBorder
+                      p="sm"
+                      radius="md"
+                      style={{
+                        borderColor: isSelected ? "var(--mantine-color-blue-6)" : undefined,
+                        borderWidth: isSelected ? 2 : 1,
+                      }}
+                    >
+                      <Group justify="space-between" wrap="nowrap">
+                        <Group
+                          gap="sm"
+                          wrap="nowrap"
+                          style={{ flex: 1, cursor: "pointer" }}
+                          onClick={() => handleCeChange(val)}
+                        >
+                          <input
+                            type="radio"
+                            name="current_education_pick"
+                            value={val}
+                            checked={isSelected}
+                            onChange={() => handleCeChange(val)}
+                            style={{ accentColor: "var(--mantine-color-blue-6)", flexShrink: 0 }}
+                          />
+                          <Stack gap={2}>
+                            <Text size="sm" fw={500}>
+                              {DEGREE_LABEL[e.degree] ?? e.degree} — {e.institution || "-"}
+                            </Text>
+                            <Text size="xs" c="dimmed">
+                              {e.major || "-"}{e.intake_year ? ` · ${e.intake_year}` : ""}
+                            </Text>
+                          </Stack>
+                        </Group>
+                        {!isEditing && (
+                          <ActionIcon
+                            variant="subtle"
+                            size="sm"
+                            color="gray"
+                            onClick={(ev) => { ev.stopPropagation(); handleToggleEdit(i); }}
+                          >
+                            <IconPencil size={14} />
+                          </ActionIcon>
+                        )}
+                      </Group>
+
+                      {isEditing && (
+                        <>
+                          <Divider my="sm" />
+                          <Stack gap="xs">
+                            <Select
+                              {...form.getInputProps("current_education.degree")}
+                              key={form.key("current_education.degree")}
+                              label="Jenjang"
+                              data={DEGREE_OPTIONS}
+                              radius="md"
+                            />
+                            <UniversityNameSelect
+                              {...form.getInputProps("current_education.institution")}
+                              key={form.key("current_education.institution")}
+                              label="Institusi"
+                              placeholder="Cari universitas"
+                              radius="md"
+                            />
+                            <TextInput
+                              {...form.getInputProps("current_education.major")}
+                              key={form.key("current_education.major")}
+                              label="Jurusan"
+                              placeholder="Jurusan"
+                              radius="md"
+                            />
+                            <NumberInput
+                              {...form.getInputProps("current_education.intake_year")}
+                              key={form.key("current_education.intake_year")}
+                              label="Tahun Masuk"
+                              placeholder="Tahun masuk"
+                              radius="md"
+                            />
+                            <Group justify="flex-end" mt="xs">
+                              <Button
+                                variant="subtle"
+                                size="xs"
+                                color="gray"
+                                onClick={() => {
+                                  // revert form to the original (unedited) local value
+                                  form.setFieldValue("current_education", localHistory[i]);
+                                  setEditingIndex(null);
+                                }}
+                              >
+                                Batal
+                              </Button>
+                              <Button size="xs" onClick={handleConfirmEdit}>
+                                Selesai
+                              </Button>
+                            </Group>
+                          </Stack>
+                        </>
+                      )}
+                    </Paper>
+                  );
+                })}
+
+                <Paper
+                  withBorder
+                  p="sm"
+                  radius="md"
+                  style={{
+                    cursor: "pointer",
+                    borderColor: ceSelectedKey === "new" ? "var(--mantine-color-blue-6)" : undefined,
+                    borderWidth: ceSelectedKey === "new" ? 2 : 1,
+                  }}
+                  onClick={() => handleCeChange("new")}
+                >
+                  <Group gap="sm" wrap="nowrap">
+                    <input
+                      type="radio"
+                      name="current_education_pick"
+                      value="new"
+                      checked={ceSelectedKey === "new"}
+                      onChange={() => handleCeChange("new")}
+                      style={{ accentColor: "var(--mantine-color-blue-6)", flexShrink: 0 }}
+                    />
+                    <Text size="sm" fw={500} c="blue">+ Tambah Pendidikan Baru</Text>
+                  </Group>
+                </Paper>
+              </Stack>
+            )}
+
+            {isCreating && (
+              <Paper key={ceFormKey} withBorder p="sm" radius="md">
+                <Text size="sm" fw={500} mb="xs">
+                  Detail Pendidikan
+                </Text>
+                <Select
+                  {...form.getInputProps("current_education.degree")}
+                  key={form.key("current_education.degree")}
+                  label="Jenjang"
+                  data={DEGREE_OPTIONS}
+                  radius="md"
+                />
+                <UniversityNameSelect
+                  {...form.getInputProps("current_education.institution")}
+                  key={form.key("current_education.institution")}
+                  label="Institusi"
+                  placeholder="Cari universitas"
+                  mt="xs"
+                  radius="md"
+                />
+                <TextInput
+                  {...form.getInputProps("current_education.major")}
+                  key={form.key("current_education.major")}
+                  label="Jurusan"
+                  placeholder="Jurusan"
+                  mt="xs"
+                  radius="md"
+                />
+                <NumberInput
+                  {...form.getInputProps("current_education.intake_year")}
+                  key={form.key("current_education.intake_year")}
+                  label="Tahun Masuk"
+                  placeholder="Tahun masuk"
+                  mt="xs"
+                  radius="md"
+                />
+              </Paper>
+            )}
+          </Stack>
+        );
+      }
 
       default:
         return <TextInput {...commonProps} />;
@@ -251,21 +602,16 @@ export default function CustomFormProfileSection({
   };
 
   const handleFormSubmit = async (values: Record<string, any>) => {
-    // If single section, show confirmation modal
     if (isSingleSection) {
       setPendingValues(values);
       setConfirmModalOpened(true);
       return;
     }
-
-    // Otherwise, proceed with submission
     await handleSubmit(values);
   };
 
   const handleSubmit = async (values: Record<string, any>) => {
-    // Save profile data directly to profile table
     try {
-      // Convert WhatsApp number format from 0812... to 62812...
       let whatsappNumber = values.whatsapp;
       if (whatsappNumber && typeof whatsappNumber === "string") {
         const whatsappStr = whatsappNumber.trim();
@@ -278,14 +624,13 @@ export default function CustomFormProfileSection({
 
       profileFields.forEach((field) => {
         if (values[field.key] !== undefined) {
-          if (field.key === "province_id" || field.key === "university_id") {
+          if (field.key === "province_id") {
             profileUpdateData[field.key] = values[field.key]
               ? Number(values[field.key])
               : undefined;
           } else if (field.key === "whatsapp") {
             profileUpdateData[field.key] = whatsappNumber;
-          } else if (field.key !== "email") {
-            // Don't update email
+          } else if (field.key !== "email" && field.key !== "current_education") {
             if (field.key === "birth_date") {
               profileUpdateData[field.key] = toISODateString(values[field.key]);
             } else {
@@ -295,6 +640,24 @@ export default function CustomFormProfileSection({
         }
       });
 
+      // current_education always becomes the last item in education_history
+      const hasCeField = profileFields.some((f) => f.key === "current_education");
+      if (hasCeField) {
+        const selectedEntry = values["current_education"] as EducationEntry;
+        if (selectedEntry?.institution) {
+          if (ceSelectedKeyRef.current === "new" || localHistory.length === 0) {
+            // New entry: append to local history
+            profileUpdateData["education_history"] = [...localHistory, selectedEntry];
+          } else if (ceSelectedKeyRef.current !== null) {
+            // Existing entry: apply any in-progress edit, then move to last
+            const idx = Number(ceSelectedKeyRef.current);
+            const merged = localHistory.map((e, i) => (i === idx ? selectedEntry : e));
+            const withoutSelected = merged.filter((_, i) => i !== idx);
+            profileUpdateData["education_history"] = [...withoutSelected, selectedEntry];
+          }
+        }
+      }
+
       const response = await editProfile(profileUpdateData);
 
       if (!response.success) {
@@ -302,10 +665,8 @@ export default function CustomFormProfileSection({
         return;
       }
 
-      // Pass form values to onSubmit (needed for single-section forms)
       onSubmit(values);
     } catch (error) {
-      // Handle unexpected errors (network failures, etc.)
       showNotif("Terjadi kesalahan jaringan. Silakan coba lagi.", true);
     }
   };
