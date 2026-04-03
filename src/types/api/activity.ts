@@ -15,13 +15,6 @@ export type GetActivityReq = {
 
 export type GetActivityResp = APIResponse<Activity>;
 
-export type PostActivityReq = {
-  slug: string;
-  data: { questionnaire_answer: Record<string, string> };
-};
-
-export type PostActivityResp = APIResponse<Registrant>;
-
 export type GetActivityRegistrationReq = {
   slug: string;
 };

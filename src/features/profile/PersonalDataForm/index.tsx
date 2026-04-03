@@ -67,7 +67,6 @@ export default function PersonalDataForm({
       birth_date: profileData?.profile.birth_date
         ? new Date(profileData.profile.birth_date)
         : undefined,
-      place_of_birth: profileData?.profile.place_of_birth,
       origin_province_id: profileData?.profile.origin_province_id?.toString(),
       country: profileData?.profile.country,
       education_history: (profileData?.profile.education_history ?? []) as EducationEntry[],
@@ -165,14 +164,6 @@ export default function PersonalDataForm({
         mt="md"
         radius="md"
       />
-      <TextInput
-        {...form.getInputProps("place_of_birth")}
-        key={form.key("place_of_birth")}
-        label="Tempat Lahir"
-        placeholder="Kota tempat lahir"
-        mt="md"
-        radius="md"
-      />
 
       <Divider my="xl" />
 
@@ -182,7 +173,7 @@ export default function PersonalDataForm({
         {...form.getInputProps("province_id")}
         key={form.key("province_id")}
         label="Provinsi"
-        placeholder="Pilih Provinsi Anda"
+        placeholder="Pilih Provinsi"
         data={provinces?.map((province) => ({
           label: province.name,
           value: province.id.toString(),

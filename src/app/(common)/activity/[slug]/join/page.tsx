@@ -21,7 +21,6 @@ import { redirect } from "next/navigation";
 
 import { verifySession } from "@/functions/server/session";
 import { getActivity } from "@/services/activity.cache";
-import { getCustomFormByFeature } from "@/services/customForm";
 import ErrorWrapper from "@/components/layout/Error";
 import { ACTIVITY_TYPE_ENUM } from "@/types/constants/activity";
 
@@ -32,7 +31,6 @@ export default async function Page(props: {
   const sessionData = await verifySession();
 
   let activity;
-  let hasCustomForm = false;
 
   try {
     activity = await getActivity({ slug: params.slug });
@@ -44,22 +42,9 @@ export default async function Page(props: {
     return <ErrorWrapper message="Kegiatan tidak ditemukan" />;
   }
 
-  // If user is already logged in, redirect directly to the form
+  // If user is already logged in, redirect directly to the custom form
   if (sessionData.session) {
-    try {
-      const customForm = await getCustomFormByFeature({
-        feature_type: "activity_registration",
-        feature_id: activity.id,
-      });
-      hasCustomForm = !!customForm && customForm.is_active;
-    } catch {
-      hasCustomForm = false;
-    }
-    redirect(
-      hasCustomForm
-        ? `/custom-form/activity/${activity.id}`
-        : `/activity/register/${params.slug}/profile-data`,
-    );
+    redirect(`/custom-form/activity/${activity.id}`);
   }
 
   const isGuestAllowed =

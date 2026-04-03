@@ -35,7 +35,6 @@ import { getActivity } from "../../../../services/activity.cache";
 import { preloadActivity } from "../../../../services/activity.preload";
 import { getActivityRegistration } from "../../../../services/activity";
 import { getProfile } from "../../../../services/profile";
-import { getCustomFormByFeature } from "../../../../services/customForm";
 import ErrorWrapper from "../../../../components/layout/Error";
 import { ACTIVITY_REGISTRANT_STATUS_ENUM } from "@/types/constants/activity";
 import { Activity } from "@/types/model/activity";
@@ -111,8 +110,6 @@ export default async function Page(props: {
     | undefined;
 
   let activity: Activity | undefined;
-  let hasCustomForm = false;
-
   const sessionData = await verifySession();
 
   try {
@@ -120,21 +117,14 @@ export default async function Page(props: {
     activity = await getActivity(params);
 
     // Run all remaining fetches in parallel now that we have activity.id
-    const [profileResult, activityRegistrationResult, customFormResult] = await Promise.all([
+    const [profileResult, activityRegistrationResult] = await Promise.all([
       getProfile(sessionData.session || ""),
       sessionData.session
         ? getActivityRegistration(sessionData.session, params)
         : Promise.resolve(undefined),
-      activity?.id
-        ? getCustomFormByFeature({
-            feature_type: "activity_registration",
-            feature_id: activity.id,
-          }).catch(() => null)
-        : Promise.resolve(null),
     ]);
     profileData = profileResult;
     activityRegistration = activityRegistrationResult;
-    hasCustomForm = !!customFormResult && customFormResult.is_active;
   } catch (error: unknown) {
     if (typeof error === "string" && error !== "Unauthorized")
       return <ErrorWrapper message={error} />;
@@ -285,11 +275,7 @@ export default async function Page(props: {
                 </Button>
               ) : activity?.is_registration_open ? (
                 <Link
-                  href={
-                    hasCustomForm
-                      ? `/custom-form/activity/${activity?.id}`
-                      : `/activity/register/${params.slug}/profile-data`
-                  }
+                  href={`/custom-form/activity/${activity?.id}`}
                   style={{ textDecoration: "none" }}
                 >
                   <Button fullWidth>Daftar Kegiatan</Button>
