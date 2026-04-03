@@ -28,13 +28,6 @@ import { toISODateString } from "@/utils/dateUtils";
 import UniversityNameSelect from "@/components/common/UniversityNameSelect";
 import { getCitiesByProvince } from "@/services/profile";
 
-type LegacyWorkEntry = {
-  job?: string;
-  organization?: string;
-  role?: string;
-  description?: string;
-};
-
 const CURRENT_ACTIVITY_FOCUS_OPTIONS = [
   { value: "professional", label: "Profesional" },
   { value: "academic", label: "Akademik" },
@@ -59,12 +52,10 @@ const normalizeYearValue = (value: number | string | null | undefined): number |
   return undefined;
 };
 
-const normalizeWorkHistory = (
-  entries: Array<Partial<WorkEntry & LegacyWorkEntry>> | undefined,
-): WorkEntry[] =>
+const normalizeWorkHistory = (entries: WorkEntry[] | undefined): WorkEntry[] =>
   (entries ?? []).map((entry) => ({
-    job_title: entry.job_title ?? entry.job ?? "",
-    company: entry.company ?? entry.organization ?? "",
+    job_title: entry.job_title ?? "",
+    company: entry.company ?? "",
     start_year: normalizeYearValue(entry.start_year),
     end_year: normalizeYearValue(entry.end_year),
   }));
@@ -120,9 +111,7 @@ export default function PersonalDataForm({
       origin_province_id: profileData?.profile.origin_province_id?.toString(),
       country: profileData?.profile.country,
       education_history: (profileData?.profile.education_history ?? []) as EducationEntry[],
-      work_history: normalizeWorkHistory(
-        profileData?.profile.work_history as Array<Partial<WorkEntry & LegacyWorkEntry>> | undefined,
-      ),
+      work_history: normalizeWorkHistory(profileData?.profile.work_history),
       extra_data: {
         preferred_name: profileData?.profile.extra_data?.preferred_name ?? "",
         salman_activity_history:
@@ -142,9 +131,7 @@ export default function PersonalDataForm({
       }
     >,
   ) => {
-    const normalizedWorkHistoryEntries = normalizeWorkHistory(
-      rawFormData.work_history as Array<Partial<WorkEntry & LegacyWorkEntry>> | undefined,
-    ).filter((entry) =>
+    const normalizedWorkHistoryEntries = normalizeWorkHistory(rawFormData.work_history).filter((entry) =>
       entry.job_title.trim() !== "" ||
       entry.company.trim() !== "" ||
       entry.start_year !== undefined ||
