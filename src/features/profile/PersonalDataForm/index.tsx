@@ -28,6 +28,13 @@ import { toISODateString } from "@/utils/dateUtils";
 import UniversityNameSelect from "@/components/common/UniversityNameSelect";
 import { getCitiesByProvince } from "@/services/profile";
 
+type LegacyWorkEntry = {
+  job?: string;
+  organization?: string;
+  role?: string;
+  description?: string;
+};
+
 const CURRENT_ACTIVITY_FOCUS_OPTIONS = [
   { value: "professional", label: "Profesional" },
   { value: "academic", label: "Akademik" },
@@ -41,6 +48,26 @@ const DEGREE_OPTIONS = [
   { value: "master", label: "S2" },
   { value: "doctoral", label: "S3" },
 ];
+
+const normalizeYearValue = (value: number | string | null | undefined): number | undefined => {
+  if (typeof value === "number" && !Number.isNaN(value)) return value;
+  if (typeof value === "string" && value.trim() !== "") {
+    const parsedValue = Number(value);
+    return Number.isNaN(parsedValue) ? undefined : parsedValue;
+  }
+
+  return undefined;
+};
+
+const normalizeWorkHistory = (
+  entries: Array<Partial<WorkEntry & LegacyWorkEntry>> | undefined,
+): WorkEntry[] =>
+  (entries ?? []).map((entry) => ({
+    job_title: entry.job_title ?? entry.job ?? "",
+    company: entry.company ?? entry.organization ?? "",
+    start_year: normalizeYearValue(entry.start_year),
+    end_year: normalizeYearValue(entry.end_year),
+  }));
 
 type PersonalDataFormProps = {
   provinces?: Province[];
@@ -93,7 +120,9 @@ export default function PersonalDataForm({
       origin_province_id: profileData?.profile.origin_province_id?.toString(),
       country: profileData?.profile.country,
       education_history: (profileData?.profile.education_history ?? []) as EducationEntry[],
-      work_history: (profileData?.profile.work_history ?? []) as WorkEntry[],
+      work_history: normalizeWorkHistory(
+        profileData?.profile.work_history as Array<Partial<WorkEntry & LegacyWorkEntry>> | undefined,
+      ),
       extra_data: {
         preferred_name: profileData?.profile.extra_data?.preferred_name ?? "",
         salman_activity_history:
@@ -113,6 +142,27 @@ export default function PersonalDataForm({
       }
     >,
   ) => {
+    const normalizedWorkHistoryEntries = normalizeWorkHistory(
+      rawFormData.work_history as Array<Partial<WorkEntry & LegacyWorkEntry>> | undefined,
+    ).filter((entry) =>
+      entry.job_title.trim() !== "" ||
+      entry.company.trim() !== "" ||
+      entry.start_year !== undefined ||
+      entry.end_year !== undefined,
+    );
+
+    const hasInvalidWorkYearRange = normalizedWorkHistoryEntries.some(
+      (entry) =>
+        entry.start_year !== undefined &&
+        entry.end_year !== undefined &&
+        entry.end_year < entry.start_year,
+    );
+
+    if (hasInvalidWorkYearRange) {
+      showNotif("Tahun selesai tidak boleh lebih kecil dari tahun mulai", true);
+      return;
+    }
+
     const finalFormData = {
       ...rawFormData,
       province_id: rawFormData.province_id
@@ -124,6 +174,7 @@ export default function PersonalDataForm({
         : undefined,
       origin_city_id: originCityId ? Number(originCityId) : undefined,
       birth_date: toISODateString(rawFormData.birth_date),
+      work_history: normalizedWorkHistoryEntries,
     };
 
     try {
@@ -407,35 +458,39 @@ export default function PersonalDataForm({
             </ActionIcon>
           </Group>
           <TextInput
-            {...form.getInputProps(`work_history.${index}.job`)}
-            key={form.key(`work_history.${index}.job`)}
-            label="Jabatan"
-            placeholder="Jabatan saat ini"
+            {...form.getInputProps(`work_history.${index}.job_title`)}
+            key={form.key(`work_history.${index}.job_title`)}
+            label="Posisi / Jabatan"
+            placeholder="Contoh: Software Engineer"
             radius="md"
           />
           <TextInput
-            {...form.getInputProps(`work_history.${index}.organization`)}
-            key={form.key(`work_history.${index}.organization`)}
-            label="Organisasi / Institusi"
-            placeholder="Nama organisasi"
+            {...form.getInputProps(`work_history.${index}.company`)}
+            key={form.key(`work_history.${index}.company`)}
+            label="Perusahaan / Organisasi"
+            placeholder="Nama perusahaan atau organisasi"
             mt="xs"
             radius="md"
           />
-          <TextInput
-            {...form.getInputProps(`work_history.${index}.role`)}
-            key={form.key(`work_history.${index}.role`)}
-            label="Peran"
-            placeholder="Peran Anda"
+          <NumberInput
+            {...form.getInputProps(`work_history.${index}.start_year`)}
+            key={form.key(`work_history.${index}.start_year`)}
+            label="Tahun Mulai"
+            placeholder="Contoh: 2022"
             mt="xs"
             radius="md"
+            min={1900}
+            max={new Date().getFullYear() + 10}
           />
-          <TextInput
-            {...form.getInputProps(`work_history.${index}.description`)}
-            key={form.key(`work_history.${index}.description`)}
-            label="Deskripsi (opsional)"
-            placeholder="Deskripsi singkat"
+          <NumberInput
+            {...form.getInputProps(`work_history.${index}.end_year`)}
+            key={form.key(`work_history.${index}.end_year`)}
+            label="Tahun Selesai"
+            placeholder="Kosongkan jika masih aktif"
             mt="xs"
             radius="md"
+            min={1900}
+            max={new Date().getFullYear() + 10}
           />
         </Paper>
       ))}
@@ -445,10 +500,10 @@ export default function PersonalDataForm({
         mt="xs"
         onClick={() =>
           form.insertListItem("work_history", {
-            job: "",
-            organization: "",
-            role: "",
-            description: "",
+            job_title: "",
+            company: "",
+            start_year: undefined,
+            end_year: undefined,
           })
         }
       >
