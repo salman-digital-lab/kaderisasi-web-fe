@@ -11,6 +11,7 @@ import classes from "./index.module.css";
 import { useRouter, useSearchParams } from "next/navigation";
 import RuangCurhatList from "../RuangCurhatList";
 import { Province } from "@/types/model/province";
+import type { Country } from "@/types/model/country";
 import { PublicUser } from "@/types/model/members";
 import { RuangCurhatData } from "@/types/model/ruangcurhat";
 import { Activity, Registrant } from "@/types/model/activity";
@@ -24,6 +25,7 @@ import {
 
 type ProfileTabProps = {
   provinceData: Province[] | undefined;
+  countryData: Country[] | undefined;
   profileData:
   | {
     userData: PublicUser;
@@ -38,6 +40,7 @@ type ProfileTabProps = {
 
 export function ProfileTab({
   provinceData,
+  countryData,
   profileData,
   activitiesRegistration,
   ruangcurhatData,
@@ -102,6 +105,7 @@ export function ProfileTab({
         ) : (
           <PersonalDataForm
             provinces={provinceData}
+            countries={countryData}
             profileData={profileData}
           />
         )}

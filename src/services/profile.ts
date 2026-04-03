@@ -9,6 +9,7 @@ import {
   PutProfileResp,
 } from "../types/api/user";
 import type { City } from "../types/model/city";
+import type { Country } from "../types/model/country";
 import type { APIResponse } from "../types/helper";
 
 export const getProvinces = async () => {
@@ -39,6 +40,17 @@ export const getUniversities = async (search?: string) => {
   );
 
   return response.data.data;
+};
+
+export const getCountries = async (): Promise<Country[]> => {
+  const { beAdminApi } = getApiConfig();
+  const response = await fetcher<APIResponse<Country[]>>(beAdminApi + "/countries", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return response.data ?? [];
 };
 
 export const getCitiesByProvince = async (provinceId: number): Promise<City[]> => {

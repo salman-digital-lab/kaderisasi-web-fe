@@ -22,6 +22,7 @@ import { CustomFormField } from "@/types/api/customForm";
 import { EducationEntry, Member, PublicUser } from "@/types/model/members";
 import { Province } from "@/types/model/province";
 import type { City } from "@/types/model/city";
+import type { Country } from "@/types/model/country";
 import { GENDER_OPTION } from "@/constants/form/profile";
 import editProfile from "@/functions/server/editProfile";
 import showNotif from "@/functions/common/notification";
@@ -56,6 +57,7 @@ type CustomFormProfileSectionProps = {
     profile: Member;
   };
   provinceData?: Province[];
+  countryData?: Country[];
   onSubmit: (data?: Record<string, any>) => void;
   loading?: boolean;
   isSingleSection?: boolean;
@@ -66,6 +68,7 @@ export default function CustomFormProfileSection({
   profileFields,
   profileData,
   provinceData,
+  countryData,
   onSubmit,
   loading = false,
   isSingleSection = false,
@@ -173,6 +176,9 @@ export default function CustomFormProfileSection({
         break;
       case "origin_city_id":
         initialValues[field.key] = profile?.origin_city_id?.toString() || "";
+        break;
+      case "country":
+        initialValues[field.key] = profile?.country || "";
         break;
       case "line":
         initialValues[field.key] = profile?.line || "";
@@ -356,6 +362,15 @@ export default function CustomFormProfileSection({
             }}
             searchable
             disabled={originCities.length === 0}
+          />
+        );
+
+      case "country":
+        return (
+          <Select
+            {...commonProps}
+            data={countryData?.map((c) => ({ label: c.name, value: c.name })) ?? []}
+            searchable
           />
         );
 

@@ -26,4 +26,7 @@ export const CACHE_TAGS = {
 
   /** Province reference data */
   PROVINCES: "provinces",
+
+  /** Country reference data */
+  COUNTRIES: "countries",
 } as const;

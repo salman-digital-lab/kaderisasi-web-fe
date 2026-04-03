@@ -23,6 +23,7 @@ import editProfile from "@/functions/server/editProfile";
 import { ExtraData, Member, PublicUser, WorkEntry, EducationEntry } from "@/types/model/members";
 import { Province } from "@/types/model/province";
 import type { City } from "@/types/model/city";
+import type { Country } from "@/types/model/country";
 import { toISODateString } from "@/utils/dateUtils";
 import UniversityNameSelect from "@/components/common/UniversityNameSelect";
 import { getCitiesByProvince } from "@/services/profile";
@@ -44,6 +45,7 @@ const DEGREE_OPTIONS = [
 
 type PersonalDataFormProps = {
   provinces?: Province[];
+  countries?: Country[];
   profileData?: {
     userData: PublicUser;
     profile: Member;
@@ -52,6 +54,7 @@ type PersonalDataFormProps = {
 
 export default function PersonalDataForm({
   provinces,
+  countries,
   profileData,
 }: PersonalDataFormProps) {
   const [currentCities, setCurrentCities] = useState<City[]>([]);
@@ -223,11 +226,13 @@ export default function PersonalDataForm({
         mt="md"
         radius="md"
       />
-      <TextInput
+      <Select
         {...form.getInputProps("country")}
         key={form.key("country")}
         label="Negara"
-        placeholder="Negara domisili saat ini"
+        placeholder="Pilih negara domisili"
+        data={countries?.map((c) => ({ label: c.name, value: c.name })) ?? []}
+        searchable
         mt="md"
         radius="md"
       />

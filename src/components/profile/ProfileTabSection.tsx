@@ -1,5 +1,5 @@
 import { getProfile } from "@/services/profile";
-import { getProvinces } from "@/services/profile.cache";
+import { getProvinces, getCountries } from "@/services/profile.cache";
 import { verifySession } from "@/functions/server/session";
 import { getActivitiesRegistration } from "@/services/activity";
 import { ProfileTab } from "@/features/profile/ProfileTab";
@@ -12,9 +12,10 @@ export async function ProfileTabSection() {
   const sessionData = await verifySession();
 
   try {
-    const [provinceData, profileData, activitiesRegistration, ruangCurhatData, achievements] =
+    const [provinceData, countryData, profileData, activitiesRegistration, ruangCurhatData, achievements] =
       await Promise.all([
         getProvinces(),
+        getCountries(),
         getProfile(sessionData.session || ""),
         getActivitiesRegistration(sessionData.session || ""),
         getRuangCurhat(sessionData.session || ""),
@@ -25,6 +26,7 @@ export async function ProfileTabSection() {
       <ProfileTab
         profileData={profileData}
         provinceData={provinceData}
+        countryData={countryData}
         activitiesRegistration={activitiesRegistration}
         ruangcurhatData={ruangCurhatData}
         achievements={achievements}

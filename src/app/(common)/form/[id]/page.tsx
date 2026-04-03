@@ -1,6 +1,6 @@
 import { verifySession } from "@/functions/server/session";
 import { getProfile } from "@/services/profile";
-import { getProvinces } from "@/services/profile.cache";
+import { getProvinces, getCountries } from "@/services/profile.cache";
 import { getCustomFormByFeature } from "@/services/customForm";
 import { Container, Paper } from "@mantine/core";
 import { redirect } from "next/navigation";
@@ -8,6 +8,7 @@ import ErrorWrapper from "@/components/layout/Error";
 import CustomFormContent from "@/features/customForm/CustomFormContent";
 import { PublicUser, Member } from "@/types/model/members";
 import { Province } from "@/types/model/province";
+import type { Country } from "@/types/model/country";
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -20,6 +21,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
       }
     | undefined;
   let provinceData: Province[] | undefined;
+  let countryData: Country[] | undefined;
 
   const sessionData = await verifySession();
 
@@ -39,7 +41,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     }
 
     // Fetch profile and provinces data
-    provinceData = await getProvinces();
+    [provinceData, countryData] = await Promise.all([getProvinces(), getCountries()]);
     profileData = await getProfile(sessionData.session || "");
 
     return (
@@ -59,6 +61,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
             customForm={customForm}
             profileData={profileData}
             provinceData={provinceData}
+            countryData={countryData}
             featureType="independent_form"
             featureId={undefined}
           />

@@ -1,6 +1,6 @@
 import { verifySession } from "@/functions/server/session";
 import { getProfile } from "@/services/profile";
-import { getProvinces } from "@/services/profile.cache";
+import { getProvinces, getCountries } from "@/services/profile.cache";
 import { getCustomFormByFeature } from "@/services/customForm";
 import { getActivity } from "@/services/activity.cache";
 import { Container } from "@mantine/core";
@@ -10,6 +10,7 @@ import { FetcherError } from "@/functions/common/fetcher";
 import CustomFormContent from "@/features/customForm/CustomFormContent";
 import { PublicUser, Member } from "@/types/model/members";
 import { Province } from "@/types/model/province";
+import type { Country } from "@/types/model/country";
 import { ACTIVITY_TYPE_ENUM } from "@/types/constants/activity";
 
 export default async function Page(props: {
@@ -27,6 +28,7 @@ export default async function Page(props: {
       }
     | undefined;
   let provinceData: Province[] | undefined;
+  let countryData: Country[] | undefined;
 
   const sessionData = await verifySession();
 
@@ -68,7 +70,7 @@ export default async function Page(props: {
     }
 
     // Fetch profile and provinces data (skip for guests)
-    provinceData = await getProvinces();
+    [provinceData, countryData] = await Promise.all([getProvinces(), getCountries()]);
     if (!isGuest) {
       profileData = await getProfile(sessionData.session || "");
     }
@@ -84,6 +86,7 @@ export default async function Page(props: {
           customForm={customForm}
           profileData={profileData}
           provinceData={provinceData}
+          countryData={countryData}
           featureType={featureType}
           featureId={type === "independent" ? undefined : Number(id)}
           isGuest={isGuest}

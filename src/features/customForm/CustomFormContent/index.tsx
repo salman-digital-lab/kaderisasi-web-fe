@@ -7,6 +7,7 @@ import Link from "next/link";
 import type { CustomForm } from "@/types/api/customForm";
 import type { Member, PublicUser } from "@/types/model/members";
 import type { Province } from "@/types/model/province";
+import type { Country } from "@/types/model/country";
 import CustomFormProfileSection from "../CustomFormProfileSection";
 import CustomFormGuestSection from "../CustomFormGuestSection";
 import CustomFormFieldsRenderer from "../CustomFormFieldsRenderer";
@@ -21,6 +22,7 @@ type CustomFormContentProps = {
   customForm: CustomForm;
   profileData?: { userData: PublicUser; profile: Member };
   provinceData?: Province[];
+  countryData?: Country[];
   featureType: "activity_registration" | "club_registration" | "independent_form";
   featureId?: number;
   isGuest?: boolean;
@@ -69,6 +71,7 @@ export default function CustomFormContent({
   customForm,
   profileData,
   provinceData,
+  countryData,
   featureType,
   featureId,
   isGuest = false,
@@ -264,6 +267,7 @@ export default function CustomFormContent({
               profileFields={profileFields}
               profileData={profileData}
               provinceData={provinceData}
+              countryData={countryData}
               onSubmit={handleProfileSubmit}
               loading={loading}
               isSingleSection={!hasCustomSections}
