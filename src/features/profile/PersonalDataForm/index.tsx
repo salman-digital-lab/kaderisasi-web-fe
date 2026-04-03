@@ -34,7 +34,6 @@ const CURRENT_ACTIVITY_FOCUS_OPTIONS = [
   { value: "social", label: "Sosial" },
   { value: "entrepreneur", label: "Wirausaha" },
   { value: "politics", label: "Politik" },
-  { value: "other", label: "Lainnya" },
 ];
 
 const DEGREE_OPTIONS = [
