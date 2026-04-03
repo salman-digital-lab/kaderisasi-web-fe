@@ -8,6 +8,8 @@ import {
   PutProfileReq,
   PutProfileResp,
 } from "../types/api/user";
+import type { City } from "../types/model/city";
+import type { APIResponse } from "../types/helper";
 
 export const getProvinces = async () => {
   const { beAdminApi } = getApiConfig();
@@ -37,6 +39,20 @@ export const getUniversities = async (search?: string) => {
   );
 
   return response.data.data;
+};
+
+export const getCitiesByProvince = async (provinceId: number): Promise<City[]> => {
+  const { beAdminApi } = getApiConfig();
+  const response = await fetcher<APIResponse<City[]>>(
+    beAdminApi + "/provinces/" + provinceId + "/cities",
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
+  return response.data ?? [];
 };
 
 export const getProfile = async (token: string) => {

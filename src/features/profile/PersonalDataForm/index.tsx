@@ -15,14 +15,17 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { DateInput } from "@mantine/dates";
+import { useState, useEffect } from "react";
 
 import { GENDER_OPTION } from "@/constants/form/profile";
 import showNotif from "@/functions/common/notification";
 import editProfile from "@/functions/server/editProfile";
 import { ExtraData, Member, PublicUser, WorkEntry, EducationEntry } from "@/types/model/members";
 import { Province } from "@/types/model/province";
+import type { City } from "@/types/model/city";
 import { toISODateString } from "@/utils/dateUtils";
 import UniversityNameSelect from "@/components/common/UniversityNameSelect";
+import { getCitiesByProvince } from "@/services/profile";
 
 const CURRENT_ACTIVITY_FOCUS_OPTIONS = [
   { value: "professional", label: "Profesional" },
@@ -51,6 +54,24 @@ export default function PersonalDataForm({
   provinces,
   profileData,
 }: PersonalDataFormProps) {
+  const [currentCities, setCurrentCities] = useState<City[]>([]);
+  const [originCities, setOriginCities] = useState<City[]>([]);
+  const [currentCityId, setCurrentCityId] = useState<string | null>(
+    profileData?.profile.city_id?.toString() ?? null,
+  );
+  const [originCityId, setOriginCityId] = useState<string | null>(
+    profileData?.profile.origin_city_id?.toString() ?? null,
+  );
+
+  useEffect(() => {
+    if (profileData?.profile.province_id) {
+      getCitiesByProvince(profileData.profile.province_id).then(setCurrentCities);
+    }
+    if (profileData?.profile.origin_province_id) {
+      getCitiesByProvince(profileData.profile.origin_province_id).then(setOriginCities);
+    }
+  }, [profileData]);
+
   const form = useForm({
     mode: "uncontrolled",
     initialValues: {
@@ -95,9 +116,11 @@ export default function PersonalDataForm({
       province_id: rawFormData.province_id
         ? Number(rawFormData.province_id)
         : undefined,
+      city_id: currentCityId ? Number(currentCityId) : undefined,
       origin_province_id: rawFormData.origin_province_id
         ? Number(rawFormData.origin_province_id)
         : undefined,
+      origin_city_id: originCityId ? Number(originCityId) : undefined,
       birth_date: toISODateString(rawFormData.birth_date),
     };
 
@@ -180,6 +203,25 @@ export default function PersonalDataForm({
         }))}
         searchable
         radius="md"
+        onChange={(val) => {
+          form.getInputProps("province_id").onChange(val);
+          setCurrentCityId(null);
+          setCurrentCities([]);
+          if (val) {
+            getCitiesByProvince(Number(val)).then(setCurrentCities);
+          }
+        }}
+      />
+      <Select
+        label="Kota / Kabupaten"
+        placeholder="Pilih Kota / Kabupaten"
+        data={currentCities.map((c) => ({ label: c.name, value: c.id.toString() }))}
+        value={currentCityId}
+        onChange={setCurrentCityId}
+        searchable
+        disabled={currentCities.length === 0}
+        mt="md"
+        radius="md"
       />
       <TextInput
         {...form.getInputProps("country")}
@@ -204,6 +246,25 @@ export default function PersonalDataForm({
           value: province.id.toString(),
         }))}
         searchable
+        radius="md"
+        onChange={(val) => {
+          form.getInputProps("origin_province_id").onChange(val);
+          setOriginCityId(null);
+          setOriginCities([]);
+          if (val) {
+            getCitiesByProvince(Number(val)).then(setOriginCities);
+          }
+        }}
+      />
+      <Select
+        label="Kota / Kabupaten Asal"
+        placeholder="Pilih Kota / Kabupaten Asal"
+        data={originCities.map((c) => ({ label: c.name, value: c.id.toString() }))}
+        value={originCityId}
+        onChange={setOriginCityId}
+        searchable
+        disabled={originCities.length === 0}
+        mt="md"
         radius="md"
       />
 

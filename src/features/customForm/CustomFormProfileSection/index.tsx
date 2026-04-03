@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, type RefObject } from "react";
+import { useState, useRef, useEffect, type RefObject } from "react";
 import {
   ActionIcon,
   Button,
@@ -21,11 +21,13 @@ import { DateInput } from "@mantine/dates";
 import { CustomFormField } from "@/types/api/customForm";
 import { EducationEntry, Member, PublicUser } from "@/types/model/members";
 import { Province } from "@/types/model/province";
+import type { City } from "@/types/model/city";
 import { GENDER_OPTION } from "@/constants/form/profile";
 import editProfile from "@/functions/server/editProfile";
 import showNotif from "@/functions/common/notification";
 import { toISODateString } from "@/utils/dateUtils";
 import UniversityNameSelect from "@/components/common/UniversityNameSelect";
+import { getCitiesByProvince } from "@/services/profile";
 
 const DEGREE_OPTIONS = [
   { value: "bachelor", label: "S1 (Sarjana)" },
@@ -39,15 +41,6 @@ const DEGREE_LABEL: Record<string, string> = {
   doctoral: "S3",
 };
 
-const formatEducationEntry = (e: EducationEntry): string => {
-  const parts = [
-    DEGREE_LABEL[e.degree] ?? e.degree,
-    e.institution || "-",
-    e.major || "-",
-    e.intake_year ? `(${e.intake_year})` : "",
-  ].filter(Boolean);
-  return parts.join(" · ");
-};
 
 const BLANK_EDUCATION: EducationEntry = {
   degree: "bachelor",
@@ -80,6 +73,24 @@ export default function CustomFormProfileSection({
 }: CustomFormProfileSectionProps) {
   const [confirmModalOpened, setConfirmModalOpened] = useState(false);
   const [pendingValues, setPendingValues] = useState<Record<string, any> | null>(null);
+
+  const [currentCities, setCurrentCities] = useState<City[]>([]);
+  const [originCities, setOriginCities] = useState<City[]>([]);
+  const [currentCityId, setCurrentCityId] = useState<string | null>(
+    profileData?.profile.city_id?.toString() ?? null,
+  );
+  const [originCityId, setOriginCityId] = useState<string | null>(
+    profileData?.profile.origin_city_id?.toString() ?? null,
+  );
+
+  useEffect(() => {
+    if (profileData?.profile.province_id) {
+      getCitiesByProvince(profileData.profile.province_id).then(setCurrentCities);
+    }
+    if (profileData?.profile.origin_province_id) {
+      getCitiesByProvince(profileData.profile.origin_province_id).then(setOriginCities);
+    }
+  }, [profileData]);
 
   const history = profileData?.profile?.education_history ?? [];
 
@@ -153,6 +164,15 @@ export default function CustomFormProfileSection({
         break;
       case "province_id":
         initialValues[field.key] = profile?.province_id?.toString() || "";
+        break;
+      case "city_id":
+        initialValues[field.key] = profile?.city_id?.toString() || "";
+        break;
+      case "origin_province_id":
+        initialValues[field.key] = profile?.origin_province_id?.toString() || "";
+        break;
+      case "origin_city_id":
+        initialValues[field.key] = profile?.origin_city_id?.toString() || "";
         break;
       case "line":
         initialValues[field.key] = profile?.line || "";
@@ -276,6 +296,66 @@ export default function CustomFormProfileSection({
               })) || []
             }
             searchable
+            onChange={(val) => {
+              commonProps.onChange(val);
+              setCurrentCityId(null);
+              setCurrentCities([]);
+              if (val) {
+                getCitiesByProvince(Number(val)).then(setCurrentCities);
+              }
+            }}
+          />
+        );
+
+      case "city_id":
+        return (
+          <Select
+            {...commonProps}
+            data={currentCities.map((c) => ({ label: c.name, value: c.id.toString() }))}
+            value={currentCityId}
+            onChange={(val) => {
+              setCurrentCityId(val);
+              commonProps.onChange(val);
+            }}
+            searchable
+            disabled={currentCities.length === 0}
+          />
+        );
+
+      case "origin_province_id":
+        return (
+          <Select
+            {...commonProps}
+            data={
+              provinceData?.map((province) => ({
+                label: province.name,
+                value: province.id.toString(),
+              })) || []
+            }
+            searchable
+            onChange={(val) => {
+              commonProps.onChange(val);
+              setOriginCityId(null);
+              setOriginCities([]);
+              if (val) {
+                getCitiesByProvince(Number(val)).then(setOriginCities);
+              }
+            }}
+          />
+        );
+
+      case "origin_city_id":
+        return (
+          <Select
+            {...commonProps}
+            data={originCities.map((c) => ({ label: c.name, value: c.id.toString() }))}
+            value={originCityId}
+            onChange={(val) => {
+              setOriginCityId(val);
+              commonProps.onChange(val);
+            }}
+            searchable
+            disabled={originCities.length === 0}
           />
         );
 
@@ -624,7 +704,12 @@ export default function CustomFormProfileSection({
 
       profileFields.forEach((field) => {
         if (values[field.key] !== undefined) {
-          if (field.key === "province_id") {
+          if (
+            field.key === "province_id" ||
+            field.key === "city_id" ||
+            field.key === "origin_province_id" ||
+            field.key === "origin_city_id"
+          ) {
             profileUpdateData[field.key] = values[field.key]
               ? Number(values[field.key])
               : undefined;
