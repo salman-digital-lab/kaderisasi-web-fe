@@ -3,6 +3,7 @@ import { inter } from "./fonts";
 
 const theme = createTheme({
   fontFamily: inter.style.fontFamily,
+  defaultRadius: "sm",
   components: {
     Input: {
       defaultProps: {
