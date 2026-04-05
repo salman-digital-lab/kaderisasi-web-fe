@@ -35,6 +35,7 @@ import {
   PersonalStep,
   ProfileStep,
   ReviewStep,
+  SalmanStep,
 } from "./sections";
 import type { OnboardingFormProps, StepId } from "./types";
 import {
@@ -76,6 +77,7 @@ export default function OnboardingForm({
   const [currentCities, setCurrentCities] = useState<City[]>([]);
   const [originCities, setOriginCities] = useState<City[]>([]);
   const [isCredentialPending, setIsCredentialPending] = useState(false);
+  const [isSubmitPending, setIsSubmitPending] = useState(false);
   const [draft, setDraft, removeDraft] = useLocalStorage<OnboardingDraft>({
     key: ONBOARDING_STORAGE_KEY,
     defaultValue: {
@@ -275,17 +277,22 @@ export default function OnboardingForm({
 
     if (result.success) {
       form.clearErrors();
-      return true;
+      return {
+        success: true,
+        firstMessage: null,
+      };
     }
 
-    setIssuesAsErrors(result.error.issues);
-    return false;
+    const nextErrors = setIssuesAsErrors(result.error.issues);
+    return {
+      success: false,
+      firstMessage: Object.values(nextErrors)[0] ?? null,
+    };
   }
 
   function validateListItem(
     index: number,
     kind: "educationHistory" | "workHistory",
-    fallbackMessage: string,
   ) {
     const schema = onboardingFormBaseSchema.shape[kind].element;
     const item = form.values[kind][index];
@@ -314,13 +321,13 @@ export default function OnboardingForm({
       ...nextErrors,
     });
     focusFirstError(nextErrors);
-    showNotif(result.error.issues[0]?.message || fallbackMessage, true);
     return false;
   }
 
   async function handleNextStep() {
-    if (!validateStep(activeStepId)) {
-      showNotif("Mohon periksa kembali data yang masih salah", true);
+    const stepValidation = validateStep(activeStepId);
+
+    if (!stepValidation.success) {
       return;
     }
 
@@ -393,9 +400,16 @@ export default function OnboardingForm({
     }
 
     setSubmitMessage(null);
-    const result = await submitOnboarding(
-      getSubmissionReadyValues(form.values, isExistingAccountLoggedIn),
-    );
+    setIsSubmitPending(true);
+    let result;
+
+    try {
+      result = await submitOnboarding(
+        getSubmissionReadyValues(form.values, isExistingAccountLoggedIn),
+      );
+    } finally {
+      setIsSubmitPending(false);
+    }
 
     if (!result.success) {
       setSubmitMessage(result.message);
@@ -450,7 +464,7 @@ export default function OnboardingForm({
       degree: "bachelor",
       institution: "",
       major: "",
-      intakeYear: new Date().getFullYear(),
+      intakeYear: null,
     });
     setEducationSnapshot(null);
     setEditingEducationIndex(form.values.educationHistory.length);
@@ -473,7 +487,7 @@ export default function OnboardingForm({
         degree: "bachelor",
         institution: "",
         major: "",
-        intakeYear: new Date().getFullYear(),
+        intakeYear: null,
       }),
     });
     setEditingEducationIndex(index);
@@ -482,6 +496,8 @@ export default function OnboardingForm({
   function cancelEditEducation(index: number) {
     if (educationSnapshot) {
       form.replaceListItem("educationHistory", index, educationSnapshot);
+    } else {
+      form.removeListItem("educationHistory", index);
     }
     setEducationSnapshot(null);
     setEditingEducationIndex(null);
@@ -495,7 +511,6 @@ export default function OnboardingForm({
     if (!validateListItem(
       editingEducationIndex,
       "educationHistory",
-      "Riwayat pendidikan belum lengkap",
     )) {
       return;
     }
@@ -533,6 +548,8 @@ export default function OnboardingForm({
   function cancelEditWork(index: number) {
     if (workSnapshot) {
       form.replaceListItem("workHistory", index, workSnapshot);
+    } else {
+      form.removeListItem("workHistory", index);
     }
     setWorkSnapshot(null);
     setEditingWorkIndex(null);
@@ -546,7 +563,6 @@ export default function OnboardingForm({
     if (!validateListItem(
       editingWorkIndex,
       "workHistory",
-      "Riwayat pekerjaan belum lengkap",
     )) {
       return;
     }
@@ -615,6 +631,8 @@ export default function OnboardingForm({
             onDeleteWork={deleteWork}
           />
         );
+      case "salman":
+        return <SalmanStep form={form} />;
       case "review":
       default:
         return (
@@ -680,6 +698,7 @@ export default function OnboardingForm({
                   mode={form.values.mode}
                   isExistingAccountLoggedIn={isExistingAccountLoggedIn}
                   isCredentialPending={isCredentialPending}
+                  isSubmitPending={isSubmitPending}
                   isRedirectPending={isRedirectPending}
                   onPrev={handlePrevStep}
                 />

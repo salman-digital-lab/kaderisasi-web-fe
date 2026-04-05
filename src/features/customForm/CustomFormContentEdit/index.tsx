@@ -89,10 +89,10 @@ export default function CustomFormContentEdit({
         <Title order={3} mb="xs">Ubah Formulir — {customForm.form_name}</Title>
         {totalSteps > 1 && (
           <>
-            <Text size="sm" c="dimmed" hiddenFrom="sm" mt="md">
+            <Text size="md" c="dimmed" hiddenFrom="sm" mt="md">
               Langkah {currentStep + 1} dari {totalSteps}: {currentSection.section_name}
             </Text>
-            <Stepper active={currentStep} size="sm" mt="lg" iconSize={32} visibleFrom="sm">
+            <Stepper active={currentStep} size="md" mt="lg" iconSize={32} visibleFrom="sm">
               {customFormSections.map((section, idx) => (
                 <Stepper.Step key={idx} label={section.section_name} description={`Bagian ${idx + 1}`} />
               ))}

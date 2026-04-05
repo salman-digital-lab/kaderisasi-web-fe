@@ -73,7 +73,7 @@ export async function ProfileContent() {
                   {profileData?.profile.name || "Nama Pengguna"}
                 </Text>
                 {profileData?.userData.member_id && (
-                  <Text size="sm" c="dimmed" ff="monospace">
+                  <Text size="md" c="dimmed" ff="monospace">
                     ID: {profileData.userData.member_id}
                   </Text>
                 )}
@@ -84,7 +84,7 @@ export async function ProfileContent() {
                   <>
                     <Divider w="100%" />
                     <Box w="100%">
-                      <Text size="sm" fw={500} mb="xs" ta="center">
+                      <Text size="md" fw={500} mb="xs" ta="center">
                         Lencana
                       </Text>
                       <Group gap="xs" justify="center">
@@ -104,28 +104,28 @@ export async function ProfileContent() {
               <SimpleGrid cols={3} w="100%" spacing="xs">
                 <Box ta="center">
                   <IconCalendar size={20} style={{ margin: "0 auto 4px" }} />
-                  <Text size="xs" c="dimmed">
+                  <Text size="md" c="dimmed">
                     Kegiatan
                   </Text>
-                  <Text fw={500} size="sm">
+                  <Text fw={500} size="md">
                     {activitiesRegistration?.length || 0}
                   </Text>
                 </Box>
                 <Box ta="center">
                   <IconTrophy size={20} style={{ margin: "0 auto 4px" }} />
-                  <Text size="xs" c="dimmed">
+                  <Text size="md" c="dimmed">
                     Prestasi
                   </Text>
-                  <Text fw={500} size="sm">
+                  <Text fw={500} size="md">
                     {achievements?.length || 0}
                   </Text>
                 </Box>
                 <Box ta="center">
                   <IconUser size={20} style={{ margin: "0 auto 4px" }} />
-                  <Text size="xs" c="dimmed">
+                  <Text size="md" c="dimmed">
                     Level
                   </Text>
-                  <Text fw={500} size="sm">
+                  <Text fw={500} size="md">
                     {
                       USER_LEVEL_RENDER[
                         profileData?.profile.level || USER_LEVEL_ENUM.JAMAAH

@@ -24,4 +24,5 @@ export type StepId =
   | "contact"
   | "address"
   | "education"
+  | "salman"
   | "review";

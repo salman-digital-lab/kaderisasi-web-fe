@@ -31,7 +31,11 @@ export const STEP_META = {
   },
   education: {
     label: "Profil",
-    description: "Pendidikan dan aktivitas",
+    description: "Pendidikan dan pekerjaan",
+  },
+  salman: {
+    label: "Salman",
+    description: "Aktivitas dan fokus",
   },
   review: {
     label: "Tinjau",
@@ -77,8 +81,10 @@ export const stepSchemas: Record<StepId, ZodType<unknown>> = {
   education: onboardingFormBaseSchema.pick({
     educationHistory: true,
     workHistory: true,
-    salmanActivityHistory: true,
     currentActivityFocus: true,
+  }),
+  salman: onboardingFormBaseSchema.pick({
+    salmanActivityHistory: true,
   }),
   review: onboardingFormSchema,
 };

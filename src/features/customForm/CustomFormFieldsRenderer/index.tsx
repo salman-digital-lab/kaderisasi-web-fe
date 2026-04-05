@@ -6,6 +6,7 @@ import {
   Stack,
   TextInput,
   Select,
+  MultiSelect,
   Textarea,
   NumberInput,
   Checkbox,
@@ -20,6 +21,7 @@ import { DateInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { IconAlertCircle } from "@tabler/icons-react";
 import { CustomFormSection } from "@/types/api/customForm";
+import classes from "./index.module.css";
 
 // Helper function to render text with newlines
 const renderTextWithNewlines = (text: string) => {
@@ -157,25 +159,41 @@ export default function CustomFormFieldsRenderer({
     const fieldKey = form.key(field.key);
     const commonProps = {
       label: renderTextWithNewlines(field.label),
-      placeholder: (field.placeholder || field.label)?.replace(/\n/g, " "),
       description: renderTextWithNewlines(field.helpText || field.description),
       required: field.required,
       disabled: field.disabled,
+      size: "md" as const,
       ...form.getInputProps(field.key),
     };
 
     switch (field.type) {
       case "text":
-        return <TextInput key={fieldKey} {...commonProps} type={field.type} />;
+        return (
+          <TextInput
+            key={fieldKey}
+            {...commonProps}
+            type={field.type}
+            placeholder="Isi di sini"
+          />
+        );
 
       case "textarea":
-        return <Textarea key={fieldKey} {...commonProps} minRows={3} autosize />;
+        return (
+          <Textarea
+            key={fieldKey}
+            {...commonProps}
+            placeholder="Isi di sini"
+            minRows={3}
+            autosize
+          />
+        );
 
       case "number":
         return (
           <NumberInput
             key={fieldKey}
             {...commonProps}
+            placeholder="Isi di sini"
             min={field.validation?.min}
             max={field.validation?.max}
           />
@@ -187,6 +205,7 @@ export default function CustomFormFieldsRenderer({
           <Select
             key={fieldKey}
             {...commonProps}
+            placeholder="Pilih opsi"
             data={
               field.options?.map((opt: any) => ({
                 label: opt.label,
@@ -200,9 +219,10 @@ export default function CustomFormFieldsRenderer({
 
       case "multiselect":
         return (
-          <Select
+          <MultiSelect
             key={fieldKey}
             {...commonProps}
+            placeholder="Pilih opsi"
             data={
               field.options?.map((opt: any) => ({
                 label: opt.label,
@@ -210,8 +230,23 @@ export default function CustomFormFieldsRenderer({
                 disabled: opt.disabled,
               })) || []
             }
-            multiple
-            searchable
+            searchable={false}
+            hidePickedOptions={false}
+            clearable={false}
+            classNames={{
+              label: classes.multiSelectLabel,
+              description: classes.multiSelectDescription,
+              input: classes.multiSelectInput,
+              pill: classes.multiSelectPill,
+              pillsList: classes.multiSelectPillsList,
+              dropdown: classes.multiSelectDropdown,
+              options: classes.multiSelectOptions,
+              option: classes.multiSelectOption,
+              inputField:
+                Array.isArray(form.values[field.key]) && form.values[field.key].length > 0
+                  ? classes.multiSelectInputHidden
+                  : undefined,
+            }}
           />
         );
 
@@ -220,12 +255,18 @@ export default function CustomFormFieldsRenderer({
           <Radio.Group key={fieldKey} {...commonProps}>
             <Stack gap="xs" mt="xs">
               {field.options?.map((opt: any, idx: number) => (
-                <Radio
+                <Radio.Card
                   key={idx}
                   value={opt.value?.toString() || opt.label}
-                  label={opt.label}
                   disabled={opt.disabled}
-                />
+                  radius="md"
+                  className={classes.optionCard}
+                >
+                  <Group wrap="nowrap" align="flex-start">
+                    <Radio.Indicator />
+                    <Text className={classes.optionCardLabel}>{opt.label}</Text>
+                  </Group>
+                </Radio.Card>
               ))}
             </Stack>
           </Radio.Group>
@@ -237,12 +278,18 @@ export default function CustomFormFieldsRenderer({
             <Checkbox.Group key={fieldKey} {...commonProps}>
               <Stack gap="xs" mt="xs">
                 {field.options?.map((opt: any, idx: number) => (
-                  <Checkbox
+                  <Checkbox.Card
                     key={idx}
                     value={opt.value?.toString() || opt.label}
-                    label={opt.label}
                     disabled={opt.disabled}
-                  />
+                    radius="md"
+                    className={classes.optionCard}
+                  >
+                    <Group wrap="nowrap" align="flex-start">
+                      <Checkbox.Indicator />
+                      <Text className={classes.optionCardLabel}>{opt.label}</Text>
+                    </Group>
+                  </Checkbox.Card>
                 ))}
               </Stack>
             </Checkbox.Group>
@@ -258,10 +305,17 @@ export default function CustomFormFieldsRenderer({
         );
 
       case "date":
-        return <DateInput key={fieldKey} {...commonProps} valueFormat="DD/MM/YYYY" />;
+        return (
+          <DateInput
+            key={fieldKey}
+            {...commonProps}
+            placeholder="Isi di sini"
+            valueFormat="DD/MM/YYYY"
+          />
+        );
 
       default:
-        return <TextInput key={fieldKey} {...commonProps} />;
+        return <TextInput key={fieldKey} {...commonProps} placeholder="Isi di sini" />;
     }
   };
 
@@ -292,11 +346,11 @@ export default function CustomFormFieldsRenderer({
   return (
     <>
       <form ref={formRef} onSubmit={form.onSubmit(handleSubmit)}>
-        <Stack gap="md">
+        <Stack gap="xl">
           <Box>
             <Title order={4}>{section.section_name}</Title>
             {section.fields.length > 0 && (
-              <Text size="sm" c="dimmed" mt="xs">
+              <Text size="md" c="dimmed" mt="xs">
                 Silakan lengkapi formulir di bawah ini
               </Text>
             )}
@@ -315,18 +369,18 @@ export default function CustomFormFieldsRenderer({
         title={
           <Group gap="xs">
             <IconAlertCircle size={24} color="var(--mantine-color-blue-6)" />
-            <Text fw={600}>Konfirmasi Pengiriman</Text>
+            <Text size="md" fw={600}>Konfirmasi Pengiriman</Text>
           </Group>
         }
         centered
         size="md"
       >
         <Stack gap="lg">
-          <Text size="sm">
+          <Text size="md">
             Pastikan semua data yang Anda isi sudah benar. Setelah mengirim,
             data tidak dapat diubah kembali.
           </Text>
-          <Text size="sm" fw={500}>
+          <Text size="md" fw={500}>
             Apakah Anda yakin ingin mengirim formulir ini?
           </Text>
 

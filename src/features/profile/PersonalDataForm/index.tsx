@@ -33,6 +33,7 @@ import type { Country } from "@/types/model/country";
 import { toISODateString } from "@/utils/dateUtils";
 import UniversityNameSelect from "@/components/common/UniversityNameSelect";
 import { getCitiesByProvince } from "@/services/profile";
+import classes from "./index.module.css";
 
 const CURRENT_ACTIVITY_FOCUS_OPTIONS = [
   { value: "professional", label: "Profesional" },
@@ -92,6 +93,9 @@ export default function PersonalDataForm({
   const [originCityId, setOriginCityId] = useState<string | null>(
     profileData?.profile.origin_city_id?.toString() ?? null,
   );
+  const [currentActivityFocus, setCurrentActivityFocus] = useState<string[]>(
+    profileData?.profile.extra_data?.current_activity_focus ?? [],
+  );
 
   useEffect(() => {
     if (profileData?.profile.province_id) {
@@ -101,6 +105,12 @@ export default function PersonalDataForm({
       getCitiesByProvince(profileData.profile.origin_province_id).then(setOriginCities);
     }
   }, [profileData]);
+
+  useEffect(() => {
+    setCurrentActivityFocus(
+      profileData?.profile.extra_data?.current_activity_focus ?? [],
+    );
+  }, [profileData?.profile.extra_data?.current_activity_focus]);
 
   const form = useForm({
     mode: "uncontrolled",
@@ -438,8 +448,13 @@ export default function PersonalDataForm({
       {form.getValues().education_history?.map((_, index) => (
         <Paper key={index} withBorder p={editingEducationIndex === index ? "md" : "sm"} mb="sm" radius="md">
           <div>
-            <Group justify="space-between" mb={editingEducationIndex !== index ? 4 : "xs"} align="center" wrap="nowrap">
-              <Text size="sm" fw={500}>
+            <Group
+              justify="space-between"
+              mb={editingEducationIndex !== index ? "sm" : "md"}
+              align="center"
+              wrap="nowrap"
+            >
+              <Text size="md" fw={500}>
                 Pendidikan {index + 1}
               </Text>
               <Group gap={4}>
@@ -448,35 +463,35 @@ export default function PersonalDataForm({
                   <ActionIcon
                     color="gray"
                     variant="filled"
-                    size="md"
+                    size="lg"
                     aria-label="Batal edit pendidikan"
                     onClick={() => cancelEditEducation(index)}
                   >
-                    <IconX size={14} />
+                    <IconX size={18} />
                   </ActionIcon>
                   <ActionIcon
                     variant="filled"
-                    size="md"
+                    size="lg"
                     aria-label="Simpan pendidikan"
                     onClick={saveEditEducation}
                   >
-                    <IconCheck size={14} />
+                    <IconCheck size={18} />
                   </ActionIcon>
                 </>
               ) : (
                 <>
                   <ActionIcon
                     variant="filled"
-                    size="md"
+                    size="lg"
                     aria-label="Edit pendidikan"
                     onClick={() => startEditEducation(index)}
                   >
-                    <IconPencil size={14} />
+                    <IconPencil size={18} />
                   </ActionIcon>
                   <ActionIcon
                     color="red"
                     variant="filled"
-                    size="md"
+                    size="lg"
                     aria-label="Hapus pendidikan"
                     onClick={() => {
                       form.removeListItem("education_history", index);
@@ -488,14 +503,14 @@ export default function PersonalDataForm({
                       });
                     }}
                   >
-                    <IconTrash size={14} />
+                    <IconTrash size={18} />
                   </ActionIcon>
                 </>
               )}
             </Group>
             </Group>
             {editingEducationIndex !== index ? (
-              <Text size="sm" c="dimmed" mb="xs">
+              <Text size="md" c="dimmed">
                 {getEducationSummary(
                   form.getValues().education_history?.[index] ?? {
                     degree: "bachelor",
@@ -546,8 +561,9 @@ export default function PersonalDataForm({
       ))}
       <Button
         variant="light"
-        size="xs"
+        size="md"
         mt="xs"
+        className={classes.addButton}
         onClick={() => {
           form.insertListItem("education_history", {
             degree: "bachelor",
@@ -569,8 +585,13 @@ export default function PersonalDataForm({
       {form.getValues().work_history?.map((_, index) => (
         <Paper key={index} withBorder p={editingWorkIndex === index ? "md" : "sm"} mb="sm" radius="md">
           <div>
-            <Group justify="space-between" mb={editingWorkIndex !== index ? 4 : "xs"} align="center" wrap="nowrap">
-              <Text size="sm" fw={500}>
+            <Group
+              justify="space-between"
+              mb={editingWorkIndex !== index ? "sm" : "md"}
+              align="center"
+              wrap="nowrap"
+            >
+              <Text size="md" fw={500}>
                 Pekerjaan / Aktivitas {index + 1}
               </Text>
               <Group gap={4}>
@@ -579,35 +600,35 @@ export default function PersonalDataForm({
                   <ActionIcon
                     color="gray"
                     variant="filled"
-                    size="md"
+                    size="lg"
                     aria-label="Batal edit pekerjaan"
                     onClick={() => cancelEditWork(index)}
                   >
-                    <IconX size={14} />
+                    <IconX size={18} />
                   </ActionIcon>
                   <ActionIcon
                     variant="filled"
-                    size="md"
+                    size="lg"
                     aria-label="Simpan pekerjaan"
                     onClick={saveEditWork}
                   >
-                    <IconCheck size={14} />
+                    <IconCheck size={18} />
                   </ActionIcon>
                 </>
               ) : (
                 <>
                   <ActionIcon
                     variant="filled"
-                    size="md"
+                    size="lg"
                     aria-label="Edit pekerjaan"
                     onClick={() => startEditWork(index)}
                   >
-                    <IconPencil size={14} />
+                    <IconPencil size={18} />
                   </ActionIcon>
                   <ActionIcon
                     color="red"
                     variant="filled"
-                    size="md"
+                    size="lg"
                     aria-label="Hapus pekerjaan"
                     onClick={() => {
                       form.removeListItem("work_history", index);
@@ -619,14 +640,14 @@ export default function PersonalDataForm({
                       });
                     }}
                   >
-                    <IconTrash size={14} />
+                    <IconTrash size={18} />
                   </ActionIcon>
                 </>
               )}
             </Group>
             </Group>
             {editingWorkIndex !== index ? (
-              <Text size="sm" c="dimmed" mb="xs">
+              <Text size="md" c="dimmed">
                 {getWorkSummary(
                   form.getValues().work_history?.[index] ?? {
                     job_title: "",
@@ -681,8 +702,9 @@ export default function PersonalDataForm({
       ))}
       <Button
         variant="light"
-        size="xs"
+        size="md"
         mt="xs"
+        className={classes.addButton}
         onClick={() => {
           form.insertListItem("work_history", {
             job_title: "",
@@ -701,13 +723,35 @@ export default function PersonalDataForm({
 
       {/* Activity focus */}
       <Title order={5} mb="sm">Fokus Aktivitas Saat Ini</Title>
+      <Text size="md" c="dimmed" mb="md">
+        Pilih satu atau beberapa fokus yang paling sesuai dengan aktivitas Anda saat ini.
+      </Text>
       <MultiSelect
-        {...form.getInputProps("extra_data.current_activity_focus")}
-        key={form.key("extra_data.current_activity_focus")}
         label="Bidang Fokus"
+        description="Bisa pilih lebih dari satu. Cari lalu ketuk untuk menambahkan."
         placeholder="Pilih fokus aktivitas"
         data={CURRENT_ACTIVITY_FOCUS_OPTIONS}
+        value={currentActivityFocus}
+        onChange={(value) => {
+          setCurrentActivityFocus(value);
+          form.setFieldValue("extra_data.current_activity_focus", value);
+        }}
+        searchable={false}
+        hidePickedOptions={false}
         radius="md"
+        size="md"
+        maxDropdownHeight={280}
+        classNames={{
+          label: classes.focusLabel,
+          description: classes.focusDescription,
+          input: classes.focusInput,
+          pill: classes.focusPill,
+          pillsList: classes.focusPillsList,
+          dropdown: classes.focusDropdown,
+          option: classes.focusOption,
+          inputField:
+            currentActivityFocus.length > 0 ? classes.focusInputHidden : undefined,
+        }}
       />
 
       <Button

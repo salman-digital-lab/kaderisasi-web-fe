@@ -8,7 +8,6 @@ const CURRENT_ACTIVITY_FOCUS_VALUES = [
   "social",
   "entrepreneur",
   "politics",
-  "other",
 ] as const;
 
 export const salmanActivityHistoryOptions = [
@@ -25,7 +24,6 @@ export const currentActivityFocusOptions = [
   { value: "social", label: "Sosial" },
   { value: "entrepreneur", label: "Wirausaha" },
   { value: "politics", label: "Politik" },
-  { value: "other", label: "Lainnya" },
 ] as const;
 
 export const degreeOptions = [
@@ -34,16 +32,27 @@ export const degreeOptions = [
   { value: "doctoral", label: "S3 (Doktor)" },
 ] as const;
 
-const educationEntrySchema = z.object({
-  degree: z.enum(["bachelor", "master", "doctoral"]),
-  institution: z.string().trim().min(1, "Institusi wajib diisi"),
-  major: z.string().trim().min(1, "Jurusan wajib diisi"),
-  intakeYear: z
-    .number({ error: "Tahun masuk wajib diisi" })
-    .int("Tahun masuk tidak valid")
-    .min(1950, "Tahun masuk tidak valid")
-    .max(new Date().getFullYear() + 5, "Tahun masuk tidak valid"),
-});
+const educationEntrySchema = z
+  .object({
+    degree: z.enum(["bachelor", "master", "doctoral"]),
+    institution: z.string().trim().min(1, "Institusi wajib diisi"),
+    major: z.string().trim().min(1, "Jurusan wajib diisi"),
+    intakeYear: z
+      .number()
+      .int("Tahun masuk tidak valid")
+      .min(1950, "Tahun masuk tidak valid")
+      .max(new Date().getFullYear() + 5, "Tahun masuk tidak valid")
+      .nullable(),
+  })
+  .superRefine((value, context) => {
+    if (value.intakeYear === null) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["intakeYear"],
+        message: "Tahun masuk wajib diisi",
+      });
+    }
+  });
 
 const workEntrySchema = z
   .object({
@@ -240,9 +249,10 @@ export function getVisibleStepIds(mode: OnboardingFormValues["mode"]) {
         "contact",
         "address",
         "education",
+        "salman",
         "review",
       ]
-    : ["mode", "personal", "contact", "address", "education", "review"];
+    : ["mode", "personal", "contact", "address", "education", "salman", "review"];
 }
 
 function normalizeString(value: string) {
@@ -264,7 +274,7 @@ function normalizeEducationEntries(values: OnboardingFormValues) {
     degree: entry.degree,
     institution: normalizeString(entry.institution),
     major: normalizeString(entry.major),
-    intake_year: entry.intakeYear,
+    intake_year: entry.intakeYear as number,
   }));
 }
 

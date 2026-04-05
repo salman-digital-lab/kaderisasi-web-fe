@@ -5,6 +5,7 @@ import {
   ActionIcon,
   Alert,
   Button,
+  Checkbox,
   Divider,
   Group,
   MultiSelect,
@@ -501,7 +502,7 @@ export function AddressStep({
     <Stack gap="lg">
       <Stack gap={6}>
         <Title order={2}>Alamat dan domisili</Title>
-        <Text c="dimmed">
+        <Text c="dimmed" size="md">
           Masukkan lokasi tempat tinggal Anda saat ini dan asal daerah.
         </Text>
       </Stack>
@@ -526,10 +527,10 @@ export function AddressStep({
         <Divider />
 
         <Stack gap={4}>
-          <Text size="sm" fw={700}>
+          <Text size="md" fw={700}>
             Domisili saat ini
           </Text>
-          <Text size="xs" c="dimmed">
+          <Text size="md" c="dimmed">
             Bagian ini untuk lokasi tempat tinggal Anda sekarang.
           </Text>
         </Stack>
@@ -577,7 +578,7 @@ export function AddressStep({
             />
           </SimpleGrid>
         ) : (
-          <Text size="sm" c="dimmed">
+          <Text size="md" c="dimmed">
             Provinsi dan kota domisili hanya ditampilkan jika negara domisili
             adalah Indonesia.
           </Text>
@@ -586,10 +587,10 @@ export function AddressStep({
         <Divider />
 
         <Stack gap={4}>
-          <Text size="sm" fw={700}>
+          <Text size="md" fw={700}>
             Asal daerah
           </Text>
-          <Text size="xs" c="dimmed">
+          <Text size="md" c="dimmed">
             Bagian ini untuk daerah asal Anda.
           </Text>
         </Stack>
@@ -702,17 +703,17 @@ export function ProfileStep({
               }
             >
               <Stack gap="md">
-                <Group justify="space-between" align="center">
-                  <div>
+                <Group justify="space-between" align="flex-start" wrap="nowrap">
+                  <div className={classes.listItemHeader}>
                     <Text fw={700}>Riwayat {index + 1}</Text>
                     {editingEducationIndex !== index ? (
-                      <Text size="sm" c="dimmed">
+                      <Text size="md" c="dimmed">
                         {getEducationSummary(
                           form.values.educationHistory[index] ?? {
                             degree: "bachelor",
                             institution: "",
                             major: "",
-                            intakeYear: new Date().getFullYear(),
+                            intakeYear: null,
                           },
                         )}
                       </Text>
@@ -806,11 +807,11 @@ export function ProfileStep({
               }
             >
               <Stack gap="md">
-                <Group justify="space-between" align="center">
-                  <div>
+                <Group justify="space-between" align="flex-start" wrap="nowrap">
+                  <div className={classes.listItemHeader}>
                     <Text fw={700}>Pekerjaan {index + 1}</Text>
                     {editingWorkIndex !== index ? (
-                      <Text size="sm" c="dimmed">
+                      <Text size="md" c="dimmed">
                         {getWorkSummary(
                           form.values.workHistory[index] ?? {
                             jobTitle: "",
@@ -880,33 +881,71 @@ export function ProfileStep({
         </Stack>
       </Stack>
 
-      <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
-        <MultiSelect
-          {...form.getInputProps("salmanActivityHistory")}
-          key={form.key("salmanActivityHistory")}
-          name="salmanActivityHistory"
-          label="Riwayat aktivitas di Salman"
-          placeholder="Pilih yang pernah diikuti"
-          data={salmanActivityHistoryOptions}
-          searchable
-          size="md"
-          radius="md"
-        />
-        <MultiSelect
+      <Stack gap="md">
+        <Stack gap={4}>
+          <Title order={4}>Fokus aktivitas saat ini</Title>
+          <Text size="sm" c="dimmed">
+            Pilih fokus utama yang sedang Anda jalani saat ini.
+          </Text>
+        </Stack>
+
+        <Checkbox.Group
           {...form.getInputProps("currentActivityFocus")}
           key={form.key("currentActivityFocus")}
           name="currentActivityFocus"
-          label="Fokus aktivitas saat ini"
-          placeholder="Pilih fokus utama"
-          data={currentActivityFocusOptions.map((option) => ({
-            label: option.label,
-            value: option.value,
-          }))}
-          searchable
-          size="md"
-          radius="md"
-        />
-      </SimpleGrid>
+        >
+          <Stack gap="sm">
+            {currentActivityFocusOptions.map((option) => (
+              <Checkbox.Card
+                key={option.value}
+                value={option.value}
+                radius="md"
+                className={classes.checkboxItem}
+              >
+                <Group wrap="nowrap" align="flex-start">
+                  <Checkbox.Indicator />
+                  <Text className={classes.checkboxLabel}>{option.label}</Text>
+                </Group>
+              </Checkbox.Card>
+            ))}
+          </Stack>
+        </Checkbox.Group>
+      </Stack>
+    </Stack>
+  );
+}
+
+export function SalmanStep({ form }: StepFormProps) {
+  return (
+    <Stack gap="xl">
+      <Stack gap={6}>
+        <Title order={2}>Riwayat aktivitas di Salman</Title>
+        <Text c="dimmed">
+          Pilih aktivitas Salman yang pernah Anda ikuti.
+        </Text>
+      </Stack>
+
+      <Checkbox.Group
+        {...form.getInputProps("salmanActivityHistory")}
+        key={form.key("salmanActivityHistory")}
+        name="salmanActivityHistory"
+      >
+        <Stack gap="sm">
+          {salmanActivityHistoryOptions.map((option) => (
+            <Checkbox.Card
+              key={option.value}
+              value={option.value}
+              radius="md"
+              className={classes.checkboxItem}
+            >
+              <Group wrap="nowrap" align="flex-start">
+                <Checkbox.Indicator />
+                <Text className={classes.checkboxLabel}>{option.label}</Text>
+              </Group>
+            </Checkbox.Card>
+          ))}
+        </Stack>
+      </Checkbox.Group>
     </Stack>
   );
 }
@@ -921,14 +960,20 @@ function SectionHeader({
   onAdd: () => void;
 }) {
   return (
-    <Group justify="space-between" align="center">
+    <Group justify="space-between" align="center" className={classes.sectionHeader}>
       <div>
         <Title order={4}>{title}</Title>
         <Text size="sm" c="dimmed">
           {description}
         </Text>
       </div>
-      <Button leftSection={<IconPlus size={18} />} variant="light" onClick={onAdd}>
+      <Button
+        leftSection={<IconPlus size={18} />}
+        variant="light"
+        size="md"
+        className={classes.addButton}
+        onClick={onAdd}
+      >
         Tambah
       </Button>
     </Group>
@@ -963,39 +1008,39 @@ function ListItemActions({
           <ActionIcon
             color="gray"
             variant="filled"
-            size="md"
+            size="lg"
             aria-label={cancelLabel}
             onClick={onCancel}
           >
-            <IconX size={14} />
+            <IconX size={18} />
           </ActionIcon>
           <ActionIcon
             variant="filled"
-            size="md"
+            size="lg"
             aria-label={saveLabel}
             onClick={onSave}
           >
-            <IconCheck size={14} />
+            <IconCheck size={18} />
           </ActionIcon>
         </>
       ) : (
         <>
           <ActionIcon
             variant="filled"
-            size="md"
+            size="lg"
             aria-label={editLabel}
             onClick={onEdit}
           >
-            <IconPencil size={14} />
+            <IconPencil size={18} />
           </ActionIcon>
           <ActionIcon
             color="red"
             variant="filled"
-            size="md"
+            size="lg"
             aria-label={deleteLabel}
             onClick={onDelete}
           >
-            <IconTrash size={14} />
+            <IconTrash size={18} />
           </ActionIcon>
         </>
       )}
@@ -1026,7 +1071,7 @@ export function ReviewStep({
     <Stack gap="lg">
       <Stack gap={6}>
         <Title order={2}>Tinjau data Anda</Title>
-        <Text c="dimmed">
+        <Text c="dimmed" size="md">
           Pastikan semua informasi sudah benar sebelum dikirim.
         </Text>
       </Stack>
@@ -1161,14 +1206,14 @@ export function ReviewStep({
                 {form.values.educationHistory.map((entry, index) => (
                   <Paper key={index} withBorder radius="md" p="sm">
                     <Text fw={600}>Riwayat {index + 1}</Text>
-                    <Text size="sm">
+                    <Text size="md">
                       Jenjang:{" "}
                       {degreeOptions.find((option) => option.value === entry.degree)
                         ?.label || "-"}
                     </Text>
-                    <Text size="sm">Institusi: {entry.institution || "-"}</Text>
-                    <Text size="sm">Jurusan: {entry.major || "-"}</Text>
-                    <Text size="sm">Tahun masuk: {entry.intakeYear || "-"}</Text>
+                    <Text size="md">Institusi: {entry.institution || "-"}</Text>
+                    <Text size="md">Jurusan: {entry.major || "-"}</Text>
+                    <Text size="md">Tahun masuk: {entry.intakeYear || "-"}</Text>
                   </Paper>
                 ))}
               </Stack>
@@ -1186,12 +1231,12 @@ export function ReviewStep({
                 {form.values.workHistory.map((entry, index) => (
                   <Paper key={index} withBorder radius="md" p="sm">
                     <Text fw={600}>Pekerjaan {index + 1}</Text>
-                    <Text size="sm">Posisi/jabatan: {entry.jobTitle || "-"}</Text>
-                    <Text size="sm">
+                    <Text size="md">Posisi/jabatan: {entry.jobTitle || "-"}</Text>
+                    <Text size="md">
                       Perusahaan/tempat: {entry.company || "-"}
                     </Text>
-                    <Text size="sm">Tahun mulai: {entry.startYear ?? "-"}</Text>
-                    <Text size="sm">Tahun selesai: {entry.endYear ?? "-"}</Text>
+                    <Text size="md">Tahun mulai: {entry.startYear ?? "-"}</Text>
+                    <Text size="md">Tahun selesai: {entry.endYear ?? "-"}</Text>
                   </Paper>
                 ))}
               </Stack>
@@ -1238,10 +1283,10 @@ function SummaryItem({
 }) {
   return (
     <div>
-      <Text size="sm" fw={700} className={classes.summaryLabel}>
+      <Text size="md" fw={700} className={classes.summaryLabel}>
         {label}
       </Text>
-      <Text>{value}</Text>
+      <Text size="md">{value}</Text>
     </div>
   );
 }
@@ -1253,6 +1298,7 @@ type ActionBarProps = {
   mode: OnboardingFormValues["mode"];
   isExistingAccountLoggedIn: boolean;
   isCredentialPending: boolean;
+  isSubmitPending: boolean;
   isRedirectPending: boolean;
   onPrev: () => void;
 };
@@ -1264,11 +1310,16 @@ export function OnboardingActionBar({
   mode,
   isExistingAccountLoggedIn,
   isCredentialPending,
+  isSubmitPending,
   isRedirectPending,
   onPrev,
 }: ActionBarProps) {
   return (
-    <Group justify="space-between" className={classes.actions}>
+    <Group
+      justify="space-between"
+      className={classes.actions}
+      data-last-step={isLastStep ? true : undefined}
+    >
       <Button
         variant="default"
         leftSection={<IconChevronLeft size={18} />}
@@ -1281,7 +1332,8 @@ export function OnboardingActionBar({
         <Button
           type="submit"
           rightSection={<IconCheck size={18} />}
-          loading={isRedirectPending}
+          loading={isSubmitPending || isRedirectPending}
+          disabled={isSubmitPending || isRedirectPending}
         >
           {mode === "login" ? "Simpan profil" : "Kirim data"}
         </Button>

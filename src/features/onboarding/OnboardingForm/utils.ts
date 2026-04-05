@@ -138,10 +138,13 @@ export function getStepIndexForField(
   if (
     fieldKey.startsWith("educationHistory") ||
     fieldKey.startsWith("workHistory") ||
-    fieldKey.startsWith("salmanActivityHistory") ||
     fieldKey.startsWith("currentActivityFocus")
   ) {
     return visibleSteps.indexOf("education");
+  }
+
+  if (fieldKey.startsWith("salmanActivityHistory")) {
+    return visibleSteps.indexOf("salman");
   }
 
   return null;

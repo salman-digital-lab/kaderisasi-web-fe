@@ -1,0 +1,82 @@
+.focusSection {
+  position: relative;
+}
+
+.focusLabel {
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 6px;
+}
+
+.focusDescription {
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
+.focusInput {
+  min-height: 52px;
+  padding: 10px 12px;
+  font-size: 16px;
+}
+
+.focusPillsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  align-content: center;
+  width: 100%;
+}
+
+.focusPill {
+  font-size: 16px;
+  margin: 0;
+}
+
+.focusInputHidden::placeholder {
+  color: transparent;
+}
+
+.focusDropdown {
+  margin-top: 6px;
+  border-radius: var(--mantine-radius-md);
+  border: 1px solid var(--mantine-color-gray-3);
+  box-shadow: var(--mantine-shadow-sm);
+  overflow: hidden;
+  background-color: var(--mantine-color-white);
+}
+
+.focusOptions {
+  font-size: 16px;
+}
+
+.focusOption {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.addButton {
+  align-self: flex-start;
+}
+
+@media (max-width: 48em) {
+  .focusInput {
+    min-height: 56px;
+    padding: 12px;
+  }
+
+  .focusPillsList {
+    gap: 6px;
+  }
+
+  .focusOption {
+    min-height: 48px;
+  }
+
+  .addButton {
+    width: 100%;
+  }
+}

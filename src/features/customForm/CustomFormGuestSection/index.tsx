@@ -142,24 +142,40 @@ export default function CustomFormGuestSection({
     const inputProps = {
       ...form.getInputProps(field.key),
       label: field.label,
-      placeholder: field.placeholder ?? field.label,
       description: field.helpText,
       required: field.required,
       disabled: field.disabled,
+      size: "md" as const,
     };
 
     switch (field.key) {
       case "email":
-        return <TextInput key={fieldKey} {...inputProps} type="email" required />;
+        return (
+          <TextInput
+            key={fieldKey}
+            {...inputProps}
+            placeholder="Isi di sini"
+            type="email"
+            required
+          />
+        );
 
       case "gender":
-        return <Select key={fieldKey} {...inputProps} data={GENDER_OPTION} />;
+        return (
+          <Select
+            key={fieldKey}
+            {...inputProps}
+            placeholder="Pilih opsi"
+            data={GENDER_OPTION}
+          />
+        );
 
       case "province_id":
         return (
           <Select
             key={fieldKey}
             {...inputProps}
+            placeholder="Pilih opsi"
             data={
               provinceData?.map((p) => ({
                 label: p.name,
@@ -175,6 +191,7 @@ export default function CustomFormGuestSection({
           <TextInput
             key={fieldKey}
             {...inputProps}
+            placeholder="Isi di sini"
             type="tel"
             inputMode="numeric"
             onKeyDown={(e) => {
@@ -187,31 +204,38 @@ export default function CustomFormGuestSection({
         );
 
       case "birth_date":
-        return <DateInput key={fieldKey} {...inputProps} valueFormat="YYYY-MM-DD" />;
+        return (
+          <DateInput
+            key={fieldKey}
+            {...inputProps}
+            placeholder="Isi di sini"
+            valueFormat="YYYY-MM-DD"
+          />
+        );
 
       case "education_history": {
         const entries = (form.getValues().education_history as EducationEntry[]) ?? [];
         const educationError = form.errors["education_history"];
         return (
           <Stack key={fieldKey} gap="xs">
-            <Text fw={500} size="sm">
+            <Text fw={500} size="md">
               {field.label}
               {field.required && <span style={{ color: "red" }}> *</span>}
             </Text>
             {field.helpText && (
-              <Text size="xs" c="dimmed">
+              <Text size="sm" c="dimmed">
                 {field.helpText}
               </Text>
             )}
             {educationError && (
-              <Text size="xs" c="red">
+              <Text size="md" c="red">
                 {educationError}
               </Text>
             )}
             {entries.map((_, index) => (
               <Paper key={index} withBorder p="sm" radius="md">
                 <Group justify="space-between" mb="xs">
-                  <Text size="sm" fw={500}>
+                  <Text size="md" fw={500}>
                     Pendidikan {index + 1}
                   </Text>
                   <ActionIcon
@@ -258,7 +282,7 @@ export default function CustomFormGuestSection({
             ))}
             <Button
               variant="light"
-              size="xs"
+              size="md"
               mt="xs"
               onClick={() =>
                 form.insertListItem("education_history", {
@@ -279,17 +303,17 @@ export default function CustomFormGuestSection({
         const ceError = form.errors["current_education"];
         return (
           <Stack key={fieldKey} gap="xs">
-            <Text fw={500} size="sm">
+            <Text fw={500} size="md">
               {field.label}
               {field.required && <span style={{ color: "red" }}> *</span>}
             </Text>
             {field.helpText && (
-              <Text size="xs" c="dimmed">
+              <Text size="sm" c="dimmed">
                 {field.helpText}
               </Text>
             )}
             {ceError && (
-              <Text size="xs" c="red">
+              <Text size="md" c="red">
                 {ceError}
               </Text>
             )}
@@ -331,7 +355,7 @@ export default function CustomFormGuestSection({
       }
 
       default:
-        return <TextInput key={fieldKey} {...inputProps} />;
+        return <TextInput key={fieldKey} {...inputProps} placeholder="Isi di sini" />;
     }
   };
 
@@ -365,7 +389,7 @@ export default function CustomFormGuestSection({
   return (
     <>
       <form ref={formRef} onSubmit={form.onSubmit(handleFormSubmit)}>
-        <Stack gap="md">
+        <Stack gap="xl">
           <Title order={4}>Data Diri</Title>
 
           {!hasNameField && (
@@ -373,7 +397,7 @@ export default function CustomFormGuestSection({
               {...form.getInputProps("name")}
               key={form.key("name")}
               label="Nama Lengkap"
-              placeholder="Nama Lengkap"
+              placeholder="Isi di sini"
               required
             />
           )}
@@ -383,7 +407,7 @@ export default function CustomFormGuestSection({
               {...form.getInputProps("email")}
               key={form.key("email")}
               label="Email"
-              placeholder="email@contoh.com"
+              placeholder="Isi di sini"
               type="email"
               required
             />
@@ -402,7 +426,7 @@ export default function CustomFormGuestSection({
         centered
       >
         <Stack gap="md">
-          <Text>
+          <Text size="md">
             Apakah Anda yakin ingin mengirim formulir ini? Pastikan semua data
             yang Anda masukkan sudah benar.
           </Text>

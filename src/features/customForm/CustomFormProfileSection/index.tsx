@@ -42,7 +42,6 @@ const DEGREE_LABEL: Record<string, string> = {
   doctoral: "S3",
 };
 
-
 const BLANK_EDUCATION: EducationEntry = {
   degree: "bachelor",
   institution: "",
@@ -59,6 +58,7 @@ type CustomFormProfileSectionProps = {
   provinceData?: Province[];
   countryData?: Country[];
   onSubmit: (data?: Record<string, any>) => void;
+  onLoadingChange?: (value: boolean) => void;
   loading?: boolean;
   isSingleSection?: boolean;
   formRef?: RefObject<HTMLFormElement | null>;
@@ -70,6 +70,7 @@ export default function CustomFormProfileSection({
   provinceData,
   countryData,
   onSubmit,
+  onLoadingChange,
   loading = false,
   isSingleSection = false,
   formRef,
@@ -271,30 +272,31 @@ export default function CustomFormProfileSection({
   const renderField = (field: CustomFormField) => {
     const commonProps = {
       label: field.label,
-      placeholder: field.placeholder || field.label,
       description: field.helpText,
       required: field.required,
       disabled: field.disabled,
+      size: "md" as const,
       ...form.getInputProps(field.key),
     };
 
     switch (field.key) {
       case "name":
-        return <TextInput {...commonProps} />;
+        return <TextInput {...commonProps} placeholder="Isi di sini" />;
 
       case "gender":
-        return <Select {...commonProps} data={GENDER_OPTION} />;
+        return <Select {...commonProps} placeholder="Pilih opsi" data={GENDER_OPTION} />;
 
       case "email":
-        return <TextInput {...commonProps} type="email" disabled />;
+        return <TextInput {...commonProps} placeholder="Isi di sini" type="email" disabled />;
 
       case "personal_id":
-        return <TextInput {...commonProps} />;
+        return <TextInput {...commonProps} placeholder="Isi di sini" />;
 
       case "province_id":
         return (
           <Select
             {...commonProps}
+            placeholder="Pilih opsi"
             data={
               provinceData?.map((province) => ({
                 label: province.name,
@@ -317,6 +319,7 @@ export default function CustomFormProfileSection({
         return (
           <Select
             {...commonProps}
+            placeholder="Pilih opsi"
             data={currentCities.map((c) => ({ label: c.name, value: c.id.toString() }))}
             value={currentCityId}
             onChange={(val) => {
@@ -332,6 +335,7 @@ export default function CustomFormProfileSection({
         return (
           <Select
             {...commonProps}
+            placeholder="Pilih opsi"
             data={
               provinceData?.map((province) => ({
                 label: province.name,
@@ -354,6 +358,7 @@ export default function CustomFormProfileSection({
         return (
           <Select
             {...commonProps}
+            placeholder="Pilih opsi"
             data={originCities.map((c) => ({ label: c.name, value: c.id.toString() }))}
             value={originCityId}
             onChange={(val) => {
@@ -369,27 +374,29 @@ export default function CustomFormProfileSection({
         return (
           <Select
             {...commonProps}
+            placeholder="Pilih opsi"
             data={countryData?.map((c) => ({ label: c.name, value: c.name })) ?? []}
             searchable
           />
         );
 
       case "line":
-        return <TextInput {...commonProps} />;
+        return <TextInput {...commonProps} placeholder="Isi di sini" />;
 
       case "instagram":
-        return <TextInput {...commonProps} />;
+        return <TextInput {...commonProps} placeholder="Isi di sini" />;
 
       case "tiktok":
-        return <TextInput {...commonProps} />;
+        return <TextInput {...commonProps} placeholder="Isi di sini" />;
 
       case "linkedin":
-        return <TextInput {...commonProps} />;
+        return <TextInput {...commonProps} placeholder="Isi di sini" />;
 
       case "whatsapp":
         return (
           <TextInput
             {...commonProps}
+            placeholder="Isi di sini"
             type="tel"
             pattern="[0-9]*"
             inputMode="numeric"
@@ -405,31 +412,31 @@ export default function CustomFormProfileSection({
         );
 
       case "birth_date":
-        return <DateInput {...commonProps} valueFormat="YYYY-MM-DD" />;
+        return <DateInput {...commonProps} placeholder="Isi di sini" valueFormat="YYYY-MM-DD" />;
 
       case "education_history": {
         const entries = (form.getValues().education_history as EducationEntry[]) ?? [];
         const educationError = form.errors["education_history"];
         return (
           <Stack gap="xs">
-            <Text fw={500} size="sm">
+            <Text fw={500} size="md">
               {field.label}
               {field.required && <span style={{ color: "red" }}> *</span>}
             </Text>
             {field.helpText && (
-              <Text size="xs" c="dimmed">
+              <Text size="sm" c="dimmed">
                 {field.helpText}
               </Text>
             )}
             {educationError && (
-              <Text size="xs" c="red">
+              <Text size="md" c="red">
                 {educationError}
               </Text>
             )}
             {entries.map((_, index) => (
               <Paper key={index} withBorder p="sm" radius="md">
                 <Group justify="space-between" mb="xs">
-                  <Text size="sm" fw={500}>
+                  <Text size="md" fw={500}>
                     Pendidikan {index + 1}
                   </Text>
                   <ActionIcon
@@ -476,7 +483,7 @@ export default function CustomFormProfileSection({
             ))}
             <Button
               variant="light"
-              size="xs"
+              size="md"
               mt="xs"
               onClick={() =>
                 form.insertListItem("education_history", {
@@ -498,18 +505,18 @@ export default function CustomFormProfileSection({
         const isCreating = ceSelectedKey === "new" || history.length === 0;
 
         return (
-          <Stack gap="xs">
-            <Text fw={500} size="sm">
+          <Stack gap={4}>
+            <Text fw={500} size="md">
               {field.label}
               {field.required && <span style={{ color: "red" }}> *</span>}
             </Text>
             {field.helpText && (
-              <Text size="xs" c="dimmed">
+              <Text size="sm" c="dimmed">
                 {field.helpText}
               </Text>
             )}
             {ceError && (
-              <Text size="xs" c="red">
+              <Text size="md" c="red">
                 {ceError}
               </Text>
             )}
@@ -547,10 +554,10 @@ export default function CustomFormProfileSection({
                             style={{ accentColor: "var(--mantine-color-blue-6)", flexShrink: 0 }}
                           />
                           <Stack gap={2}>
-                            <Text size="sm" fw={500}>
+                            <Text size="md" fw={500}>
                               {DEGREE_LABEL[e.degree] ?? e.degree} — {e.institution || "-"}
                             </Text>
-                            <Text size="xs" c="dimmed">
+                            <Text size="sm" c="dimmed">
                               {e.major || "-"}{e.intake_year ? ` · ${e.intake_year}` : ""}
                             </Text>
                           </Stack>
@@ -602,7 +609,7 @@ export default function CustomFormProfileSection({
                             <Group justify="flex-end" mt="xs">
                               <Button
                                 variant="subtle"
-                                size="xs"
+                                size="md"
                                 color="gray"
                                 onClick={() => {
                                   // revert form to the original (unedited) local value
@@ -612,7 +619,7 @@ export default function CustomFormProfileSection({
                               >
                                 Batal
                               </Button>
-                              <Button size="xs" onClick={handleConfirmEdit}>
+                              <Button size="md" onClick={handleConfirmEdit}>
                                 Selesai
                               </Button>
                             </Group>
@@ -643,7 +650,7 @@ export default function CustomFormProfileSection({
                       onChange={() => handleCeChange("new")}
                       style={{ accentColor: "var(--mantine-color-blue-6)", flexShrink: 0 }}
                     />
-                    <Text size="sm" fw={500} c="blue">+ Tambah Pendidikan Baru</Text>
+                    <Text size="md" fw={500} c="blue">+ Tambah Pendidikan Baru</Text>
                   </Group>
                 </Paper>
               </Stack>
@@ -651,7 +658,7 @@ export default function CustomFormProfileSection({
 
             {isCreating && (
               <Paper key={ceFormKey} withBorder p="sm" radius="md">
-                <Text size="sm" fw={500} mb="xs">
+                <Text size="md" fw={500} mb="xs">
                   Detail Pendidikan
                 </Text>
                 <Select
@@ -692,7 +699,7 @@ export default function CustomFormProfileSection({
       }
 
       default:
-        return <TextInput {...commonProps} />;
+        return <TextInput {...commonProps} placeholder="Isi di sini" />;
     }
   };
 
@@ -706,6 +713,7 @@ export default function CustomFormProfileSection({
   };
 
   const handleSubmit = async (values: Record<string, any>) => {
+    onLoadingChange?.(true);
     try {
       let whatsappNumber = values.whatsapp;
       if (whatsappNumber && typeof whatsappNumber === "string") {
@@ -768,6 +776,8 @@ export default function CustomFormProfileSection({
       onSubmit(values);
     } catch (error) {
       showNotif("Terjadi kesalahan jaringan. Silakan coba lagi.", true);
+    } finally {
+      onLoadingChange?.(false);
     }
   };
 
@@ -781,7 +791,7 @@ export default function CustomFormProfileSection({
   return (
     <>
       <form ref={formRef} onSubmit={form.onSubmit(handleFormSubmit)}>
-        <Stack gap="md">
+        <Stack gap="xl">
           <Title order={4}>Data Diri</Title>
 
           {profileFields
@@ -799,7 +809,7 @@ export default function CustomFormProfileSection({
         centered
       >
         <Stack gap="md">
-          <Text>
+          <Text size="md">
             Apakah Anda yakin ingin mengirim formulir ini? Pastikan semua data
             yang Anda masukkan sudah benar.
           </Text>

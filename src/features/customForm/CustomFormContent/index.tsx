@@ -210,7 +210,7 @@ export default function CustomFormContent({
       <Stack gap="md">
         <Paper {...paperProps}>
           <Title order={3} mb="xs">{customForm.form_name}</Title>
-          <Text size="sm" c="dimmed">Memuat formulir...</Text>
+          <Text size="md" c="dimmed">Memuat formulir...</Text>
         </Paper>
       </Stack>
     );
@@ -230,15 +230,15 @@ export default function CustomFormContent({
       <Paper {...paperProps}>
         <Title order={3} mb="xs">{customForm.form_name}</Title>
         {currentStep === 0 && customForm.form_description && (
-          <Text size="sm" style={{ whiteSpace: "pre-wrap" }}>{customForm.form_description}</Text>
+          <Text size="md" style={{ whiteSpace: "pre-wrap" }}>{customForm.form_description}</Text>
         )}
         {hasCustomSections && (
           <>
-            <Text size="sm" c="dimmed" hiddenFrom="sm" mt="md">
+            <Text size="md" c="dimmed" hiddenFrom="sm" mt="md">
               Langkah {currentStep + 1} dari {totalSteps}:{" "}
               {currentStep === 0 ? "Data Diri" : currentSection?.section_name}
             </Text>
-            <Stepper active={currentStep} size="sm" mt="lg" iconSize={32} visibleFrom="sm">
+            <Stepper active={currentStep} size="md" mt="lg" iconSize={32} visibleFrom="sm">
               <Stepper.Step label="Data Diri" description="Lengkapi data diri" />
               {customFormSections.map((section, idx) => (
                 <Stepper.Step key={idx} label={section.section_name} description={`Bagian ${idx + 1}`} />
@@ -269,6 +269,7 @@ export default function CustomFormContent({
               provinceData={provinceData}
               countryData={countryData}
               onSubmit={handleProfileSubmit}
+              onLoadingChange={setLoading}
               loading={loading}
               isSingleSection={!hasCustomSections}
             />
