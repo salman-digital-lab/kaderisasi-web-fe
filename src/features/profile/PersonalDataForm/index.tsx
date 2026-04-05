@@ -13,6 +13,12 @@ import {
   TextInput,
   Title,
 } from "@mantine/core";
+import {
+  IconCheck,
+  IconPencil,
+  IconTrash,
+  IconX,
+} from "@tabler/icons-react";
 import { useForm } from "@mantine/form";
 import { DateInput } from "@mantine/dates";
 import { useState, useEffect } from "react";
@@ -76,6 +82,10 @@ export default function PersonalDataForm({
 }: PersonalDataFormProps) {
   const [currentCities, setCurrentCities] = useState<City[]>([]);
   const [originCities, setOriginCities] = useState<City[]>([]);
+  const [editingEducationIndex, setEditingEducationIndex] = useState<number | null>(null);
+  const [editingWorkIndex, setEditingWorkIndex] = useState<number | null>(null);
+  const [educationSnapshot, setEducationSnapshot] = useState<EducationEntry | null>(null);
+  const [workSnapshot, setWorkSnapshot] = useState<WorkEntry | null>(null);
   const [currentCityId, setCurrentCityId] = useState<string | null>(
     profileData?.profile.city_id?.toString() ?? null,
   );
@@ -170,6 +180,72 @@ export default function PersonalDataForm({
     } catch (error: unknown) {
       if (error instanceof Error) showNotif(error.message, true);
     }
+  };
+
+  const getEducationSummary = (entry: EducationEntry) => {
+    const degreeLabel =
+      DEGREE_OPTIONS.find((option) => option.value === entry.degree)?.label || "-";
+    const primary = [entry.institution, entry.major].filter(Boolean).join(" / ");
+    return [degreeLabel, primary || "Data belum lengkap", entry.intake_year || "-"].join(" • ");
+  };
+
+  const getWorkSummary = (entry: WorkEntry) => {
+    const primary = [entry.job_title, entry.company].filter(Boolean).join(" - ");
+    const years =
+      entry.start_year || entry.end_year
+        ? `${entry.start_year ?? "?"} - ${entry.end_year ?? "Sekarang"}`
+        : "Tahun belum diisi";
+    return [primary || "Data belum lengkap", years].join(" • ");
+  };
+
+  const startEditEducation = (index: number) => {
+    setEducationSnapshot({
+      ...(form.getValues().education_history?.[index] ?? {
+        degree: "bachelor",
+        institution: "",
+        major: "",
+        intake_year: new Date().getFullYear(),
+      }),
+    });
+    setEditingEducationIndex(index);
+  };
+
+  const cancelEditEducation = (index: number) => {
+    if (educationSnapshot) {
+      form.replaceListItem("education_history", index, educationSnapshot);
+    }
+    setEducationSnapshot(null);
+    setEditingEducationIndex(null);
+  };
+
+  const saveEditEducation = () => {
+    setEducationSnapshot(null);
+    setEditingEducationIndex(null);
+  };
+
+  const startEditWork = (index: number) => {
+    setWorkSnapshot({
+      ...(form.getValues().work_history?.[index] ?? {
+        job_title: "",
+        company: "",
+        start_year: undefined,
+        end_year: undefined,
+      }),
+    });
+    setEditingWorkIndex(index);
+  };
+
+  const cancelEditWork = (index: number) => {
+    if (workSnapshot) {
+      form.replaceListItem("work_history", index, workSnapshot);
+    }
+    setWorkSnapshot(null);
+    setEditingWorkIndex(null);
+  };
+
+  const saveEditWork = () => {
+    setWorkSnapshot(null);
+    setEditingWorkIndex(null);
   };
 
   return (
@@ -360,67 +436,128 @@ export default function PersonalDataForm({
       {/* Education history */}
       <Title order={5} mb="sm">Riwayat Pendidikan</Title>
       {form.getValues().education_history?.map((_, index) => (
-        <Paper key={index} withBorder p="sm" mb="sm" radius="md">
-          <Group justify="space-between" mb="xs">
-            <Text size="sm" fw={500}>
-              Pendidikan {index + 1}
-            </Text>
-            <ActionIcon
-              color="red"
-              variant="subtle"
-              size="sm"
-              onClick={() =>
-                form.removeListItem("education_history", index)
-              }
-            >
-              ×
-            </ActionIcon>
-          </Group>
-          <Select
-            {...form.getInputProps(`education_history.${index}.degree`)}
-            key={form.key(`education_history.${index}.degree`)}
-            label="Jenjang"
-            data={DEGREE_OPTIONS}
-            radius="md"
-          />
-          <UniversityNameSelect
-            {...form.getInputProps(`education_history.${index}.institution`)}
-            key={form.key(`education_history.${index}.institution`)}
-            label="Institusi"
-            placeholder="Cari universitas"
-            mt="xs"
-            radius="md"
-          />
-          <TextInput
-            {...form.getInputProps(`education_history.${index}.major`)}
-            key={form.key(`education_history.${index}.major`)}
-            label="Jurusan"
-            placeholder="Jurusan"
-            mt="xs"
-            radius="md"
-          />
-          <NumberInput
-            {...form.getInputProps(`education_history.${index}.intake_year`)}
-            key={form.key(`education_history.${index}.intake_year`)}
-            label="Tahun Masuk"
-            placeholder="Tahun masuk"
-            mt="xs"
-            radius="md"
-          />
+        <Paper key={index} withBorder p={editingEducationIndex === index ? "md" : "sm"} mb="sm" radius="md">
+          <div>
+            <Group justify="space-between" mb={editingEducationIndex !== index ? 4 : "xs"} align="center" wrap="nowrap">
+              <Text size="sm" fw={500}>
+                Pendidikan {index + 1}
+              </Text>
+              <Group gap={4}>
+              {editingEducationIndex === index ? (
+                <>
+                  <ActionIcon
+                    color="gray"
+                    variant="filled"
+                    size="md"
+                    aria-label="Batal edit pendidikan"
+                    onClick={() => cancelEditEducation(index)}
+                  >
+                    <IconX size={14} />
+                  </ActionIcon>
+                  <ActionIcon
+                    variant="filled"
+                    size="md"
+                    aria-label="Simpan pendidikan"
+                    onClick={saveEditEducation}
+                  >
+                    <IconCheck size={14} />
+                  </ActionIcon>
+                </>
+              ) : (
+                <>
+                  <ActionIcon
+                    variant="filled"
+                    size="md"
+                    aria-label="Edit pendidikan"
+                    onClick={() => startEditEducation(index)}
+                  >
+                    <IconPencil size={14} />
+                  </ActionIcon>
+                  <ActionIcon
+                    color="red"
+                    variant="filled"
+                    size="md"
+                    aria-label="Hapus pendidikan"
+                    onClick={() => {
+                      form.removeListItem("education_history", index);
+                      setEducationSnapshot(null);
+                      setEditingEducationIndex((currentValue) => {
+                        if (currentValue === index) return null;
+                        if (currentValue !== null && currentValue > index) return currentValue - 1;
+                        return currentValue;
+                      });
+                    }}
+                  >
+                    <IconTrash size={14} />
+                  </ActionIcon>
+                </>
+              )}
+            </Group>
+            </Group>
+            {editingEducationIndex !== index ? (
+              <Text size="sm" c="dimmed" mb="xs">
+                {getEducationSummary(
+                  form.getValues().education_history?.[index] ?? {
+                    degree: "bachelor",
+                    institution: "",
+                    major: "",
+                    intake_year: new Date().getFullYear(),
+                  },
+                )}
+              </Text>
+            ) : null}
+          </div>
+          {editingEducationIndex === index ? (
+            <>
+              <Select
+                {...form.getInputProps(`education_history.${index}.degree`)}
+                key={form.key(`education_history.${index}.degree`)}
+                label="Jenjang"
+                data={DEGREE_OPTIONS}
+                radius="md"
+              />
+              <UniversityNameSelect
+                {...form.getInputProps(`education_history.${index}.institution`)}
+                key={form.key(`education_history.${index}.institution`)}
+                label="Institusi"
+                placeholder="Cari universitas"
+                mt="xs"
+                radius="md"
+              />
+              <TextInput
+                {...form.getInputProps(`education_history.${index}.major`)}
+                key={form.key(`education_history.${index}.major`)}
+                label="Jurusan"
+                placeholder="Jurusan"
+                mt="xs"
+                radius="md"
+              />
+              <NumberInput
+                {...form.getInputProps(`education_history.${index}.intake_year`)}
+                key={form.key(`education_history.${index}.intake_year`)}
+                label="Tahun Masuk"
+                placeholder="Tahun masuk"
+                mt="xs"
+                radius="md"
+              />
+            </>
+          ) : null}
         </Paper>
       ))}
       <Button
         variant="light"
         size="xs"
         mt="xs"
-        onClick={() =>
+        onClick={() => {
           form.insertListItem("education_history", {
             degree: "bachelor",
             institution: "",
             major: "",
             intake_year: new Date().getFullYear(),
-          })
-        }
+          });
+          setEducationSnapshot(null);
+          setEditingEducationIndex(form.getValues().education_history.length - 1);
+        }}
       >
         + Tambah Pendidikan
       </Button>
@@ -430,69 +567,132 @@ export default function PersonalDataForm({
       {/* Work history */}
       <Title order={5} mb="sm">Riwayat Pekerjaan / Aktivitas</Title>
       {form.getValues().work_history?.map((_, index) => (
-        <Paper key={index} withBorder p="sm" mb="sm" radius="md">
-          <Group justify="space-between" mb="xs">
-            <Text size="sm" fw={500}>
-              Pekerjaan / Aktivitas {index + 1}
-            </Text>
-            <ActionIcon
-              color="red"
-              variant="subtle"
-              size="sm"
-              onClick={() => form.removeListItem("work_history", index)}
-            >
-              ×
-            </ActionIcon>
-          </Group>
-          <TextInput
-            {...form.getInputProps(`work_history.${index}.job_title`)}
-            key={form.key(`work_history.${index}.job_title`)}
-            label="Posisi / Jabatan"
-            placeholder="Contoh: Software Engineer"
-            radius="md"
-          />
-          <TextInput
-            {...form.getInputProps(`work_history.${index}.company`)}
-            key={form.key(`work_history.${index}.company`)}
-            label="Perusahaan / Organisasi"
-            placeholder="Nama perusahaan atau organisasi"
-            mt="xs"
-            radius="md"
-          />
-          <NumberInput
-            {...form.getInputProps(`work_history.${index}.start_year`)}
-            key={form.key(`work_history.${index}.start_year`)}
-            label="Tahun Mulai"
-            placeholder="Contoh: 2022"
-            mt="xs"
-            radius="md"
-            min={1900}
-            max={new Date().getFullYear() + 10}
-          />
-          <NumberInput
-            {...form.getInputProps(`work_history.${index}.end_year`)}
-            key={form.key(`work_history.${index}.end_year`)}
-            label="Tahun Selesai"
-            placeholder="Kosongkan jika masih aktif"
-            mt="xs"
-            radius="md"
-            min={1900}
-            max={new Date().getFullYear() + 10}
-          />
+        <Paper key={index} withBorder p={editingWorkIndex === index ? "md" : "sm"} mb="sm" radius="md">
+          <div>
+            <Group justify="space-between" mb={editingWorkIndex !== index ? 4 : "xs"} align="center" wrap="nowrap">
+              <Text size="sm" fw={500}>
+                Pekerjaan / Aktivitas {index + 1}
+              </Text>
+              <Group gap={4}>
+              {editingWorkIndex === index ? (
+                <>
+                  <ActionIcon
+                    color="gray"
+                    variant="filled"
+                    size="md"
+                    aria-label="Batal edit pekerjaan"
+                    onClick={() => cancelEditWork(index)}
+                  >
+                    <IconX size={14} />
+                  </ActionIcon>
+                  <ActionIcon
+                    variant="filled"
+                    size="md"
+                    aria-label="Simpan pekerjaan"
+                    onClick={saveEditWork}
+                  >
+                    <IconCheck size={14} />
+                  </ActionIcon>
+                </>
+              ) : (
+                <>
+                  <ActionIcon
+                    variant="filled"
+                    size="md"
+                    aria-label="Edit pekerjaan"
+                    onClick={() => startEditWork(index)}
+                  >
+                    <IconPencil size={14} />
+                  </ActionIcon>
+                  <ActionIcon
+                    color="red"
+                    variant="filled"
+                    size="md"
+                    aria-label="Hapus pekerjaan"
+                    onClick={() => {
+                      form.removeListItem("work_history", index);
+                      setWorkSnapshot(null);
+                      setEditingWorkIndex((currentValue) => {
+                        if (currentValue === index) return null;
+                        if (currentValue !== null && currentValue > index) return currentValue - 1;
+                        return currentValue;
+                      });
+                    }}
+                  >
+                    <IconTrash size={14} />
+                  </ActionIcon>
+                </>
+              )}
+            </Group>
+            </Group>
+            {editingWorkIndex !== index ? (
+              <Text size="sm" c="dimmed" mb="xs">
+                {getWorkSummary(
+                  form.getValues().work_history?.[index] ?? {
+                    job_title: "",
+                    company: "",
+                    start_year: undefined,
+                    end_year: undefined,
+                  },
+                )}
+              </Text>
+            ) : null}
+          </div>
+          {editingWorkIndex === index ? (
+            <>
+              <TextInput
+                {...form.getInputProps(`work_history.${index}.job_title`)}
+                key={form.key(`work_history.${index}.job_title`)}
+                label="Posisi / Jabatan"
+                placeholder="Contoh: Software Engineer"
+                radius="md"
+              />
+              <TextInput
+                {...form.getInputProps(`work_history.${index}.company`)}
+                key={form.key(`work_history.${index}.company`)}
+                label="Perusahaan / Organisasi"
+                placeholder="Nama perusahaan atau organisasi"
+                mt="xs"
+                radius="md"
+              />
+              <NumberInput
+                {...form.getInputProps(`work_history.${index}.start_year`)}
+                key={form.key(`work_history.${index}.start_year`)}
+                label="Tahun Mulai"
+                placeholder="Contoh: 2022"
+                mt="xs"
+                radius="md"
+                min={1900}
+                max={new Date().getFullYear() + 10}
+              />
+              <NumberInput
+                {...form.getInputProps(`work_history.${index}.end_year`)}
+                key={form.key(`work_history.${index}.end_year`)}
+                label="Tahun Selesai"
+                placeholder="Kosongkan jika masih aktif"
+                mt="xs"
+                radius="md"
+                min={1900}
+                max={new Date().getFullYear() + 10}
+              />
+            </>
+          ) : null}
         </Paper>
       ))}
       <Button
         variant="light"
         size="xs"
         mt="xs"
-        onClick={() =>
+        onClick={() => {
           form.insertListItem("work_history", {
             job_title: "",
             company: "",
             start_year: undefined,
             end_year: undefined,
-          })
-        }
+          });
+          setWorkSnapshot(null);
+          setEditingWorkIndex(form.getValues().work_history.length - 1);
+        }}
       >
         + Tambah Pekerjaan / Aktivitas
       </Button>

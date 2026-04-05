@@ -17,7 +17,7 @@ import {
 } from "@tabler/icons-react";
 
 import { getProfile } from "@/services/profile";
-import { getProvinces } from "@/services/profile.cache";
+import { getProvinces, getCountries } from "@/services/profile.cache";
 import { verifySession } from "@/functions/server/session";
 import { USER_LEVEL_RENDER } from "@/constants/render/activity";
 import { getActivitiesRegistration } from "@/services/activity";
@@ -37,12 +37,14 @@ export async function ProfileContent() {
   try {
     const [
       provinceData,
+      countryData,
       profileData,
       activitiesRegistration,
       ruangCurhatData,
       achievements,
     ] = await Promise.all([
       getProvinces(),
+      getCountries(),
       getProfile(sessionData.session || ""),
       getActivitiesRegistration(sessionData.session || ""),
       getRuangCurhat(sessionData.session || ""),
@@ -153,6 +155,7 @@ export async function ProfileContent() {
           <ProfileTab
             profileData={profileData}
             provinceData={provinceData}
+            countryData={countryData}
             activitiesRegistration={activitiesRegistration}
             ruangcurhatData={ruangCurhatData}
             achievements={achievements}

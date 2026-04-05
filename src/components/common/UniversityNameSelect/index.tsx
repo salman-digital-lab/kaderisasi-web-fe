@@ -15,21 +15,29 @@ type UniversityNameSelectProps = Omit<SelectProps, "data" | "onSearchChange">;
  */
 export default function UniversityNameSelect({
   defaultValue,
+  value,
   ...props
 }: UniversityNameSelectProps) {
+  const currentValue =
+    typeof value === "string"
+      ? value
+      : typeof defaultValue === "string"
+        ? defaultValue
+        : "";
+
   // Seed options with current value so it shows immediately before fetch completes
   const [options, setOptions] = useState<{ label: string; value: string }[]>(
-    defaultValue ? [{ label: defaultValue as string, value: defaultValue as string }] : [],
+    currentValue ? [{ label: currentValue, value: currentValue }] : [],
   );
-  const [searchValue, setSearchValue] = useState((defaultValue as string) || "");
+  const [searchValue, setSearchValue] = useState(currentValue);
 
   const fetchUniversities = async (search?: string) => {
     try {
       const data = await getUniversities(search);
       const fetched = data.map((u: University) => ({ label: u.name, value: u.name }));
       // Keep current value in list even if not in results
-      if (defaultValue && !fetched.some((o) => o.value === defaultValue)) {
-        setOptions([{ label: defaultValue as string, value: defaultValue as string }, ...fetched]);
+      if (currentValue && !fetched.some((o) => o.value === currentValue)) {
+        setOptions([{ label: currentValue, value: currentValue }, ...fetched]);
       } else {
         setOptions(fetched);
       }
@@ -39,9 +47,24 @@ export default function UniversityNameSelect({
   };
 
   useEffect(() => {
-    fetchUniversities((defaultValue as string) || "");
+    fetchUniversities(currentValue);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (!currentValue) {
+      return;
+    }
+
+    setSearchValue(currentValue);
+    setOptions((previousOptions) => {
+      if (previousOptions.some((option) => option.value === currentValue)) {
+        return previousOptions;
+      }
+
+      return [{ label: currentValue, value: currentValue }, ...previousOptions];
+    });
+  }, [currentValue]);
 
   const debouncedFetch = useDebouncedCallback((value: string) => {
     fetchUniversities(value);
@@ -50,6 +73,7 @@ export default function UniversityNameSelect({
   return (
     <Select
       {...props}
+      value={value}
       defaultValue={defaultValue}
       data={options}
       searchable
