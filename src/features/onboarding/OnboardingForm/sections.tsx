@@ -716,6 +716,7 @@ export function ProfileStep({
                           form.values.educationHistory[index] ?? {
                             degree: "bachelor",
                             institution: "",
+                            faculty: "",
                             major: "",
                             intakeYear: null,
                           },
@@ -765,6 +766,14 @@ export function ProfileStep({
                       name={`educationHistory.${index}.institution`}
                       label="Institusi"
                       placeholder="Cari universitas"
+                      size="md"
+                      radius="md"
+                    />
+                    <TextInput
+                      {...form.getInputProps(`educationHistory.${index}.faculty`)}
+                      key={form.key(`educationHistory.${index}.faculty`)}
+                      name={`educationHistory.${index}.faculty`}
+                      label="Fakultas"
                       size="md"
                       radius="md"
                     />
@@ -1307,6 +1316,7 @@ export function ReviewStep({
                         ?.label || "-"}
                     </Text>
                     <Text size="md">Institusi: {entry.institution || "-"}</Text>
+                    <Text size="md">Fakultas: {entry.faculty || "-"}</Text>
                     <Text size="md">Jurusan: {entry.major || "-"}</Text>
                     <Text size="md">Tahun masuk: {entry.intakeYear || "-"}</Text>
                   </Paper>

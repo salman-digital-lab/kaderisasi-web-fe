@@ -48,7 +48,7 @@ export function getCountryLabel(value: string, items: Country[]) {
 export function getEducationSummary(
   entry: OnboardingFormValues["educationHistory"][number],
 ) {
-  const primary = [entry.institution, entry.major].filter(Boolean).join(" / ");
+  const primary = [entry.institution, entry.faculty, entry.major].filter(Boolean).join(" / ");
   const degreeLabel =
     degreeOptions.find((option) => option.value === entry.degree)?.label || "-";
   const intakeYear = entry.intakeYear ? String(entry.intakeYear) : "-";
@@ -256,6 +256,7 @@ export function buildPrefilledValues(profileData?: {
     educationHistory: history.map((entry) => ({
       degree: entry.degree,
       institution: entry.institution,
+      faculty: entry.faculty,
       major: entry.major,
       intakeYear: entry.intake_year,
     })),

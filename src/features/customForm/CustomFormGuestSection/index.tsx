@@ -76,7 +76,13 @@ export default function CustomFormGuestSection({
       const stored = initialData["current_education"];
       initialValues[field.key] = stored && typeof stored === "object"
         ? stored
-        : { degree: "bachelor", institution: "", major: "", intake_year: new Date().getFullYear() };
+        : {
+            degree: "bachelor",
+            institution: "",
+            faculty: "",
+            major: "",
+            intake_year: new Date().getFullYear(),
+          };
     } else {
       initialValues[field.key] = resolveInitialValue(field.key, field.defaultValue as unknown);
     }
@@ -263,6 +269,14 @@ export default function CustomFormGuestSection({
                   radius="md"
                 />
                 <TextInput
+                  {...form.getInputProps(`education_history.${index}.faculty`)}
+                  key={form.key(`education_history.${index}.faculty`)}
+                  label="Fakultas"
+                  placeholder="Fakultas"
+                  mt="xs"
+                  radius="md"
+                />
+                <TextInput
                   {...form.getInputProps(`education_history.${index}.major`)}
                   key={form.key(`education_history.${index}.major`)}
                   label="Jurusan"
@@ -288,6 +302,7 @@ export default function CustomFormGuestSection({
                 form.insertListItem("education_history", {
                   degree: "bachelor",
                   institution: "",
+                  faculty: "",
                   major: "",
                   intake_year: new Date().getFullYear(),
                 })
@@ -330,6 +345,14 @@ export default function CustomFormGuestSection({
                 key={form.key("current_education.institution")}
                 label="Institusi"
                 placeholder="Cari universitas"
+                mt="xs"
+                radius="md"
+              />
+              <TextInput
+                {...form.getInputProps("current_education.faculty")}
+                key={form.key("current_education.faculty")}
+                label="Fakultas"
+                placeholder="Fakultas"
                 mt="xs"
                 radius="md"
               />

@@ -171,6 +171,7 @@ const educationEntrySchema = z
   .object({
     degree: z.enum(["bachelor", "master", "doctoral"]),
     institution: z.string().trim().min(1, "Institusi wajib diisi"),
+    faculty: z.string().trim().min(1, "Fakultas wajib diisi"),
     major: z.string().trim().min(1, "Jurusan wajib diisi"),
     intakeYear: z
       .number()
@@ -428,6 +429,7 @@ function normalizeEducationEntries(values: OnboardingFormValues) {
   return values.educationHistory.map((entry) => ({
     degree: entry.degree,
     institution: normalizeString(entry.institution),
+    faculty: normalizeString(entry.faculty),
     major: normalizeString(entry.major),
     intake_year: entry.intakeYear as number,
   }));

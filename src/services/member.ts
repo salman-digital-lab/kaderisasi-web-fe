@@ -19,6 +19,7 @@ type SubmitPublicMemberProfilePayload = {
   education_history: {
     degree: "bachelor" | "master" | "doctoral";
     institution: string;
+    faculty: string;
     major: string;
     intake_year: number;
   }[];

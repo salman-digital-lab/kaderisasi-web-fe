@@ -195,7 +195,7 @@ export default function PersonalDataForm({
   const getEducationSummary = (entry: EducationEntry) => {
     const degreeLabel =
       DEGREE_OPTIONS.find((option) => option.value === entry.degree)?.label || "-";
-    const primary = [entry.institution, entry.major].filter(Boolean).join(" / ");
+    const primary = [entry.institution, entry.faculty, entry.major].filter(Boolean).join(" / ");
     return [degreeLabel, primary || "Data belum lengkap", entry.intake_year || "-"].join(" • ");
   };
 
@@ -213,6 +213,7 @@ export default function PersonalDataForm({
       ...(form.getValues().education_history?.[index] ?? {
         degree: "bachelor",
         institution: "",
+        faculty: "",
         major: "",
         intake_year: new Date().getFullYear(),
       }),
@@ -515,6 +516,7 @@ export default function PersonalDataForm({
                   form.getValues().education_history?.[index] ?? {
                     degree: "bachelor",
                     institution: "",
+                    faculty: "",
                     major: "",
                     intake_year: new Date().getFullYear(),
                   },
@@ -536,6 +538,14 @@ export default function PersonalDataForm({
                 key={form.key(`education_history.${index}.institution`)}
                 label="Institusi"
                 placeholder="Cari universitas"
+                mt="xs"
+                radius="md"
+              />
+              <TextInput
+                {...form.getInputProps(`education_history.${index}.faculty`)}
+                key={form.key(`education_history.${index}.faculty`)}
+                label="Fakultas"
+                placeholder="Fakultas"
                 mt="xs"
                 radius="md"
               />
@@ -568,6 +578,7 @@ export default function PersonalDataForm({
           form.insertListItem("education_history", {
             degree: "bachelor",
             institution: "",
+            faculty: "",
             major: "",
             intake_year: new Date().getFullYear(),
           });

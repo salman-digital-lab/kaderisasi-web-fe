@@ -485,6 +485,7 @@ export default function OnboardingForm({
     form.insertListItem("educationHistory", {
       degree: "bachelor",
       institution: "",
+      faculty: "",
       major: "",
       intakeYear: null,
     });
@@ -508,6 +509,7 @@ export default function OnboardingForm({
       ...(form.values.educationHistory[index] ?? {
         degree: "bachelor",
         institution: "",
+        faculty: "",
         major: "",
         intakeYear: null,
       }),

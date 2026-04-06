@@ -45,6 +45,7 @@ const DEGREE_LABEL: Record<string, string> = {
 const BLANK_EDUCATION: EducationEntry = {
   degree: "bachelor",
   institution: "",
+  faculty: "",
   major: "",
   intake_year: new Date().getFullYear(),
 };
@@ -464,6 +465,14 @@ export default function CustomFormProfileSection({
                   radius="md"
                 />
                 <TextInput
+                  {...form.getInputProps(`education_history.${index}.faculty`)}
+                  key={form.key(`education_history.${index}.faculty`)}
+                  label="Fakultas"
+                  placeholder="Fakultas"
+                  mt="xs"
+                  radius="md"
+                />
+                <TextInput
                   {...form.getInputProps(`education_history.${index}.major`)}
                   key={form.key(`education_history.${index}.major`)}
                   label="Jurusan"
@@ -489,6 +498,7 @@ export default function CustomFormProfileSection({
                 form.insertListItem("education_history", {
                   degree: "bachelor",
                   institution: "",
+                  faculty: "",
                   major: "",
                   intake_year: new Date().getFullYear(),
                 })
@@ -558,7 +568,8 @@ export default function CustomFormProfileSection({
                               {DEGREE_LABEL[e.degree] ?? e.degree} — {e.institution || "-"}
                             </Text>
                             <Text size="sm" c="dimmed">
-                              {e.major || "-"}{e.intake_year ? ` · ${e.intake_year}` : ""}
+                              {[e.faculty, e.major].filter(Boolean).join(" · ") || "-"}
+                              {e.intake_year ? ` · ${e.intake_year}` : ""}
                             </Text>
                           </Stack>
                         </Group>
@@ -590,6 +601,13 @@ export default function CustomFormProfileSection({
                               key={form.key("current_education.institution")}
                               label="Institusi"
                               placeholder="Cari universitas"
+                              radius="md"
+                            />
+                            <TextInput
+                              {...form.getInputProps("current_education.faculty")}
+                              key={form.key("current_education.faculty")}
+                              label="Fakultas"
+                              placeholder="Fakultas"
                               radius="md"
                             />
                             <TextInput
@@ -673,6 +691,14 @@ export default function CustomFormProfileSection({
                   key={form.key("current_education.institution")}
                   label="Institusi"
                   placeholder="Cari universitas"
+                  mt="xs"
+                  radius="md"
+                />
+                <TextInput
+                  {...form.getInputProps("current_education.faculty")}
+                  key={form.key("current_education.faculty")}
+                  label="Fakultas"
+                  placeholder="Fakultas"
                   mt="xs"
                   radius="md"
                 />
