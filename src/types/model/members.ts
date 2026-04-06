@@ -20,6 +20,11 @@ export type ExtraData = {
   preferred_name?: string;
   salman_activity_history?: string[];
   current_activity_focus?: string[];
+  kaderisasi_path?: {
+    ssc?: number | null;
+    lmd?: number | null;
+    spectra?: number | null;
+  };
   alumni_regional_assignment?: string[];
 };
 

@@ -11,11 +11,140 @@ const CURRENT_ACTIVITY_FOCUS_VALUES = [
 ] as const;
 
 export const salmanActivityHistoryOptions = [
-  { value: "mentoring", label: "Mentoring/kelompok bina" },
-  { value: "kajian", label: "Kajian atau halaqah" },
-  { value: "kepanitiaan", label: "Kepanitiaan kegiatan" },
-  { value: "organisasi", label: "Organisasi kampus/komunitas" },
-  { value: "volunteer", label: "Relawan atau pelayanan sosial" },
+  {
+    label: "PRAMUKA: Pramuka Pangkalan Masjid Salman ITB",
+    value: "PRAMUKA: Pramuka Pangkalan Masjid Salman ITB",
+  },
+  {
+    label: "PUSTENA: Pusat Teknologi Tepat Guna",
+    value: "PUSTENA: Pusat Teknologi Tepat Guna",
+  },
+  {
+    label: "SKAU: Salman Komunikasi Aspirasi Ummat",
+    value: "SKAU: Salman Komunikasi Aspirasi Ummat",
+  },
+  {
+    label: "SMC: Salman Media Center",
+    value: "SMC: Salman Media Center",
+  },
+  {
+    label:
+      "AKSARA: Aksara Salman ITB (Unit yang bergerak di bidang literasi dan jurnalistik)",
+    value:
+      "AKSARA: Aksara Salman ITB (Unit yang bergerak di bidang literasi dan jurnalistik)",
+  },
+  {
+    label: "KARISMA: Keluarga Remaja Islam Salman ITB",
+    value: "KARISMA: Keluarga Remaja Islam Salman ITB",
+  },
+  {
+    label:
+      "BIMBEL: Bimbingan Belajar (Program bimbingan belajar yang dikelola Salman/Karisma)",
+    value:
+      "BIMBEL: Bimbingan Belajar (Program bimbingan belajar yang dikelola Salman/Karisma)",
+  },
+  {
+    label: "PAS: Pembinaan Anak-anak Salman",
+    value: "PAS: Pembinaan Anak-anak Salman",
+  },
+  {
+    label: "BIOTER: Biologi Terapan",
+    value: "BIOTER: Biologi Terapan",
+  },
+  {
+    label: "BASIS: Basis ITB (Lembaga pengkaderan/pembinaan di Salman)",
+    value: "BASIS: Basis ITB (Lembaga pengkaderan/pembinaan di Salman)",
+  },
+  {
+    label: "KORSA: Korps Relawan Salman ITB",
+    value: "KORSA: Korps Relawan Salman ITB",
+  },
+  {
+    label: "REKLAMASA: Reklame Kreasi Masa Salman ITB",
+    value: "REKLAMASA: Reklame Kreasi Masa Salman ITB",
+  },
+  {
+    label: "NASA: Naungan Musik Islami Salman",
+    value: "NASA: Naungan Musik Islami Salman",
+  },
+  {
+    label: "LIKESA: Lingkar Kreatif Salman",
+    value: "LIKESA: Lingkar Kreatif Salman",
+  },
+  {
+    label: "SAFOCA: Salman Football Club Academy",
+    value: "SAFOCA: Salman Football Club Academy",
+  },
+  {
+    label: "UPTQ: Unit Pengembangan Tilawatil Qur'an",
+    value: "UPTQ: Unit Pengembangan Tilawatil Qur'an",
+  },
+  {
+    label: "MTQ: Musabaqah Tilawatil Qur'an",
+    value: "MTQ: Musabaqah Tilawatil Qur'an",
+  },
+  {
+    label: "Keluarga Mahasiswa Islam (Gamais) ITB",
+    value: "Keluarga Mahasiswa Islam (Gamais) ITB",
+  },
+  {
+    label: "Keluarga Mahasiswa Islam (Kamil) Pascasarjana ITB",
+    value: "Keluarga Mahasiswa Islam (Kamil) Pascasarjana ITB",
+  },
+  {
+    label: "Salman Entrepreneur Club (SEC)",
+    value: "Salman Entrepreneur Club (SEC)",
+  },
+  {
+    label: "Salman Archery Community (SAC)",
+    value: "Salman Archery Community (SAC)",
+  },
+  {
+    label: "YIM: Young Intellectual Moslem",
+    value: "YIM: Young Intellectual Moslem",
+  },
+  {
+    label:
+      "P3R/P3I/P3RI: Panitia Pelaksana Program Ramadhan (P3R) / Iduladha (P3I) / Ramadhan dan Iduladha (P3RI)",
+    value:
+      "P3R/P3I/P3RI: Panitia Pelaksana Program Ramadhan (P3R) / Iduladha (P3I) / Ramadhan dan Iduladha (P3RI)",
+  },
+  {
+    label: "MAJALAH YANG MUDA",
+    value: "MAJALAH YANG MUDA",
+  },
+  {
+    label: "Latihan Mujahid Dakwah (LMD)",
+    value: "Latihan Mujahid Dakwah (LMD)",
+  },
+  {
+    label: "Salman Spiritual Camp / ITB Spiritual Camp",
+    value: "Salman Spiritual Camp / ITB Spiritual Camp",
+  },
+  {
+    label: "Spiritual Entrepreneurial Civilizer Training (SPECTRA)",
+    value: "Spiritual Entrepreneurial Civilizer Training (SPECTRA)",
+  },
+  {
+    label: "Asrama Salman ITB",
+    value: "Asrama Salman ITB",
+  },
+  {
+    label: "Rumah Sahabat Muda",
+    value: "Rumah Sahabat Muda",
+  },
+  {
+    label: "Asrama Pemberdayaan Rumah Sahabat",
+    value: "Asrama Pemberdayaan Rumah Sahabat",
+  },
+  {
+    label: "Salman Film",
+    value: "Salman Film",
+  },
+  {
+    label: "Forum Filmmaker Pelajar Bandung (F2PB)",
+    value: "Forum Filmmaker Pelajar Bandung (F2PB)",
+  },
 ];
 
 export const currentActivityFocusOptions = [
@@ -24,6 +153,12 @@ export const currentActivityFocusOptions = [
   { value: "social", label: "Sosial" },
   { value: "entrepreneur", label: "Wirausaha" },
   { value: "politics", label: "Politik" },
+] as const;
+
+export const kaderisasiParticipationOptions = [
+  { value: "ssc", label: "SSC/ITBSC" },
+  { value: "lmd", label: "LMD" },
+  { value: "spectra", label: "SPECTRA" },
 ] as const;
 
 export const degreeOptions = [
@@ -135,6 +270,12 @@ export const onboardingFormBaseSchema = z.object({
   workHistory: z.array(workEntrySchema),
   salmanActivityHistory: z.array(z.string()),
   currentActivityFocus: z.array(z.enum(CURRENT_ACTIVITY_FOCUS_VALUES)),
+  kaderisasiParticipation: z.array(
+    z.enum(["ssc", "lmd", "spectra"] as const),
+  ),
+  sscGeneration: z.number().int().min(1).nullable(),
+  lmdGeneration: z.number().int().min(1).nullable(),
+  spectraGeneration: z.number().int().min(1).nullable(),
 });
 
 export const onboardingFormSchema = onboardingFormBaseSchema.superRefine(
@@ -238,6 +379,10 @@ export const onboardingInitialValues: OnboardingFormValues = {
   workHistory: [],
   salmanActivityHistory: [],
   currentActivityFocus: [],
+  kaderisasiParticipation: [],
+  sscGeneration: null,
+  lmdGeneration: null,
+  spectraGeneration: null,
 };
 
 export function getVisibleStepIds(mode: OnboardingFormValues["mode"]) {
@@ -250,9 +395,19 @@ export function getVisibleStepIds(mode: OnboardingFormValues["mode"]) {
         "address",
         "education",
         "salman",
+        "kaderisasi",
         "review",
       ]
-    : ["mode", "personal", "contact", "address", "education", "salman", "review"];
+    : [
+        "mode",
+        "personal",
+        "contact",
+        "address",
+        "education",
+        "salman",
+        "kaderisasi",
+        "review",
+      ];
 }
 
 function normalizeString(value: string) {
@@ -320,6 +475,20 @@ export function buildAccountProfilePayload(values: OnboardingFormValues) {
       current_activity_focus:
         values.currentActivityFocus.length > 0
           ? values.currentActivityFocus
+          : undefined,
+      kaderisasi_path:
+        values.kaderisasiParticipation.length > 0
+          ? {
+              ssc: values.kaderisasiParticipation.includes("ssc")
+                ? values.sscGeneration
+                : undefined,
+              lmd: values.kaderisasiParticipation.includes("lmd")
+                ? values.lmdGeneration
+                : undefined,
+              spectra: values.kaderisasiParticipation.includes("spectra")
+                ? values.spectraGeneration
+                : undefined,
+            }
           : undefined,
     },
   };

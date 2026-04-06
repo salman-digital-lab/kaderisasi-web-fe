@@ -1,9 +1,11 @@
 import type { Country } from "@/types/model/country";
 import type { Member, PublicUser } from "@/types/model/members";
+import { USER_LEVEL_ENUM } from "@/types/constants/profile";
 
 import {
   currentActivityFocusOptions,
   degreeOptions,
+  kaderisasiParticipationOptions,
   onboardingInitialValues,
   salmanActivityHistoryOptions,
   type OnboardingFormValues,
@@ -80,6 +82,13 @@ export function getSalmanHistoryLabel(value: string) {
   );
 }
 
+export function getKaderisasiParticipationLabel(value: string) {
+  return (
+    kaderisasiParticipationOptions.find((option) => option.value === value)?.label ||
+    value
+  );
+}
+
 export function getSubmissionReadyValues(
   values: OnboardingFormValues,
   isExistingAccountLoggedIn: boolean,
@@ -147,6 +156,15 @@ export function getStepIndexForField(
     return visibleSteps.indexOf("salman");
   }
 
+  if (
+    fieldKey.startsWith("kaderisasiParticipation") ||
+    fieldKey.startsWith("sscGeneration") ||
+    fieldKey.startsWith("lmdGeneration") ||
+    fieldKey.startsWith("spectraGeneration")
+  ) {
+    return visibleSteps.indexOf("kaderisasi");
+  }
+
   return null;
 }
 
@@ -159,6 +177,62 @@ export function buildPrefilledValues(profileData?: {
   }
 
   const history = profileData.profile.education_history ?? [];
+
+  const kaderisasiPath = profileData.profile.extra_data?.kaderisasi_path;
+  const parsedBadges = profileData.profile.badges ?? [];
+  const findBadgeNumber = (prefix: "SSC" | "LMD" | "SPECTRA") => {
+    const badge = parsedBadges.find((item) => item === prefix || item.startsWith(`${prefix}-`));
+    if (!badge) return null;
+    const parts = badge.split("-");
+    return parts[1] ? Number(parts[1]) || null : null;
+  };
+  const sscGeneration = kaderisasiPath?.ssc ?? findBadgeNumber("SSC");
+  const lmdGeneration = kaderisasiPath?.lmd ?? findBadgeNumber("LMD");
+  const spectraGeneration = kaderisasiPath?.spectra ?? findBadgeNumber("SPECTRA");
+  const hasSscBadge = parsedBadges.some((item) => item === "SSC" || item.startsWith("SSC-"));
+  const hasLmdBadge = parsedBadges.some((item) => item === "LMD" || item.startsWith("LMD-"));
+  const hasSpectraBadge = parsedBadges.some(
+    (item) => item === "SPECTRA" || item.startsWith("SPECTRA-"),
+  );
+
+  const inferredFromLevel = {
+    ssc:
+      profileData.profile.level !== undefined &&
+      profileData.profile.level >= USER_LEVEL_ENUM.AKTIVIS,
+    lmd:
+      profileData.profile.level !== undefined &&
+      profileData.profile.level >= USER_LEVEL_ENUM.KADER,
+    spectra:
+      profileData.profile.level !== undefined &&
+      profileData.profile.level >= USER_LEVEL_ENUM.KADER_LANJUT,
+  };
+
+  const kaderisasiParticipation: OnboardingFormValues["kaderisasiParticipation"] = [
+    ...(
+      sscGeneration !== undefined &&
+      sscGeneration !== null
+        ? (["ssc"] as const)
+        : hasSscBadge || inferredFromLevel.ssc
+          ? (["ssc"] as const)
+          : []
+    ),
+    ...(
+      lmdGeneration !== undefined &&
+      lmdGeneration !== null
+        ? (["lmd"] as const)
+        : hasLmdBadge || inferredFromLevel.lmd
+          ? (["lmd"] as const)
+          : []
+    ),
+    ...(
+      spectraGeneration !== undefined &&
+      spectraGeneration !== null
+        ? (["spectra"] as const)
+        : hasSpectraBadge || inferredFromLevel.spectra
+          ? (["spectra"] as const)
+          : []
+    ),
+  ];
 
   return {
     ...onboardingInitialValues,
@@ -197,6 +271,10 @@ export function buildPrefilledValues(profileData?: {
       (profileData.profile.extra_data?.current_activity_focus as Array<
         OnboardingFormValues["currentActivityFocus"][number]
       >) ?? [],
+    kaderisasiParticipation,
+    sscGeneration,
+    lmdGeneration,
+    spectraGeneration,
   };
 }
 

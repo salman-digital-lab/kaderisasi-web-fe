@@ -39,15 +39,18 @@ import {
 } from "@tabler/icons-react";
 
 import { GENDER_OPTION } from "@/constants/form/profile";
+import { USER_LEVEL_RENDER } from "@/constants/render/activity";
 import UniversityNameSelect from "@/components/common/UniversityNameSelect";
 import logo from "@/assets/bmka_logo_color.png";
 import type { Country } from "@/types/model/country";
 import type { City } from "@/types/model/city";
 import type { Province } from "@/types/model/province";
 import type { Member, PublicUser } from "@/types/model/members";
+import { USER_LEVEL_ENUM } from "@/types/constants/profile";
 import {
   currentActivityFocusOptions,
   degreeOptions,
+  kaderisasiParticipationOptions,
   salmanActivityHistoryOptions,
   type OnboardingFormValues,
 } from "@/features/onboarding/schema";
@@ -58,6 +61,7 @@ import {
   getCountryLabel,
   getEducationSummary,
   getFocusLabel,
+  getKaderisasiParticipationLabel,
   getLocationLabel,
   getSalmanHistoryLabel,
   getWorkSummary,
@@ -950,6 +954,89 @@ export function SalmanStep({ form }: StepFormProps) {
   );
 }
 
+export function KaderisasiStep({ form }: StepFormProps) {
+  const selected = form.values.kaderisasiParticipation;
+
+  return (
+    <Stack gap="xl">
+      <Stack gap={6}>
+        <Title order={2}>Keikutsertaan Dalam Alur Kaderisasi</Title>
+        <Text c="dimmed" size="md">
+          Pilih alur kaderisasi yang pernah Anda ikuti. Data ini akan
+          memengaruhi badge, dan untuk pengguna akun juga memengaruhi level.
+        </Text>
+      </Stack>
+
+      <Checkbox.Group
+        {...form.getInputProps("kaderisasiParticipation")}
+        key={form.key("kaderisasiParticipation")}
+        name="kaderisasiParticipation"
+      >
+        <Stack gap="sm">
+          {kaderisasiParticipationOptions.map((option) => (
+            <Checkbox.Card
+              key={option.value}
+              value={option.value}
+              radius="md"
+              className={classes.checkboxItem}
+            >
+              <Group wrap="nowrap" align="flex-start">
+                <Checkbox.Indicator />
+                <Text className={classes.checkboxLabel}>{option.label}</Text>
+              </Group>
+            </Checkbox.Card>
+          ))}
+        </Stack>
+      </Checkbox.Group>
+
+      {selected.includes("ssc") ? (
+        <NumberInput
+          {...form.getInputProps("sscGeneration")}
+          key={form.key("sscGeneration")}
+          name="sscGeneration"
+          label="Nomor SSC/ITBSC"
+          placeholder="Contoh: 32"
+          size="md"
+          radius="md"
+          min={1}
+          allowDecimal={false}
+          allowNegative={false}
+        />
+      ) : null}
+
+      {selected.includes("lmd") ? (
+        <NumberInput
+          {...form.getInputProps("lmdGeneration")}
+          key={form.key("lmdGeneration")}
+          name="lmdGeneration"
+          label="Nomor LMD"
+          placeholder="Contoh: 42"
+          size="md"
+          radius="md"
+          min={1}
+          allowDecimal={false}
+          allowNegative={false}
+        />
+      ) : null}
+
+      {selected.includes("spectra") ? (
+        <NumberInput
+          {...form.getInputProps("spectraGeneration")}
+          key={form.key("spectraGeneration")}
+          name="spectraGeneration"
+          label="Nomor SPECTRA"
+          placeholder="Contoh: 1"
+          size="md"
+          radius="md"
+          min={1}
+          allowDecimal={false}
+          allowNegative={false}
+        />
+      ) : null}
+    </Stack>
+  );
+}
+
 function SectionHeader({
   title,
   description,
@@ -1067,6 +1154,14 @@ export function ReviewStep({
   currentCities,
   originCities,
 }: ReviewStepProps) {
+  const resultingLevel = form.values.kaderisasiParticipation.includes("spectra")
+    ? USER_LEVEL_ENUM.KADER_LANJUT
+    : form.values.kaderisasiParticipation.includes("lmd")
+      ? USER_LEVEL_ENUM.KADER
+      : form.values.kaderisasiParticipation.includes("ssc")
+        ? USER_LEVEL_ENUM.AKTIVIS
+        : USER_LEVEL_ENUM.JAMAAH;
+
   return (
     <Stack gap="lg">
       <Stack gap={6}>
@@ -1265,6 +1360,56 @@ export function ReviewStep({
                 form.values.currentActivityFocus.length > 0
                   ? form.values.currentActivityFocus.map(getFocusLabel).join(", ")
                   : "-"
+              }
+            />
+          </Stack>
+
+          <Divider />
+
+          <Stack gap="xs">
+            <Text fw={700}>Alur kaderisasi</Text>
+            <SummaryItem
+              label="Keikutsertaan dalam alur kaderisasi"
+              value={
+                form.values.kaderisasiParticipation.length > 0
+                  ? form.values.kaderisasiParticipation
+                      .map(getKaderisasiParticipationLabel)
+                      .join(", ")
+                  : "Belum mengikuti, level JAMAAH"
+              }
+            />
+            <SummaryItem
+              label="Badge yang akan ditambahkan"
+              value={
+                form.values.kaderisasiParticipation.length > 0
+                  ? [
+                      form.values.kaderisasiParticipation.includes("ssc")
+                        ? form.values.sscGeneration
+                          ? `SSC-${form.values.sscGeneration}`
+                          : "SSC"
+                        : null,
+                      form.values.kaderisasiParticipation.includes("lmd")
+                        ? form.values.lmdGeneration
+                          ? `LMD-${form.values.lmdGeneration}`
+                          : "LMD"
+                        : null,
+                      form.values.kaderisasiParticipation.includes("spectra")
+                        ? form.values.spectraGeneration
+                          ? `SPECTRA-${form.values.spectraGeneration}`
+                          : "SPECTRA"
+                        : null,
+                    ]
+                      .filter(Boolean)
+                      .join(", ")
+                  : "-"
+              }
+            />
+            <SummaryItem
+              label="Dampak level"
+              value={
+                form.values.mode === "no_account"
+                  ? "Tidak mengubah level akun, hanya menambahkan badge"
+                  : USER_LEVEL_RENDER[resultingLevel]
               }
             />
           </Stack>

@@ -37,6 +37,10 @@ export const STEP_META = {
     label: "Salman",
     description: "Aktivitas dan fokus",
   },
+  kaderisasi: {
+    label: "Kaderisasi",
+    description: "Alur kaderisasi",
+  },
   review: {
     label: "Tinjau",
     description: "Periksa sebelum kirim",
@@ -85,6 +89,12 @@ export const stepSchemas: Record<StepId, ZodType<unknown>> = {
   }),
   salman: onboardingFormBaseSchema.pick({
     salmanActivityHistory: true,
+  }),
+  kaderisasi: onboardingFormBaseSchema.pick({
+    kaderisasiParticipation: true,
+    sscGeneration: true,
+    lmdGeneration: true,
+    spectraGeneration: true,
   }),
   review: onboardingFormSchema,
 };

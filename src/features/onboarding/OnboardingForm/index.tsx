@@ -34,6 +34,7 @@ import {
   OnboardingProgress,
   PersonalStep,
   ProfileStep,
+  KaderisasiStep,
   ReviewStep,
   SalmanStep,
 } from "./sections";
@@ -236,6 +237,27 @@ export default function OnboardingForm({
 
     setOriginCities([]);
   }, [form.values.originProvinceId]);
+
+  useEffect(() => {
+    if (!form.values.kaderisasiParticipation.includes("ssc") && form.values.sscGeneration !== null) {
+      form.setFieldValue("sscGeneration", null);
+    }
+    if (!form.values.kaderisasiParticipation.includes("lmd") && form.values.lmdGeneration !== null) {
+      form.setFieldValue("lmdGeneration", null);
+    }
+    if (
+      !form.values.kaderisasiParticipation.includes("spectra") &&
+      form.values.spectraGeneration !== null
+    ) {
+      form.setFieldValue("spectraGeneration", null);
+    }
+  }, [
+    form,
+    form.values.kaderisasiParticipation,
+    form.values.lmdGeneration,
+    form.values.spectraGeneration,
+    form.values.sscGeneration,
+  ]);
 
   function focusFirstError(errors: Record<string, string>) {
     const firstErrorField = Object.keys(errors)[0];
@@ -633,6 +655,8 @@ export default function OnboardingForm({
         );
       case "salman":
         return <SalmanStep form={form} />;
+      case "kaderisasi":
+        return <KaderisasiStep form={form} />;
       case "review":
       default:
         return (

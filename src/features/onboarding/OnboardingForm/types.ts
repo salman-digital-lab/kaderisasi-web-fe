@@ -25,4 +25,5 @@ export type StepId =
   | "address"
   | "education"
   | "salman"
+  | "kaderisasi"
   | "review";
