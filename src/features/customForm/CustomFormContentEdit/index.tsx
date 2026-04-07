@@ -44,7 +44,7 @@ export default function CustomFormContentEdit({
       <Stack gap="md">
         <Paper {...paperProps}>
           <Title order={3} mb="xs">{customForm.form_name}</Title>
-          <Text size="sm" c="dimmed">Tidak ada formulir tambahan untuk diubah.</Text>
+          <Text size="md" c="dimmed">Tidak ada formulir tambahan untuk diubah.</Text>
         </Paper>
       </Stack>
     );

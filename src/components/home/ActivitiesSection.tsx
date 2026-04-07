@@ -15,7 +15,7 @@ export async function ActivitiesSection() {
   const { data: activities } = await getActivities({ per_page: "4" });
 
   return (
-    <Container size="lg" py="xl">
+    <Container size="lg" py={{ base: "lg", md: "xl" }}>
       <Title ta="center" mt="sm">
         Kegiatan Baru
       </Title>
@@ -27,7 +27,11 @@ export async function ActivitiesSection() {
 
       {activities.length > 0 ? (
         <>
-          <SimpleGrid cols={{ base: 1, md: 4 }} spacing="md" mt={50}>
+          <SimpleGrid
+            cols={{ base: 1, sm: 2, md: 4 }}
+            spacing={{ base: "lg", md: "md" }}
+            mt={{ base: "xl", md: 50 }}
+          >
             {activities.map((activity) => (
               <ActivityCard
                 key={activity.id}
@@ -45,9 +49,9 @@ export async function ActivitiesSection() {
             ))}
           </SimpleGrid>
           {activities.length > 3 && (
-            <Center>
+            <Center mt="lg">
               <Link href="/activity" style={{ textDecoration: "none" }}>
-                <Button size="md" mt="md">
+                <Button>
                   Lihat Kegiatan Lainnya
                 </Button>
               </Link>

@@ -43,9 +43,9 @@ export default function Home() {
               rangka membentuk kader teladan untuk membangun Indonesia.
             </Text>
 
-            <Group mt={30}>
+            <Group mt="lg">
               <Link href="/activity" style={{ textDecoration: "none" }}>
-                <Button size="md">Daftar Kegiatan Sekarang</Button>
+                <Button>Daftar Kegiatan Sekarang</Button>
               </Link>
             </Group>
           </div>
@@ -61,7 +61,7 @@ export default function Home() {
       </Container>
 
       {/* Statistics Section - Static content, no data fetching */}
-      <Container size="lg" py="xl">
+      <Container size="lg" py={{ base: "lg", md: "xl" }}>
         <Title ta="center" mt="sm" order={1} className={classes.sectionTitle}>
           Bersama Membangun Generasi Pemimpin Masa Depan
         </Title>
@@ -78,7 +78,7 @@ export default function Home() {
           melalui Kaderisasi Salman. Kami telah membentuk generasi pemimpin masa
           depan yang siap menghadapi tantangan masa depan.
         </Text>
-        <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="xl">
+        <SimpleGrid cols={{ base: 1, sm: 2 }} spacing={{ base: "lg", md: "xl" }}>
           <Stack align="center" justify="center">
             <Title order={2} c="blue" size="h1" className={classes.statNumber}>
               45.000+
@@ -119,9 +119,9 @@ export default function Home() {
       </Suspense>
 
       {/* CTA Section - Static content, no data fetching */}
-      <Container size="lg" py="xl">
+      <Container size="lg" py={{ base: "lg", md: "xl" }}>
         <Stack
-          mt={150}
+          mt={{ base: 56, md: 120 }}
           bg="var(--mantine-color-body)"
           align="center"
           justify="center"
@@ -140,7 +140,7 @@ export default function Home() {
             praktis untuk menjadi seorang konselor lho.
           </Text>
           <Link href="/consultation" style={{ textDecoration: "none" }}>
-            <Button size="md" w="max-content">
+            <Button w="max-content">
               Ayo Curhat
             </Button>
           </Link>

@@ -102,7 +102,7 @@ export default async function ClubRegistrationInfoPage(props: Props) {
     return (
       <Stack component="main" mt="xl">
         {/* Club Logo/Image Carousel */}
-        <Container size="xs">
+        <Container size="sm">
           <Carousel
             classNames={{
               control: classes["carousel-control"],
@@ -208,7 +208,7 @@ export default async function ClubRegistrationInfoPage(props: Props) {
               />
             ) : (
               <Stack gap="xs">
-                <Text size="xs" c="dimmed" ta="center">
+                <Text size="md" c="dimmed" ta="center">
                   Silahkan masuk terlebih dahulu
                 </Text>
                 <Link href={`/login?redirect=/clubs/registration-info/${params.id}`} style={{ textDecoration: 'none' }}>
@@ -250,12 +250,12 @@ export default async function ClubRegistrationInfoPage(props: Props) {
                   formulir pendaftaran dan menunggu konfirmasi dari pengurus
                   klub.
                 </Text>
-                <Text mt="md" c="dimmed" size="sm">
+                <Text mt="md" c="dimmed" size="md">
                   Silakan klik tombol &ldquo;Daftar Klub&rdquo; di atas untuk memulai proses
                   pendaftaran.
                 </Text>
                 {customForm && (
-                  <Text mt="md" c="blue" size="sm" fw={500}>
+                  <Text mt="md" c="blue" size="md" fw={500}>
                     Pastikan Anda telah membaca semua persyaratan sebelum
                     mendaftar.
                   </Text>

@@ -229,7 +229,7 @@ export default function CustomFormGuestSection({
               {field.required && <span style={{ color: "red" }}> *</span>}
             </Text>
             {field.helpText && (
-              <Text size="sm" c="dimmed">
+              <Text size="md" c="dimmed">
                 {field.helpText}
               </Text>
             )}
@@ -247,7 +247,7 @@ export default function CustomFormGuestSection({
                   <ActionIcon
                     color="red"
                     variant="subtle"
-                    size="sm"
+                    size="md"
                     onClick={() => form.removeListItem("education_history", index)}
                   >
                     ×
@@ -323,7 +323,7 @@ export default function CustomFormGuestSection({
               {field.required && <span style={{ color: "red" }}> *</span>}
             </Text>
             {field.helpText && (
-              <Text size="sm" c="dimmed">
+              <Text size="md" c="dimmed">
                 {field.helpText}
               </Text>
             )}

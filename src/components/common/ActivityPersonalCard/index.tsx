@@ -88,12 +88,12 @@ export default function ActivityPersonalCard({
         </Text>
 
         <Box>
-          <Text size="xs" c="dimmed" tt="uppercase" fw={700}>
+          <Text size="md" c="dimmed" tt="uppercase" fw={700}>
             Status
           </Text>
           <Group gap="xs" mt={4}>
             <Badge
-              size="sm"
+              size="md"
               variant="light"
               color={getStatusColor(registrationStatus)}
             >
@@ -103,7 +103,7 @@ export default function ActivityPersonalCard({
           {isUnannounced && visibleAt && (
             <Group gap={4} mt={8}>
               <IconClock size={14} color="var(--mantine-color-orange-6)" />
-              <Text size="xs" c="orange.6">
+              <Text size="md" c="orange.6">
                 Diumumkan: {formatDate(visibleAt)}
               </Text>
             </Group>

@@ -14,7 +14,7 @@ export async function ClubsSection() {
   const { data: clubs } = await getClubs({ per_page: "4" });
 
   return (
-    <Container size="lg" py="xl">
+    <Container size="lg" py={{ base: "lg", md: "xl" }}>
       <Title ta="center" mt="sm">
         Unit Kegiatan dan Kepanitiaan
       </Title>
@@ -27,7 +27,11 @@ export async function ClubsSection() {
 
       {clubs.length > 0 ? (
         <>
-          <SimpleGrid cols={{ base: 1, md: 4 }} spacing="md" mt={50}>
+          <SimpleGrid
+            cols={{ base: 1, sm: 2, md: 4 }}
+            spacing={{ base: "lg", md: "md" }}
+            mt={{ base: "xl", md: 50 }}
+          >
             {clubs.map((club) => (
               <ClubCard
                 key={club.id}
@@ -41,9 +45,9 @@ export async function ClubsSection() {
             ))}
           </SimpleGrid>
           {clubs.length > 3 && (
-            <Center>
+            <Center mt="lg">
               <Link href="/clubs" style={{ textDecoration: "none" }}>
-                <Button size="md" mt="md">
+                <Button>
                   Lihat Unit Lainnya
                 </Button>
               </Link>

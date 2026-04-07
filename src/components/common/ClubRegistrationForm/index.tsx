@@ -95,7 +95,7 @@ const ClubRegistrationForm: React.FC<ClubRegistrationFormProps> = ({
     if (!config) return null;
 
     return (
-      <Text size="sm" c={config.color} fw={600}>
+      <Text size="md" c={config.color} fw={600}>
         Status: {config.label}
       </Text>
     );
@@ -109,7 +109,7 @@ const ClubRegistrationForm: React.FC<ClubRegistrationFormProps> = ({
         color="blue"
         variant="light"
       >
-        <Text size="sm" mb="md">
+        <Text size="md" mb="md">
           Anda harus login terlebih dahulu untuk mendaftar ke klub ini.
         </Text>
         <Button 
@@ -128,8 +128,8 @@ const ClubRegistrationForm: React.FC<ClubRegistrationFormProps> = ({
   if (isCheckingStatus) {
     return (
       <Group justify="center" gap="sm">
-        <Loader size="sm" />
-        <Text size="sm" c="dimmed">Memeriksa status pendaftaran...</Text>
+        <Loader size="md" />
+        <Text size="md" c="dimmed">Memeriksa status pendaftaran...</Text>
       </Group>
     );
   }
@@ -152,7 +152,7 @@ const ClubRegistrationForm: React.FC<ClubRegistrationFormProps> = ({
         
         {getStatusBadge()}
         
-        <Text size="xs" c="dimmed">
+        <Text size="md" c="dimmed">
           Terdaftar pada: {new Date(registration.created_at).toLocaleDateString('id-ID')}
         </Text>
 
@@ -167,7 +167,7 @@ const ClubRegistrationForm: React.FC<ClubRegistrationFormProps> = ({
             <div
               dangerouslySetInnerHTML={{ __html: afterRegistrationInfo }}
               style={{
-                fontSize: 'var(--mantine-font-size-sm)',
+                fontSize: 'var(--mantine-font-size-md)',
                 lineHeight: 1.5,
               }}
             />
@@ -189,7 +189,7 @@ const ClubRegistrationForm: React.FC<ClubRegistrationFormProps> = ({
 
   return (
     <Stack gap="lg">
-      <Text size="sm" c="dimmed" ta="center">
+      <Text size="md" c="dimmed" ta="center">
         Klik tombol di bawah ini untuk mendaftar ke {clubName}
       </Text>
       
@@ -203,7 +203,7 @@ const ClubRegistrationForm: React.FC<ClubRegistrationFormProps> = ({
           <div
             dangerouslySetInnerHTML={{ __html: afterRegistrationInfo }}
             style={{
-              fontSize: 'var(--mantine-font-size-sm)',
+              fontSize: 'var(--mantine-font-size-md)',
               lineHeight: 1.5,
             }}
           />

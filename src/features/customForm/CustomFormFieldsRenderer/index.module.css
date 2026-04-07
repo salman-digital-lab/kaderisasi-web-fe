@@ -5,7 +5,7 @@
 }
 
 .multiSelectDescription {
-  font-size: var(--mantine-font-size-sm);
+  font-size: var(--mantine-font-size-md);
   margin-bottom: 8px;
 }
 

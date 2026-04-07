@@ -75,11 +75,12 @@ function MenuItem({
       <UnstyledButton
         onClick={onClick}
         px="md"
-        py="xs"
+        py="sm"
         style={(theme) => ({
           display: "flex",
           alignItems: "center",
           width: "100%",
+          minHeight: rem(52),
           borderRadius: theme.radius.md,
           transition: "all 150ms ease",
           backgroundColor: isActive ? theme.colors.blue[0] : "transparent",
@@ -94,17 +95,17 @@ function MenuItem({
         <ThemeIcon
           variant={isActive ? "light" : "transparent"}
           color={isActive ? "blue" : "gray"}
-          size="sm"
+          size="md"
           radius="md"
           mr="sm"
         >
-          <Icon style={{ width: rem(16), height: rem(16) }} />
+          <Icon style={{ width: rem(18), height: rem(18) }} />
         </ThemeIcon>
-        <Text size="sm" fw={isActive ? 600 : 400} style={{ flex: 1 }}>
+        <Text fw={isActive ? 600 : 400} style={{ flex: 1 }}>
           {item.label}
         </Text>
         <IconChevronRight
-          size={14}
+          size={16}
           style={{ opacity: 0.4 }}
           color="currentColor"
         />
@@ -130,6 +131,7 @@ export default function NavDrawer({
       hiddenFrom="md"
       zIndex={1000000}
       withCloseButton={false}
+      scrollAreaComponent={ScrollArea.Autosize}
     >
       <Stack h="100vh" gap={0}>
         {/* Header */}
@@ -152,10 +154,10 @@ export default function NavDrawer({
                 }
               />
               <Box style={{ flex: 1, minWidth: 0 }}>
-                <Text size="sm" fw={600} lineClamp={1}>
+                <Text fw={600} lineClamp={1}>
                   {session.name}
                 </Text>
-                <Text size="xs" c="dimmed">
+                <Text c="dimmed">
                   Aktivis Salman
                 </Text>
               </Box>
@@ -181,7 +183,7 @@ export default function NavDrawer({
           {session.session && (
             <>
               <Box px="sm" py="sm">
-                <Text size="xs" c="dimmed" fw={600} px="sm" mb="xs">
+                <Text c="dimmed" fw={600} px="sm" mb="xs">
                   AKUN SAYA
                 </Text>
                 <Stack gap={2}>
@@ -201,7 +203,7 @@ export default function NavDrawer({
 
           {/* Navigation Section */}
           <Box px="sm" py="sm">
-            <Text size="xs" c="dimmed" fw={600} px="sm" mb="xs">
+            <Text c="dimmed" fw={600} px="sm" mb="xs">
               JELAJAHI
             </Text>
             <Stack gap={2}>

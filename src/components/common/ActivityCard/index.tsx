@@ -28,8 +28,8 @@ export default function ActivityCard({
   minimumLevel,
   imageUrl,
 }: ActivityCardProps) {
-  const calenderIcon = (
-    <IconCalendarTime style={{ width: rem(12), height: rem(12) }} />
+  const calendarIcon = (
+    <IconCalendarTime style={{ width: rem(14), height: rem(14) }} />
   );
 
   return (
@@ -51,37 +51,37 @@ export default function ActivityCard({
         />
       </Card.Section>
 
-      <Card.Section className={classes.section} mt="md" flex="1">
+      <Card.Section className={classes.section} mt="sm" flex="1">
         <Group justify="apart">
-          <Text fz="lg" fw={500}>
+          <Text fz="md" fw={600}>
             {activityName}
           </Text>
         </Group>
       </Card.Section>
 
       <Card.Section className={classes.section}>
-        <Text mt="md" className={classes.label} c="dimmed">
+        <Text mt="sm" className={classes.label} c="dimmed">
           Tutup Pendaftaran
         </Text>
         <Group gap={7} mt={5}>
-          <Badge variant="light" color="red" leftSection={calenderIcon}>
+          <Badge variant="light" color="red" leftSection={calendarIcon}>
             {dayjs(registrationEnd).format("DD MMMM YYYY")}
           </Badge>
         </Group>
       </Card.Section>
 
       <Card.Section className={classes.section}>
-        <Text mt="md" className={classes.label} c="dimmed">
+        <Text mt="sm" className={classes.label} c="dimmed">
           Jenjang Minimum
         </Text>
         <Group gap={7} mt={5}>
-          <Badge size="sm" variant="light">
+          <Badge variant="light">
             {USER_LEVEL_RENDER[minimumLevel]}
           </Badge>
         </Group>
       </Card.Section>
 
-      <Group mt="xs">
+      <Group mt="sm">
         <Link
           href={`/activity/${slug}`}
           style={{ flex: 1, textDecoration: "none" }}

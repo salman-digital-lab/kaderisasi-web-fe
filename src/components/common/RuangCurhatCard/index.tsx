@@ -65,7 +65,7 @@ export default function RuangCurhatCard({ data }: RuangCurhatCardProps) {
               <Text fw={600} size="md" lineClamp={1}>
                 {PROBLEM_OWNER_RENDER[data.problem_ownership]}
               </Text>
-              <Text size="sm" c="dimmed">
+              <Text size="md" c="dimmed">
                 {dayjs(data.created_at).format("DD MMMM YYYY")}
               </Text>
             </Box>
@@ -81,21 +81,21 @@ export default function RuangCurhatCard({ data }: RuangCurhatCardProps) {
 
         {/* Tags */}
         <Group gap="xs" wrap="wrap">
-          <Badge variant="light" color="yellow" size="sm">
+          <Badge variant="light" color="yellow" size="md">
             {data.handling_technic}
           </Badge>
-          <Badge variant="light" color="purple" size="sm">
+          <Badge variant="light" color="purple" size="md">
             {data.problem_category}
           </Badge>
         </Group>
 
         {/* Problem Description */}
         <Box>
-          <Text size="sm" c="dimmed" mb="xs">
+          <Text size="md" c="dimmed" mb="xs">
             Deskripsi Masalah
           </Text>
           <Text 
-            size="sm" 
+            size="md" 
             lineClamp={3}
             style={{ 
               lineHeight: 1.5,
@@ -110,11 +110,11 @@ export default function RuangCurhatCard({ data }: RuangCurhatCardProps) {
         {/* Owner Name (if applicable) */}
         {data.problem_ownership === PROBLEM_OWNER_ENUM.TEMAN && (
           <Box>
-            <Text size="sm" c="dimmed" mb="xs">
+            <Text size="md" c="dimmed" mb="xs">
               Pemilik Masalah
             </Text>
             <Text 
-              size="sm" 
+              size="md" 
               fw={500}
               lineClamp={2}
               style={{ 
@@ -129,15 +129,15 @@ export default function RuangCurhatCard({ data }: RuangCurhatCardProps) {
 
         {/* Counselor Info */}
         <Box>
-          <Text size="sm" c="dimmed" mb="xs">
+          <Text size="md" c="dimmed" mb="xs">
             Konselor
           </Text>
           {data.adminUser ? (
             <Group gap="sm" align="flex-start">
-              <Avatar radius="xl" size="sm" />
+              <Avatar radius="xl" size="md" />
               <Box flex={1}>
                 <Text 
-                  size="sm" 
+                  size="md" 
                   fw={500}
                   lineClamp={1}
                   style={{ wordBreak: 'break-word' }}
@@ -145,7 +145,7 @@ export default function RuangCurhatCard({ data }: RuangCurhatCardProps) {
                   {data.adminUser?.display_name}
                 </Text>
                 <Text 
-                  size="xs" 
+                  size="md" 
                   c="dimmed"
                   lineClamp={1}
                   style={{ wordBreak: 'break-all' }}
@@ -156,10 +156,10 @@ export default function RuangCurhatCard({ data }: RuangCurhatCardProps) {
             </Group>
           ) : (
             <Group gap="xs">
-              <ThemeIcon size="sm" variant="light" color="yellow">
+              <ThemeIcon size="md" variant="light" color="yellow">
                 <IconClock size={12} />
               </ThemeIcon>
-              <Text size="sm" c="dimmed">
+              <Text size="md" c="dimmed">
                 Belum ada konselor yang ditugaskan
               </Text>
             </Group>

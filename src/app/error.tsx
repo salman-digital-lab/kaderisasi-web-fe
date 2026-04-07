@@ -44,7 +44,7 @@ export default function Error({
               </Title>
               <Code p="md">{error.message}</Code>
               {error.digest && (
-                <Text c="dimmed" size="xs">
+                <Text c="dimmed" size="md">
                   Error ID: {error.digest}
                 </Text>
               )}
@@ -66,7 +66,7 @@ export default function Error({
                 Ke Beranda
               </Button>
             </Group>
-            <Text ta="center" c="dimmed" size="sm" mt="md">
+            <Text ta="center" c="dimmed" size="md" mt="md">
               Jika masalah berlanjut, laporkan kepada admin melalui media
               sosial.
             </Text>

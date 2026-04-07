@@ -98,7 +98,7 @@ export default function PersonalActivityData({
             <Text size="xl" fw={600} c="dimmed">
               Belum Ada Kegiatan
             </Text>
-            <Text size="sm" c="dimmed" ta="center" maw={300}>
+            <Text size="md" c="dimmed" ta="center" maw={300}>
               Mulai daftarkan diri Anda pada kegiatan-kegiatan menarik untuk
               mengembangkan kemampuan dan jaringan
             </Text>
@@ -125,14 +125,14 @@ export default function PersonalActivityData({
           <Grid.Col span={{ base: 12, sm: 4 }}>
             <Card withBorder p="sm" radius="md">
               <Group gap="xs">
-                <ThemeIcon size="sm" variant="light" color="blue">
+                <ThemeIcon size="md" variant="light" color="blue">
                   <IconActivity size={14} />
                 </ThemeIcon>
                 <Box>
-                  <Text size="xs" c="dimmed">
+                  <Text size="md" c="dimmed">
                     Total Kegiatan
                   </Text>
-                  <Text size="sm" fw={600}>
+                  <Text size="md" fw={600}>
                     {stats.totalActivities}
                   </Text>
                 </Box>
@@ -142,14 +142,14 @@ export default function PersonalActivityData({
           <Grid.Col span={{ base: 12, sm: 4 }}>
             <Card withBorder p="sm" radius="md">
               <Group gap="xs">
-                <ThemeIcon size="sm" variant="light" color="green">
+                <ThemeIcon size="md" variant="light" color="green">
                   <IconCheck size={14} />
                 </ThemeIcon>
                 <Box>
-                  <Text size="xs" c="dimmed">
+                  <Text size="md" c="dimmed">
                     Terdaftar
                   </Text>
-                  <Text size="sm" fw={600}>
+                  <Text size="md" fw={600}>
                     {stats.registeredCount}
                   </Text>
                 </Box>
@@ -159,14 +159,14 @@ export default function PersonalActivityData({
           <Grid.Col span={{ base: 12, sm: 4 }}>
             <Card withBorder p="sm" radius="md">
               <Group gap="xs">
-                <ThemeIcon size="sm" variant="light" color="red">
+                <ThemeIcon size="md" variant="light" color="red">
                   <IconX size={14} />
                 </ThemeIcon>
                 <Box>
-                  <Text size="xs" c="dimmed">
+                  <Text size="md" c="dimmed">
                     Ditolak
                   </Text>
-                  <Text size="sm" fw={600}>
+                  <Text size="md" fw={600}>
                     {stats.rejectedCount}
                   </Text>
                 </Box>
@@ -187,7 +187,7 @@ export default function PersonalActivityData({
 
         {/* Results Count */}
         {filteredActivities.length !== activities.length && (
-          <Text size="sm" c="dimmed">
+          <Text size="md" c="dimmed">
             Menampilkan {filteredActivities.length} dari {activities.length}{" "}
             kegiatan
           </Text>
@@ -228,7 +228,7 @@ export default function PersonalActivityData({
             <Text size="lg" c="dimmed" mb="xs">
               Tidak ada kegiatan yang ditemukan
             </Text>
-            <Text size="sm" c="dimmed">
+            <Text size="md" c="dimmed">
               Coba ubah kata kunci pencarian atau filter yang digunakan
             </Text>
           </Box>
@@ -242,7 +242,7 @@ export default function PersonalActivityData({
               onChange={setPage}
               value={page}
               siblings={1}
-              size="sm"
+              size="md"
             />
           </Center>
         )}

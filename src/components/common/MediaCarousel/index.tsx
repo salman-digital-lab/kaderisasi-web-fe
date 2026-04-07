@@ -233,10 +233,10 @@ function YouTubePlayer({
         <Text size="lg" fw={600} mt="md" mb="xs">
           {getErrorTitle()}
         </Text>
-        <Text size="sm" c="dimmed" mb="lg" style={{ maxWidth: "300px" }}>
+        <Text size="md" c="dimmed" mb="lg" style={{ maxWidth: "300px" }}>
           {getErrorMessage()}
         </Text>
-        <Text size="xs" c="dimmed" mt="md" style={{ maxWidth: "300px" }}>
+        <Text size="md" c="dimmed" mt="md" style={{ maxWidth: "300px" }}>
           URL yang diberikan: {videoUrl}
         </Text>
       </Box>
@@ -261,7 +261,7 @@ function YouTubePlayer({
         <Text size="lg" fw={600} mt="md" mb="xs">
           {getErrorTitle()}
         </Text>
-        <Text size="sm" c="dimmed" mb="lg" style={{ maxWidth: "300px" }}>
+        <Text size="md" c="dimmed" mb="lg" style={{ maxWidth: "300px" }}>
           {getErrorMessage()}
         </Text>
         <Group gap="sm">
@@ -269,7 +269,7 @@ function YouTubePlayer({
             variant="light"
             leftSection={<IconRefresh size={16} />}
             onClick={handleRetry}
-            size="sm"
+            size="md"
           >
             Coba Lagi
           </Button>
@@ -277,12 +277,12 @@ function YouTubePlayer({
             variant="filled"
             leftSection={<IconPlayerPlay size={16} />}
             onClick={openInYouTube}
-            size="sm"
+            size="md"
           >
             Buka di YouTube
           </Button>
         </Group>
-        <Text size="xs" c="dimmed" mt="md" style={{ maxWidth: "300px" }}>
+        <Text size="md" c="dimmed" mt="md" style={{ maxWidth: "300px" }}>
           Jika masalah berlanjut, video mungkin dibatasi atau tidak tersedia di
           wilayah Anda.
         </Text>
@@ -319,7 +319,7 @@ function YouTubePlayer({
                 margin: "0 auto 1rem",
               }}
             />
-            <Text size="sm" c="dimmed">
+            <Text size="md" c="dimmed">
               Memuat video...
             </Text>
           </Box>
@@ -346,15 +346,15 @@ function YouTubePlayer({
           }}
         >
           <IconAlertCircle size={32} />
-          <Text size="sm" mt="xs" mb="md">
+          <Text size="md" mt="xs" mb="md">
             Gagal memuat video (Percobaan {retryCount + 1}/{maxRetries})
           </Text>
-          <Text size="xs" c="dimmed" mb="md" style={{ maxWidth: "250px" }}>
+          <Text size="md" c="dimmed" mb="md" style={{ maxWidth: "250px" }}>
             {getErrorMessage()}
           </Text>
           <Button
             variant="light"
-            size="sm"
+            size="md"
             onClick={handleRetry}
             leftSection={<IconRefresh size={16} />}
           >

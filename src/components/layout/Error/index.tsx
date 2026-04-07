@@ -37,13 +37,13 @@ export default function ErrorWrapper({
                 <Button color="red" onClick={() => reset()}>
                   Silahkan Ulangi Kembali
                 </Button>
-                <Text ta="center" c="dimmed" size="sm">
+                <Text ta="center" c="dimmed" size="md">
                   Atau
                 </Text>
               </>
             )}
 
-            <Text ta="center" size="sm">
+            <Text ta="center" size="md">
               Laporkan Kepada Admin Melalui Media Sosial
             </Text>
           </Stack>

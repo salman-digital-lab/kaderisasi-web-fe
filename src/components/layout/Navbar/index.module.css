@@ -1,9 +1,15 @@
 .header {
-  height: rem(60px);
+  height: rem(72px);
   padding-left: var(--mantine-spacing-md);
   padding-right: var(--mantine-spacing-md);
   border-bottom: rem(1px) solid
     light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+
+  @media (max-width: $mantine-breakpoint-sm) {
+    height: rem(68px);
+    padding-left: var(--mantine-spacing-sm);
+    padding-right: var(--mantine-spacing-sm);
+  }
 }
 
 .link {
@@ -15,11 +21,11 @@
   text-decoration: none;
   color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
   font-weight: 500;
-  font-size: var(--mantine-font-size-sm);
+  font-size: var(--mantine-font-size-md);
   cursor: pointer;
 
   @media (max-width: $mantine-breakpoint-md) {
-    height: rem(42px);
+    height: rem(48px);
     width: 100%;
   }
 

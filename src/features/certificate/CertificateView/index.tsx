@@ -269,7 +269,7 @@ export default function CertificateView({
                   {participant.name}
                 </Text>
               </Text>
-              <Text size="sm" c="dimmed">
+              <Text size="md" c="dimmed">
                 Tanggal kegiatan: {participant.activity_date}
               </Text>
             </Stack>
@@ -317,7 +317,7 @@ export default function CertificateView({
           </Box>
 
           {/* Download hint */}
-          <Text size="sm" c="dimmed" ta="center">
+          <Text size="md" c="dimmed" ta="center">
             {isLoggedIn
               ? 'Klik "Unduh PDF" untuk menyimpan sertifikat.'
               : "Masuk ke akun Anda untuk mengunduh sertifikat ini."}

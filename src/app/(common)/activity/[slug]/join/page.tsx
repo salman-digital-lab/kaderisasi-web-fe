@@ -88,7 +88,7 @@ export default async function Page(props: {
   ];
 
   return (
-    <Container size="xs" py="xl">
+    <Container size="sm" py="xl">
       <Stack gap="lg">
         <Link href={`/activity/${params.slug}`} style={{ textDecoration: "none" }}>
           <Button variant="subtle" leftSection={<IconArrowLeft size={16} />} mb="xs" px={0}>
@@ -98,7 +98,7 @@ export default async function Page(props: {
 
         <Stack gap="xs" ta="center">
           <Title order={2}>{activity.name}</Title>
-          <Text c="dimmed" size="sm">
+          <Text c="dimmed" size="md">
             Pilih cara kamu ingin mendaftar kegiatan ini
           </Text>
         </Stack>
@@ -127,10 +127,10 @@ export default async function Page(props: {
                       {option.icon}
                     </ThemeIcon>
                     <Stack gap={2}>
-                      <Text fw={600} size="sm">
+                      <Text fw={600} size="md">
                         {option.title}
                       </Text>
-                      <Text size="xs" c="dimmed">
+                      <Text size="md" c="dimmed">
                         {option.description}
                       </Text>
                     </Stack>

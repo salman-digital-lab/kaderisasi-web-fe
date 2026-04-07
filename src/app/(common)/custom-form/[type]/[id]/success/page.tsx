@@ -71,7 +71,7 @@ export default async function SuccessPage(props: {
                   ? "Formulir Berhasil Dikirim!"
                   : "Pendaftaran Berhasil!"}
               </Title>
-              <Text size="sm">
+              <Text size="md">
                 {featureType === "independent_form"
                   ? "Terima kasih telah mengisi formulir."
                   : "Terima kasih telah mendaftar. Data Anda telah kami terima."}

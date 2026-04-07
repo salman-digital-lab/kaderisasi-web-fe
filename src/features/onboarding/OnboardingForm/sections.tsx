@@ -84,7 +84,7 @@ export function OnboardingHeader() {
       <Title ta="center" className={`${classes.title} ${classes.headerText}`}>
         Lengkapi Profil Anda
       </Title>
-      <Text c="dimmed" size="sm" ta="center" mt={5} className={classes.headerText}>
+      <Text c="dimmed" size="md" ta="center" mt={5} className={classes.headerText}>
         Buat akun baru, masuk dengan akun yang sudah ada, atau lanjut tanpa
         akun.
       </Text>
@@ -105,7 +105,7 @@ export function OnboardingProgress({
           <Text fw={700}>
             Langkah {currentStep + 1} dari {visibleStepIds.length}
           </Text>
-          <Text c="dimmed" size="sm">
+          <Text c="dimmed" size="md">
             {STEP_META[activeStepId].label}
           </Text>
         </Group>
@@ -126,7 +126,7 @@ export function OnboardingProgress({
               >
                 <div className={classes.desktopStepNumber}>{index + 1}</div>
                 <div className={classes.desktopStepText}>
-                  <Text fw={700} size="sm" truncate="end">
+                  <Text fw={700} size="md" truncate="end">
                     {STEP_META[stepId].label}
                   </Text>
                 </div>
@@ -158,7 +158,7 @@ export function NoAccountSuccessState({ onLogin }: SuccessStateProps) {
       <Title ta="center" className={`${classes.title} ${classes.headerText}`}>
         Data Berhasil Dikirim
       </Title>
-      <Text c="dimmed" size="sm" ta="center" mt={5} className={classes.headerText}>
+      <Text c="dimmed" size="md" ta="center" mt={5} className={classes.headerText}>
         Profil Anda sudah tercatat tanpa akun dan bisa dilanjutkan kembali di
         lain waktu.
       </Text>
@@ -316,12 +316,12 @@ export function CredentialsStep({
       {form.values.mode === "login" && isExistingAccountLoggedIn ? (
         <Alert color="teal" variant="light" title="Sudah masuk">
           <Stack gap="sm">
-            <Text size="sm">
+            <Text size="md">
               Anda sudah login sebagai {profileData?.userData.email || form.values.email}.
               Data profil akan dimuat otomatis saat Anda lanjut.
             </Text>
             <Group gap="xs">
-              <Button variant="default" size="sm" onClick={onSwitchAccount}>
+              <Button variant="default" size="md" onClick={onSwitchAccount}>
                 Ganti akun
               </Button>
             </Group>
@@ -688,7 +688,7 @@ export function ProfileStep({
         />
 
         {form.values.educationHistory.length === 0 ? (
-          <Text size="sm" c="dimmed">
+          <Text size="md" c="dimmed">
             Belum ada riwayat pendidikan.
           </Text>
         ) : null}
@@ -801,7 +801,7 @@ export function ProfileStep({
         />
 
         {form.values.workHistory.length === 0 ? (
-          <Text size="sm" c="dimmed">
+          <Text size="md" c="dimmed">
             Belum ada riwayat pekerjaan.
           </Text>
         ) : null}
@@ -897,7 +897,7 @@ export function ProfileStep({
       <Stack gap="md">
         <Stack gap={4}>
           <Title order={4}>Fokus aktivitas saat ini</Title>
-          <Text size="sm" c="dimmed">
+          <Text size="md" c="dimmed">
             Pilih fokus utama yang sedang Anda jalani saat ini.
           </Text>
         </Stack>
@@ -1059,7 +1059,7 @@ function SectionHeader({
     <Group justify="space-between" align="center" className={classes.sectionHeader}>
       <div>
         <Title order={4}>{title}</Title>
-        <Text size="sm" c="dimmed">
+        <Text size="md" c="dimmed">
           {description}
         </Text>
       </div>

@@ -6,7 +6,7 @@ export default function Loading() {
       <Center style={{ minHeight: "60vh" }}>
         <Stack align="center" gap="md">
           <Loader size="lg" type="dots" />
-          <Text c="dimmed" size="sm">
+          <Text c="dimmed" size="md">
             Memuat halaman...
           </Text>
         </Stack>

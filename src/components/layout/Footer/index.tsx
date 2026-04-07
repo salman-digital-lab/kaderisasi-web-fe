@@ -19,7 +19,7 @@ export default function Footer() {
         </Text>
       </Container>
       <Container className={classes.afterFooter}>
-        <Text c="dimmed" size="sm" className={classes.copyright}>
+        <Text c="dimmed" size="md" className={classes.copyright}>
           © 2026 BMKA Salman ITB All rights reserved.
         </Text>
 

@@ -154,7 +154,7 @@ export default function StatusCheckContent({
               <Text size="xl" fw={600} c="dimmed">
                 Belum Ada Kegiatan Terdaftar
               </Text>
-              <Text size="sm" c="dimmed" ta="center" maw={300}>
+              <Text size="md" c="dimmed" ta="center" maw={300}>
                 Anda belum terdaftar di kegiatan manapun. Jelajahi kegiatan yang
                 tersedia untuk memulai.
               </Text>
@@ -192,7 +192,7 @@ export default function StatusCheckContent({
                   <IconActivity size={16} />
                 </ThemeIcon>
                 <Box>
-                  <Text size="xs" c="dimmed">
+                  <Text size="md" c="dimmed">
                     Total
                   </Text>
                   <Text size="lg" fw={600}>
@@ -209,7 +209,7 @@ export default function StatusCheckContent({
                   <IconCheck size={16} />
                 </ThemeIcon>
                 <Box>
-                  <Text size="xs" c="dimmed">
+                  <Text size="md" c="dimmed">
                     Diterima
                   </Text>
                   <Text size="lg" fw={600}>
@@ -226,7 +226,7 @@ export default function StatusCheckContent({
                   <IconClock size={16} />
                 </ThemeIcon>
                 <Box>
-                  <Text size="xs" c="dimmed">
+                  <Text size="md" c="dimmed">
                     Menunggu
                   </Text>
                   <Text size="lg" fw={600}>
@@ -243,7 +243,7 @@ export default function StatusCheckContent({
                   <IconX size={16} />
                 </ThemeIcon>
                 <Box>
-                  <Text size="xs" c="dimmed">
+                  <Text size="md" c="dimmed">
                     Ditolak
                   </Text>
                   <Text size="lg" fw={600}>
@@ -265,7 +265,7 @@ export default function StatusCheckContent({
 
         {/* Results Count */}
         {filteredActivities.length !== activities.length && (
-          <Text size="sm" c="dimmed">
+          <Text size="md" c="dimmed">
             Menampilkan {filteredActivities.length} dari {activities.length}{" "}
             kegiatan
           </Text>
@@ -287,7 +287,7 @@ export default function StatusCheckContent({
                     style={{ textDecoration: "none" }}
                   >
                     <Button
-                      size="xs"
+                      size="sm"
                       variant="light"
                       rightSection={<IconExternalLink size={14} />}
                     >
@@ -297,7 +297,7 @@ export default function StatusCheckContent({
                 </Group>
                 <Group gap="xs" align="center">
                   <Badge
-                    size="sm"
+                    size="md"
                     variant="light"
                     color={getStatusColor(activity.status)}
                     leftSection={getStatusIcon(activity.status)}
@@ -309,10 +309,10 @@ export default function StatusCheckContent({
                   ACTIVITY_REGISTRANT_STATUS_ENUM.BELUM_DIUMUMKAN &&
                   activity.visible_at && (
                     <Group gap={6} align="center">
-                      <ThemeIcon size="xs" variant="transparent" color="orange">
+                      <ThemeIcon size="md" variant="transparent" color="orange">
                         <IconClock size={14} />
                       </ThemeIcon>
-                      <Text size="xs" c="orange.7" fw={500}>
+                      <Text size="md" c="orange.7" fw={500}>
                         Estimasi pengumuman: {formatDate(activity.visible_at)}
                       </Text>
                     </Group>
@@ -324,7 +324,7 @@ export default function StatusCheckContent({
                     style={{ textDecoration: "none" }}
                   >
                     <Button
-                      size="xs"
+                      size="sm"
                       color="green"
                       variant="light"
                       leftSection={<IconCertificate size={14} />}
@@ -353,7 +353,7 @@ export default function StatusCheckContent({
             <Text size="lg" c="dimmed" mb="xs">
               Tidak ada kegiatan yang ditemukan
             </Text>
-            <Text size="sm" c="dimmed">
+            <Text size="md" c="dimmed">
               Coba ubah kata kunci pencarian
             </Text>
           </Box>
@@ -367,7 +367,7 @@ export default function StatusCheckContent({
               onChange={setPage}
               value={page}
               siblings={1}
-              size="sm"
+              size="md"
             />
           </Center>
         )}

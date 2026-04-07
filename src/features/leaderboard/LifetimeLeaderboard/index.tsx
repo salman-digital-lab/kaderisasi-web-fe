@@ -94,7 +94,7 @@ const LifetimeLeaderboardList = ({
           <Group justify="space-between">
             <div>
               <Text fw={500}>Peringkat Anda:</Text>
-              <Text size="sm" c="dimmed">
+              <Text size="md" c="dimmed">
                 Total: {userScore} poin
               </Text>
             </div>
@@ -110,10 +110,10 @@ const LifetimeLeaderboardList = ({
           <Group justify="space-between">
             <div>
               <Text fw={500}>Peringkat Anda: #{userRank}</Text>
-              <Text size="sm" c="dimmed">
+              <Text size="md" c="dimmed">
                 Total: {userScore} poin
               </Text>
-              <Text size="sm">
+              <Text size="md">
                 Anda belum masuk dalam 10 besar peringkat aktivis. Terus
                 kumpulkan prestasi untuk naik peringkat!
               </Text>
@@ -165,14 +165,14 @@ const LifetimeLeaderboardList = ({
                     <Group gap="xs">
                       <Text fw={500}>{entry.user.profile?.name}</Text>
                       {isCurrentUser(entry) && (
-                        <Badge size="xs" variant="filled" color="blue">
+                        <Badge size="md" variant="filled" color="blue">
                           Anda
                         </Badge>
                       )}
                     </Group>
                     <Stack gap="xs">
                       {entry.user.profile?.university?.name && (
-                        <Text size="sm" c="dimmed">
+                        <Text size="md" c="dimmed">
                           {entry.user.profile.university.name}
                         </Text>
                       )}

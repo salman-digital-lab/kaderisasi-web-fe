@@ -93,7 +93,7 @@ export default function PersonalAchievementData({
             <Text size="xl" fw={600} c="dimmed">
               Belum Ada Prestasi
             </Text>
-            <Text size="sm" c="dimmed" ta="center" maw={300}>
+            <Text size="md" c="dimmed" ta="center" maw={300}>
               Mulai tambahkan prestasi Anda untuk meningkatkan skor leaderboard
               dan membangun portfolio yang mengesankan
             </Text>
@@ -122,7 +122,7 @@ export default function PersonalAchievementData({
               <Text size="lg" fw={600} mb="xs">
                 Prestasi Saya
               </Text>
-              <Text size="sm" c="dimmed">
+              <Text size="md" c="dimmed">
                 Total {stats.totalCount} prestasi • {stats.totalScore} poin
               </Text>
             </Box>
@@ -131,7 +131,7 @@ export default function PersonalAchievementData({
               href="/leaderboard/submit"
               leftSection={<IconPlus size={16} />}
               variant="light"
-              size="sm"
+              size="md"
             >
               Tambah Prestasi
             </Button>
@@ -143,14 +143,14 @@ export default function PersonalAchievementData({
           <Grid.Col span={{ base: 6, sm: 3 }}>
             <Card withBorder p="sm" radius="md">
               <Group gap="xs">
-                <ThemeIcon size="sm" variant="light" color="green">
+                <ThemeIcon size="md" variant="light" color="green">
                   <IconAward size={14} />
                 </ThemeIcon>
                 <Box>
-                  <Text size="xs" c="dimmed">
+                  <Text size="md" c="dimmed">
                     Disetujui
                   </Text>
-                  <Text size="sm" fw={600}>
+                  <Text size="md" fw={600}>
                     {stats.approvedCount}
                   </Text>
                 </Box>
@@ -160,14 +160,14 @@ export default function PersonalAchievementData({
           <Grid.Col span={{ base: 6, sm: 3 }}>
             <Card withBorder p="sm" radius="md">
               <Group gap="xs">
-                <ThemeIcon size="sm" variant="light" color="yellow">
+                <ThemeIcon size="md" variant="light" color="yellow">
                   <IconClock size={14} />
                 </ThemeIcon>
                 <Box>
-                  <Text size="xs" c="dimmed">
+                  <Text size="md" c="dimmed">
                     Menunggu
                   </Text>
-                  <Text size="sm" fw={600}>
+                  <Text size="md" fw={600}>
                     {stats.pendingCount}
                   </Text>
                 </Box>
@@ -177,14 +177,14 @@ export default function PersonalAchievementData({
           <Grid.Col span={{ base: 6, sm: 3 }}>
             <Card withBorder p="sm" radius="md">
               <Group gap="xs">
-                <ThemeIcon size="sm" variant="light" color="red">
+                <ThemeIcon size="md" variant="light" color="red">
                   <IconExclamationCircle size={14} />
                 </ThemeIcon>
                 <Box>
-                  <Text size="xs" c="dimmed">
+                  <Text size="md" c="dimmed">
                     Ditolak
                   </Text>
-                  <Text size="sm" fw={600}>
+                  <Text size="md" fw={600}>
                     {stats.rejectedCount}
                   </Text>
                 </Box>
@@ -194,14 +194,14 @@ export default function PersonalAchievementData({
           <Grid.Col span={{ base: 6, sm: 3 }}>
             <Card withBorder p="sm" radius="md">
               <Group gap="xs">
-                <ThemeIcon size="sm" variant="light" color="blue">
+                <ThemeIcon size="md" variant="light" color="blue">
                   <IconTrendingUp size={14} />
                 </ThemeIcon>
                 <Box>
-                  <Text size="xs" c="dimmed">
+                  <Text size="md" c="dimmed">
                     Total Poin
                   </Text>
-                  <Text size="sm" fw={600}>
+                  <Text size="md" fw={600}>
                     {stats.totalScore}
                   </Text>
                 </Box>
@@ -222,7 +222,7 @@ export default function PersonalAchievementData({
 
         {/* Results Count */}
         {filteredAchievements.length !== achievements.length && (
-          <Text size="sm" c="dimmed">
+          <Text size="md" c="dimmed">
             Menampilkan {filteredAchievements.length} dari {achievements.length}{" "}
             prestasi
           </Text>
@@ -244,7 +244,7 @@ export default function PersonalAchievementData({
                 >
                   <Group gap="sm" wrap="nowrap">
                     <ThemeIcon
-                      size="sm"
+                      size="md"
                       radius="xl"
                       variant="light"
                       color={ACHIEVEMENT_STATUS_COLOR[achievement.status]}
@@ -252,15 +252,15 @@ export default function PersonalAchievementData({
                       <IconStar size={14} />
                     </ThemeIcon>
                     <Box>
-                      <Text fw={600} size="sm" lineClamp={1}>
+                      <Text fw={600} size="md" lineClamp={1}>
                         {achievement.name}
                       </Text>
                       <Group gap="xs" mt={4}>
-                        <Badge size="xs" variant="light">
+                        <Badge size="md" variant="light">
                           {ACHIEVEMENT_TYPE_RENDER[achievement.type]}
                         </Badge>
                         <Badge
-                          size="xs"
+                          size="md"
                           variant="outline"
                           color={ACHIEVEMENT_STATUS_COLOR[achievement.status]}
                           leftSection={
@@ -276,7 +276,7 @@ export default function PersonalAchievementData({
                     </Box>
                   </Group>
                   <Group gap="xs" wrap="nowrap">
-                    <Text size="sm" fw={500} c="blue">
+                    <Text size="md" fw={500} c="blue">
                       {achievement.score} poin
                     </Text>
                   </Group>
@@ -287,10 +287,10 @@ export default function PersonalAchievementData({
                 <Stack gap="md">
                   {/* Description */}
                   <Box>
-                    <Text size="sm" c="dimmed" mb="xs">
+                    <Text size="md" c="dimmed" mb="xs">
                       Deskripsi
                     </Text>
-                    <Text size="sm" lineClamp={3}>
+                    <Text size="md" lineClamp={3}>
                       {achievement.description}
                     </Text>
                   </Box>
@@ -299,14 +299,14 @@ export default function PersonalAchievementData({
                   <Grid>
                     <Grid.Col span={{ base: 12, sm: 6 }}>
                       <Group gap="xs">
-                        <ThemeIcon size="sm" variant="light" color="gray">
+                        <ThemeIcon size="md" variant="light" color="gray">
                           <IconCalendar size={12} />
                         </ThemeIcon>
                         <Box>
-                          <Text size="xs" c="dimmed">
+                          <Text size="md" c="dimmed">
                             Tanggal Prestasi
                           </Text>
-                          <Text size="sm" fw={500}>
+                          <Text size="md" fw={500}>
                             {new Date(
                               achievement.achievement_date,
                             ).toLocaleDateString("id-ID")}
@@ -316,14 +316,14 @@ export default function PersonalAchievementData({
                     </Grid.Col>
                     <Grid.Col span={{ base: 12, sm: 6 }}>
                       <Group gap="xs">
-                        <ThemeIcon size="sm" variant="light" color="blue">
+                        <ThemeIcon size="md" variant="light" color="blue">
                           <IconStar size={12} />
                         </ThemeIcon>
                         <Box>
-                          <Text size="xs" c="dimmed">
+                          <Text size="md" c="dimmed">
                             Poin
                           </Text>
-                          <Text size="sm" fw={500}>
+                          <Text size="md" fw={500}>
                             {achievement.score} poin
                           </Text>
                         </Box>
@@ -339,14 +339,14 @@ export default function PersonalAchievementData({
                       title="Alasan Penolakan"
                       icon={<IconAlertCircle size={16} />}
                     >
-                      <Text size="sm" mb="sm">
+                      <Text size="md" mb="sm">
                         {achievement.remark}
                       </Text>
                       <Group gap="xs" wrap="wrap">
                         <Button
                           variant="light"
                           color="red"
-                          size="xs"
+                          size="sm"
                           leftSection={<IconDownload size={14} />}
                           onClick={() =>
                             handleDownloadFile(
@@ -362,7 +362,7 @@ export default function PersonalAchievementData({
                           href={`/leaderboard/edit/${achievement.id}`}
                           variant="light"
                           color="blue"
-                          size="xs"
+                          size="sm"
                           leftSection={<IconEdit size={14} />}
                         >
                           Edit Prestasi
@@ -379,7 +379,7 @@ export default function PersonalAchievementData({
                         <Button
                           variant="light"
                           color="blue"
-                          size="xs"
+                          size="sm"
                           leftSection={<IconDownload size={14} />}
                           onClick={() =>
                             handleDownloadFile(
@@ -395,7 +395,7 @@ export default function PersonalAchievementData({
                           href={`/leaderboard/edit/${achievement.id}`}
                           variant="light"
                           color="blue"
-                          size="xs"
+                          size="sm"
                           leftSection={<IconEdit size={14} />}
                         >
                           Banding Prestasi
@@ -412,7 +412,7 @@ export default function PersonalAchievementData({
                         <Button
                           variant="light"
                           color="green"
-                          size="xs"
+                          size="sm"
                           leftSection={<IconFileText size={14} />}
                           onClick={() =>
                             handleDownloadFile(
@@ -447,7 +447,7 @@ export default function PersonalAchievementData({
             <Text size="lg" c="dimmed" mb="xs">
               Tidak ada prestasi yang ditemukan
             </Text>
-            <Text size="sm" c="dimmed">
+            <Text size="md" c="dimmed">
               Coba ubah kata kunci pencarian atau filter yang digunakan
             </Text>
           </Box>

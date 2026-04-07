@@ -29,15 +29,13 @@ export default function ClubCard({
   end_period,
 }: ClubCardProps) {
   const calendarIcon = (
-    <IconCalendarTime style={{ width: rem(12), height: rem(12) }} />
+    <IconCalendarTime style={{ width: rem(14), height: rem(14) }} />
   );
-
-  const clubIcon = <IconUsers style={{ width: rem(12), height: rem(12) }} />;
 
   return (
     <Card withBorder radius="md" p="md" className={classes.card}>
       <Card.Section className={classes.section}>
-        <Group align="center" justify="center" mb="md">
+        <Group align="center" justify="center" mb="sm">
           {logo ? (
             <NextImage
               src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${logo}`}
@@ -62,11 +60,11 @@ export default function ClubCard({
             </div>
           )}
         </Group>
-        <Text fz="lg" fw={500} ta="center" lineClamp={2}>
+        <Text fz="md" fw={600} ta="center" lineClamp={2}>
           {name}
         </Text>
         {short_description && (
-          <Text size="sm" c="dimmed" ta="center" lineClamp={3} mt="xs">
+          <Text c="dimmed" ta="center" lineClamp={3} mt="xs">
             {short_description}
           </Text>
         )}
@@ -89,7 +87,7 @@ export default function ClubCard({
         </Card.Section>
       )}
 
-      <Group mt="xs" className={classes.buttonSection}>
+      <Group mt="sm" className={classes.buttonSection}>
         <Link href={`/clubs/${id}`} style={{ flex: 1, textDecoration: "none" }}>
           <Button radius="md" fullWidth>
             Lihat Detail

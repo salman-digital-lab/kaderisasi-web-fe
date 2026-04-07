@@ -143,7 +143,7 @@ export default async function Page(props: {
 
   return (
     <Stack component="main" className={classes["main-stack"]}>
-      <Container size="xs" className={classes["carousel-container"]}>
+      <Container size="sm" className={classes["carousel-container"]}>
         <ActivityCarousel
           images={activity?.additional_config?.images ?? []}
           activityName={activity?.name ?? ""}
@@ -209,7 +209,7 @@ export default async function Page(props: {
                       size={14}
                       color="var(--mantine-color-orange-6)"
                     />
-                    <Text size="xs" c="orange.6" fw={500}>
+                    <Text size="md" c="orange.6" fw={500}>
                       Estimasi pengumuman:{" "}
                       {dayjs(activityRegistration.visible_at)
                         .locale("id")

@@ -29,7 +29,7 @@ export default async function Page({
       <Title ta="center" className={classes.title}>
         Selamat Datang
       </Title>
-      <Text c="dimmed" size="sm" ta="center" mt={5}>
+      <Text c="dimmed" size="md" ta="center" mt={5}>
         Sudah Punya Akun?{" "}
         <Link
           style={{
@@ -42,11 +42,11 @@ export default async function Page({
         </Link>
       </Text>
 
-      <Text c="dimmed" size="sm" ta="center" mt={5}>
+      <Text c="dimmed" size="md" ta="center" mt={5}>
         Jika ada kendala dalam registrasi akun, silakan hubungi admin melalui
         Whatsapp di{" "}
         <Anchor
-          size="sm"
+          size="md"
           component="a"
           href="https://wa.me/6285156168499?text=Hai%20Kak%2C%20saya%20ingin%20bertanya...%0A%0ANama%20lengkap%20%3A%20%0AEmail%20%3A%20%0AAsal%20Universitas%20%3A%20%0APertanyaan%2FMasalah%20%3A%20"
         >

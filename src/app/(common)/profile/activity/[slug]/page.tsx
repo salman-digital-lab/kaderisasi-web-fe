@@ -183,7 +183,7 @@ export default async function Page(props: {
                   <IconCalendarEvent size={20} />
                 </ThemeIcon>
                 <div>
-                  <Text size="xs" c="blue" fw={600} tt="uppercase">
+                  <Text size="md" c="blue" fw={600} tt="uppercase">
                     Tanggal Kegiatan
                   </Text>
                   <Text size="md" fw={500}>
@@ -226,14 +226,14 @@ export default async function Page(props: {
                 borderRadius: "var(--mantine-radius-md)",
               }}
             >
-              <ThemeIcon size="sm" variant="filled" color="orange">
+              <ThemeIcon size="md" variant="filled" color="orange">
                 <IconClock size={14} />
               </ThemeIcon>
               <div>
-                <Text size="xs" c="orange" fw={600}>
+                <Text size="md" c="orange" fw={600}>
                   Estimasi Pengumuman
                 </Text>
-                <Text size="sm" c="orange.8">
+                <Text size="md" c="orange.8">
                   {dayjs(registrationData.visible_at)
                     .locale("id")
                     .format("DD MMMM YYYY [pukul] HH:mm")}
@@ -248,14 +248,14 @@ export default async function Page(props: {
           <Stack gap="sm" mt="md">
             <Group justify="space-between" wrap="nowrap">
               <Group gap="xs">
-                <ThemeIcon size="xs" variant="light" color="gray">
+                <ThemeIcon size="md" variant="light" color="gray">
                   <IconCheck size={12} />
                 </ThemeIcon>
-                <Text size="sm" c="dimmed">
+                <Text size="md" c="dimmed">
                   Tanggal Daftar
                 </Text>
               </Group>
-              <Text size="sm" fw={500}>
+              <Text size="md" fw={500}>
                 {formatRegistrationDate()}
               </Text>
             </Group>
@@ -281,10 +281,10 @@ export default async function Page(props: {
 
         <Card withBorder radius="md" p="lg" mt="md">
           <Group gap="xs" justify="center">
-            <ThemeIcon size="sm" variant="light" color="green">
+            <ThemeIcon size="md" variant="light" color="green">
               <IconCheck size={14} />
             </ThemeIcon>
-            <Text size="sm" c="dimmed" ta="center">
+            <Text size="md" c="dimmed" ta="center">
               Data formulir dapat dilihat pada halaman edit formulir
             </Text>
           </Group>

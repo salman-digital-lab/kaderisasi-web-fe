@@ -167,8 +167,8 @@ const ClubRegistrationButton: React.FC<ClubRegistrationButtonProps> = ({
   if (isCheckingStatus) {
     return (
       <Group justify="center" gap="sm">
-        <Loader size="sm" />
-        <Text size="sm" c="dimmed">
+        <Loader size="md" />
+        <Text size="md" c="dimmed">
           Memeriksa status pendaftaran...
         </Text>
       </Group>
@@ -205,7 +205,7 @@ const ClubRegistrationButton: React.FC<ClubRegistrationButtonProps> = ({
             <Button
               color="red"
               variant="light"
-              size="sm"
+              size="md"
               onClick={() => setShowDeleteModal(true)}
               loading={isLoading}
               leftSection={<IconX size={16} />}
@@ -214,7 +214,7 @@ const ClubRegistrationButton: React.FC<ClubRegistrationButtonProps> = ({
             </Button>
           )}
 
-          <Text size="xs" c="dimmed">
+          <Text size="md" c="dimmed">
             Terdaftar pada:{" "}
             {new Date(registration.created_at).toLocaleDateString("id-ID")}
           </Text>
@@ -229,13 +229,13 @@ const ClubRegistrationButton: React.FC<ClubRegistrationButtonProps> = ({
                 borderRadius: "var(--mantine-radius-sm)",
               }}
             >
-              <Text size="sm" c="blue.8" fw={500} mb="xs">
+              <Text size="md" c="blue.8" fw={500} mb="xs">
                 Informasi Setelah Pendaftaran:
               </Text>
               <div
                 dangerouslySetInnerHTML={{ __html: afterRegistrationInfo }}
                 style={{
-                  fontSize: "var(--mantine-font-size-sm)",
+                  fontSize: "var(--mantine-font-size-md)",
                   lineHeight: 1.5,
                 }}
               />

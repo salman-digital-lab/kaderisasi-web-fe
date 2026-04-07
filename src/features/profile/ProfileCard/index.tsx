@@ -82,7 +82,7 @@ export function ProfileCard({
                   </Text>
                   <Group gap="xs" justify="center">
                     {profileData.profile.badges.map((badge) => (
-                      <Badge key={badge} variant="light" size="sm">
+                      <Badge key={badge} variant="light" size="md">
                         {badge}
                       </Badge>
                     ))}

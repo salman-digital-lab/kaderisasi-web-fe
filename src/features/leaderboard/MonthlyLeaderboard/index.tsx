@@ -115,7 +115,7 @@ const MonthlyLeaderboardList = () => {
                   <div>
                     <Text fw={500}>{entry.user.profile?.name}</Text>
                     <Stack gap="xs">
-                      <Text size="sm" c="dimmed">
+                      <Text size="md" c="dimmed">
                         {
                           USER_LEVEL_RENDER[
                             (entry.user.profile
@@ -125,7 +125,7 @@ const MonthlyLeaderboardList = () => {
                         }
                       </Text>
                       {entry.user.profile?.university?.name && (
-                        <Text size="xs" c="dimmed">
+                        <Text size="md" c="dimmed">
                           {entry.user.profile.university.name}
                         </Text>
                       )}

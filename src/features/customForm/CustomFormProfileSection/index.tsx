@@ -425,7 +425,7 @@ export default function CustomFormProfileSection({
               {field.required && <span style={{ color: "red" }}> *</span>}
             </Text>
             {field.helpText && (
-              <Text size="sm" c="dimmed">
+              <Text size="md" c="dimmed">
                 {field.helpText}
               </Text>
             )}
@@ -443,7 +443,7 @@ export default function CustomFormProfileSection({
                   <ActionIcon
                     color="red"
                     variant="subtle"
-                    size="sm"
+                    size="md"
                     onClick={() => form.removeListItem("education_history", index)}
                   >
                     ×
@@ -521,7 +521,7 @@ export default function CustomFormProfileSection({
               {field.required && <span style={{ color: "red" }}> *</span>}
             </Text>
             {field.helpText && (
-              <Text size="sm" c="dimmed">
+              <Text size="md" c="dimmed">
                 {field.helpText}
               </Text>
             )}
@@ -567,7 +567,7 @@ export default function CustomFormProfileSection({
                             <Text size="md" fw={500}>
                               {DEGREE_LABEL[e.degree] ?? e.degree} — {e.institution || "-"}
                             </Text>
-                            <Text size="sm" c="dimmed">
+                            <Text size="md" c="dimmed">
                               {[e.faculty, e.major].filter(Boolean).join(" · ") || "-"}
                               {e.intake_year ? ` · ${e.intake_year}` : ""}
                             </Text>
@@ -576,7 +576,7 @@ export default function CustomFormProfileSection({
                         {!isEditing && (
                           <ActionIcon
                             variant="subtle"
-                            size="sm"
+                            size="md"
                             color="gray"
                             onClick={(ev) => { ev.stopPropagation(); handleToggleEdit(i); }}
                           >
