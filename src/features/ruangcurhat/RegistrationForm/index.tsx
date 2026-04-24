@@ -18,13 +18,13 @@ import { toISODateString } from "@/utils/dateUtils";
 type RegistrationFormProps = {
   token: string;
   whatsapp?: string;
-  gender?: string;
+  gender?: GENDER;
   birthDate?: string;
 };
 
 type RegistrationFormItems = {
   whatsapp: string;
-  gender?: string;
+  gender?: GENDER;
   birth_date?: Date;
   owner_name?: string;
   problem_ownership?: string;
@@ -99,7 +99,7 @@ export default function RegistrationForm({
 
       await editProfile({
         whatsapp: whatsappNumber,
-        gender: val.gender === "Laki-laki" ? GENDER.Male : GENDER.Female,
+        gender: val.gender,
         birth_date: toISODateString(val.birth_date),
       });
       const resp = await postRuangCurhat(token, {
