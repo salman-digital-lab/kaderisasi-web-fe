@@ -2,8 +2,8 @@
 
 import { cookies } from "next/headers";
 
-import { LoginResp } from "../../types/api/auth";
 import { serverApiConfig } from "../../config/apiConfig";
+import type { LoginResp } from "../../types/api/auth";
 
 import fetcher from "../common/fetcher";
 import { getErrorMessage } from "../../types/server-action";
@@ -19,10 +19,6 @@ type LoginFormData = {
 };
 
 export default async function login({ email, password }: LoginFormData) {
-  (await cookies()).delete(SESSION_COOKIE_NAME);
-  (await cookies()).delete(NAME_COOKIE_NAME);
-  (await cookies()).delete(PROFILE_PICTURE_COOKIE_NAME);
-
   const rawFormData = {
     email,
     password,
@@ -40,18 +36,32 @@ export default async function login({ email, password }: LoginFormData) {
       },
     );
 
+    const token = response.data?.token?.token;
+
+    if (!token) {
+      return {
+        success: false,
+        message: "LOGIN_TOKEN_NOT_FOUND",
+      };
+    }
+
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    (await cookies()).set(SESSION_COOKIE_NAME, response?.data?.token?.token, {
+    const cookieStore = await cookies();
+    cookieStore.delete(SESSION_COOKIE_NAME);
+    cookieStore.delete(NAME_COOKIE_NAME);
+    cookieStore.delete(PROFILE_PICTURE_COOKIE_NAME);
+
+    cookieStore.set(SESSION_COOKIE_NAME, token, {
       expires: tomorrow,
     });
-    (await cookies()).set(NAME_COOKIE_NAME, response?.data?.data?.name, {
+    cookieStore.set(NAME_COOKIE_NAME, response.data?.data?.name || "", {
       expires: tomorrow,
     });
-    (await cookies()).set(
+    cookieStore.set(
       PROFILE_PICTURE_COOKIE_NAME,
-      response?.data?.data?.picture || "",
+      response.data?.data?.picture || "",
       {
         expires: tomorrow,
       },

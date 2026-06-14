@@ -13,12 +13,22 @@ export const metadata = {
     "Masuk ke akun Kaderisasi Salman untuk mendaftar kegiatan, mengakses Ruang Curhat, dan melihat status pendaftaran Anda.",
 };
 
+function normalizeRedirect(redirect: string | string[] | undefined) {
+  const value = Array.isArray(redirect) ? redirect[0] : redirect;
+
+  if (!value || value === "undefined") {
+    return undefined;
+  }
+
+  return value;
+}
+
 export default async function Page({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const redirect = (await searchParams).redirect;
+  const redirect = normalizeRedirect((await searchParams).redirect);
   return (
     <Container size={420} my={40}>
       <div className={classes.logo}>
@@ -35,7 +45,11 @@ export default async function Page({
             textDecoration: "none",
             color: "var(--mantine-color-blue-6)",
           }}
-          href={`/register?redirect=${redirect}`}
+          href={
+            redirect
+              ? `/register?redirect=${encodeURIComponent(redirect)}`
+              : "/register"
+          }
         >
           Buat Akun Disini
         </Link>
@@ -66,7 +80,7 @@ export default async function Page({
       </Text>
 
       <Paper withBorder p={30} mt={24} radius="md">
-        <LoginForm redirect={redirect as string | undefined} />
+        <LoginForm redirect={redirect} />
         <Link href="/" style={{ textDecoration: "none" }}>
           <Button variant="default" fullWidth mt="xl">
             Kembali ke Beranda
