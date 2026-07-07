@@ -8,7 +8,6 @@ import {
   Checkbox,
   Divider,
   Group,
-  MultiSelect,
   NumberInput,
   Paper,
   Progress,

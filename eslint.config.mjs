@@ -7,7 +7,7 @@ export default defineConfig([
   ...nextTs,
   {
     rules: {
-      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-explicit-any": "off",
       "react-hooks/error-boundaries": "off",
       "react-hooks/immutability": "off",
       "react-hooks/set-state-in-effect": "off",

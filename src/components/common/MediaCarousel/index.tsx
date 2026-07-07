@@ -7,7 +7,6 @@ import {
   Divider,
   Box,
   Image,
-  rem,
   Button,
   Text,
 } from "@mantine/core";

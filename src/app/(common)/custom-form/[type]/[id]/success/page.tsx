@@ -3,7 +3,6 @@ import { getCustomFormByFeature } from "@/services/customForm";
 import { Container, Paper, Title, Text, Button, Stack, Alert } from "@mantine/core";
 import { redirect } from "next/navigation";
 import ErrorWrapper from "@/components/layout/Error";
-import { IconCheck } from "@tabler/icons-react";
 import Link from "next/link";
 import styles from "./page.module.css";
 
@@ -13,17 +12,20 @@ export default async function SuccessPage(props: {
   const params = await props.params;
   const { type, id } = params;
 
+  if (type === "club") {
+    redirect("/");
+  }
+
   await verifySession();
 
   // Validate type
-  if (!["activity", "club", "independent"].includes(type)) {
+  if (!["activity", "independent"].includes(type)) {
     return <ErrorWrapper message="Invalid form type" />;
   }
 
   // Map type to feature_type for API
   const featureTypeMap = {
     activity: "activity_registration",
-    club: "club_registration",
     independent: "independent_form",
   } as const;
 
@@ -47,9 +49,6 @@ export default async function SuccessPage(props: {
     if (featureType === "activity_registration") {
       redirectUrl = "/activity";
       redirectLabel = "Lihat Daftar Kegiatan";
-    } else if (featureType === "club_registration") {
-      redirectUrl = "/clubs";
-      redirectLabel = "Lihat Daftar Unit Kegiatan";
     }
 
     return (
@@ -116,4 +115,3 @@ export default async function SuccessPage(props: {
     return <ErrorWrapper message="An error occurred" />;
   }
 }
-

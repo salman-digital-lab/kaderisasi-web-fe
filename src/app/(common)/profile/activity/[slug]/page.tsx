@@ -113,12 +113,6 @@ export default async function Page(props: {
       .format("DD MMMM YYYY [pukul] HH:mm");
   };
 
-  const formatUpdateDate = () => {
-    return dayjs(registrationData.updated_at)
-      .locale("id")
-      .format("DD MMMM YYYY [pukul] HH:mm");
-  };
-
   const getRelativeTime = (date: string) => {
     const now = dayjs();
     const target = dayjs(date);

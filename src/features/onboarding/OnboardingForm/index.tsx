@@ -196,7 +196,7 @@ export default function OnboardingForm({
     }
 
     setSubmitMessage(null);
-  }, [currentStep, form.errors, form.values.mode, isExistingAccountLoggedIn]);
+  }, [currentStep, form, form.errors, form.values.mode, isExistingAccountLoggedIn]);
 
   useEffect(() => {
     if (form.values.country === "" || isIndonesia) {

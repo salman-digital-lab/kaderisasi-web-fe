@@ -21,7 +21,6 @@ import {
   IconUser,
   IconHome,
   IconCalendarEvent,
-  IconUsers,
   IconMessageCircle,
   IconTrophy,
   IconActivity,
@@ -48,7 +47,6 @@ type NavItem = {
 const navItems: NavItem[] = [
   { label: "Beranda", href: "/", icon: IconHome },
   { label: "Kegiatan", href: "/activity", icon: IconCalendarEvent },
-  { label: "Unit Kegiatan & Kepanitiaan", href: "/clubs", icon: IconUsers },
   { label: "Ruang Curhat", href: "/consultation", icon: IconMessageCircle },
   { label: "Leaderboard", href: "/leaderboard", icon: IconTrophy },
 ];

@@ -22,7 +22,7 @@ import {
   IconCheck,
   IconX,
 } from "@tabler/icons-react";
-import { useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { Activity, Registrant } from "@/types/model/activity";
 import { ACTIVITY_REGISTRANT_STATUS_ENUM } from "@/types/constants/activity";
@@ -83,7 +83,7 @@ export default function PersonalActivityData({
   );
 
   // Reset page when search changes
-  useMemo(() => {
+  useEffect(() => {
     setPage(1);
   }, [searchQuery]);
 

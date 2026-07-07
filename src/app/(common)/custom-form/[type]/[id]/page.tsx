@@ -8,8 +8,8 @@ import { redirect } from "next/navigation";
 import ErrorWrapper from "@/components/layout/Error";
 import { FetcherError } from "@/functions/common/fetcher";
 import CustomFormContent from "@/features/customForm/CustomFormContent";
-import { PublicUser, Member } from "@/types/model/members";
-import { Province } from "@/types/model/province";
+import type { PublicUser, Member } from "@/types/model/members";
+import type { Province } from "@/types/model/province";
 import type { Country } from "@/types/model/country";
 import { ACTIVITY_TYPE_ENUM } from "@/types/constants/activity";
 
@@ -20,6 +20,10 @@ export default async function Page(props: {
   const params = await props.params;
   const searchParams = await props.searchParams;
   const { type, id } = params;
+
+  if (type === "club") {
+    redirect("/");
+  }
 
   let profileData:
     | {
@@ -33,14 +37,13 @@ export default async function Page(props: {
   const sessionData = await verifySession();
 
   // Validate type
-  if (!["activity", "club", "independent"].includes(type)) {
+  if (!["activity", "independent"].includes(type)) {
     return <ErrorWrapper message="Invalid form type" />;
   }
 
   // Map type to feature_type for API
   const featureTypeMap = {
     activity: "activity_registration",
-    club: "club_registration",
     independent: "independent_form",
   } as const;
 

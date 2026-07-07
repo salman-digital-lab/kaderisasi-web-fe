@@ -106,6 +106,7 @@ function CertificateElementRenderer({
       case "signature":
         if (element.imageUrl) {
           return (
+            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={element.imageUrl}
               alt={element.type}
@@ -178,10 +179,16 @@ export default function CertificateView({
         onclone: (clonedDoc) => {
           const clonedElement = clonedDoc.querySelector('[data-certificate-content]') as HTMLElement;
           if (clonedElement) {
-            (clonedElement.style as any).fontSmooth = "always";
-            (clonedElement.style as any).webkitFontSmoothing = "antialiased";
-            (clonedElement.style as any).mozFontSmoothing = "grayscale";
-            (clonedElement.style as any).fontRendering = "optimizeLegibility";
+            const clonedStyle = clonedElement.style as CSSStyleDeclaration & {
+              fontSmooth?: string;
+              webkitFontSmoothing?: string;
+              mozFontSmoothing?: string;
+              fontRendering?: string;
+            };
+            clonedStyle.fontSmooth = "always";
+            clonedStyle.webkitFontSmoothing = "antialiased";
+            clonedStyle.mozFontSmoothing = "grayscale";
+            clonedStyle.fontRendering = "optimizeLegibility";
           }
         },
       });

@@ -13,9 +13,7 @@ import classes from "./index.module.css";
 import illustration from "@/assets/homepage-1.svg";
 import Link from "next/link";
 import ActivitiesSection from "@/components/home/ActivitiesSection";
-import ClubsSection from "@/components/home/ClubsSection";
 import ActivitiesSectionSkeleton from "@/components/home/ActivitiesSectionSkeleton";
-import ClubsSectionSkeleton from "@/components/home/ClubsSectionSkeleton";
 
 export const metadata = {
   title: "Beranda",
@@ -111,11 +109,6 @@ export default function Home() {
       {/* Activities Section - Streamed with Suspense */}
       <Suspense fallback={<ActivitiesSectionSkeleton />}>
         <ActivitiesSection />
-      </Suspense>
-
-      {/* Clubs Section - Streamed with Suspense */}
-      <Suspense fallback={<ClubsSectionSkeleton />}>
-        <ClubsSection />
       </Suspense>
 
       {/* CTA Section - Static content, no data fetching */}

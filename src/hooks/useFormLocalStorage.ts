@@ -49,7 +49,7 @@ export function useFormLocalStorage(
     } finally {
       setIsLoaded(true);
     }
-  }, [storageKey]); // reset is intentionally omitted — only matters on first mount
+  }, [storageKey, reset]);
 
   // Save data to localStorage whenever it changes
   useEffect(() => {
@@ -89,4 +89,3 @@ export function useFormLocalStorage(
     isLoaded,
   };
 }
-

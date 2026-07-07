@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   getLifetimeLeaderboard,
   getMyLifetimeRank,
@@ -37,7 +37,7 @@ const LifetimeLeaderboardList = ({
   const [userRank, setUserRank] = useState<number | null>(null);
   const [userScore, setUserScore] = useState<number>(0);
 
-  const fetchLeaderboard = async () => {
+  const fetchLeaderboard = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -66,11 +66,11 @@ const LifetimeLeaderboardList = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [userSession]);
 
   useEffect(() => {
     fetchLeaderboard();
-  }, [userSession, userName]);
+  }, [fetchLeaderboard]);
 
   const getPositionClass = (index: number) => {
     if (index === 0) return styles.top1;

@@ -4,10 +4,10 @@ import { Avatar } from "@mantine/core";
 
 interface ProfilePictureProps {
   src?: string;
-  token: string;
+  token?: string;
 }
 
-export default function ProfilePictureNav({ src, token }: ProfilePictureProps) {
+export default function ProfilePictureNav({ src }: ProfilePictureProps) {
   return (
     <Avatar
       radius="xl"

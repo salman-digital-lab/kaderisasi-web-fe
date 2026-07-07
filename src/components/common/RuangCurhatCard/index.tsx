@@ -9,15 +9,12 @@ import {
   Box,
   ThemeIcon,
 } from "@mantine/core";
-import { 
-  IconCalendarTime, 
-  IconUser, 
+import {
   IconMessageCircle, 
   IconClock,
   IconCheck,
   IconX,
   IconAlertCircle,
-  IconHeartHandshake,
 } from "@tabler/icons-react";
 
 import {

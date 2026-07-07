@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Paper, Title, Text, Stack, ThemeIcon, Group, Box } from "@mantine/core";
+import { Paper, Title, Stack, ThemeIcon, Group, Box } from "@mantine/core";
 import { IconClipboardList } from "@tabler/icons-react";
 import { RegistrationInfo } from "@/types/model/club";
 

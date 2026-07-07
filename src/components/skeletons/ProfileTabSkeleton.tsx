@@ -1,6 +1,6 @@
 "use client";
 
-import { Skeleton, Stack, Group, Paper, Box, Card } from "@mantine/core";
+import { Skeleton, Stack, Group, Box, Card } from "@mantine/core";
 
 export function ProfileTabListSkeleton() {
   return (
@@ -74,4 +74,3 @@ export function ProfileTabContentSkeleton() {
 }
 
 export default ProfileTabContentSkeleton;
-

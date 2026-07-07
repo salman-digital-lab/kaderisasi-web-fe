@@ -42,7 +42,7 @@ export default function RegistrationForm({ redirect }: { redirect?: string }) {
       } else {
         showNotif(response.message, true);
       }
-    } catch (error: unknown) {
+    } catch {
       showNotif("Terjadi kesalahan pada sistem", true);
     }
   };

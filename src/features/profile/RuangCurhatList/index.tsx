@@ -11,7 +11,6 @@ import {
   TextInput,
   Card,
   Group,
-  Badge,
   Button,
 } from "@mantine/core";
 import {
@@ -19,11 +18,9 @@ import {
   IconSearch,
   IconPlus,
   IconCalendar,
-  IconUser,
   IconClock,
   IconCheck,
   IconX,
-  IconAlertCircle,
 } from "@tabler/icons-react";
 import { RuangCurhatData } from "@/types/model/ruangcurhat";
 import RuangCurhatCard from "@/components/common/RuangCurhatCard";

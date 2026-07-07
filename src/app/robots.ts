@@ -1,4 +1,4 @@
-import { MetadataRoute } from "next";
+import type { MetadataRoute } from "next";
 
 const BASE_URL = "https://kaderisasi.salmanitb.com";
 
@@ -27,6 +27,8 @@ export default function robots(): MetadataRoute.Robots {
           "/leaderboard/edit/",
           "/custom-form/",
           "/form/",
+          "/clubs",
+          "/clubs/",
           "/clubs/registration-info/",
           "/reset",
         ],

@@ -800,7 +800,7 @@ export default function CustomFormProfileSection({
       }
 
       onSubmit(values);
-    } catch (error) {
+    } catch {
       showNotif("Terjadi kesalahan jaringan. Silakan coba lagi.", true);
     } finally {
       onLoadingChange?.(false);
