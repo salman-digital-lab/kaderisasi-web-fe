@@ -1,7 +1,7 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getToken } from "@/functions/auth/getToken";
-import { getCertificate } from "@/services/certificate";
+import { getCertificate, getCertificateByCode } from "@/services/certificate";
 import CertificateView from "@/features/certificate/CertificateView";
 import { FetcherError } from "@/functions/common/fetcher";
 
@@ -14,9 +14,11 @@ export default async function CertificatePage(props: {
   params: Promise<{ registrationId: string }>;
 }) {
   const params = await props.params;
-  const registrationId = parseInt(params.registrationId, 10);
+  const certificateParam = params.registrationId;
+  const registrationId = parseInt(certificateParam, 10);
+  const isLegacyRegistrationUrl = !Number.isNaN(registrationId) && registrationId > 0;
 
-  if (isNaN(registrationId) || registrationId <= 0) {
+  if (!certificateParam) {
     notFound();
   }
 
@@ -24,7 +26,9 @@ export default async function CertificatePage(props: {
   const token = await getToken();
 
   try {
-    const certificateData = await getCertificate(registrationId);
+    const certificateData = isLegacyRegistrationUrl
+      ? await getCertificate(registrationId)
+      : await getCertificateByCode(certificateParam);
 
     return (
       <CertificateView

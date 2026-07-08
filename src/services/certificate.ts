@@ -17,6 +17,20 @@ export const getCertificate = async (registrationId: number) => {
   return response.data;
 };
 
+export const getCertificateByCode = async (certificateCode: string) => {
+  const { beApi } = getApiConfig();
+  const response = await fetcher<PostGenerateSingleCertificateResp>(
+    beApi + "/certificates/code/" + certificateCode,
+    {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      cache: "no-store",
+    },
+  );
+
+  return response.data;
+};
+
 // Authenticated — verifies ownership, used for download action
 export const downloadCertificate = async (
   token: string,

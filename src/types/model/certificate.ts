@@ -25,7 +25,7 @@ export type CertificateData = {
   activity: {
     id: number;
     name: string;
-    activity_start: string;
+    activity_start: string | null;
   };
   template: {
     id: number;
@@ -35,11 +35,21 @@ export type CertificateData = {
   };
   participant: {
     registration_id: number;
-    user_id: number;
+    user_id: number | null;
     name: string;
     email: string;
     university: string;
     activity_name: string;
     activity_date: string;
+  };
+  certificate?: {
+    id: number;
+    certificate_code: string;
+    registration_id: number;
+    activity_id: number;
+    template_id: number;
+    issued_at: string;
+    revoked_at: string | null;
+    revoked_reason: string | null;
   };
 };

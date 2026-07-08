@@ -10,13 +10,14 @@ import {
   Box,
   Paper,
   Tooltip,
+  Alert,
 } from "@mantine/core";
 import { IconArrowLeft, IconDownload, IconLogin } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import QRCode from "react-qr-code";
 import { useState, useRef } from "react";
-import { CertificateData, CertificateElement } from "@/types/model/certificate";
+import type { CertificateData, CertificateElement } from "@/types/model/certificate";
 
 type CertificateViewProps = {
   data: CertificateData;
@@ -28,6 +29,7 @@ type CertificateViewProps = {
 function resolveVariable(
   variable: string | undefined,
   participant: CertificateData["participant"],
+  certificate?: CertificateData["certificate"],
 ): string {
   const varName = variable?.replace(/\{\{|\}\}/g, "").trim() || "";
   switch (varName) {
@@ -40,11 +42,15 @@ function resolveVariable(
     case "activity_name":
       return participant.activity_name;
     case "activity_date":
+    case "date":
       return participant.activity_date;
     case "registration_id":
       return String(participant.registration_id);
     case "user_id":
       return String(participant.user_id);
+    case "certificate_id":
+    case "certificate_code":
+      return certificate?.certificate_code || "";
     default:
       return "";
   }
@@ -53,10 +59,12 @@ function resolveVariable(
 function CertificateElementRenderer({
   element,
   participant,
+  certificate,
   certificateUrl,
 }: {
   element: CertificateElement;
   participant: CertificateData["participant"];
+  certificate?: CertificateData["certificate"];
   certificateUrl: string;
 }) {
   const isTextType =
@@ -79,7 +87,7 @@ function CertificateElementRenderer({
       case "variable-text":
         return (
           <div style={textStyle}>
-            {resolveVariable(element.variable, participant)}
+            {resolveVariable(element.variable, participant, certificate)}
           </div>
         );
       case "qr-code": {
@@ -151,13 +159,16 @@ export default function CertificateView({
   const certificateRef = useRef<HTMLDivElement>(null);
   const { template, participant, activity } = data;
   const { template_data, background_image } = template;
+  const certificateCode = data.certificate?.certificate_code;
+  const isRevoked = !!data.certificate?.revoked_at;
 
   const backgroundImageUrl = background_image
     ? `${imageBaseUrl}/${background_image}`
     : null;
 
-  const certificateUrl = `${appUrl}/certificate/${participant.registration_id}`;
-  const loginRedirect = `/login?redirect=/certificate/${participant.registration_id}`;
+  const certificatePath = `/certificate/${certificateCode || participant.registration_id}`;
+  const certificateUrl = `${appUrl}${certificatePath}`;
+  const loginRedirect = `/login?redirect=${encodeURIComponent(certificatePath)}`;
 
   const handleDownloadPdf = async () => {
     if (!certificateRef.current) return;
@@ -252,6 +263,7 @@ export default function CertificateView({
                 leftSection={<IconDownload size={16} />}
                 onClick={handleDownloadPdf}
                 loading={isDownloading}
+                disabled={isRevoked}
               >
                 Unduh PDF
               </Button>
@@ -269,6 +281,11 @@ export default function CertificateView({
           {/* Certificate info */}
           <Paper withBorder p="md" radius="sm">
             <Stack gap="xs">
+              {isRevoked && (
+                <Alert color="red" title="Sertifikat tidak valid">
+                  Sertifikat ini telah dicabut.
+                </Alert>
+              )}
               <Title order={3}>{activity.name}</Title>
               <Text c="dimmed">
                 Sertifikat atas nama:{" "}
@@ -279,6 +296,14 @@ export default function CertificateView({
               <Text size="md" c="dimmed">
                 Tanggal kegiatan: {participant.activity_date}
               </Text>
+              {certificateCode && (
+                <Text size="md" c="dimmed">
+                  Kode sertifikat:{" "}
+                  <Text component="span" fw={600} c="dark">
+                    {certificateCode}
+                  </Text>
+                </Text>
+              )}
             </Stack>
           </Paper>
 
@@ -317,6 +342,7 @@ export default function CertificateView({
                   key={element.id}
                   element={element}
                   participant={participant}
+                  certificate={data.certificate}
                   certificateUrl={certificateUrl}
                 />
               ))}

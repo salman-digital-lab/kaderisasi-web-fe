@@ -1,4 +1,4 @@
-import { APIResponse } from "../helper";
-import { CertificateData } from "../model/certificate";
+import type { APIResponse } from "../helper";
+import type { CertificateData } from "../model/certificate";
 
 export type PostGenerateSingleCertificateResp = APIResponse<CertificateData>;
