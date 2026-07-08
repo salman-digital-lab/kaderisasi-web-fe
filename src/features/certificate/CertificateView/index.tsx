@@ -18,6 +18,7 @@ import Link from "next/link";
 import QRCode from "react-qr-code";
 import { useState, useRef } from "react";
 import type { CertificateData, CertificateElement } from "@/types/model/certificate";
+import { saveCertificatePdf } from "../utils/certificatePdf";
 
 type CertificateViewProps = {
   data: CertificateData;
@@ -56,6 +57,18 @@ function resolveVariable(
   }
 }
 
+function getJustifyContent(align?: CertificateElement["textAlign"]): string {
+  if (align === "left") return "flex-start";
+  if (align === "right") return "flex-end";
+  return "center";
+}
+
+function getAlignItems(align?: CertificateElement["verticalAlign"]): string {
+  if (align === "top") return "flex-start";
+  if (align === "bottom") return "flex-end";
+  return "center";
+}
+
 function CertificateElementRenderer({
   element,
   participant,
@@ -71,13 +84,23 @@ function CertificateElementRenderer({
     element.type === "static-text" || element.type === "variable-text";
 
   const textStyle: React.CSSProperties = {
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    alignItems: getAlignItems(element.verticalAlign),
+    justifyContent: getJustifyContent(element.textAlign),
     fontSize: element.fontSize || 16,
     fontFamily: element.fontFamily || "sans-serif",
+    fontWeight: element.fontWeight || "normal",
+    fontStyle: element.fontStyle || "normal",
+    textDecoration: element.textDecoration || "none",
     color: element.color || "#000000",
     textAlign: element.textAlign || "center",
     margin: 0,
     wordBreak: "break-word",
-    lineHeight: 1.4,
+    whiteSpace: "pre-wrap",
+    lineHeight: element.lineHeight || 1.4,
+    letterSpacing: element.letterSpacing || 0,
   };
 
   const renderContent = () => {
@@ -118,7 +141,12 @@ function CertificateElementRenderer({
             <img
               src={element.imageUrl}
               alt={element.type}
-              style={{ width: "100%", height: "100%", objectFit: "contain" }}
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: element.objectFit || "contain",
+                borderRadius: element.borderRadius || 0,
+              }}
               draggable={false}
             />
           );
@@ -128,6 +156,8 @@ function CertificateElementRenderer({
         return null;
     }
   };
+
+  if (element.visible === false) return null;
 
   return (
     <div
@@ -141,7 +171,13 @@ function CertificateElementRenderer({
           : { height: element.height }),
         padding: 4,
         boxSizing: "border-box",
+        opacity: (element.opacity ?? 100) / 100,
+        transform: `rotate(${element.rotation || 0}deg)`,
+        transformOrigin: "center center",
+        borderRadius: element.borderRadius || 0,
+        overflow: "hidden",
       }}
+      data-certificate-text-element={isTextType ? "true" : undefined}
     >
       {renderContent()}
     </div>
@@ -175,45 +211,15 @@ export default function CertificateView({
 
     setIsDownloading(true);
     try {
-      const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
-        import("html2canvas"),
-        import("jspdf"),
-      ]);
-
-      const canvas = await html2canvas(certificateRef.current, {
-        scale: 4,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: "#ffffff",
-        logging: false,
-        imageTimeout: 0,
-        onclone: (clonedDoc) => {
-          const clonedElement = clonedDoc.querySelector('[data-certificate-content]') as HTMLElement;
-          if (clonedElement) {
-            const clonedStyle = clonedElement.style as CSSStyleDeclaration & {
-              fontSmooth?: string;
-              webkitFontSmoothing?: string;
-              mozFontSmoothing?: string;
-              fontRendering?: string;
-            };
-            clonedStyle.fontSmooth = "always";
-            clonedStyle.webkitFontSmoothing = "antialiased";
-            clonedStyle.mozFontSmoothing = "grayscale";
-            clonedStyle.fontRendering = "optimizeLegibility";
-          }
-        },
+      await saveCertificatePdf({
+        template: template_data,
+        sourceElement: certificateRef.current,
+        filename: `sertifikat-${participant.name.replace(/\s+/g, "-")}.pdf`,
+        resolveText: (element) =>
+          element.type === "variable-text"
+            ? resolveVariable(element.variable, participant, data.certificate)
+            : element.content || "",
       });
-
-      const imgData = canvas.toDataURL("image/png", 1.0);
-      const pdf = new jsPDF({
-        orientation: template_data.canvasWidth > template_data.canvasHeight ? "landscape" : "portrait",
-        unit: "px",
-        format: [template_data.canvasWidth, template_data.canvasHeight],
-        hotfixes: ["px_scaling"],
-      });
-
-      pdf.addImage(imgData, "PNG", 0, 0, template_data.canvasWidth, template_data.canvasHeight, undefined, "FAST");
-      pdf.save(`sertifikat-${participant.name.replace(/\s+/g, "-")}.pdf`);
     } catch (error) {
       console.error("Error generating PDF:", error);
     } finally {
