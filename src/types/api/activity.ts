@@ -5,6 +5,7 @@ export type GetActivitiesReq = {
   per_page?: string;
   page?: string;
   search?: string;
+  club_id?: string;
 };
 
 export type GetActivitiesResp = APIPagiResponse<Activity>;

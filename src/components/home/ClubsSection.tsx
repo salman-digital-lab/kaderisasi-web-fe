@@ -37,6 +37,7 @@ export async function ClubsSection() {
                 key={club.id}
                 id={club.id}
                 name={club.name}
+                club_type={club.club_type}
                 short_description={club.short_description}
                 logo={club.logo}
                 start_period={club.start_period}

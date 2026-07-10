@@ -37,6 +37,7 @@ export type Activity = {
   minimum_level: USER_LEVEL_ENUM;
   activity_type: number;
   activity_category: ACTIVITY_CATEGORY_ENUM;
+  club_id?: number | null;
   images: string[];
   additional_config: {
     additional_questionnaire?: Questionnaire[];

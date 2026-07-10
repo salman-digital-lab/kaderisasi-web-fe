@@ -19,6 +19,7 @@ import {
 } from "@/services/clubRegistration";
 import { ClubRegistrationStatus } from "@/types/model/clubRegistration";
 import { useRouter } from "next/navigation";
+import type { CustomForm } from "@/types/api/customForm";
 
 interface ClubRegistrationButtonProps {
   clubId: number;
@@ -27,7 +28,7 @@ interface ClubRegistrationButtonProps {
   onLoginRequired?: () => void;
   afterRegistrationInfo?: string;
   isRegistrationOpen: boolean;
-  customForm?: any;
+  customForm?: CustomForm;
 }
 
 const ClubRegistrationButton: React.FC<ClubRegistrationButtonProps> = ({

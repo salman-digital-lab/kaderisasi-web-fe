@@ -5,13 +5,15 @@ import { getClubs } from "@/services/club.cache";
 
 type ClubsListContentProps = {
   search: string;
+  clubType?: string;
 };
 
-export async function ClubsListContent({ search }: ClubsListContentProps) {
+export async function ClubsListContent({ search, clubType }: ClubsListContentProps) {
   const { data: clubs } = await getClubs({
     page: "1",
     per_page: "9999",
     search,
+    club_type: clubType,
   });
 
   if (clubs.length === 0) {
@@ -42,6 +44,7 @@ export async function ClubsListContent({ search }: ClubsListContentProps) {
           key={club.id}
           id={club.id}
           name={club.name}
+          club_type={club.club_type}
           short_description={club.short_description}
           logo={club.logo}
           start_period={club.start_period}

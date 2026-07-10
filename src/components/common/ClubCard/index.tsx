@@ -7,6 +7,7 @@ import NextImage from "next/image";
 import { Text, Group, Badge, Button, rem, Card } from "@mantine/core";
 import classes from "./index.module.css";
 import { IconCalendarTime, IconUsers } from "@tabler/icons-react";
+import type { ClubType } from "@/types/model/club";
 
 // Set the locale globally for this component
 dayjs.locale("id");
@@ -14,6 +15,7 @@ dayjs.locale("id");
 type ClubCardProps = {
   id: number;
   name: string;
+  club_type?: ClubType;
   short_description: string | null;
   logo: string;
   start_period: string | null;
@@ -23,6 +25,7 @@ type ClubCardProps = {
 export default function ClubCard({
   id,
   name,
+  club_type,
   short_description,
   logo,
   start_period,
@@ -63,6 +66,13 @@ export default function ClubCard({
         <Text fz="md" fw={600} ta="center" lineClamp={2}>
           {name}
         </Text>
+        {club_type && (
+          <Group justify="center" mt="xs">
+            <Badge color={club_type === "AVISMAN" ? "violet" : "blue"} variant="light">
+              {club_type}
+            </Badge>
+          </Group>
+        )}
         {short_description && (
           <Text c="dimmed" ta="center" lineClamp={3} mt="xs">
             {short_description}

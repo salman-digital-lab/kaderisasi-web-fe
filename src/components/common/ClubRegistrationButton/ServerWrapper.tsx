@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import ClubRegistrationButton from "./index";
+import type { CustomForm } from "@/types/api/customForm";
 
 interface ClubRegistrationButtonServerWrapperProps {
   clubId: number;
@@ -9,7 +10,7 @@ interface ClubRegistrationButtonServerWrapperProps {
   isAuthenticated: boolean;
   afterRegistrationInfo?: string;
   isRegistrationOpen?: boolean;
-  customForm?: any; // Add custom form prop
+  customForm?: CustomForm;
 }
 
 /**
