@@ -8,7 +8,6 @@ interface ClubRegistrationButtonServerWrapperProps {
   clubId: number;
   clubName: string;
   isAuthenticated: boolean;
-  afterRegistrationInfo?: string;
   isRegistrationOpen?: boolean;
   customForm?: CustomForm;
 }
@@ -21,7 +20,6 @@ const ClubRegistrationButtonServerWrapper: React.FC<ClubRegistrationButtonServer
   clubId,
   clubName,
   isAuthenticated,
-  afterRegistrationInfo,
   isRegistrationOpen,
   customForm,
 }) => {
@@ -37,7 +35,6 @@ const ClubRegistrationButtonServerWrapper: React.FC<ClubRegistrationButtonServer
       clubName={clubName}
       isAuthenticated={isAuthenticated}
       onLoginRequired={handleLoginRequired}
-      afterRegistrationInfo={afterRegistrationInfo}
       isRegistrationOpen={isRegistrationOpen ?? false}
       customForm={customForm}
     />

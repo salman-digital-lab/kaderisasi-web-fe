@@ -145,9 +145,6 @@ export default async function ClubDetailPage({ params }: ClubDetailPageProps) {
                   clubId={club.id}
                   clubName={club.name}
                   isAuthenticated={Boolean(sessionData.session)}
-                  afterRegistrationInfo={
-                    club.registration_info?.after_registration_info
-                  }
                   isRegistrationOpen={Boolean(club.is_registration_open)}
                   customForm={customForm}
                 />

@@ -26,10 +26,6 @@ export interface ClubRegistration {
   roles?: ClubRegistrationRole[];
 }
 
-export interface ClubRegistrationRequest {
-  additional_data?: Record<string, any>;
-}
-
 export interface ClubRegistrationUpdateRequest {
   additional_data?: Record<string, any>;
 }

@@ -2,7 +2,6 @@ import fetcher from "../functions/common/fetcher";
 import { getApiConfig } from "../config/apiConfig";
 import {
   ClubRegistration,
-  ClubRegistrationRequest,
   ClubRegistrationUpdateRequest,
   ClubRegistrationStatus,
 } from "../types/model/clubRegistration";
@@ -47,23 +46,6 @@ const getAuthHeaders = (token?: string): Record<string, string> => {
   }
 
   return headers;
-};
-
-// Club registration endpoints for public users
-export const registerToClub = async (
-  clubId: number,
-  data: ClubRegistrationRequest = {},
-  token?: string,
-): Promise<ApiResponse<ClubRegistration>> => {
-  const { beApi } = getApiConfig();
-  return await fetcher<ApiResponse<ClubRegistration>>(
-    `${beApi}/clubs/${clubId}/register`,
-    {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: getAuthHeaders(token),
-    },
-  );
 };
 
 export const getRegistrationStatus = async (

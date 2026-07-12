@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { notifications } from "@mantine/notifications";
 import {
+  Alert,
   Button,
   Badge,
   Stack,
@@ -12,11 +13,7 @@ import {
   Modal,
 } from "@mantine/core";
 import { IconCheck, IconX } from "@tabler/icons-react";
-import {
-  getRegistrationStatus,
-  cancelMyRegistration,
-  registerToClub,
-} from "@/services/clubRegistration";
+import { getRegistrationStatus, cancelMyRegistration } from "@/services/clubRegistration";
 import { ClubRegistrationStatus } from "@/types/model/clubRegistration";
 import { useRouter } from "next/navigation";
 import type { CustomForm } from "@/types/api/customForm";
@@ -26,7 +23,6 @@ interface ClubRegistrationButtonProps {
   clubName: string;
   isAuthenticated: boolean;
   onLoginRequired?: () => void;
-  afterRegistrationInfo?: string;
   isRegistrationOpen: boolean;
   customForm?: CustomForm;
 }
@@ -36,7 +32,6 @@ const ClubRegistrationButton: React.FC<ClubRegistrationButtonProps> = ({
   clubName,
   isAuthenticated,
   onLoginRequired,
-  afterRegistrationInfo,
   isRegistrationOpen,
   customForm,
 }) => {
@@ -72,39 +67,13 @@ const ClubRegistrationButton: React.FC<ClubRegistrationButtonProps> = ({
     return null;
   }
 
-  const handleRegister = async () => {
+  const handleRegister = () => {
     if (!isAuthenticated) {
       onLoginRequired?.();
       return;
     }
 
-    // If custom form exists, redirect to custom form page
-    if (customForm && customForm.is_active) {
-      router.push(`/custom-form/club/${clubId}`);
-      return;
-    }
-
-    // Otherwise, directly register to club
-    setIsLoading(true);
-    try {
-      await registerToClub(clubId);
-      notifications.show({
-        title: "Pendaftaran Berhasil",
-        message: `Berhasil mendaftar ke ${clubName}`,
-        color: "green",
-      });
-      // Refresh registration status
-      await checkRegistrationStatus();
-    } catch (error: any) {
-      const message = error.response?.data?.message || "Gagal mendaftar ke klub";
-      notifications.show({
-        title: "Pendaftaran Gagal",
-        message: message,
-        color: "red",
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    router.push(`/custom-form/club/${clubId}`);
   };
 
   const handleDeleteConfirm = async () => {
@@ -220,28 +189,6 @@ const ClubRegistrationButton: React.FC<ClubRegistrationButtonProps> = ({
             {new Date(registration.created_at).toLocaleDateString("id-ID")}
           </Text>
 
-          {afterRegistrationInfo && (
-            <div
-              style={{
-                marginTop: "12px",
-                padding: "12px",
-                backgroundColor: "var(--mantine-color-blue-0)",
-                border: "1px solid var(--mantine-color-blue-3)",
-                borderRadius: "var(--mantine-radius-sm)",
-              }}
-            >
-              <Text size="md" c="blue.8" fw={500} mb="xs">
-                Informasi Setelah Pendaftaran:
-              </Text>
-              <div
-                dangerouslySetInnerHTML={{ __html: afterRegistrationInfo }}
-                style={{
-                  fontSize: "var(--mantine-font-size-md)",
-                  lineHeight: 1.5,
-                }}
-              />
-            </div>
-          )}
         </Stack>
 
         <Modal
@@ -270,6 +217,14 @@ const ClubRegistrationButton: React.FC<ClubRegistrationButtonProps> = ({
           </Stack>
         </Modal>
       </>
+    );
+  }
+
+  if (!customForm?.is_active) {
+    return (
+      <Alert color="yellow" title="Form pendaftaran belum tersedia">
+        Pendaftaran belum dapat dilakukan. Silakan coba kembali nanti.
+      </Alert>
     );
   }
 

@@ -12,7 +12,6 @@ export type MediaStructure = {
 
 export type RegistrationInfo = {
   registration_info: string;
-  after_registration_info: string;
 };
 
 export type ClubType = 'UKM' | 'AVISMAN';
