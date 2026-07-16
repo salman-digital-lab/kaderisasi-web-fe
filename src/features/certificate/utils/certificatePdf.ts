@@ -1,9 +1,13 @@
 import type { jsPDF } from "jspdf";
-import type { CertificateElement, CertificateTemplateData } from "@/types/model/certificate";
+import type {
+  CertificateElement,
+  CertificateTemplateData,
+} from "@/types/model/certificate";
 
 const PDF_RASTER_SCALE = 2;
 const PDF_RASTER_IMAGE_QUALITY = 0.92;
 const ELEMENT_PADDING = 4;
+const IMAGE_LOAD_TIMEOUT_MS = 15_000;
 const A4_PORTRAIT = { width: 595.28, height: 841.89 };
 const LETTER_PORTRAIT = { width: 612, height: 792 };
 const RATIO_TOLERANCE = 0.04;
@@ -99,16 +103,22 @@ const getTextTopY = (
   metrics: PdfMetrics,
 ): number => {
   const fontSize = (element.fontSize || 16) * metrics.scaleY;
-  const lineHeight = element.lineHeight || 1.2;
+  const lineHeight = element.lineHeight || 1.4;
   const blockHeight = lineCount * fontSize * lineHeight;
 
   if (element.verticalAlign === "top") {
     return (element.y + ELEMENT_PADDING) * metrics.scaleY;
   }
   if (element.verticalAlign === "bottom") {
-    return (element.y + element.height - ELEMENT_PADDING) * metrics.scaleY - blockHeight;
+    return (
+      (element.y + element.height - ELEMENT_PADDING) * metrics.scaleY -
+      blockHeight
+    );
   }
-  return element.y * metrics.scaleY + (element.height * metrics.scaleY - blockHeight) / 2;
+  return (
+    element.y * metrics.scaleY +
+    (element.height * metrics.scaleY - blockHeight) / 2
+  );
 };
 
 const drawUnderline = (
@@ -122,7 +132,7 @@ const drawUnderline = (
   if (element.textDecoration !== "underline") return;
 
   const fontSize = (element.fontSize || 16) * metrics.scaleY;
-  const lineHeight = element.lineHeight || 1.2;
+  const lineHeight = element.lineHeight || 1.4;
   const textAlign = getTextAlign(element.textAlign);
   pdf.setLineWidth(Math.max(0.5, fontSize / 18));
 
@@ -152,7 +162,7 @@ const drawVectorTextElements = (
       if (!text) return;
 
       const fontSize = (element.fontSize || 16) * metrics.scaleY;
-      const lineHeight = element.lineHeight || 1.2;
+      const lineHeight = element.lineHeight || 1.4;
       const maxTextWidth = Math.max(
         1,
         (element.width - ELEMENT_PADDING * 2) * metrics.scaleX,
@@ -161,6 +171,12 @@ const drawVectorTextElements = (
       const anchorX = getTextAnchorX(element) * metrics.scaleX;
       const topY = getTextTopY(element, lines.length, metrics);
 
+      pdf.saveGraphicsState();
+      pdf.setGState(
+        pdf.GState({
+          opacity: Math.max(0, Math.min(1, (element.opacity ?? 100) / 100)),
+        }),
+      );
       pdf.setFont(mapFontFamily(element.fontFamily), mapFontStyle(element));
       pdf.setFontSize(fontSize);
       pdf.setTextColor(element.color || "#000000");
@@ -176,7 +192,48 @@ const drawVectorTextElements = (
       });
 
       drawUnderline(pdf, element, lines, anchorX, topY, metrics);
+      pdf.restoreGraphicsState();
     });
+};
+
+const waitForImage = async (image: HTMLImageElement): Promise<void> => {
+  if (image.complete) {
+    if (image.naturalWidth === 0) {
+      throw new Error("CERTIFICATE_IMAGE_FAILED");
+    }
+    await image.decode();
+    return;
+  }
+
+  await new Promise<void>((resolve, reject) => {
+    const timeout = window.setTimeout(() => {
+      cleanup();
+      reject(new Error("CERTIFICATE_IMAGE_TIMEOUT"));
+    }, IMAGE_LOAD_TIMEOUT_MS);
+    const cleanup = (): void => {
+      window.clearTimeout(timeout);
+      image.removeEventListener("load", handleLoad);
+      image.removeEventListener("error", handleError);
+    };
+    const handleLoad = (): void => {
+      cleanup();
+      resolve();
+    };
+    const handleError = (): void => {
+      cleanup();
+      reject(new Error("CERTIFICATE_IMAGE_FAILED"));
+    };
+
+    image.addEventListener("load", handleLoad, { once: true });
+    image.addEventListener("error", handleError, { once: true });
+  });
+};
+
+const waitForCertificateImages = async (
+  sourceElement: HTMLElement,
+): Promise<void> => {
+  const images = Array.from(sourceElement.querySelectorAll("img"));
+  await Promise.all(images.map(waitForImage));
 };
 
 export const saveCertificatePdf = async ({
@@ -185,6 +242,8 @@ export const saveCertificatePdf = async ({
   resolveText,
   filename,
 }: SaveCertificatePdfOptions): Promise<void> => {
+  await waitForCertificateImages(sourceElement);
+
   const [{ default: html2canvas }, { default: JsPDF }] = await Promise.all([
     import("html2canvas"),
     import("jspdf"),
@@ -193,11 +252,27 @@ export const saveCertificatePdf = async ({
   const rasterCanvas = await html2canvas(sourceElement, {
     scale: PDF_RASTER_SCALE,
     useCORS: true,
-    allowTaint: true,
+    allowTaint: false,
     backgroundColor: "#ffffff",
     logging: false,
-    imageTimeout: 0,
+    imageTimeout: IMAGE_LOAD_TIMEOUT_MS,
+    width: template.canvasWidth,
+    height: template.canvasHeight,
+    windowWidth: template.canvasWidth,
+    windowHeight: template.canvasHeight,
     onclone: (clonedDoc) => {
+      const clonedSource = clonedDoc.querySelector<HTMLElement>(
+        "[data-certificate-content]",
+      );
+      if (clonedSource) {
+        clonedSource.style.height = `${template.canvasHeight}px`;
+        clonedSource.style.transform = "none";
+        clonedSource.style.width = `${template.canvasWidth}px`;
+        if (clonedSource.parentElement) {
+          clonedSource.parentElement.style.left = "0";
+          clonedSource.parentElement.style.transform = "none";
+        }
+      }
       clonedDoc
         .querySelectorAll<HTMLElement>('[data-certificate-text-element="true"]')
         .forEach((element) => {

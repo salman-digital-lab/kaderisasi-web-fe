@@ -1,0 +1,35 @@
+.topBar {
+  display: grid;
+  gap: var(--mantine-spacing-sm);
+}
+
+.actions {
+  display: grid;
+  gap: var(--mantine-spacing-xs);
+  grid-template-columns: 1fr;
+}
+
+.actionButton {
+  min-height: 44px;
+  width: 100%;
+}
+
+.certificateCode {
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 48em) {
+  .topBar {
+    align-items: center;
+    grid-template-columns: auto 1fr;
+  }
+
+  .actions {
+    grid-template-columns: repeat(4, auto);
+    justify-content: end;
+  }
+
+  .actionButton {
+    width: auto;
+  }
+}

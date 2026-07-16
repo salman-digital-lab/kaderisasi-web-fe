@@ -1,15 +1,18 @@
-import { Container, Skeleton, Stack, Group } from "@mantine/core";
+import { Container, Group, Skeleton, Stack, Text } from "@mantine/core";
 
 export default function Loading() {
   return (
-    <Container size="lg" py="xl">
-      <Stack gap="xl">
+    <Container aria-busy="true" component="main" size="lg" py="xl">
+      <Text aria-live="polite" role="status" ta="center">
+        Memuat sertifikat…
+      </Text>
+      <Stack aria-hidden gap="xl" mt="md">
         <Group justify="space-between">
-          <Skeleton height={36} width={100} radius="md" />
-          <Skeleton height={36} width={140} radius="md" />
+          <Skeleton height={44} radius="md" width={110} />
+          <Skeleton height={44} radius="md" width={160} />
         </Group>
-        <Skeleton height={100} radius="md" />
-        <Skeleton height={600} radius="md" />
+        <Skeleton height={130} radius="md" />
+        <Skeleton height={520} radius="md" />
       </Stack>
     </Container>
   );

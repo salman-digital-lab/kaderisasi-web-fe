@@ -15,7 +15,6 @@ import {
   IconCalendarTime,
   IconCalendarMonth,
   IconClock,
-  IconCertificate,
 } from "@tabler/icons-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -39,6 +38,8 @@ import ErrorWrapper from "../../../../components/layout/Error";
 import { ACTIVITY_REGISTRANT_STATUS_ENUM } from "@/types/constants/activity";
 import { Activity } from "@/types/model/activity";
 import { PublicUser, Member } from "@/types/model/members";
+import { getCertificateCta } from "@/features/certificate/utils/certificateData";
+import CertificateCtaButton from "@/features/certificate/CertificateCtaButton";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
 
@@ -99,6 +100,12 @@ export default async function Page(props: {
         status: string;
         visible_at?: string;
         registration_id?: number;
+        certificate_code?: string | null;
+        certificate_state?:
+          | "not_eligible"
+          | "eligible_not_issued"
+          | "issued_active"
+          | "issued_revoked";
       }
     | undefined;
 
@@ -140,6 +147,20 @@ export default async function Page(props: {
     profileData?.profile?.level !== undefined &&
     profileData?.profile?.level >= activity.minimum_level,
   );
+
+  const certificateCta = activityRegistration
+    ? getCertificateCta({
+        certificateCode: activityRegistration.certificate_code,
+        certificateState: activityRegistration.certificate_state,
+        hasTemplate: Boolean(
+          activity?.additional_config?.certificate_template_id,
+        ),
+        isPassed:
+          activityRegistration.status ===
+          ACTIVITY_REGISTRANT_STATUS_ENUM.LULUS_KEGIATAN,
+        registrationId: activityRegistration.registration_id,
+      })
+    : null;
 
   return (
     <Stack component="main" className={classes["main-stack"]}>
@@ -217,22 +238,7 @@ export default async function Page(props: {
                     </Text>
                   </Group>
                 )}
-              {activityRegistration?.status ===
-                ACTIVITY_REGISTRANT_STATUS_ENUM.LULUS_KEGIATAN &&
-                activityRegistration?.registration_id && (
-                  <Link
-                    href={`/certificate/${activityRegistration.registration_id}`}
-                    style={{ textDecoration: "none" }}
-                  >
-                    <Button
-                      fullWidth
-                      color="green"
-                      leftSection={<IconCertificate size={16} />}
-                    >
-                      Lihat Sertifikat
-                    </Button>
-                  </Link>
-                )}
+              {certificateCta && <CertificateCtaButton cta={certificateCta} />}
             </Stack>
           ) : sessionData.session ? (
             // Logged in but not registered — registration is closed

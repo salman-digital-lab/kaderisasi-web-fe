@@ -30,6 +30,7 @@ import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { Activity, Registrant } from "@/types/model/activity";
 import { ACTIVITY_REGISTRANT_STATUS_ENUM } from "@/types/constants/activity";
+import { getCertificateCta } from "@/features/certificate/utils/certificateData";
 
 type StatusCheckContentProps = {
   activities: ({ activity: Activity } & Registrant)[];
@@ -273,69 +274,80 @@ export default function StatusCheckContent({
 
         {/* Activities List */}
         <Stack gap="md">
-          {paginatedActivities.map((activity) => (
-            <Card key={activity.activity_id} withBorder p="md" radius="md">
-              <Stack gap="sm">
-                <Group justify="space-between" align="flex-start" wrap="wrap">
-                  <Box style={{ flex: 1, minWidth: 200 }}>
-                    <Text fw={600} size="md">
-                      {activity.activity.name}
-                    </Text>
-                  </Box>
-                  <Link
-                    href={`/activity/${activity.activity.slug}`}
-                    style={{ textDecoration: "none" }}
-                  >
+          {paginatedActivities.map((activity) => {
+            const certificateCta = getCertificateCta({
+              certificateCode: activity.certificate_code,
+              certificateState: activity.certificate_state,
+              hasTemplate: Boolean(
+                activity.activity.additional_config?.certificate_template_id,
+              ),
+              isPassed:
+                activity.status ===
+                ACTIVITY_REGISTRANT_STATUS_ENUM.LULUS_KEGIATAN,
+              registrationId: activity.id,
+            });
+
+            return (
+              <Card key={activity.activity_id} withBorder p="md" radius="md">
+                <Stack gap="sm">
+                  <Group justify="space-between" align="flex-start" wrap="wrap">
+                    <Box style={{ flex: 1, minWidth: 200 }}>
+                      <Text fw={600} size="md">
+                        {activity.activity.name}
+                      </Text>
+                    </Box>
                     <Button
+                      component={Link}
+                      href={`/activity/${activity.activity.slug}`}
+                      rightSection={<IconExternalLink aria-hidden size={14} />}
                       size="sm"
                       variant="light"
-                      rightSection={<IconExternalLink size={14} />}
                     >
                       Detail
                     </Button>
-                  </Link>
-                </Group>
-                <Group gap="xs" align="center">
-                  <Badge
-                    size="md"
-                    variant="light"
-                    color={getStatusColor(activity.status)}
-                    leftSection={getStatusIcon(activity.status)}
-                  >
-                    {activity.status}
-                  </Badge>
-                </Group>
-                {activity.status ===
-                  ACTIVITY_REGISTRANT_STATUS_ENUM.BELUM_DIUMUMKAN &&
-                  activity.visible_at && (
-                    <Group gap={6} align="center">
-                      <ThemeIcon size="md" variant="transparent" color="orange">
-                        <IconClock size={14} />
-                      </ThemeIcon>
-                      <Text size="md" c="orange.7" fw={500}>
-                        Estimasi pengumuman: {formatDate(activity.visible_at)}
-                      </Text>
-                    </Group>
-                  )}
-                {activity.status ===
-                  ACTIVITY_REGISTRANT_STATUS_ENUM.LULUS_KEGIATAN && (
-                  <Link
-                    href={`/certificate/${activity.id}`}
-                    style={{ textDecoration: "none" }}
-                  >
-                    <Button
-                      size="sm"
-                      color="green"
+                  </Group>
+                  <Group gap="xs" align="center">
+                    <Badge
+                      size="md"
                       variant="light"
-                      leftSection={<IconCertificate size={14} />}
+                      color={getStatusColor(activity.status)}
+                      leftSection={getStatusIcon(activity.status)}
                     >
-                      Lihat Sertifikat
+                      {activity.status}
+                    </Badge>
+                  </Group>
+                  {activity.status ===
+                    ACTIVITY_REGISTRANT_STATUS_ENUM.BELUM_DIUMUMKAN &&
+                    activity.visible_at && (
+                      <Group gap={6} align="center">
+                        <ThemeIcon
+                          size="md"
+                          variant="transparent"
+                          color="orange"
+                        >
+                          <IconClock size={14} />
+                        </ThemeIcon>
+                        <Text size="md" c="orange.7" fw={500}>
+                          Estimasi pengumuman: {formatDate(activity.visible_at)}
+                        </Text>
+                      </Group>
+                    )}
+                  {certificateCta && (
+                    <Button
+                      color={certificateCta.color}
+                      component={Link}
+                      href={certificateCta.href}
+                      leftSection={<IconCertificate aria-hidden size={14} />}
+                      size="sm"
+                      variant="light"
+                    >
+                      {certificateCta.label}
                     </Button>
-                  </Link>
-                )}
-              </Stack>
-            </Card>
-          ))}
+                  )}
+                </Stack>
+              </Card>
+            );
+          })}
         </Stack>
 
         {/* No Results */}

@@ -207,7 +207,11 @@ export default function PersonalActivityData({
                 imageUrl={activity.activity.additional_config?.images?.[0]}
                 visibleAt={activity.visible_at}
                 registrationId={activity.id}
-                hasCertificate={!!activity.activity.additional_config?.certificate_template_id}
+                hasCertificate={
+                  !!activity.activity.additional_config?.certificate_template_id
+                }
+                certificateCode={activity.certificate_code}
+                certificateState={activity.certificate_state}
               />
             </Grid.Col>
           ))}

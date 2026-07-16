@@ -62,4 +62,7 @@ export type Registrant = {
   created_at: string;
   updated_at: string;
   visible_at?: string; // ISO datetime when status will be revealed
+  certificate_code?: string | null;
+  certificate_state?:
+    "not_eligible" | "eligible_not_issued" | "issued_active" | "issued_revoked";
 };

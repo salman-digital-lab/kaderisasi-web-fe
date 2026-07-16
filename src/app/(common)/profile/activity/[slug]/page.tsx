@@ -13,7 +13,6 @@ import {
 import {
   IconArrowLeft,
   IconCalendarEvent,
-  IconCertificate,
   IconClock,
   IconCheck,
 } from "@tabler/icons-react";
@@ -32,6 +31,8 @@ import { getActivityRegistrationData } from "@/services/activity";
 import ErrorWrapper from "@/components/layout/Error";
 import { ACTIVITY_REGISTRANT_STATUS_ENUM } from "@/types/constants/activity";
 import { Activity } from "@/types/model/activity";
+import { getCertificateCta } from "@/features/certificate/utils/certificateData";
+import CertificateCtaButton from "@/features/certificate/CertificateCtaButton";
 
 export async function generateMetadata(props: {
   params: Promise<{ slug: string }>;
@@ -64,15 +65,20 @@ export default async function Page(props: {
         created_at: string;
         updated_at: string;
         visible_at?: string;
+        certificate_code?: string | null;
+        certificate_state?:
+          | "not_eligible"
+          | "eligible_not_issued"
+          | "issued_active"
+          | "issued_revoked";
       }
     | undefined;
 
   try {
     activity = await getActivity(params);
-    registrationData = await getActivityRegistrationData(
-      sessionData.session,
-      { slug: params.slug },
-    );
+    registrationData = await getActivityRegistrationData(sessionData.session, {
+      slug: params.slug,
+    });
   } catch (error: unknown) {
     if (typeof error === "string") {
       return <ErrorWrapper message={error} />;
@@ -87,10 +93,15 @@ export default async function Page(props: {
     return <ErrorWrapper message="Registration not found" />;
   }
 
-  const canViewCertificate =
-    registrationData.status === ACTIVITY_REGISTRANT_STATUS_ENUM.LULUS_KEGIATAN;
-
-  const hasCertificate = !!activity.additional_config?.certificate_template_id;
+  const certificateCta = getCertificateCta({
+    certificateCode: registrationData.certificate_code,
+    certificateState: registrationData.certificate_state,
+    hasTemplate: Boolean(activity.additional_config?.certificate_template_id),
+    isPassed:
+      registrationData.status ===
+      ACTIVITY_REGISTRANT_STATUS_ENUM.LULUS_KEGIATAN,
+    registrationId: registrationData.id,
+  });
 
   const formatActivityDate = () => {
     if (!activity?.activity_start) return null;
@@ -129,10 +140,7 @@ export default async function Page(props: {
   return (
     <Stack component="main" gap="lg">
       <Container size="md">
-        <Link
-          href="/profile?tab=activity"
-          style={{ textDecoration: "none" }}
-        >
+        <Link href="/profile?tab=activity" style={{ textDecoration: "none" }}>
           <Button
             variant="subtle"
             leftSection={<IconArrowLeft size={16} />}
@@ -151,9 +159,7 @@ export default async function Page(props: {
                 </Title>
                 <Group gap={7}>
                   <Badge variant="light">
-                    {activity
-                      ? USER_LEVEL_RENDER[activity.minimum_level]
-                      : ""}
+                    {activity ? USER_LEVEL_RENDER[activity.minimum_level] : ""}
                   </Badge>
                   <Badge variant="light">
                     {activity
@@ -212,32 +218,32 @@ export default async function Page(props: {
           {registrationData.status ===
             ACTIVITY_REGISTRANT_STATUS_ENUM.BELUM_DIUMUMKAN &&
             registrationData.visible_at && (
-            <Group
-              gap="md"
-              p="sm"
-              style={{
-                backgroundColor: "var(--mantine-color-orange-light)",
-                borderRadius: "var(--mantine-radius-md)",
-              }}
-            >
-              <ThemeIcon size="md" variant="filled" color="orange">
-                <IconClock size={14} />
-              </ThemeIcon>
-              <div>
-                <Text size="md" c="orange" fw={600}>
-                  Estimasi Pengumuman
-                </Text>
-                <Text size="md" c="orange.8">
-                  {dayjs(registrationData.visible_at)
-                    .locale("id")
-                    .format("DD MMMM YYYY [pukul] HH:mm")}
-                </Text>
-              </div>
-              <Badge color="orange" variant="light" ml="auto">
-                {getRelativeTime(registrationData.visible_at)}
-              </Badge>
-            </Group>
-          )}
+              <Group
+                gap="md"
+                p="sm"
+                style={{
+                  backgroundColor: "var(--mantine-color-orange-light)",
+                  borderRadius: "var(--mantine-radius-md)",
+                }}
+              >
+                <ThemeIcon size="md" variant="filled" color="orange">
+                  <IconClock size={14} />
+                </ThemeIcon>
+                <div>
+                  <Text size="md" c="orange" fw={600}>
+                    Estimasi Pengumuman
+                  </Text>
+                  <Text size="md" c="orange.8">
+                    {dayjs(registrationData.visible_at)
+                      .locale("id")
+                      .format("DD MMMM YYYY [pukul] HH:mm")}
+                  </Text>
+                </div>
+                <Badge color="orange" variant="light" ml="auto">
+                  {getRelativeTime(registrationData.visible_at)}
+                </Badge>
+              </Group>
+            )}
 
           <Stack gap="sm" mt="md">
             <Group justify="space-between" wrap="nowrap">
@@ -255,21 +261,8 @@ export default async function Page(props: {
             </Group>
           </Stack>
 
-          {canViewCertificate && hasCertificate && (
-            <Link
-              href={`/certificate/${registrationData.id}`}
-              style={{ textDecoration: "none" }}
-            >
-              <Button
-                mt="lg"
-                fullWidth
-                color="green"
-                leftSection={<IconCertificate size={18} />}
-                size="md"
-              >
-                Lihat Sertifikat
-              </Button>
-            </Link>
+          {certificateCta && (
+            <CertificateCtaButton cta={certificateCta} marginTop="lg" />
           )}
         </Card>
 

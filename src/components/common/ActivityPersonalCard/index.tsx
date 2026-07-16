@@ -5,6 +5,8 @@ import NextImage from "next/image";
 import { Card, Text, Group, Badge, Button, Stack, Box } from "@mantine/core";
 import { IconClock, IconAward } from "@tabler/icons-react";
 import { ACTIVITY_REGISTRANT_STATUS_ENUM } from "@/types/constants/activity";
+import { getCertificateCta } from "@/features/certificate/utils/certificateData";
+import type { CertificateLifecycleState } from "@/types/model/certificate";
 
 type ActivityCardProps = {
   activityName: string;
@@ -14,6 +16,8 @@ type ActivityCardProps = {
   visibleAt?: string;
   registrationId?: number;
   hasCertificate?: boolean;
+  certificateCode?: string | null;
+  certificateState?: CertificateLifecycleState;
 };
 
 // Format date to readable string
@@ -54,15 +58,23 @@ export default function ActivityPersonalCard({
   visibleAt,
   registrationId,
   hasCertificate,
+  certificateCode,
+  certificateState,
 }: ActivityCardProps) {
   const isUnannounced =
     registrationStatus === ACTIVITY_REGISTRANT_STATUS_ENUM.BELUM_DIUMUMKAN;
 
-  const canViewCertificate = registrationId && hasCertificate &&
-    (registrationStatus === ACTIVITY_REGISTRANT_STATUS_ENUM.LULUS_KEGIATAN ||
-     registrationStatus === ACTIVITY_REGISTRANT_STATUS_ENUM.DITERIMA);
+  const certificateCta = getCertificateCta({
+    certificateCode,
+    certificateState,
+    hasTemplate: Boolean(hasCertificate),
+    isPassed:
+      registrationStatus === ACTIVITY_REGISTRANT_STATUS_ENUM.LULUS_KEGIATAN,
+    registrationId,
+  });
 
-  const canEditForm = registrationStatus === ACTIVITY_REGISTRANT_STATUS_ENUM.TERDAFTAR;
+  const canEditForm =
+    registrationStatus === ACTIVITY_REGISTRANT_STATUS_ENUM.TERDAFTAR;
 
   return (
     <Card withBorder radius="md" p="md" h="100%">
@@ -112,36 +124,38 @@ export default function ActivityPersonalCard({
       </Stack>
 
       <Stack mt="md" gap="xs">
-        <Link href={`/profile/activity/${slug}`} style={{ textDecoration: "none" }}>
-          <Button radius="md" variant="filled" fullWidth>
-            Lihat Detail
-          </Button>
-        </Link>
+        <Button
+          component={Link}
+          fullWidth
+          href={`/profile/activity/${slug}`}
+          radius="md"
+          variant="filled"
+        >
+          Lihat Detail
+        </Button>
         {canEditForm && (
-          <Link
+          <Button
+            component={Link}
+            fullWidth
             href={`/activity/register/${slug}/edit-activity-form`}
-            style={{ textDecoration: "none" }}
+            radius="md"
+            variant="outline"
           >
-            <Button radius="md" variant="outline" fullWidth>
-              Edit Formulir
-            </Button>
-          </Link>
+            Edit Formulir
+          </Button>
         )}
-        {canViewCertificate && (
-          <Link
-            href={`/certificate/${registrationId}`}
-            style={{ textDecoration: "none" }}
+        {certificateCta && (
+          <Button
+            color={certificateCta.color}
+            component={Link}
+            fullWidth
+            href={certificateCta.href}
+            leftSection={<IconAward aria-hidden size={16} />}
+            radius="md"
+            variant="light"
           >
-            <Button
-              radius="md"
-              variant="light"
-              color="yellow"
-              fullWidth
-              leftSection={<IconAward size={16} />}
-            >
-              Lihat Sertifikat
-            </Button>
-          </Link>
+            {certificateCta.label}
+          </Button>
         )}
       </Stack>
     </Card>

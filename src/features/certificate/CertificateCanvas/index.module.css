@@ -1,0 +1,37 @@
+.frame {
+  overflow: hidden;
+  padding: clamp(0.5rem, 2vw, 1rem);
+  border-radius: var(--mantine-radius-md);
+  background: var(--mantine-color-gray-0);
+}
+
+.viewport {
+  position: relative;
+  width: 100%;
+}
+
+.scaleLayer {
+  position: absolute;
+  top: 0;
+  transform-origin: top left;
+  transition: opacity 120ms ease;
+}
+
+.canvas {
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 1px solid var(--mantine-color-gray-3);
+  background-color: white;
+  background-position: center;
+  background-size: cover;
+  box-shadow: var(--mantine-shadow-sm);
+  -webkit-font-smoothing: antialiased;
+  font-rendering: optimizeLegibility;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scaleLayer {
+    transition: none;
+  }
+}
