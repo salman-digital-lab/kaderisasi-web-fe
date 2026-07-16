@@ -37,6 +37,10 @@ export default async function Navbar() {
               Kegiatan
             </Anchor>
 
+            <Anchor href="/clubs" className={classes.link} underline="never">
+              Club
+            </Anchor>
+
             <Anchor
               href="/consultation"
               className={classes.link}

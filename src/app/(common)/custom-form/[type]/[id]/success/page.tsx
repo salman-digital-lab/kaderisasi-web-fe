@@ -1,10 +1,13 @@
 import { verifySession } from "@/functions/server/session";
 import { getCustomFormByFeature } from "@/services/customForm";
-import { Container, Paper, Title, Text, Button, Stack, Alert } from "@mantine/core";
+import { Container, Paper, Title, Text, Stack, Alert } from "@mantine/core";
 import { redirect } from "next/navigation";
 import ErrorWrapper from "@/components/layout/Error";
-import Link from "next/link";
 import styles from "./page.module.css";
+import LinkButton from "@/components/common/LinkButton";
+import { getRegistrationStatus } from "@/services/clubRegistration";
+import type { CustomForm } from "@/types/api/customForm";
+import type { ClubRegistration } from "@/types/model/clubRegistration";
 
 export default async function SuccessPage(props: {
   params: Promise<{ type: string; id: string }>;
@@ -12,7 +15,7 @@ export default async function SuccessPage(props: {
   const params = await props.params;
   const { type, id } = params;
 
-  await verifySession();
+  const { session } = await verifySession();
 
   // Validate type
   if (!["activity", "club", "independent"].includes(type)) {
@@ -28,14 +31,53 @@ export default async function SuccessPage(props: {
 
   const featureType = featureTypeMap[type as keyof typeof featureTypeMap];
 
-  try {
-    // Fetch custom form
-    const customForm = await getCustomFormByFeature({
-      feature_type: featureType,
-      feature_id: type === "independent" ? undefined : Number(id),
-    });
+  let clubCustomForm: CustomForm | undefined;
+  let clubRegistrationStatus: ClubRegistration["status"] | undefined;
 
-    if (!customForm) {
+  if (type === "club") {
+    const clubId = Number(id);
+
+    if (!/^\d+$/.test(id) || !Number.isSafeInteger(clubId) || clubId <= 0) {
+      redirect("/clubs");
+    }
+
+    if (!session) {
+      redirect(`/clubs/${id}`);
+    }
+
+    try {
+      const status = await getRegistrationStatus(clubId, session);
+      if (status.data.isRegistered && status.data.registration) {
+        clubRegistrationStatus = status.data.registration.status;
+      }
+    } catch {
+      redirect(`/clubs/${id}`);
+    }
+
+    if (!clubRegistrationStatus) {
+      redirect(`/clubs/${id}`);
+    }
+
+    try {
+      clubCustomForm = await getCustomFormByFeature({
+        feature_type: "club_registration",
+        feature_id: clubId,
+      });
+    } catch {
+      clubCustomForm = undefined;
+    }
+  }
+
+  try {
+    const customForm =
+      type === "club"
+        ? clubCustomForm
+        : await getCustomFormByFeature({
+            feature_type: featureType,
+            feature_id: type === "independent" ? undefined : Number(id),
+          });
+
+    if (!customForm && type !== "club") {
       return <ErrorWrapper message="Custom form not found" />;
     }
 
@@ -52,7 +94,7 @@ export default async function SuccessPage(props: {
     }
 
     return (
-      <Container size="md" component="main" py={{ base: "md", sm: "xl" }} px={{ base: "xs", sm: "md" }}>
+      <Container size="md" py={{ base: "md", sm: "xl" }} px={{ base: "xs", sm: "md" }}>
         <Paper 
           radius="md" 
           withBorder 
@@ -68,16 +110,25 @@ export default async function SuccessPage(props: {
               <Title order={3} mb="xs">
                 {featureType === "independent_form"
                   ? "Formulir Berhasil Dikirim!"
-                  : "Pendaftaran Berhasil!"}
+                  : featureType === "club_registration" &&
+                      clubRegistrationStatus !== "PENDING"
+                    ? "Status Pendaftaran"
+                    : "Pendaftaran Berhasil!"}
               </Title>
               <Text size="md">
                 {featureType === "independent_form"
                   ? "Terima kasih telah mengisi formulir."
-                  : "Terima kasih telah mendaftar. Data Anda telah kami terima."}
+                  : featureType === "club_registration"
+                    ? clubRegistrationStatus === "APPROVED"
+                      ? "Pendaftaran Anda telah disetujui oleh pengelola club."
+                      : clubRegistrationStatus === "REJECTED"
+                        ? "Pendaftaran Anda telah ditinjau tetapi belum dapat disetujui."
+                        : "Data pendaftaran Anda telah diterima dan sedang menunggu peninjauan pengelola club."
+                    : "Terima kasih telah mendaftar. Data Anda telah kami terima."}
               </Text>
             </Alert>
 
-            {customForm.post_submission_info && (
+            {customForm?.post_submission_info && (
               <Paper 
                 w="100%" 
                 p="md" 
@@ -96,14 +147,9 @@ export default async function SuccessPage(props: {
               </Paper>
             )}
 
-            <Link href={redirectUrl} style={{ textDecoration: 'none' }}>
-              <Button
-                size="md"
-                mt="md"
-              >
-                {redirectLabel}
-              </Button>
-            </Link>
+            <LinkButton href={redirectUrl} size="md" mt="md">
+              {redirectLabel}
+            </LinkButton>
           </Stack>
         </Paper>
       </Container>

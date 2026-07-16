@@ -1,0 +1,89 @@
+.content {
+  overflow-wrap: anywhere;
+}
+
+.content p,
+.content ul,
+.content ol {
+  margin-bottom: 1rem;
+}
+
+.content h1,
+.content h2,
+.content h3,
+.content h4,
+.content h5,
+.content h6 {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.content ul,
+.content ol {
+  padding-left: 1.5rem;
+}
+
+.content li {
+  margin-bottom: 0.25rem;
+}
+
+.content img,
+.content video,
+.content iframe {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--mantine-radius-md);
+}
+
+.content table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+}
+
+.content blockquote {
+  margin-left: 0;
+  padding: 1rem;
+  border-left: 4px solid var(--mantine-color-blue-6);
+  border-radius: var(--mantine-radius-sm);
+  background: var(--mantine-color-gray-0);
+  font-style: italic;
+}
+
+.content a {
+  color: var(--mantine-color-blue-6);
+  text-decoration: underline;
+}
+
+.content a:hover {
+  text-decoration: none;
+}
+
+.content strong,
+.content b {
+  font-weight: 600;
+}
+
+.content code,
+.content pre {
+  border-radius: var(--mantine-radius-sm);
+  background: var(--mantine-color-gray-1);
+  font-family: monospace;
+}
+
+.content code {
+  padding: 0.2rem 0.4rem;
+  font-size: 0.9em;
+}
+
+.content pre {
+  max-width: 100%;
+  overflow: auto;
+  padding: 1rem;
+}
+
+.content pre code {
+  padding: 0;
+  background: transparent;
+}

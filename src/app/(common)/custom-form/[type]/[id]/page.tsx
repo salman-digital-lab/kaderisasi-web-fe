@@ -3,6 +3,8 @@ import { getProfile } from "@/services/profile";
 import { getProvinces, getCountries } from "@/services/profile.cache";
 import { getCustomFormByFeature } from "@/services/customForm";
 import { getActivity } from "@/services/activity.cache";
+import { getClub } from "@/services/club";
+import { getRegistrationStatus } from "@/services/clubRegistration";
 import { Container } from "@mantine/core";
 import { redirect } from "next/navigation";
 import ErrorWrapper from "@/components/layout/Error";
@@ -12,6 +14,7 @@ import type { PublicUser, Member } from "@/types/model/members";
 import type { Province } from "@/types/model/province";
 import type { Country } from "@/types/model/country";
 import { ACTIVITY_TYPE_ENUM } from "@/types/constants/activity";
+import { isClubRegistrationOpen } from "@/features/clubs/registration-state";
 
 export default async function Page(props: {
   params: Promise<{ type: string; id: string }>;
@@ -46,6 +49,73 @@ export default async function Page(props: {
 
   const featureType = featureTypeMap[type as keyof typeof featureTypeMap];
 
+  if (
+    type === "club" &&
+    (!/^\d+$/.test(id) || !Number.isSafeInteger(Number(id)) || Number(id) <= 0)
+  ) {
+    redirect("/clubs");
+  }
+
+  if (!sessionData.session && type === "club") {
+    const returnUrl = `/clubs/${id}`;
+    redirect(`/login?redirect=${encodeURIComponent(returnUrl)}`);
+  }
+
+  if (type === "club" && sessionData.session) {
+    const clubId = Number(id);
+    let club: Awaited<ReturnType<typeof getClub>>;
+
+    try {
+      club = await getClub({ id });
+    } catch (error: unknown) {
+      if (error instanceof FetcherError && error.status === 404) {
+        redirect("/clubs");
+      }
+
+      return (
+        <ErrorWrapper message="Informasi club belum dapat dimuat. Silakan coba lagi." />
+      );
+    }
+
+    if (
+      !isClubRegistrationOpen({
+        isRegistrationOpen: Boolean(club.is_registration_open),
+        registrationEndDate: club.registration_end_date,
+      })
+    ) {
+      redirect(`/clubs/${id}`);
+    }
+
+    let isRegistered = false;
+
+    try {
+      const registrationStatus = await getRegistrationStatus(
+        clubId,
+        sessionData.session,
+      );
+      isRegistered = Boolean(
+        registrationStatus.data.isRegistered &&
+          registrationStatus.data.registration,
+      );
+    } catch (error: unknown) {
+      if (error instanceof FetcherError && error.status === 401) {
+        const loginUrl = `/login?redirect=${encodeURIComponent(`/clubs/${id}`)}`;
+        redirect(`/api/logout?redirect=${encodeURIComponent(loginUrl)}`);
+      }
+      if (error instanceof FetcherError && error.status === 404) {
+        redirect("/clubs");
+      }
+
+      return (
+        <ErrorWrapper message="Status pendaftaran belum dapat diperiksa. Silakan coba lagi." />
+      );
+    }
+
+    if (isRegistered) {
+      redirect(`/custom-form/club/${id}/success`);
+    }
+  }
+
   // Guest mode: no session + activity registration + slug provided + REGISTRATION_ONLY type
   const activitySlug = searchParams.slug;
   let isGuest = false;
@@ -78,7 +148,6 @@ export default async function Page(props: {
     return (
       <Container
         size="md"
-        component="main"
         py={{ base: "md", sm: "xl" }}
         px={{ base: "xs", sm: "md" }}
       >
@@ -96,8 +165,16 @@ export default async function Page(props: {
       </Container>
     );
   } catch (error: unknown) {
-    if (error instanceof FetcherError && error.status === 401)
+    if (error instanceof FetcherError && error.status === 404 && type === "club") {
+      redirect(`/clubs/${id}`);
+    }
+    if (error instanceof FetcherError && error.status === 401) {
+      if (type === "club") {
+        const loginUrl = `/login?redirect=${encodeURIComponent(`/clubs/${id}`)}`;
+        redirect(`/api/logout?redirect=${encodeURIComponent(loginUrl)}`);
+      }
       redirect("/api/logout");
+    }
     const message =
       error instanceof FetcherError || error instanceof Error
         ? error.message

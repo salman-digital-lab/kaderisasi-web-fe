@@ -1,5 +1,10 @@
 import { redirect } from "next/navigation";
 
-export default function ClubRegistrationInfoPage() {
-  redirect("/");
+export default async function ClubRegistrationInfoPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  redirect(`/clubs/${id}`);
 }

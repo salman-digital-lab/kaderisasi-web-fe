@@ -26,6 +26,7 @@ import {
   IconActivity,
   IconChevronRight,
   IconX,
+  IconBuildingCommunity,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -47,6 +48,7 @@ type NavItem = {
 const navItems: NavItem[] = [
   { label: "Beranda", href: "/", icon: IconHome },
   { label: "Kegiatan", href: "/activity", icon: IconCalendarEvent },
+  { label: "Club", href: "/clubs", icon: IconBuildingCommunity },
   { label: "Ruang Curhat", href: "/consultation", icon: IconMessageCircle },
   { label: "Leaderboard", href: "/leaderboard", icon: IconTrophy },
 ];

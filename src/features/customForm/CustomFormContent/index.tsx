@@ -171,7 +171,11 @@ export default function CustomFormContent({
         }
       }
       clearStorage();
-      router.push(getSuccessUrl());
+      if (featureType === "club_registration") {
+        router.replace(getSuccessUrl());
+      } else {
+        router.push(getSuccessUrl());
+      }
     } catch {
       showNotif("Terjadi kesalahan jaringan. Silakan coba lagi.", true);
     } finally {
@@ -204,6 +208,15 @@ export default function CustomFormContent({
         ? `/activity/${activitySlug}/join`
         : `/activity/${activitySlug}`
       : null;
+  const backUrl =
+    activityBackUrl ??
+    (featureType === "club_registration" && featureId
+      ? `/clubs/${featureId}`
+      : null);
+  const backLabel =
+    featureType === "club_registration"
+      ? "Kembali ke Club"
+      : "Kembali ke Kegiatan";
 
   if (!isLoaded) {
     return (
@@ -218,12 +231,18 @@ export default function CustomFormContent({
 
   return (
     <Stack gap="md">
-      {activityBackUrl && (
-        <Link href={activityBackUrl} style={{ textDecoration: "none" }}>
-          <Button variant="subtle" leftSection={<IconArrowLeft size={16} />} mb="xs" px={0}>
-            Kembali ke Kegiatan
-          </Button>
-        </Link>
+      {backUrl && (
+        <Button
+          component={Link}
+          href={backUrl}
+          variant="subtle"
+          leftSection={<IconArrowLeft size={16} aria-hidden="true" />}
+          mb="xs"
+          px={0}
+          style={{ alignSelf: "flex-start" }}
+        >
+          {backLabel}
+        </Button>
       )}
 
       {/* Header card: title, description, stepper */}

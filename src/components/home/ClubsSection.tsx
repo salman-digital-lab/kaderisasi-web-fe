@@ -1,21 +1,41 @@
 import {
   SimpleGrid,
   Center,
-  Button,
   Title,
   Text,
   Container,
+  Alert,
 } from "@mantine/core";
-import Link from "next/link";
 import ClubCard from "@/components/common/ClubCard";
-import { getClubs } from "@/services/club.cache";
+import LinkButton from "@/components/common/LinkButton";
+import { getClubs } from "@/services/club";
 
 export async function ClubsSection() {
-  const { data: clubs } = await getClubs({ per_page: "4" });
+  let clubs: Awaited<ReturnType<typeof getClubs>>["data"];
+
+  try {
+    ({ data: clubs } = await getClubs({ per_page: "4" }));
+  } catch {
+    return (
+      <Container size="lg" py={{ base: "lg", md: "xl" }}>
+        <Title order={2} ta="center" mt="sm">
+          Unit Kegiatan dan Kepanitiaan
+        </Title>
+        <Alert color="yellow" title="Daftar club belum dapat dimuat" mt="xl">
+          Silakan buka halaman Club atau coba lagi beberapa saat lagi.
+        </Alert>
+        <Center mt="lg">
+          <LinkButton href="/clubs" variant="light">
+            Buka halaman Club
+          </LinkButton>
+        </Center>
+      </Container>
+    );
+  }
 
   return (
     <Container size="lg" py={{ base: "lg", md: "xl" }}>
-      <Title ta="center" mt="sm">
+      <Title order={2} ta="center" mt="sm">
         Unit Kegiatan dan Kepanitiaan
       </Title>
 
@@ -42,16 +62,16 @@ export async function ClubsSection() {
                 logo={club.logo}
                 start_period={club.start_period}
                 end_period={club.end_period}
+                is_registration_open={Boolean(club.is_registration_open)}
+                registration_end_date={club.registration_end_date}
               />
             ))}
           </SimpleGrid>
           {clubs.length > 3 && (
             <Center mt="lg">
-              <Link href="/clubs" style={{ textDecoration: "none" }}>
-                <Button>
-                  Lihat Unit Lainnya
-                </Button>
-              </Link>
+              <LinkButton href="/clubs">
+                Lihat Unit Lainnya
+              </LinkButton>
             </Center>
           )}
         </>

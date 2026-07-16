@@ -3,7 +3,6 @@ import { Suspense } from "react";
 import {
   Container,
   Text,
-  Button,
   Group,
   Title,
   SimpleGrid,
@@ -11,9 +10,11 @@ import {
 } from "@mantine/core";
 import classes from "./index.module.css";
 import illustration from "@/assets/homepage-1.svg";
-import Link from "next/link";
 import ActivitiesSection from "@/components/home/ActivitiesSection";
 import ActivitiesSectionSkeleton from "@/components/home/ActivitiesSectionSkeleton";
+import ClubsSection from "@/components/home/ClubsSection";
+import ClubsSectionSkeleton from "@/components/home/ClubsSectionSkeleton";
+import LinkButton from "@/components/common/LinkButton";
 
 export const metadata = {
   title: "Beranda",
@@ -23,7 +24,7 @@ export const metadata = {
 
 export default function Home() {
   return (
-    <main>
+    <div>
       {/* Hero Section - No data fetching, renders immediately */}
       <Container size="md">
         <div className={classes.inner}>
@@ -42,9 +43,7 @@ export default function Home() {
             </Text>
 
             <Group mt="lg">
-              <Link href="/activity" style={{ textDecoration: "none" }}>
-                <Button>Daftar Kegiatan Sekarang</Button>
-              </Link>
+              <LinkButton href="/activity">Daftar Kegiatan Sekarang</LinkButton>
             </Group>
           </div>
           <Image
@@ -111,6 +110,10 @@ export default function Home() {
         <ActivitiesSection />
       </Suspense>
 
+      <Suspense fallback={<ClubsSectionSkeleton />}>
+        <ClubsSection />
+      </Suspense>
+
       {/* CTA Section - Static content, no data fetching */}
       <Container size="lg" py={{ base: "lg", md: "xl" }}>
         <Stack
@@ -132,13 +135,11 @@ export default function Home() {
             sudah mendapatkan pelatihan dan bekal-bekal pengetahuan psikologi
             praktis untuk menjadi seorang konselor lho.
           </Text>
-          <Link href="/consultation" style={{ textDecoration: "none" }}>
-            <Button w="max-content">
-              Ayo Curhat
-            </Button>
-          </Link>
+          <LinkButton href="/consultation" w="max-content">
+            Ayo Curhat
+          </LinkButton>
         </Stack>
       </Container>
-    </main>
+    </div>
   );
 }

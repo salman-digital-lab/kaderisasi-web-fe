@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import {
   AspectRatio,
   Badge,
-  Button,
   Card,
   Container,
   Divider,
@@ -20,14 +19,16 @@ import {
   IconCalendarTime,
   IconUsers,
 } from "@tabler/icons-react";
-import Link from "next/link";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
 import { getClub } from "@/services/club.cache";
 import { getCustomFormByFeature } from "@/services/customForm";
 import { verifySession } from "@/functions/server/session";
+import { FetcherError } from "@/functions/common/fetcher";
 import ClubRegistrationInfo from "@/components/common/ClubRegistrationInfo";
-import ClubRegistrationButtonServerWrapper from "@/components/common/ClubRegistrationButton/ServerWrapper";
+import ClubRegistrationButton from "@/components/common/ClubRegistrationButton";
+import LinkButton from "@/components/common/LinkButton";
+import { isClubRegistrationOpen } from "@/features/clubs/registration-state";
 import type { CustomForm } from "@/types/api/customForm";
 import type { ClubDetail } from "@/types/model/club";
 
@@ -40,6 +41,9 @@ export async function generateMetadata({ params }: ClubDetailPageProps) {
 
   try {
     const club = await getClub({ id });
+    if (!club) {
+      return { title: "Club" };
+    }
     return {
       title: club.name,
       description:
@@ -54,35 +58,48 @@ export async function generateMetadata({ params }: ClubDetailPageProps) {
 
 export default async function ClubDetailPage({ params }: ClubDetailPageProps) {
   const { id } = await params;
-  const sessionData = await verifySession();
+  const parsedId = Number(id);
 
-  let club: ClubDetail | undefined;
-  try {
-    club = await getClub({ id });
-  } catch {
+  if (!/^\d+$/.test(id) || !Number.isSafeInteger(parsedId) || parsedId <= 0) {
     notFound();
   }
+
+  const sessionPromise = verifySession();
+
+  const club: ClubDetail | null = await getClub({ id });
 
   if (!club) {
     notFound();
   }
 
   let customForm: CustomForm | undefined;
-  try {
-    customForm = await getCustomFormByFeature({
-      feature_type: "club_registration",
-      feature_id: club.id,
-    });
-  } catch {
-    customForm = undefined;
+  let customFormError = false;
+  const registrationOpen = isClubRegistrationOpen({
+    isRegistrationOpen: Boolean(club.is_registration_open),
+    registrationEndDate: club.registration_end_date,
+  });
+
+  if (registrationOpen) {
+    try {
+      customForm = await getCustomFormByFeature({
+        feature_type: "club_registration",
+        feature_id: club.id,
+      });
+    } catch (error: unknown) {
+      customFormError = !(
+        error instanceof FetcherError && error.status === 404
+      );
+    }
   }
+
+  const sessionData = await sessionPromise;
 
   const logoUrl = club.logo
     ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${club.logo}`
     : undefined;
 
   return (
-    <main>
+    <div>
       <Container size="lg" py={{ base: "lg", md: "xl" }}>
         <Stack gap="xl">
           <Paper withBorder p={{ base: "md", md: "xl" }} radius="md">
@@ -110,9 +127,11 @@ export default async function ClubDetailPage({ params }: ClubDetailPageProps) {
                   >
                     {club.club_type}
                   </Badge>
-                  {club.is_registration_open && (
-                    <Badge color="green">Pendaftaran Dibuka</Badge>
-                  )}
+                  <Badge color={registrationOpen ? "green" : "gray"}>
+                    {registrationOpen
+                      ? "Pendaftaran dibuka"
+                      : "Pendaftaran ditutup"}
+                  </Badge>
                 </Group>
                 <Title order={1}>{club.name}</Title>
                 {club.short_description && (
@@ -138,15 +157,27 @@ export default async function ClubDetailPage({ params }: ClubDetailPageProps) {
                     </Text>
                   </Group>
                 )}
+                {club.registration_end_date && (
+                  <Group gap="xs">
+                    <IconCalendarEvent size={18} aria-hidden="true" />
+                    <Text>
+                      Batas pendaftaran:{" "}
+                      {dayjs(club.registration_end_date)
+                        .locale("id")
+                        .format("DD MMMM YYYY")}
+                    </Text>
+                  </Group>
+                )}
               </Stack>
 
-              <Stack gap="sm" style={{ width: 280 }}>
-                <ClubRegistrationButtonServerWrapper
+              <Stack gap="sm" style={{ flex: "1 1 280px", maxWidth: 360 }}>
+                <ClubRegistrationButton
                   clubId={club.id}
                   clubName={club.name}
                   isAuthenticated={Boolean(sessionData.session)}
-                  isRegistrationOpen={Boolean(club.is_registration_open)}
+                  isRegistrationOpen={registrationOpen}
                   customForm={customForm}
+                  customFormError={customFormError}
                 />
               </Stack>
             </Group>
@@ -212,14 +243,13 @@ export default async function ClubDetailPage({ params }: ClubDetailPageProps) {
                       )}
                       <Divider />
                       <Group justify="flex-end">
-                        <Link
+                        <LinkButton
                           href={`/activity/${activity.slug}`}
-                          style={{ textDecoration: "none" }}
+                          variant="light"
+                          size="xs"
                         >
-                          <Button variant="light" size="xs">
-                            Lihat Kegiatan
-                          </Button>
-                        </Link>
+                          Lihat Kegiatan
+                        </LinkButton>
                       </Group>
                     </Stack>
                   </Card>
@@ -262,12 +292,12 @@ export default async function ClubDetailPage({ params }: ClubDetailPageProps) {
           )}
 
           <Group justify="center">
-            <Link href="/clubs" style={{ textDecoration: "none" }}>
-              <Button variant="light">Kembali ke Daftar Club</Button>
-            </Link>
+            <LinkButton href="/clubs" variant="light">
+              Kembali ke Daftar Club
+            </LinkButton>
           </Group>
         </Stack>
       </Container>
-    </main>
+    </div>
   );
 }

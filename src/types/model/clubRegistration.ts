@@ -17,7 +17,7 @@ export interface ClubRegistration {
   club_id: number;
   member_id: number;
   status: 'PENDING' | 'APPROVED' | 'REJECTED';
-  additional_data: Record<string, any>;
+  additional_data: Record<string, unknown>;
   created_at: string;
   updated_at: string;
   
@@ -27,7 +27,7 @@ export interface ClubRegistration {
 }
 
 export interface ClubRegistrationUpdateRequest {
-  additional_data?: Record<string, any>;
+  additional_data?: Record<string, unknown>;
 }
 
 export interface ClubRegistrationStatus {

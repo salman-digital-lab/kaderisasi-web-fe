@@ -1,6 +1,6 @@
 import fetcher from "../functions/common/fetcher";
 import { getApiConfig } from "../config/apiConfig";
-import {
+import type {
   GetClubsReq,
   GetClubsResp,
   GetClubReq,

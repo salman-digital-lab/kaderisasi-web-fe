@@ -2,6 +2,7 @@
 
 import { cacheLife, cacheTag } from "next/cache";
 import { CACHE_TAGS } from "@/constants/cache";
+import { FetcherError } from "@/functions/common/fetcher";
 import { getClubs as _getClubs, getClub as _getClub } from "./club";
 import type { GetClubsReq, GetClubReq } from "@/types/api/club";
 
@@ -12,11 +13,7 @@ import type { GetClubsReq, GetClubReq } from "@/types/api/club";
 export async function getClubs(props: GetClubsReq) {
   cacheLife("minutes");
   cacheTag(CACHE_TAGS.CLUBS);
-  try {
-    return await _getClubs(props);
-  } catch {
-    return { meta: {} as any, data: [] };
-  }
+  return _getClubs(props);
 }
 
 /**
@@ -26,5 +23,13 @@ export async function getClubs(props: GetClubsReq) {
 export async function getClub(props: GetClubReq) {
   cacheLife("minutes");
   cacheTag(CACHE_TAGS.CLUBS, CACHE_TAGS.CLUB(props.id));
-  return _getClub(props);
+
+  try {
+    return await _getClub(props);
+  } catch (error: unknown) {
+    if (error instanceof FetcherError && error.status === 404) {
+      return null;
+    }
+    throw error;
+  }
 }

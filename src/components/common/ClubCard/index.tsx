@@ -8,6 +8,7 @@ import { Text, Group, Badge, Button, rem, Card } from "@mantine/core";
 import classes from "./index.module.css";
 import { IconCalendarTime, IconUsers } from "@tabler/icons-react";
 import type { ClubType } from "@/types/model/club";
+import { isClubRegistrationOpen } from "@/features/clubs/registration-state";
 
 // Set the locale globally for this component
 dayjs.locale("id");
@@ -20,6 +21,8 @@ type ClubCardProps = {
   logo: string;
   start_period: string | null;
   end_period: string | null;
+  is_registration_open?: boolean;
+  registration_end_date?: string | null;
 };
 
 export default function ClubCard({
@@ -30,9 +33,18 @@ export default function ClubCard({
   logo,
   start_period,
   end_period,
+  is_registration_open = false,
+  registration_end_date,
 }: ClubCardProps) {
+  const registrationOpen = isClubRegistrationOpen({
+    isRegistrationOpen: is_registration_open,
+    registrationEndDate: registration_end_date,
+  });
   const calendarIcon = (
-    <IconCalendarTime style={{ width: rem(14), height: rem(14) }} />
+    <IconCalendarTime
+      style={{ width: rem(14), height: rem(14) }}
+      aria-hidden="true"
+    />
   );
 
   return (
@@ -59,7 +71,7 @@ export default function ClubCard({
                 justifyContent: "center",
               }}
             >
-              <IconUsers size={40} />
+              <IconUsers size={40} aria-hidden="true" />
             </div>
           )}
         </Group>
@@ -68,10 +80,23 @@ export default function ClubCard({
         </Text>
         {club_type && (
           <Group justify="center" mt="xs">
-            <Badge color={club_type === "AVISMAN" ? "violet" : "blue"} variant="light">
+            <Badge
+              color={club_type === "AVISMAN" ? "violet" : "blue"}
+              variant="light"
+            >
               {club_type}
             </Badge>
           </Group>
+        )}
+        <Group justify="center" mt="xs">
+          <Badge color={registrationOpen ? "green" : "gray"} variant="light">
+            {registrationOpen ? "Pendaftaran dibuka" : "Pendaftaran ditutup"}
+          </Badge>
+        </Group>
+        {registrationOpen && registration_end_date && (
+          <Text c="dimmed" ta="center" size="md" mt={4}>
+            Sampai {dayjs(registration_end_date).format("D MMMM YYYY")}
+          </Text>
         )}
         {short_description && (
           <Text c="dimmed" ta="center" lineClamp={3} mt="xs">
@@ -98,11 +123,9 @@ export default function ClubCard({
       )}
 
       <Group mt="sm" className={classes.buttonSection}>
-        <Link href={`/clubs/${id}`} style={{ flex: 1, textDecoration: "none" }}>
-          <Button radius="md" fullWidth>
-            Lihat Detail
-          </Button>
-        </Link>
+        <Button component={Link} href={`/clubs/${id}`} radius="md" fullWidth>
+          Lihat Detail
+        </Button>
       </Group>
     </Card>
   );

@@ -1,142 +1,120 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
-import { notifications } from "@mantine/notifications";
+import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import {
   Alert,
-  Button,
   Badge,
-  Stack,
-  Text,
+  Button,
   Group,
   Loader,
   Modal,
+  Stack,
+  Text,
 } from "@mantine/core";
-import { IconCheck, IconX } from "@tabler/icons-react";
-import { getRegistrationStatus, cancelMyRegistration } from "@/services/clubRegistration";
-import { ClubRegistrationStatus } from "@/types/model/clubRegistration";
-import { useRouter } from "next/navigation";
+import { notifications } from "@mantine/notifications";
+import {
+  IconAlertCircle,
+  IconCheck,
+  IconClock,
+  IconX,
+} from "@tabler/icons-react";
+import {
+  cancelClubRegistration,
+  checkClubRegistrationStatus,
+} from "@/functions/server/clubRegistration";
+import { getRegistrationPresentation } from "@/features/clubs/registration-state";
 import type { CustomForm } from "@/types/api/customForm";
+import type { ClubRegistrationStatus } from "@/types/model/clubRegistration";
+
+type StatusCheckState = "loading" | "loaded" | "error" | "unauthenticated";
 
 interface ClubRegistrationButtonProps {
   clubId: number;
   clubName: string;
   isAuthenticated: boolean;
-  onLoginRequired?: () => void;
   isRegistrationOpen: boolean;
   customForm?: CustomForm;
+  customFormError?: boolean;
 }
 
-const ClubRegistrationButton: React.FC<ClubRegistrationButtonProps> = ({
+export default function ClubRegistrationButton({
   clubId,
   clubName,
   isAuthenticated,
-  onLoginRequired,
   isRegistrationOpen,
   customForm,
-}) => {
+  customFormError = false,
+}: ClubRegistrationButtonProps) {
   const [registrationStatus, setRegistrationStatus] =
     useState<ClubRegistrationStatus | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isCheckingStatus, setIsCheckingStatus] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const router = useRouter();
+  const [checkState, setCheckState] = useState<StatusCheckState>(
+    isAuthenticated ? "loading" : "unauthenticated",
+  );
+  const [checkError, setCheckError] = useState("");
+  const [isCancelling, setIsCancelling] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const loginHref = `/login?redirect=${encodeURIComponent(`/clubs/${clubId}`)}`;
 
-  const checkRegistrationStatus = useCallback(async () => {
-    if (!isAuthenticated) return;
-
-    setIsCheckingStatus(true);
-    try {
-      const response = await getRegistrationStatus(clubId);
-      setRegistrationStatus(response.data);
-    } catch (error) {
-      console.error("Error checking registration status:", error);
-    } finally {
-      setIsCheckingStatus(false);
-    }
-  }, [clubId, isAuthenticated]);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      checkRegistrationStatus();
-    }
-  }, [isAuthenticated, checkRegistrationStatus]);
-
-  // If registration is not open, don't show anything
-  if (isRegistrationOpen === false) {
-    return null;
-  }
-
-  const handleRegister = () => {
+  const checkRegistration = useCallback(async () => {
     if (!isAuthenticated) {
-      onLoginRequired?.();
+      setCheckState("unauthenticated");
       return;
     }
 
-    router.push(`/custom-form/club/${clubId}`);
-  };
+    setCheckState("loading");
+    setCheckError("");
+    const result = await checkClubRegistrationStatus(clubId);
 
-  const handleDeleteConfirm = async () => {
-    setIsLoading(true);
-    setShowDeleteModal(false);
-    try {
-      await cancelMyRegistration(clubId);
+    if (result.success) {
+      setRegistrationStatus(result.data);
+      setCheckState("loaded");
+      return;
+    }
+
+    setRegistrationStatus(null);
+    setCheckError(result.message);
+    setCheckState(
+      result.reason === "UNAUTHENTICATED" ? "unauthenticated" : "error",
+    );
+  }, [clubId, isAuthenticated]);
+
+  useEffect(() => {
+    void checkRegistration();
+  }, [checkRegistration]);
+
+  const handleCancel = async () => {
+    setIsCancelling(true);
+    setShowCancelModal(false);
+    const result = await cancelClubRegistration(clubId);
+
+    if (!result.success) {
       notifications.show({
-        title: "Pendaftaran Dihapus",
-        message: "Pendaftaran berhasil dihapus",
-        color: "blue",
-      });
-      await checkRegistrationStatus();
-    } catch (error: any) {
-      const message =
-        error.response?.data?.message || "Gagal menghapus pendaftaran";
-      notifications.show({
-        title: "Penghapusan Gagal",
-        message: message,
+        title: "Pembatalan gagal",
+        message: result.message,
         color: "red",
       });
-    } finally {
-      setIsLoading(false);
+      setIsCancelling(false);
+
+      if (result.reason === "UNAUTHENTICATED") {
+        setCheckError(result.message);
+        setCheckState("unauthenticated");
+      }
+      return;
     }
+
+    notifications.show({
+      title: "Pendaftaran dibatalkan",
+      message: result.message,
+      color: "blue",
+    });
+    setIsCancelling(false);
+    await checkRegistration();
   };
 
-  const getStatusBadge = () => {
-    if (!registrationStatus?.registration) return null;
-
-    const status = registrationStatus.registration.status;
-    const statusConfig = {
-      PENDING: { label: "Menunggu", color: "orange" },
-      APPROVED: { label: "Disetujui", color: "green" },
-      REJECTED: { label: "Ditolak", color: "red" },
-    };
-
-    const config = statusConfig[status as keyof typeof statusConfig];
-    if (!config) return null;
-
+  if (checkState === "loading") {
     return (
-      <Badge color={config.color} variant="light">
-        {config.label}
-      </Badge>
-    );
-  };
-
-  if (!isAuthenticated) {
-    return (
-      <Button
-        size="lg"
-        variant="gradient"
-        gradient={{ from: "blue", to: "cyan" }}
-        onClick={onLoginRequired}
-        fullWidth
-      >
-        Login untuk Mendaftar
-      </Button>
-    );
-  }
-
-  if (isCheckingStatus) {
-    return (
-      <Group justify="center" gap="sm">
+      <Group justify="center" gap="sm" aria-live="polite">
         <Loader size="md" />
         <Text size="md" c="dimmed">
           Memeriksa status pendaftaran...
@@ -145,10 +123,33 @@ const ClubRegistrationButton: React.FC<ClubRegistrationButtonProps> = ({
     );
   }
 
-  if (registrationStatus?.isRegistered) {
-    const registration = registrationStatus.registration!;
-    // Only allow deletion for PENDING status, not for APPROVED status
-    const canDelete = registration.status === "PENDING";
+  if (checkState === "error") {
+    return (
+      <Alert
+        color="red"
+        title="Status belum dapat diperiksa"
+        icon={<IconAlertCircle size={20} aria-hidden="true" />}
+      >
+        <Stack gap="sm">
+          <Text size="md">{checkError}</Text>
+          <Button variant="light" color="red" onClick={checkRegistration}>
+            Coba lagi
+          </Button>
+        </Stack>
+      </Alert>
+    );
+  }
+
+  if (registrationStatus?.isRegistered && registrationStatus.registration) {
+    const registration = registrationStatus.registration;
+    const presentation = getRegistrationPresentation(registration.status);
+    const canCancel = registration.status === "PENDING";
+    const StatusIcon =
+      registration.status === "PENDING"
+        ? IconClock
+        : registration.status === "APPROVED"
+          ? IconCheck
+          : IconX;
 
     return (
       <>
@@ -156,67 +157,117 @@ const ClubRegistrationButton: React.FC<ClubRegistrationButtonProps> = ({
           gap="md"
           p="md"
           style={{
-            backgroundColor: "var(--mantine-color-green-0)",
-            border: "2px solid var(--mantine-color-green-4)",
+            backgroundColor: `var(--mantine-color-${presentation.color}-0)`,
+            border: `2px solid var(--mantine-color-${presentation.color}-4)`,
             borderRadius: "var(--mantine-radius-md)",
           }}
+          aria-live="polite"
         >
-          <Group justify="space-between" align="center">
-            <Group gap="xs">
-              <IconCheck size={20} color="var(--mantine-color-green-6)" />
-              <Text fw={600} c="green.8">
-                Terdaftar untuk {clubName}
-              </Text>
+          <Group justify="space-between" align="start" wrap="nowrap">
+            <Group gap="xs" wrap="nowrap" align="start">
+              <StatusIcon
+                size={20}
+                color={`var(--mantine-color-${presentation.color}-6)`}
+                aria-hidden="true"
+              />
+              <Text fw={600}>{presentation.title}</Text>
             </Group>
-            {getStatusBadge()}
+            <Badge color={presentation.color} variant="light">
+              {presentation.badgeLabel}
+            </Badge>
           </Group>
 
-          {canDelete && (
+          <Text size="md">{presentation.description}</Text>
+          <Text size="md" c="dimmed">
+            Dikirim pada{" "}
+            {new Intl.DateTimeFormat("id-ID", {
+              dateStyle: "long",
+            }).format(new Date(registration.created_at))}
+          </Text>
+
+          {canCancel && (
             <Button
               color="red"
               variant="light"
-              size="md"
-              onClick={() => setShowDeleteModal(true)}
-              loading={isLoading}
-              leftSection={<IconX size={16} />}
+              onClick={() => setShowCancelModal(true)}
+              loading={isCancelling}
+              leftSection={<IconX size={16} aria-hidden="true" />}
             >
-              Hapus Pendaftaran
+              Batalkan pendaftaran
             </Button>
           )}
-
-          <Text size="md" c="dimmed">
-            Terdaftar pada:{" "}
-            {new Date(registration.created_at).toLocaleDateString("id-ID")}
-          </Text>
-
         </Stack>
 
         <Modal
-          opened={showDeleteModal}
-          onClose={() => setShowDeleteModal(false)}
-          title="Hapus Pendaftaran"
+          opened={showCancelModal}
+          onClose={() => setShowCancelModal(false)}
+          title="Batalkan pendaftaran"
           centered
         >
           <Stack gap="md">
             <Text>
-              Apakah Anda yakin ingin menghapus pendaftaran untuk{" "}
+              Yakin ingin membatalkan pendaftaran untuk{" "}
               <strong>{clubName}</strong>?
             </Text>
             <Group justify="flex-end" gap="sm">
-              <Button variant="light" onClick={() => setShowDeleteModal(false)}>
-                Pertahankan Pendaftaran
-              </Button>
               <Button
-                color="red"
-                onClick={handleDeleteConfirm}
-                loading={isLoading}
+                variant="default"
+                onClick={() => setShowCancelModal(false)}
               >
-                Hapus Pendaftaran
+                Pertahankan
+              </Button>
+              <Button color="red" onClick={handleCancel} loading={isCancelling}>
+                Ya, batalkan
               </Button>
             </Group>
           </Stack>
         </Modal>
       </>
+    );
+  }
+
+  if (checkState === "unauthenticated") {
+    return (
+      <Stack gap="sm">
+        {!isRegistrationOpen && (
+          <Alert color="gray" title="Pendaftaran telah ditutup">
+            Masuk untuk melihat status pendaftaran Anda.
+          </Alert>
+        )}
+        {checkError && (
+          <Alert color="yellow" title="Sesi berakhir">
+            {checkError}
+          </Alert>
+        )}
+        <Button
+          component={Link}
+          href={loginHref}
+          size="lg"
+          variant="gradient"
+          gradient={{ from: "blue", to: "cyan" }}
+          fullWidth
+        >
+          {isRegistrationOpen
+            ? "Masuk untuk mendaftar"
+            : "Masuk untuk melihat status"}
+        </Button>
+      </Stack>
+    );
+  }
+
+  if (!isRegistrationOpen) {
+    return (
+      <Alert color="gray" title="Pendaftaran telah ditutup">
+        Belum ada pendaftaran untuk akun Anda pada club ini.
+      </Alert>
+    );
+  }
+
+  if (customFormError) {
+    return (
+      <Alert color="red" title="Form pendaftaran belum dapat dimuat">
+        Silakan muat ulang halaman atau coba lagi beberapa saat lagi.
+      </Alert>
     );
   }
 
@@ -230,16 +281,14 @@ const ClubRegistrationButton: React.FC<ClubRegistrationButtonProps> = ({
 
   return (
     <Button
+      component={Link}
+      href={`/custom-form/club/${clubId}`}
       size="lg"
       variant="gradient"
       gradient={{ from: "blue", to: "cyan" }}
-      onClick={handleRegister}
-      loading={isLoading}
       fullWidth
     >
       Daftar untuk {clubName}
     </Button>
   );
-};
-
-export default ClubRegistrationButton;
+}

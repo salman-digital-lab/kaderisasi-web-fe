@@ -1,6 +1,6 @@
 import fetcher from "../functions/common/fetcher";
 import { getApiConfig } from "../config/apiConfig";
-import {
+import type {
   ClubRegistration,
   ClubRegistrationUpdateRequest,
   ClubRegistrationStatus,
@@ -24,22 +24,10 @@ interface PaginatedResponse<T> {
   };
 }
 
-// Helper function to get auth headers with token from cookie (client-side)
 const getAuthHeaders = (token?: string): Record<string, string> => {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
   };
-
-  // For client-side, try to get token from cookie if not provided
-  if (typeof window !== "undefined" && !token) {
-    const sessionCookie = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("session="));
-
-    if (sessionCookie) {
-      token = sessionCookie.split("=")[1];
-    }
-  }
 
   if (token) {
     headers.Authorization = `Bearer ${token}`;
@@ -81,9 +69,9 @@ export const updateMyRegistration = async (
 export const cancelMyRegistration = async (
   clubId: number,
   token?: string,
-): Promise<ApiResponse<ClubRegistration>> => {
+): Promise<ApiResponse<null>> => {
   const { beApi } = getApiConfig();
-  return await fetcher<ApiResponse<ClubRegistration>>(
+  return await fetcher<ApiResponse<null>>(
     `${beApi}/clubs/${clubId}/registration`,
     {
       method: "DELETE",
