@@ -7,7 +7,7 @@ export function ClubsSectionSkeleton() {
   return (
     <Container size="lg" py="xl">
       <Title ta="center" mt="sm">
-        Unit Kegiatan dan Kepanitiaan
+        Klub dan Kepanitiaan
       </Title>
 
       <Text
@@ -17,7 +17,7 @@ export function ClubsSectionSkeleton() {
         maw={600}
         mx="auto"
       >
-        Bergabunglah dengan berbagai unit kegiatan dan kepanitiaan untuk
+        Bergabunglah dengan berbagai klub dan kepanitiaan untuk
         mengembangkan minat dan bakat Anda serta berkontribusi dalam membangun
         generasi pemimpin masa depan.
       </Text>
@@ -33,4 +33,3 @@ export function ClubsSectionSkeleton() {
 }
 
 export default ClubsSectionSkeleton;
-

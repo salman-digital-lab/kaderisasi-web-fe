@@ -19,14 +19,14 @@ export async function ClubsSection() {
     return (
       <Container size="lg" py={{ base: "lg", md: "xl" }}>
         <Title order={2} ta="center" mt="sm">
-          Unit Kegiatan dan Kepanitiaan
+          Klub dan Kepanitiaan
         </Title>
-        <Alert color="yellow" title="Daftar club belum dapat dimuat" mt="xl">
-          Silakan buka halaman Club atau coba lagi beberapa saat lagi.
+        <Alert color="yellow" title="Daftar klub belum dapat dimuat" mt="xl">
+          Silakan buka halaman Klub atau coba lagi beberapa saat lagi.
         </Alert>
         <Center mt="lg">
           <LinkButton href="/clubs" variant="light">
-            Buka halaman Club
+            Buka halaman Klub
           </LinkButton>
         </Center>
       </Container>
@@ -36,11 +36,11 @@ export async function ClubsSection() {
   return (
     <Container size="lg" py={{ base: "lg", md: "xl" }}>
       <Title order={2} ta="center" mt="sm">
-        Unit Kegiatan dan Kepanitiaan
+        Klub dan Kepanitiaan
       </Title>
 
       <Text c="dimmed" ta="center" mt="md" maw={600} mx="auto">
-        Bergabunglah dengan berbagai unit kegiatan dan kepanitiaan untuk
+        Bergabunglah dengan berbagai klub dan kepanitiaan untuk
         mengembangkan minat dan bakat Anda serta berkontribusi dalam membangun
         generasi pemimpin masa depan.
       </Text>
@@ -70,7 +70,7 @@ export async function ClubsSection() {
           {clubs.length > 3 && (
             <Center mt="lg">
               <LinkButton href="/clubs">
-                Lihat Unit Lainnya
+                Lihat Klub Lainnya
               </LinkButton>
             </Center>
           )}
@@ -78,7 +78,7 @@ export async function ClubsSection() {
       ) : (
         <Center py="xl">
           <Text size="lg" c="dimmed">
-            Belum ada unit yang tersedia
+            Belum ada klub yang tersedia
           </Text>
         </Center>
       )}

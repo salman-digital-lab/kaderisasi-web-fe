@@ -215,7 +215,7 @@ export default function CustomFormContent({
       : null);
   const backLabel =
     featureType === "club_registration"
-      ? "Kembali ke Club"
+      ? "Kembali ke Klub"
       : "Kembali ke Kegiatan";
 
   if (!isLoaded) {

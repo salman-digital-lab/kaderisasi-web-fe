@@ -22,7 +22,7 @@ export default function ClubPagination({
   const items = getPaginationItems(page, totalPages);
 
   return (
-    <nav aria-label="Navigasi halaman daftar club">
+    <nav aria-label="Navigasi halaman daftar klub">
       <Group justify="center" gap="xs" wrap="wrap">
         {page > 1 ? (
           <LinkButton

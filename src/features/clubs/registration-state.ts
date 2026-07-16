@@ -66,13 +66,13 @@ export function getRegistrationPresentation(
     PENDING: {
       title: "Pendaftaran sedang ditinjau",
       description:
-        "Data Anda sudah diterima dan sedang menunggu peninjauan pengelola club.",
+        "Data Anda sudah diterima dan sedang menunggu peninjauan pengelola klub.",
       color: "orange",
       badgeLabel: "Menunggu",
     },
     APPROVED: {
       title: "Keanggotaan disetujui",
-      description: "Pendaftaran Anda telah disetujui oleh pengelola club.",
+      description: "Pendaftaran Anda telah disetujui oleh pengelola klub.",
       color: "green",
       badgeLabel: "Disetujui",
     },

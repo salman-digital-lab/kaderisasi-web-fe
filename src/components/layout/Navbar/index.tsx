@@ -38,7 +38,7 @@ export default async function Navbar() {
             </Anchor>
 
             <Anchor href="/clubs" className={classes.link} underline="never">
-              Club
+              Klub
             </Anchor>
 
             <Anchor

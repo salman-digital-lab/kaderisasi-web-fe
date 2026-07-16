@@ -90,7 +90,7 @@ export default async function SuccessPage(props: {
       redirectLabel = "Lihat Daftar Kegiatan";
     } else if (featureType === "club_registration") {
       redirectUrl = `/clubs/${id}`;
-      redirectLabel = "Kembali ke Detail Club";
+      redirectLabel = "Kembali ke Detail Klub";
     }
 
     return (
@@ -120,10 +120,10 @@ export default async function SuccessPage(props: {
                   ? "Terima kasih telah mengisi formulir."
                   : featureType === "club_registration"
                     ? clubRegistrationStatus === "APPROVED"
-                      ? "Pendaftaran Anda telah disetujui oleh pengelola club."
+                      ? "Pendaftaran Anda telah disetujui oleh pengelola klub."
                       : clubRegistrationStatus === "REJECTED"
                         ? "Pendaftaran Anda telah ditinjau tetapi belum dapat disetujui."
-                        : "Data pendaftaran Anda telah diterima dan sedang menunggu peninjauan pengelola club."
+                        : "Data pendaftaran Anda telah diterima dan sedang menunggu peninjauan pengelola klub."
                     : "Terima kasih telah mendaftar. Data Anda telah kami terima."}
               </Text>
             </Alert>

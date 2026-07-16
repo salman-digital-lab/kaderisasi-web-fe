@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: ClubDetailPageProps) {
   try {
     const club = await getClub({ id });
     if (!club) {
-      return { title: "Club" };
+      return { title: "Klub" };
     }
     return {
       title: club.name,
@@ -51,7 +51,7 @@ export async function generateMetadata({ params }: ClubDetailPageProps) {
     };
   } catch {
     return {
-      title: "Club",
+      title: "Klub",
     };
   }
 }
@@ -188,7 +188,7 @@ export default async function ClubDetailPage({ params }: ClubDetailPageProps) {
           {club.description && (
             <Paper withBorder p="xl" radius="md">
               <Title order={2} mb="md">
-                Tentang Club
+                Tentang Klub
               </Title>
               <div dangerouslySetInnerHTML={{ __html: club.description }} />
             </Paper>
@@ -293,7 +293,7 @@ export default async function ClubDetailPage({ params }: ClubDetailPageProps) {
 
           <Group justify="center">
             <LinkButton href="/clubs" variant="light">
-              Kembali ke Daftar Club
+              Kembali ke Daftar Klub
             </LinkButton>
           </Group>
         </Stack>

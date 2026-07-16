@@ -44,8 +44,8 @@ export async function ClubsListContent({
         <Stack align="center" gap="md">
           <Text size="lg" c="dimmed">
             {search || clubType
-              ? "Tidak ada club yang sesuai dengan pencarian atau filter Anda."
-              : "Belum ada club yang tersedia."}
+              ? "Tidak ada klub yang sesuai dengan pencarian atau filter Anda."
+              : "Belum ada klub yang tersedia."}
           </Text>
           {(search || clubType) && (
             <LinkButton href="/clubs" variant="outline">
@@ -64,7 +64,7 @@ export async function ClubsListContent({
     <Stack gap="lg">
       <Group justify="space-between" align="center">
         <Text c="dimmed" size="md">
-          Menampilkan {firstResult}–{lastResult} dari {meta.total} club
+          Menampilkan {firstResult}–{lastResult} dari {meta.total} klub
         </Text>
       </Group>
 

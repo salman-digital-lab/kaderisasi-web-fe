@@ -73,7 +73,7 @@ export default async function Page(props: {
       }
 
       return (
-        <ErrorWrapper message="Informasi club belum dapat dimuat. Silakan coba lagi." />
+        <ErrorWrapper message="Informasi klub belum dapat dimuat. Silakan coba lagi." />
       );
     }
 

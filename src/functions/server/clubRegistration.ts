@@ -35,7 +35,7 @@ export async function checkClubRegistrationStatus(
     return {
       success: false,
       reason: "UNAVAILABLE",
-      message: "Club tidak valid.",
+      message: "Klub tidak valid.",
     };
   }
 
@@ -80,7 +80,7 @@ export async function cancelClubRegistration(
     return {
       success: false,
       reason: "UNAVAILABLE",
-      message: "Club tidak valid.",
+      message: "Klub tidak valid.",
     };
   }
 

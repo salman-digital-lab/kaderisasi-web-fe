@@ -258,7 +258,7 @@ export default function ClubRegistrationButton({
   if (!isRegistrationOpen) {
     return (
       <Alert color="gray" title="Pendaftaran telah ditutup">
-        Belum ada pendaftaran untuk akun Anda pada club ini.
+        Belum ada pendaftaran untuk akun Anda pada klub ini.
       </Alert>
     );
   }

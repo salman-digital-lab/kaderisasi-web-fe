@@ -13,7 +13,7 @@ export default function ClubsListError() {
     <Alert
       color="red"
       icon={<IconAlertCircle aria-hidden="true" />}
-      title="Daftar club belum dapat dimuat"
+      title="Daftar klub belum dapat dimuat"
     >
       Terjadi kendala saat mengambil data. Periksa koneksi Anda lalu coba lagi.
       <Group mt="md">

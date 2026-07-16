@@ -1,15 +1,16 @@
+import Image from "next/image";
 import { Suspense } from "react";
 import {
   Button,
   Container,
   Group,
-  Paper,
   Stack,
   Text,
   TextInput,
   Title,
 } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
+import illustration from "@/assets/activitiespage-1.svg";
 import ClubsListContent from "@/components/clubs/ClubsListContent";
 import ClubsListSkeleton from "@/components/clubs/ClubsListSkeleton";
 import LinkButton from "@/components/common/LinkButton";
@@ -18,10 +19,11 @@ import {
   MAX_CLUB_SEARCH_LENGTH,
   parseClubListQuery,
 } from "@/features/clubs/list-query";
+import classes from "./page.module.css";
 
 export const metadata = {
-  title: "Club",
-  description: "Daftar UKM dan AVISMAN di lingkungan Kaderisasi Salman.",
+  title: "Klub",
+  description: "Daftar klub UKM dan AVISMAN di lingkungan Kaderisasi Salman.",
 };
 
 type ClubsPageProps = {
@@ -32,33 +34,70 @@ export default async function ClubsPage({ searchParams }: ClubsPageProps) {
   const { search, clubType, page } = parseClubListQuery(await searchParams);
 
   return (
-    <div>
+    <main>
+      <Container size="md">
+        <div className={classes.inner}>
+          <div className={classes.content}>
+            <h1 className={classes.title}>
+              Klub di{" "}
+              <Text component="span" c="blue" inherit>
+                Kaderisasi Salman
+              </Text>
+            </h1>
+            <Text c="dimmed" mt="md" className={classes.heroDescription}>
+              Temukan ruang bertumbuh, berkarya, dan berkolaborasi melalui klub
+              UKM dan AVISMAN di Kaderisasi Salman.
+            </Text>
+          </div>
+          <Image
+            width={400}
+            src={illustration}
+            alt=""
+            preload
+            className={classes.image}
+          />
+        </div>
+      </Container>
+
       <Container size="lg" py={{ base: "lg", md: "xl" }}>
         <Stack gap="lg">
-          <Stack gap="xs">
-            <Title order={1}>Club</Title>
-            <Text c="dimmed" maw={720}>
-              Jelajahi UKM dan AVISMAN yang tersedia di Kaderisasi Salman.
+          <Stack gap="xs" align="center">
+            <Title order={2} ta="center" className={classes.sectionTitle}>
+              Jelajahi Klub
+            </Title>
+            <Text
+              c="dimmed"
+              maw={640}
+              ta="center"
+              className={classes.sectionDescription}
+            >
+              Cari klub berdasarkan nama atau pilih jenis klub yang ingin Anda
+              jelajahi.
             </Text>
           </Stack>
 
-          <Paper withBorder p="md" radius="md">
-            <form action="/clubs">
-              <Group align="end" gap="md">
-                <TextInput
-                  name="search"
-                  label="Cari club"
-                  placeholder="Nama club"
-                  defaultValue={search}
-                  maxLength={MAX_CLUB_SEARCH_LENGTH}
-                  leftSection={<IconSearch size={16} aria-hidden="true" />}
-                  style={{ flex: 1, minWidth: 220 }}
-                />
-                <input type="hidden" name="type" value={clubType || ""} />
-                <Button type="submit">Cari</Button>
-              </Group>
+          <Stack gap="md" align="center">
+            <form action="/clubs" className={classes.searchForm}>
+              <TextInput
+                name="search"
+                label="Cari klub"
+                placeholder="Nama klub"
+                defaultValue={search}
+                maxLength={MAX_CLUB_SEARCH_LENGTH}
+                leftSection={<IconSearch size={16} aria-hidden="true" />}
+                className={classes.searchInput}
+              />
+              <input type="hidden" name="type" value={clubType || ""} />
+              <Button type="submit" className={classes.searchButton}>
+                Cari
+              </Button>
             </form>
-            <Group mt="md" gap="xs" role="group" aria-label="Filter jenis club">
+            <Group
+              gap="xs"
+              justify="center"
+              role="group"
+              aria-label="Filter jenis klub"
+            >
               <LinkButton
                 href={buildClubsHref({ search })}
                 variant={!clubType ? "filled" : "light"}
@@ -84,7 +123,7 @@ export default async function ClubsPage({ searchParams }: ClubsPageProps) {
                 AVISMAN
               </LinkButton>
             </Group>
-          </Paper>
+          </Stack>
 
           <Suspense
             key={`${search}-${clubType || "ALL"}-${page}`}
@@ -94,6 +133,6 @@ export default async function ClubsPage({ searchParams }: ClubsPageProps) {
           </Suspense>
         </Stack>
       </Container>
-    </div>
+    </main>
   );
 }
