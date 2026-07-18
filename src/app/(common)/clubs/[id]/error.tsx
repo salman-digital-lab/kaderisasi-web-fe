@@ -31,7 +31,7 @@ export default function ClubDetailError({
   }, [error]);
 
   return (
-    <Container size="sm" py={{ base: "xl", md: 80 }}>
+    <Container size="md" py={{ base: "xl", md: 80 }}>
       <Stack gap="lg">
         <Title order={1} size="h2">
           Kami tidak dapat membuka klub ini

@@ -1,33 +1,56 @@
-.header {
-  max-width: rem(760px);
+.inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: calc(var(--mantine-spacing-xl) * 2);
+  padding-top: calc(var(--mantine-spacing-xl) * 2.5);
+  padding-bottom: calc(var(--mantine-spacing-xl) * 2.5);
+
+  @media (max-width: $mantine-breakpoint-md) {
+    gap: var(--mantine-spacing-xl);
+    padding-top: calc(var(--mantine-spacing-xl) * 1.25);
+    padding-bottom: calc(var(--mantine-spacing-xl) * 1.25);
+  }
+}
+
+.content {
+  max-width: rem(480px);
+
+  @media (max-width: $mantine-breakpoint-md) {
+    max-width: 100%;
+  }
 }
 
 .title {
-  color: var(--mantine-color-text);
-  font-size: clamp(rem(30px), 5vw, rem(44px));
-  font-weight: 800;
-  letter-spacing: -0.025em;
+  color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
+  font-size: rem(44px);
+  line-height: 1.2;
+  font-weight: 900;
+
+  @media (max-width: $mantine-breakpoint-md) {
+    font-size: rem(34px);
+  }
 }
 
-.description {
-  max-width: 62ch;
-  margin-top: var(--mantine-spacing-xs);
-  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
-  font-size: var(--mantine-font-size-md);
-  line-height: 1.6;
+.image {
+  width: rem(376px);
+  height: rem(356px);
+
+  @media (max-width: $mantine-breakpoint-md) {
+    display: none;
+  }
 }
 
-.controls {
-  display: grid;
-  gap: var(--mantine-spacing-sm);
-  margin-top: var(--mantine-spacing-lg);
+.heroDescription {
+  @media (max-width: $mantine-breakpoint-md) {
+    font-size: var(--mantine-font-size-md);
+  }
 }
 
 .searchForm {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  align-items: end;
-  gap: var(--mantine-spacing-xs);
+  gap: var(--mantine-spacing-sm);
   width: 100%;
 }
 
@@ -40,39 +63,8 @@
 }
 
 .searchButton {
-  min-width: rem(72px);
+  min-width: rem(80px);
   min-height: rem(44px);
-  background: light-dark(
-    var(--mantine-color-blue-8),
-    var(--mantine-color-blue-7)
-  );
-}
-
-.filters {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--mantine-spacing-xs);
-}
-
-.filters a {
-  min-width: 0;
-  min-height: rem(44px);
-  padding-inline: var(--mantine-spacing-xs);
-}
-
-@media (min-width: $mantine-breakpoint-sm) {
-  .controls {
-    grid-template-columns: minmax(rem(360px), rem(560px)) auto;
-    align-items: end;
-  }
-
-  .filters {
-    display: flex;
-  }
-
-  .filters a {
-    min-width: rem(92px);
-  }
 }
 
 @media (max-width: rem(350px)) {

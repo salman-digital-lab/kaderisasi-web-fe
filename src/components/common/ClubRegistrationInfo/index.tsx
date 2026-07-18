@@ -1,4 +1,4 @@
-import { Paper, Stack, Text, Title } from "@mantine/core";
+import { Card, Stack, Text, Title } from "@mantine/core";
 import ClubRichText from "@/components/common/ClubRichText";
 import type { RegistrationInfo } from "@/types/model/club";
 import classes from "./index.module.css";
@@ -26,10 +26,10 @@ export default function ClubRegistrationInfo({
   const headingId = `club-registration-info-${presentation}`;
 
   return (
-    <Paper
+    <Card
       component="section"
       aria-labelledby={headingId}
-      p={{ base: "md", sm: "lg", md: "xl" }}
+      p="lg"
       radius="md"
       withBorder
       className={classes.section}
@@ -46,6 +46,6 @@ export default function ClubRegistrationInfo({
         )}
         <ClubRichText html={registrationInfo.registration_info} />
       </Stack>
-    </Paper>
+    </Card>
   );
 }

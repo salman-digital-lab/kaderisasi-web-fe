@@ -8,71 +8,59 @@
 }
 
 .header {
-  display: grid;
-  grid-template-areas:
-    "logo identity"
-    "metadata metadata"
-    "action action";
-  grid-template-columns: auto minmax(0, 1fr);
+  display: flex;
   gap: var(--mantine-spacing-md);
-  padding-block: var(--mantine-spacing-lg);
-  border-block: rem(1px) solid
-    light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+  width: 100%;
+}
+
+.identityCard {
+  width: 75%;
+}
+
+.actionCard {
+  width: 25%;
+  align-content: center;
 }
 
 .logo {
-  grid-area: logo;
-  width: rem(72px);
-  height: rem(72px);
+  width: rem(96px);
+  height: rem(96px);
+  flex: 0 0 rem(96px);
 }
 
 .identity {
-  grid-area: identity;
+  flex: 1;
   min-width: 0;
 }
 
-.metadata {
-  grid-area: metadata;
-  min-width: 0;
-}
-
-.action {
-  grid-area: action;
-  min-width: 0;
-  min-height: rem(112px);
+.identityHeader {
+  align-items: flex-start;
 }
 
 .prose {
   max-width: 70ch;
 }
 
-@media (min-width: $mantine-breakpoint-sm) {
+@media (max-width: $mantine-breakpoint-md) {
   .header {
-    column-gap: var(--mantine-spacing-lg);
-    padding-block: var(--mantine-spacing-xl);
+    flex-direction: column;
   }
 
-  .logo {
-    width: rem(80px);
-    height: rem(80px);
+  .identityCard,
+  .actionCard {
+    width: 100%;
   }
 }
 
-@media (min-width: $mantine-breakpoint-md) {
-  .header {
-    grid-template-areas:
-      "logo identity action"
-      "logo metadata action";
-    grid-template-columns: rem(96px) minmax(0, 1fr) minmax(
-        rem(320px),
-        rem(360px)
-      );
-    column-gap: var(--mantine-spacing-xl);
+@media (max-width: $mantine-breakpoint-xs) {
+  .identityHeader {
+    flex-direction: column;
   }
 
   .logo {
-    width: rem(96px);
-    height: rem(96px);
+    width: rem(72px);
+    height: rem(72px);
+    flex-basis: rem(72px);
   }
 }
 
@@ -80,5 +68,6 @@
   .logo {
     width: rem(64px);
     height: rem(64px);
+    flex-basis: rem(64px);
   }
 }

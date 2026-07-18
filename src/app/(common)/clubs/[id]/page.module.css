@@ -17,42 +17,40 @@
 }
 
 .header {
-  display: grid;
-  grid-template-areas:
-    "logo identity"
-    "metadata metadata"
-    "action action";
-  grid-template-columns: auto minmax(0, 1fr);
+  display: flex;
   gap: var(--mantine-spacing-md);
+  width: 100%;
+}
+
+.identityCard {
+  width: 75%;
+}
+
+.actionCard {
+  display: flex;
+  width: 25%;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--mantine-spacing-md);
+}
+
+.identityHeader {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--mantine-spacing-lg);
   align-items: start;
-  padding-block: var(--mantine-spacing-lg);
-  border-block: rem(1px) solid
-    light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
 }
 
 .logo {
-  --club-logo-rendered-size: rem(72px);
-
-  grid-area: logo;
+  --club-logo-rendered-size: rem(96px);
 }
 
 .identity {
-  grid-area: identity;
   min-width: 0;
 }
 
-.clubType {
-  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
-  font-size: var(--mantine-font-size-sm);
-  font-weight: 700;
-  letter-spacing: 0.02em;
-}
-
 .title {
-  margin-top: rem(2px);
-  font-size: clamp(rem(27px), 6vw, rem(44px));
-  font-weight: 800;
-  letter-spacing: -0.025em;
+  margin-top: var(--mantine-spacing-xs);
   overflow-wrap: anywhere;
 }
 
@@ -62,69 +60,44 @@
   line-height: 1.55;
 }
 
-.metadata {
-  grid-area: metadata;
-  display: grid;
-  gap: var(--mantine-spacing-xs);
-  min-width: 0;
+.metadataSection {
+  border-top: rem(1px) solid
+    light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+  padding-left: var(--mantine-spacing-lg);
+  padding-right: var(--mantine-spacing-lg);
+  margin-top: var(--mantine-spacing-md);
+  padding-bottom: var(--mantine-spacing-sm);
 }
 
-.registrationStatus,
-.metaItem {
-  color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-dark-0));
-  font-size: var(--mantine-font-size-sm);
+.label {
+  text-transform: uppercase;
+  font-size: var(--mantine-font-size-md);
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
-.registrationStatus {
-  display: flex;
-  align-items: center;
-  gap: rem(7px);
-  font-weight: 600;
+.metadataBadge {
+  max-width: 100%;
+  height: auto;
+  min-height: rem(22px);
+  padding-block: rem(3px);
+  line-height: 1.35;
+  white-space: normal;
 }
 
-.statusDot {
-  width: rem(8px);
-  height: rem(8px);
-  flex: 0 0 rem(8px);
-  border-radius: 50%;
-  background: light-dark(
-    var(--mantine-color-gray-6),
-    var(--mantine-color-dark-2)
-  );
-}
-
-.registrationStatus[data-open] .statusDot {
-  background: light-dark(
-    var(--mantine-color-blue-8),
-    var(--mantine-color-blue-4)
-  );
-}
-
-.metaItem {
-  align-items: flex-start;
-}
-
-.metaItem svg {
-  flex: 0 0 auto;
-  margin-top: rem(2px);
-}
-
-.actionPanel {
-  grid-area: action;
-  min-width: 0;
-  min-height: rem(50px);
+.metadataBadge :global(.mantine-Badge-label) {
+  overflow: visible;
+  white-space: normal;
+  text-overflow: clip;
 }
 
 .body {
-  gap: var(--mantine-spacing-xl);
-  margin-top: var(--mantine-spacing-xl);
+  gap: var(--mantine-spacing-md);
 }
 
 .heading {
   margin-bottom: var(--mantine-spacing-lg);
-  font-size: clamp(rem(24px), 3.5vw, rem(32px));
-  font-weight: 750;
-  letter-spacing: -0.015em;
+  font-size: var(--mantine-h3-font-size);
 }
 
 .collectionCard {
@@ -185,33 +158,6 @@
 }
 
 @media (min-width: $mantine-breakpoint-sm) {
-  .header {
-    grid-template-areas:
-      "logo identity"
-      "metadata metadata"
-      "action action";
-    grid-template-columns: auto minmax(0, 1fr);
-    column-gap: var(--mantine-spacing-lg);
-    padding-block: var(--mantine-spacing-xl);
-  }
-
-  .logo {
-    --club-logo-rendered-size: rem(80px);
-  }
-
-  .metadata {
-    grid-template-columns: repeat(2, minmax(0, max-content));
-    column-gap: var(--mantine-spacing-lg);
-  }
-
-  .registrationStatus {
-    grid-column: 1 / -1;
-  }
-
-  .actionPanel {
-    width: 100%;
-  }
-
   .activityHeader {
     flex-direction: row;
     justify-content: space-between;
@@ -219,39 +165,31 @@
   }
 }
 
-@media (min-width: $mantine-breakpoint-md) {
-  .body {
-    gap: rem(48px);
-    margin-top: rem(48px);
+@media (max-width: $mantine-breakpoint-md) {
+  .header {
+    flex-direction: column;
   }
 
-  .header {
-    grid-template-areas:
-      "logo identity action"
-      "logo metadata action";
-    grid-template-columns: rem(96px) minmax(0, 1fr) minmax(
-        rem(320px),
-        rem(360px)
-      );
-    column-gap: var(--mantine-spacing-xl);
+  .identityCard,
+  .actionCard {
+    width: 100%;
+  }
+}
+
+@media (max-width: $mantine-breakpoint-xs) {
+  .identityHeader {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--mantine-spacing-md);
   }
 
   .logo {
-    --club-logo-rendered-size: rem(96px);
-  }
-
-  .metadata {
-    align-self: end;
-  }
-
-  .actionPanel {
-    align-self: stretch;
+    --club-logo-rendered-size: rem(72px);
   }
 }
 
 @media (max-width: rem(359px)) {
-  .header {
-    column-gap: var(--mantine-spacing-sm);
+  .identityHeader {
+    gap: var(--mantine-spacing-sm);
   }
 
   .logo {

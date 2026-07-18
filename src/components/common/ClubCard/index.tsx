@@ -1,8 +1,16 @@
 import dayjs from "dayjs";
 import "dayjs/locale/id";
 import Link from "next/link";
-import { Card, Group, Text, Title } from "@mantine/core";
-import { IconCalendar } from "@tabler/icons-react";
+import {
+  Badge,
+  Button,
+  Card,
+  CardSection,
+  Group,
+  rem,
+  Text,
+} from "@mantine/core";
+import { IconCalendar, IconCalendarTime } from "@tabler/icons-react";
 import ClubLogo from "@/components/common/ClubLogo";
 import type { ClubType } from "@/types/model/club";
 import { isClubRegistrationOpen } from "@/features/clubs/registration-state";
@@ -24,7 +32,6 @@ export default function ClubCard({
   id,
   name,
   club_type,
-  short_description,
   logo,
   start_period,
   end_period,
@@ -46,45 +53,81 @@ export default function ClubCard({
           ? `Mulai ${dayjs(start_period).locale("id").format("MMM YYYY")}`
           : `Hingga ${dayjs(end_period).locale("id").format("MMM YYYY")}`
       : null;
+  const registrationIcon = (
+    <IconCalendarTime
+      style={{ width: rem(14), height: rem(14) }}
+      aria-hidden="true"
+    />
+  );
+  const periodIcon = (
+    <IconCalendar
+      style={{ width: rem(14), height: rem(14) }}
+      aria-hidden="true"
+    />
+  );
 
   return (
-    <Card component="article" withBorder radius="md" className={classes.card}>
-      <div className={classes.header}>
-        <ClubLogo imageSrc={logoUrl} clubName={name} size={68} />
-        <div className={classes.identity}>
-          {club_type && <Text className={classes.type}>{club_type}</Text>}
-          <Title order={3} className={classes.name}>
-            <Link href={`/clubs/${id}`} className={classes.link}>
-              {name}
-            </Link>
-          </Title>
-          <Text
-            className={classes.registration}
-            data-open={registrationOpen || undefined}
-          >
-            <span className={classes.statusDot} aria-hidden="true" />
-            {registrationOpen ? "Pendaftaran dibuka" : "Pendaftaran ditutup"}
-          </Text>
-        </div>
-      </div>
+    <Card
+      component="article"
+      withBorder
+      radius="md"
+      p="md"
+      className={classes.card}
+    >
+      <CardSection className={classes.logoSection}>
+        <ClubLogo imageSrc={logoUrl} clubName={name} size={112} />
+      </CardSection>
 
-      <Text className={classes.description} lineClamp={2}>
-        {short_description || "Informasi singkat klub belum tersedia."}
-      </Text>
-
-      {registrationOpen && registration_end_date && (
-        <Text className={classes.deadline}>
-          Pendaftaran hingga{" "}
-          {dayjs(registration_end_date).locale("id").format("D MMMM YYYY")}
+      <CardSection className={classes.section} mt="sm" flex="1">
+        <Text fz="md" fw={600} lineClamp={3}>
+          {name}
         </Text>
-      )}
+      </CardSection>
 
-      {period && (
-        <Group gap="xs" wrap="nowrap" className={classes.period}>
-          <IconCalendar size={17} stroke={1.7} aria-hidden="true" />
-          <Text component="span">{period}</Text>
+      <CardSection className={classes.section}>
+        <Text mt="sm" className={classes.label} c="dimmed">
+          Pendaftaran
+        </Text>
+        <Group gap={7} mt={5}>
+          <Badge color={registrationOpen ? "green" : "gray"} variant="light">
+            {registrationOpen ? "Dibuka" : "Ditutup"}
+          </Badge>
+          {registrationOpen && registration_end_date && (
+            <Badge color="red" variant="light" leftSection={registrationIcon}>
+              {dayjs(registration_end_date).locale("id").format("D MMMM YYYY")}
+            </Badge>
+          )}
         </Group>
-      )}
+      </CardSection>
+
+      <CardSection className={classes.section}>
+        <Text mt="sm" className={classes.label} c="dimmed">
+          Jenis &amp; Periode
+        </Text>
+        <Group gap={7} mt={5}>
+          {club_type && (
+            <Badge
+              color={club_type === "AVISMAN" ? "violet" : "blue"}
+              variant="light"
+            >
+              {club_type}
+            </Badge>
+          )}
+          {period && (
+            <Badge variant="light" color="blue" leftSection={periodIcon}>
+              {period}
+            </Badge>
+          )}
+        </Group>
+      </CardSection>
+
+      <Group mt="sm">
+        <Link href={`/clubs/${id}`} style={{ flex: 1, textDecoration: "none" }}>
+          <Button radius="md" fullWidth>
+            Lihat Selengkapnya
+          </Button>
+        </Link>
+      </Group>
     </Card>
   );
 }

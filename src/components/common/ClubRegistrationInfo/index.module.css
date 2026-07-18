@@ -1,12 +1,9 @@
 .section {
-  background: light-dark(
-    var(--mantine-color-gray-0),
-    var(--mantine-color-dark-7)
-  );
+  background: var(--mantine-color-body);
 }
 
 .title {
-  font-size: clamp(rem(22px), 3vw, rem(28px));
+  font-size: var(--mantine-h3-font-size);
 }
 
 .closedNote {
