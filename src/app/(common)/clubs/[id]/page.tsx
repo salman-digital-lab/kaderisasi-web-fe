@@ -270,9 +270,15 @@ export default async function ClubDetailPage({ params }: ClubDetailPageProps) {
                       <Image
                         src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${item.media_url}`}
                         alt={club.name}
-                        fill
+                        width={1600}
+                        height={1000}
                         sizes="(max-width: 768px) 100vw, 33vw"
-                        style={{ objectFit: "cover", borderRadius: 8 }}
+                        style={{
+                          width: "100%",
+                          height: "auto",
+                          objectFit: "cover",
+                          borderRadius: 8,
+                        }}
                       />
                     </AspectRatio>
                   ) : (
