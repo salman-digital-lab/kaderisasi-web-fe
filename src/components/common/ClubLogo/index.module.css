@@ -1,0 +1,35 @@
+.frame {
+  --club-logo-rendered-size: var(--club-logo-size);
+
+  width: var(--club-logo-rendered-size);
+  height: var(--club-logo-rendered-size);
+  flex: 0 0 var(--club-logo-rendered-size);
+  overflow: hidden;
+  border: rem(1px) solid
+    light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+  border-radius: var(--mantine-radius-md);
+  background: light-dark(
+    var(--mantine-color-gray-0),
+    var(--mantine-color-dark-6)
+  );
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.fallback {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-1));
+}
+
+.fallback svg {
+  width: 48%;
+  height: 48%;
+}

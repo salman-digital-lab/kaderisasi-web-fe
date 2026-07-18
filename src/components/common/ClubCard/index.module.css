@@ -1,34 +1,115 @@
 .card {
+  position: relative;
   height: 100%;
   display: flex;
   flex-direction: column;
+  gap: var(--mantine-spacing-sm);
+  padding: var(--mantine-spacing-md);
+  background: var(--mantine-color-body);
+  transition:
+    border-color 120ms ease,
+    box-shadow 120ms ease;
 }
 
-.section {
-  padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
-  border-top: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
-
-  &:first-of-type {
-    border-top: none;
-  }
+.card:hover {
+  border-color: light-dark(
+    var(--mantine-color-blue-4),
+    var(--mantine-color-blue-7)
+  );
 }
 
-.label {
-  text-transform: uppercase;
-  font-size: var(--mantine-font-size-md);
-  font-weight: 700;
-  letter-spacing: 0.02em;
+.card:has(.link:focus-visible) {
+  border-color: var(--mantine-color-blue-6);
+  box-shadow: 0 0 0 rem(3px)
+    light-dark(var(--mantine-color-blue-1), var(--mantine-color-blue-9));
 }
 
-.logo {
+.header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: var(--mantine-spacing-md);
+}
+
+.identity {
+  min-width: 0;
+}
+
+.type {
+  margin-bottom: rem(2px);
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 600;
+}
+
+.name {
+  min-width: 0;
+  font-size: rem(18px);
+  line-height: 1.35;
+}
+
+.link {
+  color: var(--mantine-color-text);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.link::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+}
+
+.link:focus-visible {
+  outline: none;
+}
+
+.registration {
+  display: flex;
+  align-items: center;
+  gap: rem(6px);
+  margin-top: rem(6px);
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 500;
+}
+
+.statusDot {
+  width: rem(7px);
+  height: rem(7px);
+  flex: 0 0 rem(7px);
   border-radius: 50%;
-  border: 2px solid var(--mantine-color-gray-2);
+  background: light-dark(
+    var(--mantine-color-gray-6),
+    var(--mantine-color-dark-2)
+  );
 }
 
-.periodSection {
-  margin-top: auto;
+.registration[data-open] .statusDot {
+  background: light-dark(
+    var(--mantine-color-blue-7),
+    var(--mantine-color-blue-4)
+  );
 }
 
-.buttonSection {
+.description {
+  min-height: calc(1.55em * 2);
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
+  font-size: var(--mantine-font-size-md);
+  line-height: 1.55;
+}
+
+.deadline {
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
+  font-size: var(--mantine-font-size-sm);
+}
+
+.period {
   margin-top: auto;
+  padding-top: var(--mantine-spacing-xs);
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
+}
+
+.period span {
+  font-size: var(--mantine-font-size-sm);
 }

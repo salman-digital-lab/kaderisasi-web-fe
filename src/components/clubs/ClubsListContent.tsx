@@ -1,4 +1,4 @@
-import { SimpleGrid, Center, Stack, Text, Group } from "@mantine/core";
+import { Center, Group, Stack, Text, Title } from "@mantine/core";
 import { redirect } from "next/navigation";
 import ClubCard from "@/components/common/ClubCard";
 import { getClubs } from "@/services/club.cache";
@@ -10,6 +10,7 @@ import {
   CLUBS_PAGE_SIZE,
   type ClubListQuery,
 } from "@/features/clubs/list-query";
+import gridClasses from "./club-grid.module.css";
 
 type ClubsListContentProps = ClubListQuery;
 
@@ -28,7 +29,14 @@ export async function ClubsListContent({
       club_type: clubType,
     });
   } catch {
-    return <ClubsListError />;
+    return (
+      <Stack gap="md">
+        <Title order={2} size="h3">
+          Daftar Klub
+        </Title>
+        <ClubsListError />
+      </Stack>
+    );
   }
 
   const { data: clubs, meta } = result;
@@ -40,20 +48,30 @@ export async function ClubsListContent({
 
   if (clubs.length === 0) {
     return (
-      <Center py="xl">
-        <Stack align="center" gap="md">
-          <Text size="lg" c="dimmed">
-            {search || clubType
-              ? "Tidak ada klub yang sesuai dengan pencarian atau filter Anda."
-              : "Belum ada klub yang tersedia."}
+      <Stack gap="md">
+        <Group gap="xs" align="baseline">
+          <Title order={2} size="h3">
+            Daftar Klub
+          </Title>
+          <Text c="dimmed" size="sm">
+            0 klub
           </Text>
-          {(search || clubType) && (
-            <LinkButton href="/clubs" variant="outline">
-              Hapus pencarian dan filter
-            </LinkButton>
-          )}
-        </Stack>
-      </Center>
+        </Group>
+        <Center py="xl">
+          <Stack align="center" gap="md">
+            <Text size="lg" c="dimmed" ta="center">
+              {search || clubType
+                ? "Tidak ada klub yang sesuai dengan pencarian atau filter Anda."
+                : "Belum ada klub yang tersedia."}
+            </Text>
+            {(search || clubType) && (
+              <LinkButton href="/clubs" variant="outline">
+                Hapus pencarian dan filter
+              </LinkButton>
+            )}
+          </Stack>
+        </Center>
+      </Stack>
     );
   }
 
@@ -62,13 +80,16 @@ export async function ClubsListContent({
 
   return (
     <Stack gap="lg">
-      <Group justify="space-between" align="center">
-        <Text c="dimmed" size="md">
-          Menampilkan {firstResult}–{lastResult} dari {meta.total} klub
+      <Group gap="xs" align="baseline">
+        <Title order={2} size="h3">
+          Daftar Klub
+        </Title>
+        <Text c="dimmed" size="sm">
+          {firstResult}–{lastResult} dari {meta.total} klub
         </Text>
       </Group>
 
-      <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing="md">
+      <div className={gridClasses.grid}>
         {clubs.map((club) => (
           <ClubCard
             key={club.id}
@@ -83,7 +104,7 @@ export async function ClubsListContent({
             registration_end_date={club.registration_end_date}
           />
         ))}
-      </SimpleGrid>
+      </div>
 
       <ClubPagination
         search={search}

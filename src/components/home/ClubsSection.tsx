@@ -1,14 +1,8 @@
-import {
-  SimpleGrid,
-  Center,
-  Title,
-  Text,
-  Container,
-  Alert,
-} from "@mantine/core";
+import { Alert, Center, Container, Text, Title } from "@mantine/core";
 import ClubCard from "@/components/common/ClubCard";
 import LinkButton from "@/components/common/LinkButton";
 import { getClubs } from "@/services/club";
+import gridClasses from "@/components/clubs/club-grid.module.css";
 
 export async function ClubsSection() {
   let clubs: Awaited<ReturnType<typeof getClubs>>["data"];
@@ -40,18 +34,14 @@ export async function ClubsSection() {
       </Title>
 
       <Text c="dimmed" ta="center" mt="md" maw={600} mx="auto">
-        Bergabunglah dengan berbagai klub dan kepanitiaan untuk
-        mengembangkan minat dan bakat Anda serta berkontribusi dalam membangun
-        generasi pemimpin masa depan.
+        Bergabunglah dengan berbagai klub dan kepanitiaan untuk mengembangkan
+        minat dan bakat Anda serta berkontribusi dalam membangun generasi
+        pemimpin masa depan.
       </Text>
 
       {clubs.length > 0 ? (
         <>
-          <SimpleGrid
-            cols={{ base: 1, sm: 2, md: 4 }}
-            spacing={{ base: "lg", md: "md" }}
-            mt={{ base: "xl", md: 50 }}
-          >
+          <div className={`${gridClasses.grid} ${gridClasses.homeGrid}`}>
             {clubs.map((club) => (
               <ClubCard
                 key={club.id}
@@ -66,12 +56,10 @@ export async function ClubsSection() {
                 registration_end_date={club.registration_end_date}
               />
             ))}
-          </SimpleGrid>
+          </div>
           {clubs.length > 3 && (
             <Center mt="lg">
-              <LinkButton href="/clubs">
-                Lihat Klub Lainnya
-              </LinkButton>
+              <LinkButton href="/clubs">Lihat Klub Lainnya</LinkButton>
             </Center>
           )}
         </>

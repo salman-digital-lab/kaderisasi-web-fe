@@ -1,4 +1,6 @@
+import { Suspense } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   AspectRatio,
@@ -7,30 +9,30 @@ import {
   Container,
   Divider,
   Group,
-  Paper,
   SimpleGrid,
   Stack,
   Text,
-  ThemeIcon,
   Title,
 } from "@mantine/core";
 import {
+  IconArrowLeft,
+  IconCalendar,
   IconCalendarEvent,
-  IconCalendarTime,
-  IconUsers,
 } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
 import { getClub } from "@/services/club.cache";
-import { getCustomFormByFeature } from "@/services/customForm";
-import { verifySession } from "@/functions/server/session";
-import { FetcherError } from "@/functions/common/fetcher";
+import ClubLogo from "@/components/common/ClubLogo";
 import ClubRegistrationInfo from "@/components/common/ClubRegistrationInfo";
-import ClubRegistrationButton from "@/components/common/ClubRegistrationButton";
+import ClubRichText from "@/components/common/ClubRichText";
+import {
+  ClubRegistrationAction,
+  ClubRegistrationActionFallback,
+} from "@/components/clubs/ClubRegistrationAction";
 import LinkButton from "@/components/common/LinkButton";
 import { isClubRegistrationOpen } from "@/features/clubs/registration-state";
-import type { CustomForm } from "@/types/api/customForm";
 import type { ClubDetail } from "@/types/model/club";
+import classes from "./page.module.css";
 
 type ClubDetailPageProps = {
   params: Promise<{ id: string }>;
@@ -50,10 +52,23 @@ export async function generateMetadata({ params }: ClubDetailPageProps) {
         club.short_description || `Detail ${club.name} di Kaderisasi Salman`,
     };
   } catch {
-    return {
-      title: "Klub",
-    };
+    return { title: "Klub" };
   }
+}
+
+function formatPeriod(club: ClubDetail): string | null {
+  if (!club.start_period && !club.end_period) {
+    return null;
+  }
+
+  const start = club.start_period
+    ? dayjs(club.start_period).locale("id").format("MMMM YYYY")
+    : "Mulai belum ditentukan";
+  const end = club.end_period
+    ? dayjs(club.end_period).locale("id").format("MMMM YYYY")
+    : "Sekarang";
+
+  return `${start}–${end}`;
 }
 
 export default async function ClubDetailPage({ params }: ClubDetailPageProps) {
@@ -64,246 +79,265 @@ export default async function ClubDetailPage({ params }: ClubDetailPageProps) {
     notFound();
   }
 
-  const sessionPromise = verifySession();
-
   const club: ClubDetail | null = await getClub({ id });
 
   if (!club) {
     notFound();
   }
 
-  let customForm: CustomForm | undefined;
-  let customFormError = false;
   const registrationOpen = isClubRegistrationOpen({
     isRegistrationOpen: Boolean(club.is_registration_open),
     registrationEndDate: club.registration_end_date,
   });
-
-  if (registrationOpen) {
-    try {
-      customForm = await getCustomFormByFeature({
-        feature_type: "club_registration",
-        feature_id: club.id,
-      });
-    } catch (error: unknown) {
-      customFormError = !(
-        error instanceof FetcherError && error.status === 404
-      );
-    }
-  }
-
-  const sessionData = await sessionPromise;
-
   const logoUrl = club.logo
     ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${club.logo}`
     : undefined;
+  const period = formatPeriod(club);
 
   return (
-    <div>
-      <Container size="lg" py={{ base: "lg", md: "xl" }}>
-        <Stack gap="xl">
-          <Paper withBorder p={{ base: "md", md: "xl" }} radius="md">
-            <Group align="center" gap="xl" wrap="wrap">
-              {logoUrl ? (
-                <Image
-                  src={logoUrl}
-                  alt={club.name}
-                  width={128}
-                  height={128}
-                  sizes="128px"
-                  style={{ objectFit: "contain", borderRadius: 12 }}
-                  priority
-                />
-              ) : (
-                <ThemeIcon size={128} radius="md" variant="light">
-                  <IconUsers size={64} />
-                </ThemeIcon>
-              )}
+    <Container size="lg" py={{ base: "md", md: "xl" }}>
+      <Link href="/clubs" className={classes.backLink}>
+        <IconArrowLeft size={18} aria-hidden="true" />
+        Kembali ke daftar klub
+      </Link>
 
-              <Stack gap="sm" style={{ flex: 1, minWidth: 260 }}>
-                <Group gap="sm">
-                  <Badge
-                    color={club.club_type === "AVISMAN" ? "violet" : "blue"}
-                  >
-                    {club.club_type}
-                  </Badge>
-                  <Badge color={registrationOpen ? "green" : "gray"}>
-                    {registrationOpen
-                      ? "Pendaftaran dibuka"
-                      : "Pendaftaran ditutup"}
-                  </Badge>
-                </Group>
-                <Title order={1}>{club.name}</Title>
-                {club.short_description && (
-                  <Text size="lg" c="dimmed">
-                    {club.short_description}
-                  </Text>
-                )}
-                {(club.start_period || club.end_period) && (
-                  <Group gap="xs">
-                    <IconCalendarTime size={18} />
-                    <Text>
-                      {club.start_period
-                        ? dayjs(club.start_period)
-                            .locale("id")
-                            .format("MMMM YYYY")
-                        : "Mulai belum ditentukan"}{" "}
-                      -{" "}
-                      {club.end_period
-                        ? dayjs(club.end_period)
-                            .locale("id")
-                            .format("MMMM YYYY")
-                        : "Sekarang"}
-                    </Text>
-                  </Group>
-                )}
-                {club.registration_end_date && (
-                  <Group gap="xs">
-                    <IconCalendarEvent size={18} aria-hidden="true" />
-                    <Text>
-                      Batas pendaftaran:{" "}
-                      {dayjs(club.registration_end_date)
-                        .locale("id")
-                        .format("DD MMMM YYYY")}
-                    </Text>
-                  </Group>
-                )}
-              </Stack>
+      <header className={classes.header}>
+        <ClubLogo
+          imageSrc={logoUrl}
+          clubName={club.name}
+          size={96}
+          priority
+          className={classes.logo}
+        />
 
-              <Stack gap="sm" style={{ flex: "1 1 280px", maxWidth: 360 }}>
-                <ClubRegistrationButton
-                  clubId={club.id}
-                  clubName={club.name}
-                  isAuthenticated={Boolean(sessionData.session)}
-                  isRegistrationOpen={registrationOpen}
-                  customForm={customForm}
-                  customFormError={customFormError}
-                />
-              </Stack>
-            </Group>
-          </Paper>
-
-          <ClubRegistrationInfo registrationInfo={club.registration_info} />
-
-          {club.description && (
-            <Paper withBorder p="xl" radius="md">
-              <Title order={2} mb="md">
-                Tentang Klub
-              </Title>
-              <div dangerouslySetInnerHTML={{ __html: club.description }} />
-            </Paper>
+        <div className={classes.identity}>
+          <Text className={classes.clubType}>{club.club_type}</Text>
+          <Title order={1} className={classes.title}>
+            {club.name}
+          </Title>
+          {club.short_description && (
+            <Text className={classes.shortDescription}>
+              {club.short_description}
+            </Text>
           )}
+        </div>
 
-          {!!club.leadership?.length && (
-            <Paper withBorder p="xl" radius="md">
-              <Title order={2} mb="md">
+        <div className={classes.metadata}>
+          <Text
+            className={classes.registrationStatus}
+            data-open={registrationOpen || undefined}
+          >
+            <span className={classes.statusDot} aria-hidden="true" />
+            {registrationOpen ? "Pendaftaran dibuka" : "Pendaftaran ditutup"}
+          </Text>
+          {period && (
+            <Group gap="xs" wrap="nowrap" className={classes.metaItem}>
+              <IconCalendar size={18} aria-hidden="true" />
+              <Text component="span">{period}</Text>
+            </Group>
+          )}
+          {club.registration_end_date && (
+            <Group gap="xs" wrap="nowrap" className={classes.metaItem}>
+              <IconCalendarEvent size={18} aria-hidden="true" />
+              <Text component="span">
+                Batas pendaftaran{" "}
+                {dayjs(club.registration_end_date)
+                  .locale("id")
+                  .format("D MMMM YYYY")}
+              </Text>
+            </Group>
+          )}
+        </div>
+
+        <aside
+          className={classes.actionPanel}
+          aria-label="Tindakan pendaftaran klub"
+        >
+          <Suspense fallback={<ClubRegistrationActionFallback />}>
+            <ClubRegistrationAction
+              clubId={club.id}
+              clubName={club.name}
+              isRegistrationOpen={registrationOpen}
+            />
+          </Suspense>
+        </aside>
+      </header>
+
+      <Stack className={classes.body}>
+        {registrationOpen && (
+          <ClubRegistrationInfo
+            registrationInfo={club.registration_info}
+            presentation="open"
+          />
+        )}
+
+        {club.description && (
+          <section aria-labelledby="about-club-heading">
+            <Title
+              order={2}
+              id="about-club-heading"
+              className={classes.heading}
+            >
+              Tentang Klub
+            </Title>
+            <ClubRichText html={club.description} />
+          </section>
+        )}
+
+        {!registrationOpen && (
+          <ClubRegistrationInfo
+            registrationInfo={club.registration_info}
+            presentation="closed"
+          />
+        )}
+
+        {!!club.leadership?.length && (
+          <>
+            <Divider />
+            <section aria-labelledby="club-leadership-heading">
+              <Title
+                order={2}
+                id="club-leadership-heading"
+                className={classes.heading}
+              >
                 Pengurus
               </Title>
               <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="md">
                 {club.leadership.map((role) => (
-                  <Card key={role.id} withBorder radius="md">
-                    <Text fw={700}>
+                  <Card
+                    component="article"
+                    key={role.id}
+                    withBorder
+                    radius="md"
+                    className={classes.collectionCard}
+                  >
+                    <Title order={3} className={classes.itemTitle}>
                       {role.registration?.member?.profile?.name || "Anggota"}
+                    </Title>
+                    <Text className={classes.secondaryText}>
+                      {role.role_name}
                     </Text>
-                    <Text c="dimmed">{role.role_name}</Text>
                   </Card>
                 ))}
               </SimpleGrid>
-            </Paper>
-          )}
+            </section>
+          </>
+        )}
 
-          {!!club.activities?.length && (
-            <Paper withBorder p="xl" radius="md">
-              <Title order={2} mb="md">
+        {!!club.activities?.length && (
+          <>
+            <Divider />
+            <section aria-labelledby="club-activities-heading">
+              <Title
+                order={2}
+                id="club-activities-heading"
+                className={classes.heading}
+              >
                 Kegiatan Terkait
               </Title>
               <SimpleGrid cols={{ base: 1, md: 2 }} spacing="md">
                 {club.activities.map((activity) => (
-                  <Card key={activity.id} withBorder radius="md">
-                    <Stack gap="xs">
-                      <Group justify="space-between" align="start">
-                        <Title order={3} size="h4">
+                  <Card
+                    component="article"
+                    key={activity.id}
+                    withBorder
+                    radius="md"
+                    className={classes.collectionCard}
+                  >
+                    <Stack gap="sm">
+                      <div className={classes.activityHeader}>
+                        <Title order={3} className={classes.itemTitle}>
                           {activity.name}
                         </Title>
                         <Badge variant="light">
                           {activity.is_registration_open
-                            ? "Pendaftaran Dibuka"
-                            : "Informasi"}
+                            ? "Pendaftaran dibuka"
+                            : "Informasi kegiatan"}
                         </Badge>
-                      </Group>
+                      </div>
                       {activity.activity_start && (
-                        <Group gap="xs">
-                          <IconCalendarEvent size={16} />
-                          <Text size="md">
+                        <Group gap="xs" wrap="nowrap">
+                          <IconCalendarEvent size={17} aria-hidden="true" />
+                          <Text className={classes.secondaryText}>
                             {dayjs(activity.activity_start)
                               .locale("id")
-                              .format("DD MMMM YYYY")}
+                              .format("D MMMM YYYY")}
                           </Text>
                         </Group>
                       )}
-                      <Divider />
-                      <Group justify="flex-end">
-                        <LinkButton
-                          href={`/activity/${activity.slug}`}
-                          variant="light"
-                          size="xs"
-                        >
-                          Lihat Kegiatan
-                        </LinkButton>
-                      </Group>
+                      <LinkButton
+                        href={`/activity/${activity.slug}`}
+                        variant="default"
+                        className={classes.itemAction}
+                      >
+                        Lihat kegiatan
+                      </LinkButton>
                     </Stack>
                   </Card>
                 ))}
               </SimpleGrid>
-            </Paper>
-          )}
+            </section>
+          </>
+        )}
 
-          {!!club.media?.items?.length && (
-            <Paper withBorder p="xl" radius="md">
-              <Title order={2} mb="md">
+        {!!club.media?.items?.length && (
+          <>
+            <Divider />
+            <section aria-labelledby="club-media-heading">
+              <Title
+                order={2}
+                id="club-media-heading"
+                className={classes.heading}
+              >
                 Media
               </Title>
               <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="md">
-                {club.media.items.map((item) =>
-                  item.media_type === "image" ? (
-                    <AspectRatio key={item.media_url} ratio={16 / 10}>
-                      <Image
-                        src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${item.media_url}`}
-                        alt={club.name}
-                        width={1600}
-                        height={1000}
-                        sizes="(max-width: 768px) 100vw, 33vw"
-                        style={{
-                          width: "100%",
-                          height: "auto",
-                          objectFit: "cover",
-                          borderRadius: 8,
-                        }}
-                      />
-                    </AspectRatio>
-                  ) : (
-                    <AspectRatio key={item.media_url} ratio={16 / 9}>
-                      <iframe
-                        src={item.media_url}
-                        title={`${club.name} video`}
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                        style={{ border: 0, borderRadius: 8 }}
-                      />
-                    </AspectRatio>
-                  ),
-                )}
-              </SimpleGrid>
-            </Paper>
-          )}
+                {club.media.items.map((item, index) => {
+                  const mediaNumber = index + 1;
 
-          <Group justify="center">
-            <LinkButton href="/clubs" variant="light">
-              Kembali ke Daftar Klub
-            </LinkButton>
-          </Group>
-        </Stack>
-      </Container>
-    </div>
+                  return (
+                    <figure
+                      key={`${item.media_type}-${item.media_url}-${index}`}
+                      className={classes.mediaItem}
+                    >
+                      <AspectRatio ratio={16 / 10}>
+                        {item.media_type === "image" ? (
+                          <Image
+                            src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${item.media_url}`}
+                            alt={`Media ${mediaNumber} dari ${club.name}`}
+                            width={1600}
+                            height={1000}
+                            sizes="(max-width: 767px) 100vw, (max-width: 991px) 50vw, 33vw"
+                            className={classes.mediaVisual}
+                          />
+                        ) : (
+                          <iframe
+                            src={item.media_url}
+                            title={`Video ${mediaNumber} dari ${club.name}`}
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            className={classes.mediaVisual}
+                          />
+                        )}
+                      </AspectRatio>
+                      <figcaption>
+                        <Title order={3} className={classes.mediaLabel}>
+                          Media {mediaNumber}
+                        </Title>
+                      </figcaption>
+                    </figure>
+                  );
+                })}
+              </SimpleGrid>
+            </section>
+          </>
+        )}
+
+        <Link href="/clubs" className={classes.bottomBackLink}>
+          <IconArrowLeft size={17} aria-hidden="true" />
+          Kembali ke daftar klub
+        </Link>
+      </Stack>
+    </Container>
   );
 }

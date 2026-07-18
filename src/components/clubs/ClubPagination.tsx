@@ -29,6 +29,7 @@ export default function ClubPagination({
             href={buildClubsHref({ search, clubType, page: page - 1 })}
             variant="default"
             size="md"
+            mih={44}
             leftSection={<IconChevronLeft size={16} aria-hidden="true" />}
             aria-label="Halaman sebelumnya"
           >
@@ -38,6 +39,7 @@ export default function ClubPagination({
           <Button
             variant="default"
             size="md"
+            mih={44}
             leftSection={<IconChevronLeft size={16} aria-hidden="true" />}
             disabled
           >
@@ -61,6 +63,7 @@ export default function ClubPagination({
                 href={buildClubsHref({ search, clubType, page: item })}
                 variant={item === page ? "filled" : "subtle"}
                 size="md"
+                mih={44}
                 px="sm"
                 aria-label={`Halaman ${item}`}
                 aria-current={item === page ? "page" : undefined}
@@ -80,6 +83,7 @@ export default function ClubPagination({
             href={buildClubsHref({ search, clubType, page: page + 1 })}
             variant="default"
             size="md"
+            mih={44}
             rightSection={<IconChevronRight size={16} aria-hidden="true" />}
             aria-label="Halaman berikutnya"
           >
@@ -89,6 +93,7 @@ export default function ClubPagination({
           <Button
             variant="default"
             size="md"
+            mih={44}
             rightSection={<IconChevronRight size={16} aria-hidden="true" />}
             disabled
           >

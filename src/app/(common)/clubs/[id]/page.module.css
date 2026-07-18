@@ -1,0 +1,260 @@
+.backLink,
+.bottomBackLink {
+  display: inline-flex;
+  min-height: rem(44px);
+  align-items: center;
+  gap: var(--mantine-spacing-xs);
+  color: light-dark(var(--mantine-color-blue-8), var(--mantine-color-blue-3));
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.backLink:focus-visible,
+.bottomBackLink:focus-visible {
+  border-radius: var(--mantine-radius-sm);
+  outline: rem(3px) solid var(--mantine-color-blue-5);
+  outline-offset: rem(2px);
+}
+
+.header {
+  display: grid;
+  grid-template-areas:
+    "logo identity"
+    "metadata metadata"
+    "action action";
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--mantine-spacing-md);
+  align-items: start;
+  padding-block: var(--mantine-spacing-lg);
+  border-block: rem(1px) solid
+    light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+}
+
+.logo {
+  --club-logo-rendered-size: rem(72px);
+
+  grid-area: logo;
+}
+
+.identity {
+  grid-area: identity;
+  min-width: 0;
+}
+
+.clubType {
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.title {
+  margin-top: rem(2px);
+  font-size: clamp(rem(27px), 6vw, rem(44px));
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  overflow-wrap: anywhere;
+}
+
+.shortDescription {
+  margin-top: var(--mantine-spacing-xs);
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
+  line-height: 1.55;
+}
+
+.metadata {
+  grid-area: metadata;
+  display: grid;
+  gap: var(--mantine-spacing-xs);
+  min-width: 0;
+}
+
+.registrationStatus,
+.metaItem {
+  color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-dark-0));
+  font-size: var(--mantine-font-size-sm);
+}
+
+.registrationStatus {
+  display: flex;
+  align-items: center;
+  gap: rem(7px);
+  font-weight: 600;
+}
+
+.statusDot {
+  width: rem(8px);
+  height: rem(8px);
+  flex: 0 0 rem(8px);
+  border-radius: 50%;
+  background: light-dark(
+    var(--mantine-color-gray-6),
+    var(--mantine-color-dark-2)
+  );
+}
+
+.registrationStatus[data-open] .statusDot {
+  background: light-dark(
+    var(--mantine-color-blue-8),
+    var(--mantine-color-blue-4)
+  );
+}
+
+.metaItem {
+  align-items: flex-start;
+}
+
+.metaItem svg {
+  flex: 0 0 auto;
+  margin-top: rem(2px);
+}
+
+.actionPanel {
+  grid-area: action;
+  min-width: 0;
+  min-height: rem(50px);
+}
+
+.body {
+  gap: var(--mantine-spacing-xl);
+  margin-top: var(--mantine-spacing-xl);
+}
+
+.heading {
+  margin-bottom: var(--mantine-spacing-lg);
+  font-size: clamp(rem(24px), 3.5vw, rem(32px));
+  font-weight: 750;
+  letter-spacing: -0.015em;
+}
+
+.collectionCard {
+  height: 100%;
+  padding: var(--mantine-spacing-md);
+  background: var(--mantine-color-body);
+}
+
+.itemTitle {
+  font-size: rem(19px);
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.secondaryText {
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
+  line-height: 1.55;
+}
+
+.activityHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--mantine-spacing-xs);
+}
+
+.itemAction {
+  min-height: rem(44px);
+  align-self: flex-start;
+  margin-top: var(--mantine-spacing-xs);
+}
+
+.mediaItem {
+  min-width: 0;
+  margin: 0;
+}
+
+.mediaVisual {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: var(--mantine-radius-sm);
+  object-fit: cover;
+}
+
+.mediaLabel {
+  margin-top: var(--mantine-spacing-xs);
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 600;
+}
+
+.bottomBackLink {
+  width: max-content;
+  margin-inline: auto;
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
+  font-size: var(--mantine-font-size-sm);
+}
+
+@media (min-width: $mantine-breakpoint-sm) {
+  .header {
+    grid-template-areas:
+      "logo identity"
+      "metadata metadata"
+      "action action";
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: var(--mantine-spacing-lg);
+    padding-block: var(--mantine-spacing-xl);
+  }
+
+  .logo {
+    --club-logo-rendered-size: rem(80px);
+  }
+
+  .metadata {
+    grid-template-columns: repeat(2, minmax(0, max-content));
+    column-gap: var(--mantine-spacing-lg);
+  }
+
+  .registrationStatus {
+    grid-column: 1 / -1;
+  }
+
+  .actionPanel {
+    width: 100%;
+  }
+
+  .activityHeader {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: var(--mantine-spacing-md);
+  }
+}
+
+@media (min-width: $mantine-breakpoint-md) {
+  .body {
+    gap: rem(48px);
+    margin-top: rem(48px);
+  }
+
+  .header {
+    grid-template-areas:
+      "logo identity action"
+      "logo metadata action";
+    grid-template-columns: rem(96px) minmax(0, 1fr) minmax(
+        rem(320px),
+        rem(360px)
+      );
+    column-gap: var(--mantine-spacing-xl);
+  }
+
+  .logo {
+    --club-logo-rendered-size: rem(96px);
+  }
+
+  .metadata {
+    align-self: end;
+  }
+
+  .actionPanel {
+    align-self: stretch;
+  }
+}
+
+@media (max-width: rem(359px)) {
+  .header {
+    column-gap: var(--mantine-spacing-sm);
+  }
+
+  .logo {
+    --club-logo-rendered-size: rem(64px);
+  }
+}

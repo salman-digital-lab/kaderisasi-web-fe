@@ -1,7 +1,8 @@
 "use client";
 
-import { SimpleGrid, Title, Text, Container, Skeleton, Center } from "@mantine/core";
+import { Center, Container, Skeleton, Text, Title } from "@mantine/core";
 import { ClubGridSkeleton } from "@/components/skeletons";
+import gridClasses from "@/components/clubs/club-grid.module.css";
 
 export function ClubsSectionSkeleton() {
   return (
@@ -10,21 +11,15 @@ export function ClubsSectionSkeleton() {
         Klub dan Kepanitiaan
       </Title>
 
-      <Text
-        c="dimmed"
-        ta="center"
-        mt="md"
-        maw={600}
-        mx="auto"
-      >
-        Bergabunglah dengan berbagai klub dan kepanitiaan untuk
-        mengembangkan minat dan bakat Anda serta berkontribusi dalam membangun
-        generasi pemimpin masa depan.
+      <Text c="dimmed" ta="center" mt="md" maw={600} mx="auto">
+        Bergabunglah dengan berbagai klub dan kepanitiaan untuk mengembangkan
+        minat dan bakat Anda serta berkontribusi dalam membangun generasi
+        pemimpin masa depan.
       </Text>
 
-      <SimpleGrid cols={{ base: 1, md: 4 }} spacing="md" mt={50}>
+      <div className={`${gridClasses.grid} ${gridClasses.homeGrid}`}>
         <ClubGridSkeleton count={4} />
-      </SimpleGrid>
+      </div>
       <Center>
         <Skeleton height={42} width={160} radius="md" mt="md" />
       </Center>

@@ -20,6 +20,7 @@ export default function ClubsListError() {
         <Button
           color="red"
           variant="light"
+          mih={44}
           leftSection={<IconRefresh size={16} aria-hidden="true" />}
           loading={isPending}
           onClick={() => startTransition(() => router.refresh())}

@@ -1,14 +1,16 @@
-import { Paper, Title, Stack, ThemeIcon, Group, Box } from "@mantine/core";
-import { IconClipboardList } from "@tabler/icons-react";
+import { Paper, Stack, Text, Title } from "@mantine/core";
+import ClubRichText from "@/components/common/ClubRichText";
 import type { RegistrationInfo } from "@/types/model/club";
 import classes from "./index.module.css";
 
 interface ClubRegistrationInfoProps {
   registrationInfo?: RegistrationInfo;
+  presentation: "open" | "closed";
 }
 
 export default function ClubRegistrationInfo({
   registrationInfo,
+  presentation,
 }: ClubRegistrationInfoProps) {
   if (
     !registrationInfo?.registration_info ||
@@ -17,35 +19,32 @@ export default function ClubRegistrationInfo({
     return null;
   }
 
+  const isClosed = presentation === "closed";
+  const title = isClosed
+    ? "Informasi Pendaftaran Sebelumnya"
+    : "Informasi Pendaftaran";
+  const headingId = `club-registration-info-${presentation}`;
+
   return (
     <Paper
-      p="xl"
+      component="section"
+      aria-labelledby={headingId}
+      p={{ base: "md", sm: "lg", md: "xl" }}
       radius="md"
-      shadow="sm"
-      style={{
-        background:
-          "linear-gradient(135deg, var(--mantine-color-blue-0) 0%, var(--mantine-color-cyan-0) 100%)",
-        border: "2px solid var(--mantine-color-blue-2)",
-      }}
+      withBorder
+      className={classes.section}
     >
-      <Stack gap="md">
-        <Group gap="sm" align="center">
-          <ThemeIcon size="lg" variant="light" color="blue">
-            <IconClipboardList size={20} />
-          </ThemeIcon>
-          <Title order={3} c="blue.8">
-            Informasi Pendaftaran
-          </Title>
-        </Group>
-
-        <Paper p="lg" radius="sm" bg="white" shadow="xs">
-          <Box
-            className={classes.content}
-            dangerouslySetInnerHTML={{
-              __html: registrationInfo.registration_info,
-            }}
-          />
-        </Paper>
+      <Stack gap="sm">
+        <Title order={2} id={headingId} className={classes.title}>
+          {title}
+        </Title>
+        {isClosed && (
+          <Text className={classes.closedNote}>
+            Pendaftaran klub ini telah ditutup. Informasi berikut ditampilkan
+            sebagai referensi dari periode pendaftaran sebelumnya.
+          </Text>
+        )}
+        <ClubRichText html={registrationInfo.registration_info} />
       </Stack>
     </Paper>
   );

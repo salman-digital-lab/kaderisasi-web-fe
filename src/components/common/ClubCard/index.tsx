@@ -1,17 +1,12 @@
-"use client";
-
 import dayjs from "dayjs";
 import "dayjs/locale/id";
 import Link from "next/link";
-import NextImage from "next/image";
-import { Text, Group, Badge, Button, rem, Card } from "@mantine/core";
-import classes from "./index.module.css";
-import { IconCalendarTime, IconUsers } from "@tabler/icons-react";
+import { Card, Group, Text, Title } from "@mantine/core";
+import { IconCalendar } from "@tabler/icons-react";
+import ClubLogo from "@/components/common/ClubLogo";
 import type { ClubType } from "@/types/model/club";
 import { isClubRegistrationOpen } from "@/features/clubs/registration-state";
-
-// Set the locale globally for this component
-dayjs.locale("id");
+import classes from "./index.module.css";
 
 type ClubCardProps = {
   id: number;
@@ -40,93 +35,56 @@ export default function ClubCard({
     isRegistrationOpen: is_registration_open,
     registrationEndDate: registration_end_date,
   });
-  const calendarIcon = (
-    <IconCalendarTime
-      style={{ width: rem(14), height: rem(14) }}
-      aria-hidden="true"
-    />
-  );
+  const logoUrl = logo
+    ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${logo}`
+    : undefined;
+  const period =
+    start_period || end_period
+      ? start_period && end_period
+        ? `${dayjs(start_period).locale("id").format("MMM YYYY")}–${dayjs(end_period).locale("id").format("MMM YYYY")}`
+        : start_period
+          ? `Mulai ${dayjs(start_period).locale("id").format("MMM YYYY")}`
+          : `Hingga ${dayjs(end_period).locale("id").format("MMM YYYY")}`
+      : null;
 
   return (
-    <Card withBorder radius="md" p="md" className={classes.card}>
-      <Card.Section className={classes.section}>
-        <Group align="center" justify="center" mb="sm">
-          {logo ? (
-            <NextImage
-              src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${logo}`}
-              width={80}
-              height={80}
-              alt={name}
-              className={classes.logo}
-              sizes="80px"
-            />
-          ) : (
-            <div
-              className={classes.logo}
-              style={{
-                width: 80,
-                height: 80,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <IconUsers size={40} aria-hidden="true" />
-            </div>
-          )}
-        </Group>
-        <Text fz="md" fw={600} ta="center" lineClamp={2}>
-          {name}
-        </Text>
-        {club_type && (
-          <Group justify="center" mt="xs">
-            <Badge
-              color={club_type === "AVISMAN" ? "violet" : "blue"}
-              variant="light"
-            >
-              {club_type}
-            </Badge>
-          </Group>
-        )}
-        <Group justify="center" mt="xs">
-          <Badge color={registrationOpen ? "green" : "gray"} variant="light">
+    <Card component="article" withBorder radius="md" className={classes.card}>
+      <div className={classes.header}>
+        <ClubLogo imageSrc={logoUrl} clubName={name} size={68} />
+        <div className={classes.identity}>
+          {club_type && <Text className={classes.type}>{club_type}</Text>}
+          <Title order={3} className={classes.name}>
+            <Link href={`/clubs/${id}`} className={classes.link}>
+              {name}
+            </Link>
+          </Title>
+          <Text
+            className={classes.registration}
+            data-open={registrationOpen || undefined}
+          >
+            <span className={classes.statusDot} aria-hidden="true" />
             {registrationOpen ? "Pendaftaran dibuka" : "Pendaftaran ditutup"}
-          </Badge>
-        </Group>
-        {registrationOpen && registration_end_date && (
-          <Text c="dimmed" ta="center" size="md" mt={4}>
-            Sampai {dayjs(registration_end_date).format("D MMMM YYYY")}
           </Text>
-        )}
-        {short_description && (
-          <Text c="dimmed" ta="center" lineClamp={3} mt="xs">
-            {short_description}
-          </Text>
-        )}
-      </Card.Section>
+        </div>
+      </div>
 
-      {(start_period || end_period) && (
-        <Card.Section className={`${classes.section} ${classes.periodSection}`}>
-          <Text className={classes.label} c="dimmed">
-            Periode Aktivitas
-          </Text>
-          <Group gap={7} mt={5} justify="center">
-            <Badge variant="light" color="blue" leftSection={calendarIcon}>
-              {start_period && end_period
-                ? `${dayjs(start_period).format("MMM YYYY")} - ${dayjs(end_period).format("MMM YYYY")}`
-                : start_period
-                  ? dayjs(start_period).format("MMM YYYY")
-                  : `s/d ${dayjs(end_period).format("MMM YYYY")}`}
-            </Badge>
-          </Group>
-        </Card.Section>
+      <Text className={classes.description} lineClamp={2}>
+        {short_description || "Informasi singkat klub belum tersedia."}
+      </Text>
+
+      {registrationOpen && registration_end_date && (
+        <Text className={classes.deadline}>
+          Pendaftaran hingga{" "}
+          {dayjs(registration_end_date).locale("id").format("D MMMM YYYY")}
+        </Text>
       )}
 
-      <Group mt="sm" className={classes.buttonSection}>
-        <Button component={Link} href={`/clubs/${id}`} radius="md" fullWidth>
-          Lihat Detail
-        </Button>
-      </Group>
+      {period && (
+        <Group gap="xs" wrap="nowrap" className={classes.period}>
+          <IconCalendar size={17} stroke={1.7} aria-hidden="true" />
+          <Text component="span">{period}</Text>
+        </Group>
+      )}
     </Card>
   );
 }
