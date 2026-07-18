@@ -34,6 +34,20 @@
   gap: var(--mantine-spacing-md);
 }
 
+.actionCard :global(.mantine-Button-root) {
+  height: auto;
+  min-height: rem(44px);
+  padding-block: var(--mantine-spacing-xs);
+}
+
+.actionCard :global(.mantine-Button-label) {
+  overflow: visible;
+  line-height: 1.3;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
 .identityHeader {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
