@@ -1,5 +1,4 @@
-.backLink,
-.bottomBackLink {
+.backLink {
   display: inline-flex;
   min-height: rem(44px);
   align-items: center;
@@ -9,8 +8,7 @@
   text-decoration: none;
 }
 
-.backLink:focus-visible,
-.bottomBackLink:focus-visible {
+.backLink:focus-visible {
   border-radius: var(--mantine-radius-sm);
   outline: rem(3px) solid var(--mantine-color-blue-5);
   outline-offset: rem(2px);
@@ -162,13 +160,6 @@
   color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
   font-size: var(--mantine-font-size-sm);
   font-weight: 600;
-}
-
-.bottomBackLink {
-  width: max-content;
-  margin-inline: auto;
-  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
-  font-size: var(--mantine-font-size-sm);
 }
 
 @media (min-width: $mantine-breakpoint-sm) {

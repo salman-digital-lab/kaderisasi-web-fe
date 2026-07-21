@@ -387,11 +387,6 @@ export default async function ClubDetailPage({ params }: ClubDetailPageProps) {
               </SimpleGrid>
             </Card>
           )}
-
-          <Link href="/clubs" className={classes.bottomBackLink}>
-            <IconArrowLeft size={17} aria-hidden="true" />
-            Kembali ke daftar klub
-          </Link>
         </Stack>
       </Stack>
     </Container>
