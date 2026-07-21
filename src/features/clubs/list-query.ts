@@ -1,4 +1,4 @@
-import type { ClubType } from "@/types/model/club";
+import { CLUB_TYPES, type ClubType } from "../../types/model/club";
 
 export const CLUBS_PAGE_SIZE = 12;
 export const MAX_CLUB_SEARCH_LENGTH = 100;
@@ -36,7 +36,7 @@ export function parseClubListQuery(params: {
 
   return {
     search: normalizeParam(params.search).slice(0, MAX_CLUB_SEARCH_LENGTH),
-    clubType: type === "UKM" || type === "AVISMAN" ? type : undefined,
+    clubType: CLUB_TYPES.find((clubType) => clubType === type),
     page: normalizePage(params.page),
   };
 }

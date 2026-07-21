@@ -31,7 +31,7 @@ import {
 } from "@/components/clubs/ClubRegistrationAction";
 import LinkButton from "@/components/common/LinkButton";
 import { isClubRegistrationOpen } from "@/features/clubs/registration-state";
-import type { ClubDetail } from "@/types/model/club";
+import { CLUB_TYPE_LABELS, type ClubDetail } from "@/types/model/club";
 import classes from "./page.module.css";
 
 type ClubDetailPageProps = {
@@ -121,7 +121,9 @@ export default async function ClubDetailPage({ params }: ClubDetailPageProps) {
 
               <div className={classes.identity}>
                 <Group gap={7}>
-                  <Badge variant="light">{club.club_type}</Badge>
+                  <Badge variant="light">
+                    {CLUB_TYPE_LABELS[club.club_type]}
+                  </Badge>
                   <Badge
                     variant="light"
                     color={registrationOpen ? "green" : "gray"}

@@ -12,7 +12,7 @@ import {
 } from "@mantine/core";
 import { IconCalendar, IconCalendarTime } from "@tabler/icons-react";
 import ClubLogo from "@/components/common/ClubLogo";
-import type { ClubType } from "@/types/model/club";
+import { CLUB_TYPE_LABELS, type ClubType } from "@/types/model/club";
 import { isClubRegistrationOpen } from "@/features/clubs/registration-state";
 import classes from "./index.module.css";
 
@@ -26,6 +26,13 @@ type ClubCardProps = {
   end_period: string | null;
   is_registration_open?: boolean;
   registration_end_date?: string | null;
+};
+
+const CLUB_TYPE_COLORS: Record<ClubType, string> = {
+  UNIT: "blue",
+  CLUB_KEPROFESIAN: "grape",
+  CLUB_BAHASA: "teal",
+  AVISMAN_REGIONAL: "violet",
 };
 
 export default function ClubCard({
@@ -106,11 +113,8 @@ export default function ClubCard({
         </Text>
         <Group gap={7} mt={5}>
           {club_type && (
-            <Badge
-              color={club_type === "AVISMAN" ? "violet" : "blue"}
-              variant="light"
-            >
-              {club_type}
+            <Badge color={CLUB_TYPE_COLORS[club_type]} variant="light">
+              {CLUB_TYPE_LABELS[club_type]}
             </Badge>
           )}
           {period && (

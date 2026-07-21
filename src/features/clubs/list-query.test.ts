@@ -10,10 +10,10 @@ describe("Club list query helpers", () => {
     expect(
       parseClubListQuery({
         search: ["  panahan  ", "ignored"],
-        type: "UKM",
+        type: "CLUB_BAHASA",
         page: "3",
       }),
-    ).toEqual({ search: "panahan", clubType: "UKM", page: 3 });
+    ).toEqual({ search: "panahan", clubType: "CLUB_BAHASA", page: 3 });
 
     expect(parseClubListQuery({ type: "invalid", page: "0" })).toEqual({
       search: "",
@@ -28,8 +28,11 @@ describe("Club list query helpers", () => {
 
   it("builds encoded URLs while omitting the default page", () => {
     expect(
-      buildClubsHref({ search: "  Salman & ITB ", clubType: "AVISMAN" }),
-    ).toBe("/clubs?search=Salman+%26+ITB&type=AVISMAN");
+      buildClubsHref({
+        search: "  Salman & ITB ",
+        clubType: "AVISMAN_REGIONAL",
+      }),
+    ).toBe("/clubs?search=Salman+%26+ITB&type=AVISMAN_REGIONAL");
     expect(buildClubsHref({ search: "", page: 4 })).toBe("/clubs?page=4");
   });
 

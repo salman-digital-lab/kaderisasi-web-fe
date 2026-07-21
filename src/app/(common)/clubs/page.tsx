@@ -11,11 +11,13 @@ import {
   MAX_CLUB_SEARCH_LENGTH,
   parseClubListQuery,
 } from "@/features/clubs/list-query";
+import { CLUB_TYPES, CLUB_TYPE_LABELS } from "@/types/model/club";
 import classes from "./page.module.css";
 
 export const metadata = {
   title: "Klub",
-  description: "Daftar klub UKM dan AVISMAN di lingkungan Kaderisasi Salman.",
+  description:
+    "Daftar Unit, Club Keprofesian, Club Bahasa, dan Avisman Regional di Kaderisasi Salman.",
 };
 
 type ClubsPageProps = {
@@ -37,8 +39,9 @@ export default async function ClubsPage({ searchParams }: ClubsPageProps) {
               </Text>
             </h1>
             <Text c="dimmed" mt="md" className={classes.heroDescription}>
-              Temukan ruang bertumbuh, berkarya, dan berkolaborasi melalui klub
-              UKM dan AVISMAN di Kaderisasi Salman.
+              Temukan ruang bertumbuh, berkarya, dan berkolaborasi melalui Unit,
+              Club Keprofesian, Club Bahasa, dan Avisman Regional di Kaderisasi
+              Salman.
             </Text>
           </div>
           <Image
@@ -87,26 +90,19 @@ export default async function ClubsPage({ searchParams }: ClubsPageProps) {
           >
             Semua
           </LinkButton>
-          <LinkButton
-            href={buildClubsHref({ search, clubType: "UKM" })}
-            variant={clubType === "UKM" ? "filled" : "light"}
-            radius="xs"
-            size="md"
-            mih={44}
-            aria-current={clubType === "UKM" ? "page" : undefined}
-          >
-            UKM
-          </LinkButton>
-          <LinkButton
-            href={buildClubsHref({ search, clubType: "AVISMAN" })}
-            variant={clubType === "AVISMAN" ? "filled" : "light"}
-            radius="xs"
-            size="md"
-            mih={44}
-            aria-current={clubType === "AVISMAN" ? "page" : undefined}
-          >
-            AVISMAN
-          </LinkButton>
+          {CLUB_TYPES.map((type) => (
+            <LinkButton
+              key={type}
+              href={buildClubsHref({ search, clubType: type })}
+              variant={clubType === type ? "filled" : "light"}
+              radius="xs"
+              size="md"
+              mih={44}
+              aria-current={clubType === type ? "page" : undefined}
+            >
+              {CLUB_TYPE_LABELS[type]}
+            </LinkButton>
+          ))}
         </Group>
 
         <Suspense
