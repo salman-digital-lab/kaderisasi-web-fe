@@ -1,0 +1,38 @@
+.main {
+  min-height: 100dvh;
+  background: var(--surface-subtle);
+  padding-block: var(--page-space);
+}
+.container {
+  width: 100%;
+}
+.logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--mantine-spacing-xl);
+}
+.logo img {
+  max-width: 100%;
+  height: auto;
+}
+.header {
+  margin-bottom: var(--mantine-spacing-xl);
+}
+.link {
+  color: var(--mantine-primary-color-filled);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.legal {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  margin-top: var(--mantine-spacing-sm);
+  font-size: var(--mantine-font-size-sm);
+}
+.legal a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+}

@@ -1,10 +1,12 @@
 "use client";
 
-import { Container, Skeleton, Stack } from "@mantine/core";
+import PageContainer from "@/components/layout/PageContainer";
+
+import { Skeleton, Stack } from "@mantine/core";
 
 export function JoinPageSkeleton() {
   return (
-    <Container size="xs" py="xl">
+    <PageContainer size="sm">
       <Stack gap="lg">
         {/* Back button */}
         <Skeleton height={36} width={160} radius="md" />
@@ -22,6 +24,6 @@ export function JoinPageSkeleton() {
           <Skeleton height={72} radius="md" />
         </Stack>
       </Stack>
-    </Container>
+    </PageContainer>
   );
 }

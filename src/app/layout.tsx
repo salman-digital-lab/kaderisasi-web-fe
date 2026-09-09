@@ -2,6 +2,7 @@ import "@mantine/core/styles.css";
 import "@mantine/carousel/styles.css";
 import "@mantine/notifications/styles.css";
 import "@mantine/dates/styles.css";
+import "./globals.css";
 
 import { ColorSchemeScript, mantineHtmlProps } from "@mantine/core";
 import Script from "next/script";
@@ -98,6 +99,9 @@ export default function RootLayout({
       </head>
       <body>
         <AppProvider>
+          <a href="#main-content" className="skipLink">
+            Lewati ke konten utama
+          </a>
           <Suspense>
             <ScrollToTop />
           </Suspense>

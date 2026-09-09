@@ -8,17 +8,20 @@
 }
 
 .header {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(16rem, 1fr);
   gap: var(--mantine-spacing-md);
   width: 100%;
 }
 
 .identityCard {
-  width: 75%;
+  width: 100%;
+  min-width: 0;
 }
 
 .actionCard {
-  width: 25%;
+  width: 100%;
+  min-width: 0;
   align-content: center;
 }
 
@@ -69,5 +72,11 @@
     width: rem(64px);
     height: rem(64px);
     flex-basis: rem(64px);
+  }
+}
+
+@media (max-width: $mantine-breakpoint-md) {
+  .header {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

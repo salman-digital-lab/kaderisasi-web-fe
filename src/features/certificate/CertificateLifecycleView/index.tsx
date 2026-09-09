@@ -1,10 +1,11 @@
 "use client";
 
+import PageContainer from "@/components/layout/PageContainer";
+
 import Link from "next/link";
 import {
   Alert,
   Button,
-  Container,
   Paper,
   Stack,
   Text,
@@ -28,7 +29,7 @@ export default function CertificateLifecycleView({
   const isWaiting = summary.state === "eligible_not_issued";
 
   return (
-    <Container component="main" size="sm" py="xl">
+    <PageContainer size="sm">
       <Paper p={{ base: "lg", sm: "xl" }} radius="md" withBorder>
         <Stack align="center" gap="lg" ta="center">
           <ThemeIcon
@@ -73,6 +74,6 @@ export default function CertificateLifecycleView({
           </Button>
         </Stack>
       </Paper>
-    </Container>
+    </PageContainer>
   );
 }

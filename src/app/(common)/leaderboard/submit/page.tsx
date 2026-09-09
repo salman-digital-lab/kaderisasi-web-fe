@@ -1,4 +1,5 @@
-import { Container, Paper, Title, Text, rem } from "@mantine/core";
+import PageContainer from "@/components/layout/PageContainer";
+import { Paper, Title, Text } from "@mantine/core";
 import AchievementForm from "@/features/leaderboard/AchievementForm";
 import { verifySession } from "@/functions/server/session";
 import { Member, PublicUser } from "@/types/model/members";
@@ -48,8 +49,8 @@ async function AchievementFormContent() {
 
 export default function Page() {
   return (
-    <Container size="sm" component="main" mt={rem(80)}>
-      <Title ta="center" mb="xl">
+    <PageContainer size="sm">
+      <Title order={1} mb="xl">
         Kirim Prestasi Anda
       </Title>
       <Paper radius="md" withBorder p="lg">
@@ -68,6 +69,6 @@ export default function Page() {
           <AchievementFormContent />
         </Suspense>
       </Paper>
-    </Container>
+    </PageContainer>
   );
 }

@@ -1,25 +1,16 @@
-import { Container, Paper, Skeleton } from "@mantine/core";
-import classes from "./index.module.css";
+import { Skeleton, Stack } from "@mantine/core";
+import type { ReactElement } from "react";
+import AuthLayout from "@/components/layout/AuthLayout";
 
-export default function Loading() {
+export default function Loading(): ReactElement {
   return (
-    <Container size={420} my={40}>
-      <div className={classes.logo}>
-        <Skeleton height={100} width={100} mx="auto" />
-      </div>
-
-      <Skeleton height={40} width={200} mx="auto" mt={20} />
-      <Skeleton height={20} width={250} mx="auto" mt={5} />
-      <Skeleton height={40} width={300} mx="auto" mt={10} />
-
-      <Paper withBorder p={30} mt={24} radius="md">
-        <Skeleton height={50} mb={15} />
-        <Skeleton height={50} mb={15} />
-        <Skeleton height={50} mb={15} />
-        <Skeleton height={50} mb={15} />
-        <Skeleton height={40} mt={30} />
-        <Skeleton height={36} mt="xl" />
-      </Paper>
-    </Container>
+    <AuthLayout title="Buat akun" description="Menyiapkan formulir…">
+      <Stack role="status" aria-label="Memuat formulir">
+        {Array.from({ length: 4 }, (_, index) => (
+          <Skeleton key={index} height={72} />
+        ))}
+        <Skeleton height={44} />
+      </Stack>
+    </AuthLayout>
   );
 }

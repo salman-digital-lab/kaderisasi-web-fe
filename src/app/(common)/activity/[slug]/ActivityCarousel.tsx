@@ -3,7 +3,7 @@
 import { Image } from "@mantine/core";
 import { Carousel, CarouselSlide } from "@mantine/carousel";
 import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
-
+import type { ReactElement } from "react";
 import classes from "./index.module.css";
 
 type ActivityCarouselProps = {
@@ -16,7 +16,8 @@ export default function ActivityCarousel({
   images,
   activityName,
   imageBaseUrl,
-}: ActivityCarouselProps) {
+}: ActivityCarouselProps): ReactElement | null {
+  if (images.length === 0) return null;
   return (
     <Carousel
       classNames={{
@@ -25,34 +26,25 @@ export default function ActivityCarousel({
         slide: classes["carousel-slide"],
       }}
       slideGap="md"
-      withIndicators
-      controlsOffset={0}
-      controlSize={40}
+      withIndicators={images.length > 1}
+      controlsOffset="sm"
+      controlSize={44}
       emblaOptions={{ loop: true, align: "start" }}
-      nextControlIcon={<IconArrowRight size={24} color="white" />}
-      previousControlIcon={<IconArrowLeft size={24} color="white" />}
+      nextControlProps={{ "aria-label": "Gambar berikutnya" }}
+      previousControlProps={{ "aria-label": "Gambar sebelumnya" }}
+      nextControlIcon={<IconArrowRight size={24} aria-hidden />}
+      previousControlIcon={<IconArrowLeft size={24} aria-hidden />}
       withControls={images.length > 1}
     >
-      {images.length ? (
-        images.map((image) => (
-          <CarouselSlide key={image}>
-            <Image
-              src={`${imageBaseUrl}/${image}`}
-              alt="Activity Banner"
-              className={classes["carousel-image"]}
-              fallbackSrc={"https://placehold.co/700x700?text=" + activityName}
-            />
-          </CarouselSlide>
-        ))
-      ) : (
-        <CarouselSlide>
+      {images.map((image, index) => (
+        <CarouselSlide key={image}>
           <Image
-            src={"https://placehold.co/700x700?text=" + activityName}
-            alt="Activity Banner"
+            src={`${imageBaseUrl}/${image}`}
+            alt={`${activityName} — gambar ${index + 1}`}
             className={classes["carousel-image"]}
           />
         </CarouselSlide>
-      )}
+      ))}
     </Carousel>
   );
 }

@@ -80,10 +80,21 @@ export function OnboardingHeader() {
       <div className={classes.logo}>
         <Image src={logo} alt="bmka" fill className={classes.logoImage} />
       </div>
-      <Title ta="center" className={`${classes.title} ${classes.headerText}`}>
+      <Title
+        order={1}
+        size="h2"
+        ta="center"
+        className={`${classes.title} ${classes.headerText}`}
+      >
         Lengkapi Profil Anda
       </Title>
-      <Text c="dimmed" size="md" ta="center" mt={5} className={classes.headerText}>
+      <Text
+        c="dimmed"
+        size="md"
+        ta="center"
+        mt={5}
+        className={classes.headerText}
+      >
         Buat akun baru, masuk dengan akun yang sudah ada, atau lanjut tanpa
         akun.
       </Text>
@@ -108,10 +119,19 @@ export function OnboardingProgress({
             {STEP_META[activeStepId].label}
           </Text>
         </Group>
-        <Progress value={progressValue} radius="xl" size="md" />
+        <Progress
+          value={progressValue}
+          radius="xl"
+          size="md"
+          aria-label={`Progres pengisian: langkah ${currentStep + 1} dari ${visibleStepIds.length}`}
+        />
       </Stack>
 
-      <div className={classes.desktopSteps} aria-label="Progres onboarding">
+      <div
+        className={classes.desktopSteps}
+        role="group"
+        aria-label="Progres onboarding"
+      >
         {visibleStepIds.map((stepId, index) => {
           const isCompleted = index < currentStep;
           const isActive = index === currentStep;
@@ -154,10 +174,21 @@ export function NoAccountSuccessState({ onLogin }: SuccessStateProps) {
       <div className={classes.logo}>
         <Image src={logo} alt="bmka" fill className={classes.logoImage} />
       </div>
-      <Title ta="center" className={`${classes.title} ${classes.headerText}`}>
+      <Title
+        order={1}
+        size="h2"
+        ta="center"
+        className={`${classes.title} ${classes.headerText}`}
+      >
         Data Berhasil Dikirim
       </Title>
-      <Text c="dimmed" size="md" ta="center" mt={5} className={classes.headerText}>
+      <Text
+        c="dimmed"
+        size="md"
+        ta="center"
+        mt={5}
+        className={classes.headerText}
+      >
         Profil Anda sudah tercatat tanpa akun dan bisa dilanjutkan kembali di
         lain waktu.
       </Text>
@@ -316,8 +347,9 @@ export function CredentialsStep({
         <Alert color="teal" variant="light" title="Sudah masuk">
           <Stack gap="sm">
             <Text size="md">
-              Anda sudah login sebagai {profileData?.userData.email || form.values.email}.
-              Data profil akan dimuat otomatis saat Anda lanjut.
+              Anda sudah login sebagai{" "}
+              {profileData?.userData.email || form.values.email}. Data profil
+              akan dimuat otomatis saat Anda lanjut.
             </Text>
             <Group gap="xs">
               <Button variant="default" size="md" onClick={onSwitchAccount}>
@@ -738,7 +770,9 @@ export function ProfileStep({
                 {editingEducationIndex === index ? (
                   <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
                     <Select
-                      {...form.getInputProps(`educationHistory.${index}.degree`)}
+                      {...form.getInputProps(
+                        `educationHistory.${index}.degree`,
+                      )}
                       key={form.key(`educationHistory.${index}.degree`)}
                       name={`educationHistory.${index}.degree`}
                       label="Jenjang"
@@ -750,7 +784,9 @@ export function ProfileStep({
                       radius="md"
                     />
                     <NumberInput
-                      {...form.getInputProps(`educationHistory.${index}.intakeYear`)}
+                      {...form.getInputProps(
+                        `educationHistory.${index}.intakeYear`,
+                      )}
                       key={form.key(`educationHistory.${index}.intakeYear`)}
                       name={`educationHistory.${index}.intakeYear`}
                       label="Tahun masuk"
@@ -760,7 +796,9 @@ export function ProfileStep({
                       radius="md"
                     />
                     <UniversityNameSelect
-                      {...form.getInputProps(`educationHistory.${index}.institution`)}
+                      {...form.getInputProps(
+                        `educationHistory.${index}.institution`,
+                      )}
                       key={form.key(`educationHistory.${index}.institution`)}
                       name={`educationHistory.${index}.institution`}
                       label="Institusi"
@@ -769,7 +807,9 @@ export function ProfileStep({
                       radius="md"
                     />
                     <TextInput
-                      {...form.getInputProps(`educationHistory.${index}.faculty`)}
+                      {...form.getInputProps(
+                        `educationHistory.${index}.faculty`,
+                      )}
                       key={form.key(`educationHistory.${index}.faculty`)}
                       name={`educationHistory.${index}.faculty`}
                       label="Fakultas"
@@ -932,9 +972,7 @@ export function SalmanStep({ form }: StepFormProps) {
     <Stack gap="xl">
       <Stack gap={6}>
         <Title order={2}>Riwayat aktivitas di Salman</Title>
-        <Text c="dimmed">
-          Pilih aktivitas Salman yang pernah Anda ikuti.
-        </Text>
+        <Text c="dimmed">Pilih aktivitas Salman yang pernah Anda ikuti.</Text>
       </Stack>
 
       <Checkbox.Group
@@ -1055,7 +1093,11 @@ function SectionHeader({
   onAdd: () => void;
 }) {
   return (
-    <Group justify="space-between" align="center" className={classes.sectionHeader}>
+    <Group
+      justify="space-between"
+      align="center"
+      className={classes.sectionHeader}
+    >
       <div>
         <Title order={4}>{title}</Title>
         <Text size="md" c="dimmed">
@@ -1223,10 +1265,13 @@ export function ReviewStep({
                       : "Lanjut tanpa akun"
                 }
               />
-              {form.values.mode === "account" || form.values.mode === "login" ? (
+              {form.values.mode === "account" ||
+              form.values.mode === "login" ? (
                 <SummaryItem
                   label="Email akun"
-                  value={profileData?.userData.email || form.values.email || "-"}
+                  value={
+                    profileData?.userData.email || form.values.email || "-"
+                  }
                 />
               ) : null}
             </SimpleGrid>
@@ -1237,7 +1282,10 @@ export function ReviewStep({
           <Stack gap="xs">
             <Text fw={700}>Data diri</Text>
             <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="lg">
-              <SummaryItem label="Nama lengkap" value={form.values.name || "-"} />
+              <SummaryItem
+                label="Nama lengkap"
+                value={form.values.name || "-"}
+              />
               <SummaryItem
                 label="Nama panggilan"
                 value={form.values.preferredName || "-"}
@@ -1245,8 +1293,9 @@ export function ReviewStep({
               <SummaryItem
                 label="Jenis kelamin"
                 value={
-                  GENDER_OPTION.find((option) => option.value === form.values.gender)
-                    ?.label || "-"
+                  GENDER_OPTION.find(
+                    (option) => option.value === form.values.gender,
+                  )?.label || "-"
                 }
               />
               <SummaryItem
@@ -1265,10 +1314,19 @@ export function ReviewStep({
           <Stack gap="xs">
             <Text fw={700}>Kontak</Text>
             <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="lg">
-              <SummaryItem label="WhatsApp" value={form.values.whatsapp || "-"} />
-              <SummaryItem label="Instagram" value={form.values.instagram || "-"} />
+              <SummaryItem
+                label="WhatsApp"
+                value={form.values.whatsapp || "-"}
+              />
+              <SummaryItem
+                label="Instagram"
+                value={form.values.instagram || "-"}
+              />
               <SummaryItem label="TikTok" value={form.values.tiktok || "-"} />
-              <SummaryItem label="LinkedIn" value={form.values.linkedin || "-"} />
+              <SummaryItem
+                label="LinkedIn"
+                value={form.values.linkedin || "-"}
+              />
             </SimpleGrid>
           </Stack>
 
@@ -1291,7 +1349,10 @@ export function ReviewStep({
               />
               <SummaryItem
                 label="Provinsi asal"
-                value={getLocationLabel(form.values.originProvinceId, provinceData)}
+                value={getLocationLabel(
+                  form.values.originProvinceId,
+                  provinceData,
+                )}
               />
               <SummaryItem
                 label="Kota/kabupaten asal"
@@ -1311,13 +1372,16 @@ export function ReviewStep({
                     <Text fw={600}>Riwayat {index + 1}</Text>
                     <Text size="md">
                       Jenjang:{" "}
-                      {degreeOptions.find((option) => option.value === entry.degree)
-                        ?.label || "-"}
+                      {degreeOptions.find(
+                        (option) => option.value === entry.degree,
+                      )?.label || "-"}
                     </Text>
                     <Text size="md">Institusi: {entry.institution || "-"}</Text>
                     <Text size="md">Fakultas: {entry.faculty || "-"}</Text>
                     <Text size="md">Jurusan: {entry.major || "-"}</Text>
-                    <Text size="md">Tahun masuk: {entry.intakeYear || "-"}</Text>
+                    <Text size="md">
+                      Tahun masuk: {entry.intakeYear || "-"}
+                    </Text>
                   </Paper>
                 ))}
               </Stack>
@@ -1335,7 +1399,9 @@ export function ReviewStep({
                 {form.values.workHistory.map((entry, index) => (
                   <Paper key={index} withBorder radius="md" p="sm">
                     <Text fw={600}>Pekerjaan {index + 1}</Text>
-                    <Text size="md">Posisi/jabatan: {entry.jobTitle || "-"}</Text>
+                    <Text size="md">
+                      Posisi/jabatan: {entry.jobTitle || "-"}
+                    </Text>
                     <Text size="md">
                       Perusahaan/tempat: {entry.company || "-"}
                     </Text>
@@ -1367,7 +1433,9 @@ export function ReviewStep({
               label="Fokus aktivitas saat ini"
               value={
                 form.values.currentActivityFocus.length > 0
-                  ? form.values.currentActivityFocus.map(getFocusLabel).join(", ")
+                  ? form.values.currentActivityFocus
+                      .map(getFocusLabel)
+                      .join(", ")
                   : "-"
               }
             />
@@ -1428,13 +1496,7 @@ export function ReviewStep({
   );
 }
 
-function SummaryItem({
-  label,
-  value,
-}: {
-  label: string;
-  value: string;
-}) {
+function SummaryItem({ label, value }: { label: string; value: string }) {
   return (
     <div>
       <Text size="md" fw={700} className={classes.summaryLabel}>

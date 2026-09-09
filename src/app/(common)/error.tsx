@@ -1,49 +1,23 @@
 "use client";
 
-import {
-  Button,
-  Center,
-  Code,
-  Stack,
-  Title,
-  Text,
-  Container,
-} from "@mantine/core";
 import { useEffect } from "react";
+import type { ReactElement } from "react";
+import ErrorWrapper from "@/components/layout/Error";
 
 export default function Error({
   error,
-  reset,
+  retry,
 }: {
   error: Error & { digest?: string };
-  reset: () => void;
-}) {
+  retry: () => void;
+}): ReactElement {
   useEffect(() => {
     console.error(error);
   }, [error]);
-
   return (
-    <Container>
-      <Center h="98vh">
-        <Stack>
-          <Title ta="center">Telah Terjadi Kesalahan</Title>
-          <Title order={3} c="dimmed">
-            Detil Kesalahan :
-          </Title>
-          <Code p="md">{error.message}</Code>
-          <Stack gap="xs">
-            <Button color="red" onClick={() => reset()}>
-              Silahkan Ulangi Kembali
-            </Button>
-            <Text ta="center" c="dimmed" size="md">
-              Atau
-            </Text>
-            <Text ta="center" size="md">
-              Laporkan Kepada Admin Melalui Media Sosial
-            </Text>
-          </Stack>
-        </Stack>
-      </Center>
-    </Container>
+    <ErrorWrapper
+      message="Terjadi kendala saat memuat halaman. Silakan coba lagi."
+      reset={retry}
+    />
   );
 }

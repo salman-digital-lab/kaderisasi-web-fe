@@ -1,6 +1,7 @@
+import PageContainer from "@/components/layout/PageContainer";
 import { verifySession } from "@/functions/server/session";
 import { getCustomFormByFeature } from "@/services/customForm";
-import { Container, Paper, Title, Text, Stack, Alert } from "@mantine/core";
+import { Paper, Title, Text, Stack, Alert } from "@mantine/core";
 import { redirect } from "next/navigation";
 import ErrorWrapper from "@/components/layout/Error";
 import styles from "./page.module.css";
@@ -94,20 +95,16 @@ export default async function SuccessPage(props: {
     }
 
     return (
-      <Container size="md" py={{ base: "md", sm: "xl" }} px={{ base: "xs", sm: "md" }}>
-        <Paper 
-          radius="md" 
-          withBorder 
+      <PageContainer size="md">
+        <Paper
+          radius="md"
+          withBorder
           p={{ base: "md", sm: "xl" }}
           style={{ width: "100%", maxWidth: "100%" }}
         >
           <Stack gap="lg" align="center">
-            <Alert 
-              color="blue" 
-              variant="light"
-              w="100%"
-            >
-              <Title order={3} mb="xs">
+            <Alert color="blue" variant="light" w="100%">
+              <Title order={1} size="h2" mb="xs">
                 {featureType === "independent_form"
                   ? "Formulir Berhasil Dikirim!"
                   : featureType === "club_registration" &&
@@ -129,20 +126,22 @@ export default async function SuccessPage(props: {
             </Alert>
 
             {customForm?.post_submission_info && (
-              <Paper 
-                w="100%" 
-                p="md" 
+              <Paper
+                w="100%"
+                p="md"
                 withBorder
-                style={{ 
-                  backgroundColor: "var(--mantine-color-gray-0)",
+                style={{
+                  backgroundColor: "var(--surface-subtle)",
                 }}
               >
-                <Title order={4} mb="md">
+                <Title order={2} size="h4" mb="md">
                   Informasi Penting
                 </Title>
                 <div
                   className={styles.richTextContent}
-                  dangerouslySetInnerHTML={{ __html: customForm.post_submission_info }}
+                  dangerouslySetInnerHTML={{
+                    __html: customForm.post_submission_info,
+                  }}
                 />
               </Paper>
             )}
@@ -152,7 +151,7 @@ export default async function SuccessPage(props: {
             </LinkButton>
           </Stack>
         </Paper>
-      </Container>
+      </PageContainer>
     );
   } catch (error: unknown) {
     if (typeof error === "string" && error === "Unauthorized")

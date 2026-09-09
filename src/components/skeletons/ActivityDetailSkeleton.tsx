@@ -1,29 +1,21 @@
 "use client";
 
-import { Container, Skeleton, Stack, Group } from "@mantine/core";
+import { Skeleton, Stack, SimpleGrid } from "@mantine/core";
+import type { ReactElement } from "react";
+import PageContainer from "@/components/layout/PageContainer";
 
-export function ActivityDetailSkeleton() {
+export function ActivityDetailSkeleton(): ReactElement {
   return (
-    <Stack component="main" mt="xl" gap="md">
-      {/* Image */}
-      <Container size="xs" w="100%">
-        <Skeleton height={400} radius="md" />
-      </Container>
-
-      {/* Title + Register */}
-      <Container size="md" w="100%">
-        <Group align="stretch" gap="md" wrap="nowrap">
-          <Skeleton height={120} radius="md" style={{ flex: 3 }} />
-          <Skeleton height={120} radius="md" style={{ flex: 1 }} />
-        </Group>
-      </Container>
-
-      {/* Detail / Description */}
-      <Container size="md" w="100%">
+    <PageContainer size="md">
+      <Stack gap="lg" role="status" aria-label="Memuat detail kegiatan">
+        <Skeleton height={44} width={190} />
+        <SimpleGrid cols={{ base: 1, md: 2 }}>
+          <Skeleton height={180} radius="md" />
+          <Skeleton height={180} radius="md" />
+        </SimpleGrid>
         <Skeleton height={200} radius="md" />
-      </Container>
-    </Stack>
+      </Stack>
+    </PageContainer>
   );
 }
-
 export default ActivityDetailSkeleton;

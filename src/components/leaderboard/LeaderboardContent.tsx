@@ -1,3 +1,4 @@
+import PageContainer from "@/components/layout/PageContainer";
 import { IconUser } from "@tabler/icons-react";
 import {
   Paper,
@@ -6,7 +7,6 @@ import {
   Text,
   Group,
   Stack,
-  Container,
   Alert,
   Badge,
 } from "@mantine/core";
@@ -65,7 +65,7 @@ export async function LeaderboardContent({
   };
 
   return (
-    <Container size="md" py="xl">
+    <PageContainer size="lg">
       <Group justify="space-between" mb="lg">
         <Title order={2}>Peringkat Aktivis</Title>
       </Group>
@@ -174,7 +174,7 @@ export async function LeaderboardContent({
           </Alert>
         )}
       </Stack>
-    </Container>
+    </PageContainer>
   );
 }
 

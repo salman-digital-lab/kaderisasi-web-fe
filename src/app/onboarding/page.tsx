@@ -1,7 +1,8 @@
 import { getCountries, getProvinces } from "@/services/profile.cache";
 import { getProfile } from "@/services/profile";
 import { verifySession } from "@/functions/server/session";
-import { Container } from "@mantine/core";
+import PageContainer from "@/components/layout/PageContainer";
+import { FormSkeleton } from "@/components/skeletons";
 import { Suspense } from "react";
 import type { ReactElement } from "react";
 
@@ -17,9 +18,13 @@ export const metadata = {
 
 export default function Page(): ReactElement {
   return (
-    <Suspense>
-      <OnboardingContent />
-    </Suspense>
+    <main id="main-content" tabIndex={-1}>
+      <PageContainer size="md">
+        <Suspense fallback={<FormSkeleton />}>
+          <OnboardingContent />
+        </Suspense>
+      </PageContainer>
+    </main>
   );
 }
 
@@ -46,13 +51,13 @@ async function OnboardingContent(): Promise<ReactElement> {
     }
 
     return (
-      <Container size="lg" component="main" px={{ base: 8, sm: "sm" }}>
+      <>
         <OnboardingForm
           provinceData={provinceData}
           countryData={countryData}
           profileData={profileData}
         />
-      </Container>
+      </>
     );
   } catch {
     return <ErrorWrapper message="Data formulir tidak berhasil dimuat" />;

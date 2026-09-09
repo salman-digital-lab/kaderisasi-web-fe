@@ -1,18 +1,13 @@
 "use client";
 
-import {
-  Card,
-  Container,
-  Group,
-  SimpleGrid,
-  Skeleton,
-  Stack,
-} from "@mantine/core";
+import PageContainer from "@/components/layout/PageContainer";
+
+import { Card, Group, SimpleGrid, Skeleton, Stack } from "@mantine/core";
 import classes from "./ClubDetailSkeleton.module.css";
 
 export function ClubDetailSkeleton() {
   return (
-    <Container size="md" py={{ base: "md", md: "xl" }} aria-busy="true">
+    <PageContainer size="md">
       <span className={classes.status} role="status">
         Memuat detail klub…
       </span>
@@ -78,7 +73,7 @@ export function ClubDetailSkeleton() {
           </Card>
         </Stack>
       </Stack>
-    </Container>
+    </PageContainer>
   );
 }
 

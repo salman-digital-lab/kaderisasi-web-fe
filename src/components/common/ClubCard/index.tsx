@@ -1,15 +1,7 @@
+import LinkButton from "@/components/common/LinkButton";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
-import Link from "next/link";
-import {
-  Badge,
-  Button,
-  Card,
-  CardSection,
-  Group,
-  rem,
-  Text,
-} from "@mantine/core";
+import { Badge, Card, CardSection, Group, rem, Text } from "@mantine/core";
 import { IconCalendar, IconCalendarTime } from "@tabler/icons-react";
 import ClubLogo from "@/components/common/ClubLogo";
 import { CLUB_TYPE_LABELS, type ClubType } from "@/types/model/club";
@@ -126,11 +118,14 @@ export default function ClubCard({
       </CardSection>
 
       <Group mt="sm">
-        <Link href={`/clubs/${id}`} style={{ flex: 1, textDecoration: "none" }}>
-          <Button radius="md" fullWidth>
-            Lihat Selengkapnya
-          </Button>
-        </Link>
+        <LinkButton
+          aria-label={`Lihat klub ${name}`}
+          href={`/clubs/${id}`}
+          radius="md"
+          fullWidth
+        >
+          Lihat Selengkapnya
+        </LinkButton>
       </Group>
     </Card>
   );

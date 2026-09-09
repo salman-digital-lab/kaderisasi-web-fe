@@ -1,36 +1,26 @@
 "use client";
 
-import {
-  Alert,
-  Button,
-  Container,
-  Stack,
-  Text,
-  VisuallyHidden,
-} from "@mantine/core";
-import { IconAlertTriangle } from "@tabler/icons-react";
+import { Button, Group } from "@mantine/core";
+import type { ReactElement } from "react";
+import PageState from "@/components/layout/PageState";
+import LinkButton from "@/components/common/LinkButton";
 
-export default function CertificateError({ reset }: { reset: () => void }) {
+export default function CertificateError({
+  retry,
+}: {
+  retry: () => void;
+}): ReactElement {
   return (
-    <Container component="main" size="sm" py="xl">
-      <Stack gap="md">
-        <Alert
-          color="red"
-          icon={<IconAlertTriangle aria-hidden size={20} />}
-          title="Sertifikat belum dapat dimuat"
-        >
-          <Stack gap="sm">
-            <Text>
-              Terjadi gangguan saat mengambil data sertifikat. Coba beberapa
-              saat lagi.
-            </Text>
-            <Button color="red" onClick={reset} variant="light">
-              Coba lagi
-            </Button>
-          </Stack>
-        </Alert>
-        <VisuallyHidden component="h1">Gangguan sertifikat</VisuallyHidden>
-      </Stack>
-    </Container>
+    <PageState
+      title="Sertifikat belum dapat dimuat"
+      description="Terjadi gangguan saat mengambil data sertifikat. Coba beberapa saat lagi."
+    >
+      <Group justify="center">
+        <Button onClick={retry}>Coba lagi</Button>
+        <LinkButton href="/certificate/verify" variant="default">
+          Kembali ke verifikasi
+        </LinkButton>
+      </Group>
+    </PageState>
   );
 }

@@ -15,7 +15,9 @@ export default function ClientNavbar({
   return (
     <>
       <Burger
-        aria-label="Buka menu"
+        aria-label={drawerOpened ? "Tutup menu" : "Buka menu"}
+        aria-expanded={drawerOpened}
+        aria-controls="mobile-navigation"
         opened={drawerOpened}
         onClick={toggleDrawer}
         hiddenFrom="md"

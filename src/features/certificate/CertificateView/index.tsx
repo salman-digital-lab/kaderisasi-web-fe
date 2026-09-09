@@ -1,12 +1,13 @@
 "use client";
 
+import PageContainer from "@/components/layout/PageContainer";
+
 import type { CertificateDownloadAccess } from "@/services/certificate";
 import type { PublicCertificateData } from "@/types/model/certificate";
 import {
   Alert,
   Badge,
   Button,
-  Container,
   Group,
   Paper,
   Stack,
@@ -155,7 +156,7 @@ export default function CertificateView({
   }
 
   return (
-    <Container component="main" size="lg" py="xl">
+    <PageContainer size="lg">
       <Stack gap="lg">
         <Button
           component={Link}
@@ -263,6 +264,6 @@ export default function CertificateView({
           {stage}
         </Text>
       </Stack>
-    </Container>
+    </PageContainer>
   );
 }

@@ -40,7 +40,7 @@ export async function ClubsListContent({
 
   if (clubs.length === 0) {
     return (
-      <Center mt={50} py="xl">
+      <Center mt="xl" py="xl">
         <Stack align="center" gap="md">
           <Text size="lg" c="dimmed" ta="center">
             {search || clubType
@@ -59,7 +59,7 @@ export async function ClubsListContent({
 
   return (
     <>
-      <SimpleGrid cols={{ base: 1, md: 4 }} spacing="md" mt={50}>
+      <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="md" mt="xl">
         {clubs.map((club) => (
           <ClubCard
             key={club.id}

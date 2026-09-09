@@ -1,43 +1,28 @@
-.container {
-  min-height: calc(100vh - 80px);
-}
-
-.headerSection {
-  @media (max-width: $mantine-breakpoint-md) {
-    display: none;
-  }
-}
-
 .content {
-  @media (max-width: $mantine-breakpoint-md) {
-    grid-template-columns: 1fr !important;
-    gap: 1.5rem !important;
-  }
+  min-width: 0;
 }
-
 .profileSection {
-  @media (min-width: $mantine-breakpoint-md) {
+  min-width: 0;
+}
+.contentSection {
+  min-width: 0;
+}
+@media (min-width: $mantine-breakpoint-md) {
+  .profileSection {
     grid-column: 1;
   }
-
-  @media (max-width: $mantine-breakpoint-md) {
-    display: none;
+  .contentSection {
+    grid-column: 2 / 4;
   }
 }
-
-.contentSection {
-  @media (min-width: $mantine-breakpoint-md) {
-    grid-column: 2 / 4;
+@media (max-width: $mantine-breakpoint-md) {
+  .profileSection {
+    display: none;
   }
 }
 
 .profileCard {
   position: sticky;
-  top: 2rem;
-  background: white;
-  
-  @media (max-width: $mantine-breakpoint-md) {
-    position: static;
-    margin-bottom: 1rem;
-  }
+  top: var(--mantine-spacing-lg);
+  background: var(--mantine-color-body);
 }

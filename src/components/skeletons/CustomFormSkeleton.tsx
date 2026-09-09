@@ -1,6 +1,8 @@
 "use client";
 
-import { Container, Paper, Skeleton, Stack, Group, Box } from "@mantine/core";
+import PageContainer from "@/components/layout/PageContainer";
+
+import { Paper, Skeleton, Stack, Group, Box } from "@mantine/core";
 
 const paperProps = {
   radius: "md" as const,
@@ -10,10 +12,10 @@ const paperProps = {
 
 export function CustomFormSkeleton() {
   return (
-    <Container size="md" py={{ base: "md", sm: "xl" }} px={{ base: "xs", sm: "md" }}>
+    <PageContainer size="md">
       <Stack gap="md">
         {/* Back button */}
-        <Skeleton height={36} width={160} radius="md" />
+        <Skeleton height={44} width={160} radius="md" />
 
         {/* Header card: title + stepper */}
         <Paper {...paperProps}>
@@ -48,7 +50,7 @@ export function CustomFormSkeleton() {
             {Array.from({ length: 4 }).map((_, i) => (
               <Box key={i}>
                 <Skeleton height={14} width={100} mb={6} />
-                <Skeleton height={36} width="100%" radius="md" />
+                <Skeleton height={44} width="100%" radius="md" />
               </Box>
             ))}
           </Stack>
@@ -56,9 +58,9 @@ export function CustomFormSkeleton() {
 
         {/* Navigation buttons */}
         <Group justify="flex-end">
-          <Skeleton height={36} width={120} radius="md" />
+          <Skeleton height={44} width={120} radius="md" />
         </Group>
       </Stack>
-    </Container>
+    </PageContainer>
   );
 }

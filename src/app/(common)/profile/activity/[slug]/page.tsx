@@ -1,9 +1,9 @@
+import LinkButton from "@/components/common/LinkButton";
+import PageContainer from "@/components/layout/PageContainer";
 import { redirect } from "next/navigation";
 import {
   Badge,
-  Button,
   Card,
-  Container,
   Group,
   Stack,
   Title,
@@ -16,7 +16,6 @@ import {
   IconClock,
   IconCheck,
 } from "@tabler/icons-react";
-import Link from "next/link";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
 
@@ -138,23 +137,22 @@ export default async function Page(props: {
   };
 
   return (
-    <Stack component="main" gap="lg">
-      <Container size="md">
-        <Link href="/profile?tab=activity" style={{ textDecoration: "none" }}>
-          <Button
-            variant="subtle"
-            leftSection={<IconArrowLeft size={16} />}
-            mb="md"
-          >
-            Kembali ke Kegiatan
-          </Button>
-        </Link>
+    <Stack gap="lg">
+      <PageContainer size="md">
+        <LinkButton
+          href="/profile?tab=activity"
+          variant="subtle"
+          leftSection={<IconArrowLeft size={16} />}
+          mb="md"
+        >
+          Kembali ke Kegiatan
+        </LinkButton>
 
         <Card withBorder radius="md" p="lg">
           <Stack gap="md">
             <Group justify="space-between" align="flex-start">
               <div>
-                <Title order={2} mb="xs">
+                <Title order={1} size="h2" mb="xs">
                   {activity.name}
                 </Title>
                 <Group gap={7}>
@@ -183,7 +181,12 @@ export default async function Page(props: {
                   <IconCalendarEvent size={20} />
                 </ThemeIcon>
                 <div>
-                  <Text size="md" c="blue" fw={600} tt="uppercase">
+                  <Text
+                    size="md"
+                    c="var(--mantine-color-blue-light-color)"
+                    fw={600}
+                    tt="uppercase"
+                  >
                     Tanggal Kegiatan
                   </Text>
                   <Text size="md" fw={500}>
@@ -197,7 +200,9 @@ export default async function Page(props: {
 
         <Card withBorder radius="md" p="lg" mt="md">
           <Group justify="space-between" align="flex-start" mb="md">
-            <Title order={4}>Status Pendaftaran</Title>
+            <Title order={2} size="h4">
+              Status Pendaftaran
+            </Title>
             <Badge
               size="xl"
               color={
@@ -246,7 +251,7 @@ export default async function Page(props: {
             )}
 
           <Stack gap="sm" mt="md">
-            <Group justify="space-between" wrap="nowrap">
+            <Group justify="space-between" wrap="wrap">
               <Group gap="xs">
                 <ThemeIcon size="md" variant="light" color="gray">
                   <IconCheck size={12} />
@@ -276,7 +281,7 @@ export default async function Page(props: {
             </Text>
           </Group>
         </Card>
-      </Container>
+      </PageContainer>
     </Stack>
   );
 }

@@ -1,35 +1,23 @@
-import Image from "next/image";
 import Link from "next/link";
-import { Paper, Title, Container, Button } from "@mantine/core";
-
-import logo from "@/assets/bmka_logo_color.png";
+import type { ReactElement } from "react";
+import AuthLayout from "@/components/layout/AuthLayout";
 import ForgotForm from "@/features/auth/ForgotForm";
+import classes from "@/components/layout/AuthLayout.module.css";
 
-import classes from "./index.module.css";
+export const metadata = { title: "Lupa password" };
 
-export const metadata = {
-  title: "Lupa Password",
-};
-
-export default function Page() {
+export default function Page(): ReactElement {
   return (
-    <Container size={420} my={40}>
-      <div className={classes.logo}>
-        <Image src={logo} alt="bmka" fill />
-      </div>
-
-      <Title ta="center" className={classes.title}>
-        Lupa Password
-      </Title>
-
-      <Paper withBorder shadow="md" p={30} mt={30} radius="md">
-        <ForgotForm />
-        <Link href="/" style={{ textDecoration: 'none' }}>
-          <Button variant="default" fullWidth mt="xl">
-            Kembali ke Beranda
-          </Button>
+    <AuthLayout
+      title="Lupa password"
+      description="Masukkan email akun Anda. Kami akan mengirimkan tautan untuk mengubah password."
+      alternate={
+        <Link href="/login" className={classes.link}>
+          Kembali ke halaman masuk
         </Link>
-      </Paper>
-    </Container>
+      }
+    >
+      <ForgotForm />
+    </AuthLayout>
   );
 }

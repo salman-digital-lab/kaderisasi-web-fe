@@ -1,6 +1,6 @@
+import LogoutAction from "@/components/common/LogoutAction";
 import {
   Text,
-  Button,
   Stack,
   Group,
   Badge,
@@ -9,12 +9,7 @@ import {
   Card,
   SimpleGrid,
 } from "@mantine/core";
-import {
-  IconLogout,
-  IconUser,
-  IconTrophy,
-  IconCalendar,
-} from "@tabler/icons-react";
+import { IconUser, IconTrophy, IconCalendar } from "@tabler/icons-react";
 
 import { getProfile } from "@/services/profile";
 import { verifySession } from "@/functions/server/session";
@@ -32,14 +27,15 @@ export async function ProfileCardSection() {
   const sessionData = await verifySession();
 
   try {
-    const [profileData, activitiesRegistration, achievements] = await Promise.all([
-      getProfile(sessionData.session || ""),
-      getActivitiesRegistration(sessionData.session || ""),
-      getMyAchievements(sessionData.session || ""),
-    ]);
+    const [profileData, activitiesRegistration, achievements] =
+      await Promise.all([
+        getProfile(sessionData.session || ""),
+        getActivitiesRegistration(sessionData.session || ""),
+        getMyAchievements(sessionData.session || ""),
+      ]);
 
     return (
-      <Card radius="lg" withBorder p="xl" className={classes.profileCard}>
+      <Card radius="md" withBorder p="xl" className={classes.profileCard}>
         <Stack align="center" gap="md">
           <ProfilePicture
             src={profileData?.profile.picture}
@@ -105,22 +101,18 @@ export async function ProfileCardSection() {
                 Level
               </Text>
               <Text fw={500} size="md">
-                {USER_LEVEL_RENDER[profileData?.profile.level || USER_LEVEL_ENUM.JAMAAH]}
+                {
+                  USER_LEVEL_RENDER[
+                    profileData?.profile.level || USER_LEVEL_ENUM.JAMAAH
+                  ]
+                }
               </Text>
             </Box>
           </SimpleGrid>
 
           <Divider w="100%" />
 
-          <Button
-            variant="light"
-            color="red"
-            fullWidth
-            leftSection={<IconLogout size={16} />}
-            radius="md"
-          >
-            Keluar
-          </Button>
+          <LogoutAction />
         </Stack>
       </Card>
     );

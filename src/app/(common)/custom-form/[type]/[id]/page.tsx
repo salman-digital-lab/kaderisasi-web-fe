@@ -1,3 +1,4 @@
+import PageContainer from "@/components/layout/PageContainer";
 import { verifySession } from "@/functions/server/session";
 import { getProfile } from "@/services/profile";
 import { getProvinces, getCountries } from "@/services/profile.cache";
@@ -5,7 +6,7 @@ import { getCustomFormByFeature } from "@/services/customForm";
 import { getActivity } from "@/services/activity.cache";
 import { getClub } from "@/services/club";
 import { getRegistrationStatus } from "@/services/clubRegistration";
-import { Container } from "@mantine/core";
+import {} from "@mantine/core";
 import { redirect } from "next/navigation";
 import ErrorWrapper from "@/components/layout/Error";
 import { FetcherError } from "@/functions/common/fetcher";
@@ -95,7 +96,7 @@ export default async function Page(props: {
       );
       isRegistered = Boolean(
         registrationStatus.data.isRegistered &&
-          registrationStatus.data.registration,
+        registrationStatus.data.registration,
       );
     } catch (error: unknown) {
       if (error instanceof FetcherError && error.status === 401) {
@@ -120,8 +121,14 @@ export default async function Page(props: {
   const activitySlug = searchParams.slug;
   let isGuest = false;
 
-  if (!sessionData.session && featureType === "activity_registration" && activitySlug) {
-    const activityData = await getActivity({ slug: activitySlug }).catch(() => null);
+  if (
+    !sessionData.session &&
+    featureType === "activity_registration" &&
+    activitySlug
+  ) {
+    const activityData = await getActivity({ slug: activitySlug }).catch(
+      () => null,
+    );
     isGuest =
       !!activityData &&
       activityData.activity_type === ACTIVITY_TYPE_ENUM.REGISTRATION_ONLY &&
@@ -140,17 +147,16 @@ export default async function Page(props: {
     }
 
     // Fetch profile and provinces data (skip for guests)
-    [provinceData, countryData] = await Promise.all([getProvinces(), getCountries()]);
+    [provinceData, countryData] = await Promise.all([
+      getProvinces(),
+      getCountries(),
+    ]);
     if (!isGuest) {
       profileData = await getProfile(sessionData.session || "");
     }
 
     return (
-      <Container
-        size="md"
-        py={{ base: "md", sm: "xl" }}
-        px={{ base: "xs", sm: "md" }}
-      >
+      <PageContainer size="md">
         <CustomFormContent
           customForm={customForm}
           profileData={profileData}
@@ -162,10 +168,14 @@ export default async function Page(props: {
           activitySlug={activitySlug}
           resetOnMount={searchParams.reset === "1"}
         />
-      </Container>
+      </PageContainer>
     );
   } catch (error: unknown) {
-    if (error instanceof FetcherError && error.status === 404 && type === "club") {
+    if (
+      error instanceof FetcherError &&
+      error.status === 404 &&
+      type === "club"
+    ) {
       redirect(`/clubs/${id}`);
     }
     if (error instanceof FetcherError && error.status === 401) {

@@ -1,14 +1,6 @@
-import {
-  Container,
-  Title,
-  Text,
-  Stack,
-  Card,
-  Group,
-  ThemeIcon,
-  rem,
-  Button,
-} from "@mantine/core";
+import LinkButton from "@/components/common/LinkButton";
+import PageContainer from "@/components/layout/PageContainer";
+import { Title, Text, Stack, Card, Group, ThemeIcon, rem } from "@mantine/core";
 import {
   IconLogin2,
   IconUserPlus,
@@ -75,9 +67,7 @@ export default async function Page(props: {
       ? [
           {
             href: guestFormUrl,
-            icon: (
-              <IconUserOff style={{ width: rem(22), height: rem(22) }} />
-            ),
+            icon: <IconUserOff style={{ width: rem(22), height: rem(22) }} />,
             color: "gray",
             title: "Lanjut tanpa akun",
             description:
@@ -88,16 +78,20 @@ export default async function Page(props: {
   ];
 
   return (
-    <Container size="sm" py="xl">
+    <PageContainer size="sm">
       <Stack gap="lg">
-        <Link href={`/activity/${params.slug}`} style={{ textDecoration: "none" }}>
-          <Button variant="subtle" leftSection={<IconArrowLeft size={16} />} mb="xs" px={0}>
-            Kembali ke Kegiatan
-          </Button>
-        </Link>
+        <LinkButton
+          href={`/activity/${params.slug}`}
+          variant="subtle"
+          leftSection={<IconArrowLeft size={16} />}
+          mb="xs"
+          px={0}
+        >
+          Kembali ke Kegiatan
+        </LinkButton>
 
         <Stack gap="xs" ta="center">
-          <Title order={2}>{activity.name}</Title>
+          <Title order={1}>{activity.name}</Title>
           <Text c="dimmed" size="md">
             Pilih cara kamu ingin mendaftar kegiatan ini
           </Text>
@@ -149,6 +143,6 @@ export default async function Page(props: {
           ))}
         </Stack>
       </Stack>
-    </Container>
+    </PageContainer>
   );
 }

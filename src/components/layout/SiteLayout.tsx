@@ -9,10 +9,12 @@ export default function SiteLayout({
 }): ReactElement {
   return (
     <div
-      style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
+      style={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}
     >
       <Navbar />
-      <main style={{ flex: 1 }}>{children}</main>
+      <main id="main-content" tabIndex={-1} style={{ flex: 1, minWidth: 0 }}>
+        {children}
+      </main>
       <Footer />
     </div>
   );

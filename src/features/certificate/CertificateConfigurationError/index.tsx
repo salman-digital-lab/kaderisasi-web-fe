@@ -1,12 +1,14 @@
 "use client";
 
+import PageContainer from "@/components/layout/PageContainer";
+
 import Link from "next/link";
-import { Alert, Button, Container, Stack, Text, Title } from "@mantine/core";
+import { Alert, Button, Stack, Text, Title } from "@mantine/core";
 import { IconAlertTriangle } from "@tabler/icons-react";
 
 export default function CertificateConfigurationError() {
   return (
-    <Container component="main" size="sm" py="xl">
+    <PageContainer size="sm">
       <Stack gap="md">
         <Title order={1} size="h2">
           Sertifikat belum dapat ditampilkan
@@ -27,6 +29,6 @@ export default function CertificateConfigurationError() {
           </Stack>
         </Alert>
       </Stack>
-    </Container>
+    </PageContainer>
   );
 }

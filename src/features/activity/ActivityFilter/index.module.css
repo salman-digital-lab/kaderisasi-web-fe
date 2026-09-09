@@ -1,0 +1,8 @@
+.searchForm {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--mantine-spacing-sm);
+}
+.searchInput {
+  min-width: 0;
+}

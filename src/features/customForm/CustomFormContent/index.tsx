@@ -1,7 +1,15 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Stack, Title, Text, Stepper, Button, Paper, Group } from "@mantine/core";
+import {
+  Stack,
+  Title,
+  Text,
+  Stepper,
+  Button,
+  Paper,
+  Group,
+} from "@mantine/core";
 import { IconArrowLeft } from "@tabler/icons-react";
 import Link from "next/link";
 import type { CustomForm } from "@/types/api/customForm";
@@ -23,7 +31,8 @@ type CustomFormContentProps = {
   profileData?: { userData: PublicUser; profile: Member };
   provinceData?: Province[];
   countryData?: Country[];
-  featureType: "activity_registration" | "club_registration" | "independent_form";
+  featureType:
+    "activity_registration" | "club_registration" | "independent_form";
   featureId?: number;
   isGuest?: boolean;
   activitySlug?: string;
@@ -40,7 +49,8 @@ const GUEST_FIELD_LABELS: Record<string, string> = {
 };
 
 const GUEST_BACKEND_ERRORS: Record<string, string> = {
-  GUEST_REGISTRATION_NOT_ALLOWED: "Pendaftaran tamu tidak diizinkan untuk kegiatan ini.",
+  GUEST_REGISTRATION_NOT_ALLOWED:
+    "Pendaftaran tamu tidak diizinkan untuk kegiatan ini.",
   REGISTRATION_CLOSED: "Pendaftaran sudah ditutup.",
   ALREADY_REGISTERED: "Kamu sudah terdaftar di kegiatan ini.",
 };
@@ -97,7 +107,7 @@ export default function CustomFormContent({
     const url = new URL(window.location.href);
     url.searchParams.delete("reset");
     router.replace(url.pathname + url.search, { scroll: false });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [loading, setLoading] = useState(false);
@@ -125,7 +135,11 @@ export default function CustomFormContent({
   };
 
   const buildGuestPayload = (formData: Record<string, unknown>) => {
-    const profileFieldKeys = new Set([...profileFields.map((f) => f.key), "name", "email"]);
+    const profileFieldKeys = new Set([
+      ...profileFields.map((f) => f.key),
+      "name",
+      "email",
+    ]);
     const guestData: Record<string, unknown> = {};
     const questionnaireAnswer: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(formData)) {
@@ -140,7 +154,10 @@ export default function CustomFormContent({
     try {
       const resp = await postGuestActivity({
         slug: activitySlug!,
-        data: { guest_data: guestData, questionnaire_answer: questionnaireAnswer },
+        data: {
+          guest_data: guestData,
+          questionnaire_answer: questionnaireAnswer,
+        },
       });
       return !!resp;
     } catch (error) {
@@ -222,8 +239,12 @@ export default function CustomFormContent({
     return (
       <Stack gap="md">
         <Paper {...paperProps}>
-          <Title order={3} mb="xs">{customForm.form_name}</Title>
-          <Text size="md" c="dimmed">Memuat formulir...</Text>
+          <Title order={1} size="h2" mb="xs">
+            {customForm.form_name}
+          </Title>
+          <Text size="md" c="dimmed">
+            Memuat formulir...
+          </Text>
         </Paper>
       </Stack>
     );
@@ -247,9 +268,13 @@ export default function CustomFormContent({
 
       {/* Header card: title, description, stepper */}
       <Paper {...paperProps}>
-        <Title order={3} mb="xs">{customForm.form_name}</Title>
+        <Title order={1} size="h2" mb="xs">
+          {customForm.form_name}
+        </Title>
         {currentStep === 0 && customForm.form_description && (
-          <Text size="md" style={{ whiteSpace: "pre-wrap" }}>{customForm.form_description}</Text>
+          <Text size="md" style={{ whiteSpace: "pre-wrap" }}>
+            {customForm.form_description}
+          </Text>
         )}
         {hasCustomSections && (
           <>
@@ -257,10 +282,23 @@ export default function CustomFormContent({
               Langkah {currentStep + 1} dari {totalSteps}:{" "}
               {currentStep === 0 ? "Data Diri" : currentSection?.section_name}
             </Text>
-            <Stepper active={currentStep} size="md" mt="lg" iconSize={32} visibleFrom="sm">
-              <Stepper.Step label="Data Diri" description="Lengkapi data diri" />
+            <Stepper
+              active={currentStep}
+              size="md"
+              mt="lg"
+              iconSize={32}
+              visibleFrom="sm"
+            >
+              <Stepper.Step
+                label="Data Diri"
+                description="Lengkapi data diri"
+              />
               {customFormSections.map((section, idx) => (
-                <Stepper.Step key={idx} label={section.section_name} description={`Bagian ${idx + 1}`} />
+                <Stepper.Step
+                  key={idx}
+                  label={section.section_name}
+                  description={`Bagian ${idx + 1}`}
+                />
               ))}
             </Stepper>
           </>

@@ -2,6 +2,7 @@ import { spawn } from "node:child_process";
 import { once } from "node:events";
 import { createServer } from "node:http";
 import { activities, clubs, paginate } from "../tests/instant/fixtures.mjs";
+import { uiFixture } from "../tests/ui/fixtures.mjs";
 
 // These endpoints serve synthetic public data only, on an OS-assigned test port.
 const api = createServer((request, response) => {
@@ -10,7 +11,10 @@ const api = createServer((request, response) => {
   response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
   response.setHeader("Access-Control-Allow-Headers", "Content-Type");
   if (request.method === "OPTIONS") return response.end();
-  let data;
+  let data = uiFixture(url, request.headers.authorization);
+  if (data !== undefined) {
+    return response.end(JSON.stringify({ message: "TEST_DATA", data }));
+  }
   if (url.pathname === "/v2/activities/categories") {
     data = [1, 2, 3];
   } else if (url.pathname === "/v2/activities") {

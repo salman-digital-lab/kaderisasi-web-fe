@@ -11,7 +11,6 @@ import {
   Stack,
   Button,
   Box,
-  UnstyledButton,
   ThemeIcon,
   ActionIcon,
 } from "@mantine/core";
@@ -28,6 +27,7 @@ import {
   IconBuildingCommunity,
 } from "@tabler/icons-react";
 import Link from "next/link";
+import classes from "../index.module.css";
 import { usePathname } from "next/navigation";
 
 import logout from "../../../../functions/server/logout";
@@ -69,45 +69,29 @@ function MenuItem({
 }) {
   const Icon = item.icon;
   return (
-    <Link href={item.href} style={{ textDecoration: "none" }}>
-      <UnstyledButton
-        onClick={onClick}
-        px="md"
-        py="sm"
-        style={(theme) => ({
-          display: "flex",
-          alignItems: "center",
-          width: "100%",
-          minHeight: rem(52),
-          borderRadius: theme.radius.md,
-          transition: "all 150ms ease",
-          backgroundColor: isActive ? theme.colors.blue[0] : "transparent",
-          color: isActive ? theme.colors.blue[7] : theme.colors.gray[7],
-          "&:hover": {
-            backgroundColor: isActive
-              ? theme.colors.blue[1]
-              : theme.colors.gray[0],
-          },
-        })}
+    <Link
+      href={item.href}
+      onClick={onClick}
+      className={`${classes.link} ${classes.drawerLink}`}
+      aria-current={isActive ? "page" : undefined}
+    >
+      <ThemeIcon
+        variant={isActive ? "light" : "transparent"}
+        color={isActive ? "blue" : "gray"}
+        size="md"
+        radius="md"
+        mr="sm"
       >
-        <ThemeIcon
-          variant={isActive ? "light" : "transparent"}
-          color={isActive ? "blue" : "gray"}
-          size="md"
-          radius="md"
-          mr="sm"
-        >
-          <Icon style={{ width: rem(18), height: rem(18) }} />
-        </ThemeIcon>
-        <Text fw={isActive ? 600 : 400} style={{ flex: 1 }}>
-          {item.label}
-        </Text>
-        <IconChevronRight
-          size={16}
-          style={{ opacity: 0.4 }}
-          color="currentColor"
-        />
-      </UnstyledButton>
+        <Icon style={{ width: rem(18), height: rem(18) }} />
+      </ThemeIcon>
+      <Text fw={isActive ? 600 : 400} style={{ flex: 1 }}>
+        {item.label}
+      </Text>
+      <IconChevronRight
+        size={16}
+        style={{ opacity: 0.4 }}
+        color="currentColor"
+      />
     </Link>
   );
 }
@@ -123,7 +107,18 @@ export default function NavDrawer({
     <Drawer
       opened={drawerOpened}
       onClose={closeDrawer}
-      size="300px"
+      size="min(22rem, 100vw)"
+      id="mobile-navigation"
+      title="Menu navigasi"
+      styles={{
+        header: {
+          position: "absolute",
+          clipPath: "inset(50%)",
+          width: 1,
+          height: 1,
+          padding: 0,
+        },
+      }}
       padding={0}
       position="right"
       hiddenFrom="md"
@@ -131,7 +126,7 @@ export default function NavDrawer({
       withCloseButton={false}
       scrollAreaComponent={ScrollArea.Autosize}
     >
-      <Stack h="100vh" gap={0}>
+      <Stack h="100dvh" gap={0}>
         {/* Header */}
         <Box
           px="md"
@@ -155,11 +150,14 @@ export default function NavDrawer({
                 <Text fw={600} lineClamp={1}>
                   {session.name}
                 </Text>
-                <Text c="dimmed">
-                  Aktivis Salman
-                </Text>
+                <Text c="dimmed">Aktivis Salman</Text>
               </Box>
-              <ActionIcon variant="subtle" color="gray" onClick={closeDrawer} aria-label="Tutup menu">
+              <ActionIcon
+                variant="subtle"
+                color="gray"
+                onClick={closeDrawer}
+                aria-label="Tutup menu"
+              >
                 <IconX size={18} />
               </ActionIcon>
             </Group>
@@ -168,7 +166,12 @@ export default function NavDrawer({
               <Text fw={600} size="md">
                 Menu
               </Text>
-              <ActionIcon variant="subtle" color="gray" onClick={closeDrawer} aria-label="Tutup menu">
+              <ActionIcon
+                variant="subtle"
+                color="gray"
+                onClick={closeDrawer}
+                aria-label="Tutup menu"
+              >
                 <IconX size={18} />
               </ActionIcon>
             </Group>
@@ -189,7 +192,11 @@ export default function NavDrawer({
                     <MenuItem
                       key={item.href}
                       item={item}
-                      isActive={pathname === item.href}
+                      isActive={
+                        pathname === item.href ||
+                        (item.href !== "/" &&
+                          pathname.startsWith(`${item.href}/`))
+                      }
                       onClick={closeDrawer}
                     />
                   ))}
@@ -209,7 +216,10 @@ export default function NavDrawer({
                 <MenuItem
                   key={item.href}
                   item={item}
-                  isActive={pathname === item.href}
+                  isActive={
+                    pathname === item.href ||
+                    (item.href !== "/" && pathname.startsWith(`${item.href}/`))
+                  }
                   onClick={closeDrawer}
                 />
               ))}
@@ -241,26 +251,26 @@ export default function NavDrawer({
             </Button>
           ) : (
             <Stack gap="xs">
-              <Link href="/login" style={{ textDecoration: "none" }}>
-                <Button
-                  variant="filled"
-                  radius="md"
-                  fullWidth
-                  onClick={closeDrawer}
-                >
-                  Masuk
-                </Button>
-              </Link>
-              <Link href="/register" style={{ textDecoration: "none" }}>
-                <Button
-                  variant="default"
-                  radius="md"
-                  fullWidth
-                  onClick={closeDrawer}
-                >
-                  Daftar
-                </Button>
-              </Link>
+              <Button
+                component={Link}
+                href="/login"
+                variant="filled"
+                radius="md"
+                fullWidth
+                onClick={closeDrawer}
+              >
+                Masuk
+              </Button>
+              <Button
+                component={Link}
+                href="/register"
+                variant="default"
+                radius="md"
+                fullWidth
+                onClick={closeDrawer}
+              >
+                Daftar
+              </Button>
             </Stack>
           )}
         </Box>

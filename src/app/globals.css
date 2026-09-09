@@ -1,0 +1,57 @@
+:root {
+  --page-space: clamp(1.5rem, 4vw, 3rem);
+  --surface-subtle: light-dark(
+    var(--mantine-color-gray-0),
+    var(--mantine-color-dark-7)
+  );
+  --surface-border: light-dark(
+    var(--mantine-color-gray-3),
+    var(--mantine-color-dark-4)
+  );
+}
+
+html {
+  scroll-padding-top: 1.5rem;
+}
+body {
+  margin: 0;
+}
+
+:where(h1, h2, h3, h4, p) {
+  overflow-wrap: break-word;
+}
+:where(a, button, input, textarea, select, [tabindex]):focus-visible {
+  outline: 3px solid var(--mantine-primary-color-filled);
+  outline-offset: 3px;
+}
+
+.skipLink {
+  position: fixed;
+  top: 0.75rem;
+  left: 1rem;
+  z-index: 1000001;
+  padding: 0.75rem 1rem;
+  border-radius: var(--mantine-radius-md);
+  background: var(--mantine-primary-color-filled);
+  color: white;
+  transform: translateY(-200%);
+}
+.skipLink:focus {
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+:root[data-mantine-color-scheme="light"] {
+  --mantine-color-dimmed: var(--mantine-color-gray-7);
+  --mantine-color-placeholder: var(--mantine-color-gray-7);
+}

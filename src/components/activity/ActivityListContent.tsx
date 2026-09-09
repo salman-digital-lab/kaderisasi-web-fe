@@ -1,4 +1,5 @@
-import { SimpleGrid, Center, Text } from "@mantine/core";
+import LinkButton from "@/components/common/LinkButton";
+import { SimpleGrid, Center, Text, Stack } from "@mantine/core";
 import ActivityCard from "@/components/common/ActivityCard";
 import ActivityPagination from "@/features/activity/ActivityPagination";
 import { getActivities } from "@/services/activity.cache";
@@ -14,17 +15,24 @@ export async function ActivityListContent({
 
   if (!activities?.data?.length) {
     return (
-      <Center mt={50} py="xl">
-        <Text c="dimmed" size="lg">
-          Tidak ada kegiatan
-        </Text>
+      <Center mt="xl" py="xl">
+        <Stack align="center" gap="md">
+          <Text c="dimmed" size="lg" ta="center">
+            Tidak ada kegiatan yang sesuai.
+          </Text>
+          {(searchParams.search || searchParams.category) && (
+            <LinkButton href="/activity" variant="outline">
+              Hapus pencarian dan filter
+            </LinkButton>
+          )}
+        </Stack>
       </Center>
     );
   }
 
   return (
     <>
-      <SimpleGrid cols={{ base: 1, md: 4 }} spacing="md" mt={50}>
+      <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="md" mt="xl">
         {activities.data.map((activity) => (
           <ActivityCard
             key={activity.id}

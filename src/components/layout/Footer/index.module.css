@@ -1,5 +1,5 @@
 .footer {
-  margin-top: rem(36px);
+  margin-top: var(--mantine-spacing-xl);
   padding-top: var(--mantine-spacing-md);
   padding-bottom: var(--mantine-spacing-md);
   background-color: light-dark(
@@ -28,7 +28,7 @@
 
 .inner {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   gap: var(--mantine-spacing-md);
 
   @media (max-width: $mantine-breakpoint-sm) {
@@ -68,7 +68,7 @@
 
 .afterFooter {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   margin-top: var(--mantine-spacing-xs);
   padding-top: var(--mantine-spacing-xs);

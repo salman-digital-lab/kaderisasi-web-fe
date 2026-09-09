@@ -1,5 +1,8 @@
 "use client";
 
+import PageHeader from "@/components/layout/PageHeader";
+import PageContainer from "@/components/layout/PageContainer";
+
 import {
   Paper,
   Stack,
@@ -13,9 +16,7 @@ import {
   Button,
   Center,
   Pagination,
-  Title,
   Badge,
-  Container,
 } from "@mantine/core";
 import {
   IconSearch,
@@ -145,9 +146,13 @@ export default function StatusCheckContent({
   // Empty state - rendered after all hooks are called
   if (activities.length === 0) {
     return (
-      <Container size="md" py="xl">
-        <Paper radius="md" withBorder p="xl">
-          <Stack align="center" justify="center" h={300} gap="lg">
+      <PageContainer size="lg">
+        <PageHeader
+          title="Cek Status Kegiatan"
+          description="Lihat status pendaftaran Anda di berbagai kegiatan"
+        />
+        <Paper radius="md" withBorder p={{ base: "lg", sm: "xl" }}>
+          <Stack align="center" justify="center" mih={300} gap="lg">
             <ThemeIcon size={80} radius="xl" variant="light" color="gray">
               <IconActivity size={40} />
             </ThemeIcon>
@@ -160,29 +165,27 @@ export default function StatusCheckContent({
                 tersedia untuk memulai.
               </Text>
             </Stack>
-            <Link href="/activity" style={{ textDecoration: "none" }}>
-              <Button leftSection={<IconExternalLink size={16} />} size="md">
-                Jelajahi Kegiatan
-              </Button>
-            </Link>
+            <Button
+              component={Link}
+              href="/activity"
+              leftSection={<IconExternalLink size={16} />}
+              size="md"
+            >
+              Jelajahi Kegiatan
+            </Button>
           </Stack>
         </Paper>
-      </Container>
+      </PageContainer>
     );
   }
 
   return (
-    <Container size="lg" py="xl">
+    <PageContainer size="lg">
       <Stack gap="xl">
-        {/* Header */}
-        <Box>
-          <Title order={2} mb="xs">
-            Cek Status Kegiatan
-          </Title>
-          <Text c="dimmed">
-            Lihat status pendaftaran Anda di berbagai kegiatan
-          </Text>
-        </Box>
+        <PageHeader
+          title="Cek Status Kegiatan"
+          description="Lihat status pendaftaran Anda di berbagai kegiatan"
+        />
 
         {/* Statistics Cards */}
         <Grid>
@@ -258,6 +261,7 @@ export default function StatusCheckContent({
 
         {/* Search */}
         <TextInput
+          aria-label="Cari kegiatan atau status"
           placeholder="Cari berdasarkan nama kegiatan atau status..."
           leftSection={<IconSearch size={16} />}
           value={searchQuery}
@@ -291,7 +295,9 @@ export default function StatusCheckContent({
               <Card key={activity.activity_id} withBorder p="md" radius="md">
                 <Stack gap="sm">
                   <Group justify="space-between" align="flex-start" wrap="wrap">
-                    <Box style={{ flex: 1, minWidth: 200 }}>
+                    <Box
+                      style={{ flex: 1, minWidth: 0, overflowWrap: "anywhere" }}
+                    >
                       <Text fw={600} size="md">
                         {activity.activity.name}
                       </Text>
@@ -384,6 +390,6 @@ export default function StatusCheckContent({
           </Center>
         )}
       </Stack>
-    </Container>
+    </PageContainer>
   );
 }

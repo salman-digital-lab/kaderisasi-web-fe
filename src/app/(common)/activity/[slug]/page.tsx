@@ -1,8 +1,9 @@
+import PageContainer from "@/components/layout/PageContainer";
+import LinkButton from "@/components/common/LinkButton";
 import {
   Badge,
   Button,
   Card,
-  Container,
   Group,
   rem,
   Skeleton,
@@ -17,7 +18,6 @@ import {
   IconClock,
 } from "@tabler/icons-react";
 import dynamic from "next/dynamic";
-import Link from "next/link";
 
 const ActivityCarousel = dynamic(() => import("./ActivityCarousel"), {
   loading: () => <Skeleton height={700} radius="md" />,
@@ -163,155 +163,166 @@ export default async function Page(props: {
     : null;
 
   return (
-    <Stack component="main" className={classes["main-stack"]}>
-      <Container size="sm" className={classes["carousel-container"]}>
-        <ActivityCarousel
-          images={activity?.additional_config?.images ?? []}
-          activityName={activity?.name ?? ""}
-          imageBaseUrl={process.env.NEXT_PUBLIC_IMAGE_BASE_URL ?? ""}
-        />
-      </Container>
-      <Container size="md" className={classes.header}>
-        <Card className={classes.title} padding="lg" radius="md" withBorder>
-          <Title order={1} size="h2">
-            {activity?.name}
-          </Title>
-          <Group gap={7} mt={10}>
-            <Badge variant="light">
-              {activity ? USER_LEVEL_RENDER[activity.minimum_level] : ""}
-            </Badge>
-            <Badge variant="light">
-              {activity
-                ? ACTIVITY_CATEGORY_RENDER[activity.activity_category]
-                : ""}
-            </Badge>
-          </Group>
-          {activity?.activity_start && (
-            <CardSection className={classes.section}>
-              <Text mt="md" className={classes.label} c="dimmed">
-                Tanggal Mulai Kegiatan
-              </Text>
-              <Badge variant="light" leftSection={calenderMonthIcon}>
-                {dayjs(activity?.activity_start)
-                  .locale("id")
-                  .format("DD MMMM YYYY")}
-              </Badge>
-            </CardSection>
-          )}
-        </Card>
-        <Card className={classes.control} padding="lg" radius="md" withBorder>
-          {isRegistered ? (
-            <Stack gap="xs">
-              <Title order={5} ta="center">
-                Status Pendaftaran
-              </Title>
-              <Badge
-                color={
-                  activityRegistration?.status &&
-                  ACTIVITY_REGISTRANT_COLOR_STATUS_RENDER[
-                    activityRegistration.status as keyof typeof ACTIVITY_REGISTRANT_COLOR_STATUS_RENDER
-                  ]
-                    ? ACTIVITY_REGISTRANT_COLOR_STATUS_RENDER[
-                        activityRegistration.status as keyof typeof ACTIVITY_REGISTRANT_COLOR_STATUS_RENDER
-                      ]
-                    : "blue"
-                }
-                m="auto"
-                size="lg"
-                px="xl"
-              >
-                {activityRegistration?.status}
-              </Badge>
-              {activityRegistration?.status ===
-                ACTIVITY_REGISTRANT_STATUS_ENUM.BELUM_DIUMUMKAN &&
-                activityRegistration?.visible_at && (
-                  <Group gap={6} justify="center" mt="xs">
-                    <IconClock
-                      size={14}
-                      color="var(--mantine-color-orange-6)"
-                    />
-                    <Text size="md" c="orange.6" fw={500}>
-                      Estimasi pengumuman:{" "}
-                      {dayjs(activityRegistration.visible_at)
-                        .locale("id")
-                        .format("DD MMMM YYYY, HH:mm")}
-                    </Text>
-                  </Group>
-                )}
-              {certificateCta && <CertificateCtaButton cta={certificateCta} />}
-            </Stack>
-          ) : sessionData.session ? (
-            // Logged in but not registered — registration is closed
-            <Stack gap="xs">
-              <Title order={5} ta="center">
-                {dayjs().isAfter(activity?.registration_end)
-                  ? "Cek Status Pendaftaran"
-                  : "Tutup Pendaftaran"}
-              </Title>
-              {!dayjs().isAfter(activity?.registration_end) && (
-                <Badge m="auto" color="red" leftSection={calendarIcon}>
-                  {dayjs(activity?.registration_end)
-                    .locale("id")
-                    .format("DD MMMM YYYY")}
-                </Badge>
-              )}
-            </Stack>
-          ) : (
-            // Not logged in — show registration end date; never show "Cek Status Pendaftaran"
-            // since unauthenticated users have no registration status to check
-            <Stack gap="xs">
-              <Title order={5} ta="center">
-                Tutup Pendaftaran
-              </Title>
-              {activity?.registration_end && (
-                <Badge m="auto" color="red" leftSection={calendarIcon}>
-                  {dayjs(activity.registration_end)
-                    .locale("id")
-                    .format("DD MMMM YYYY")}
-                </Badge>
-              )}
-            </Stack>
-          )}
+    <PageContainer size="md">
+      <Stack gap="lg">
+        <LinkButton
+          href="/activity"
+          variant="subtle"
+          style={{ alignSelf: "flex-start" }}
+        >
+          ← Kembali ke Kegiatan
+        </LinkButton>
 
-          {sessionData.session ? (
-            !isRegistered ? (
-              !isLevelEligible ? (
-                <Button disabled fullWidth>
-                  Jenjang Tidak Cukup
-                </Button>
-              ) : activity?.is_registration_open ? (
-                <Link
-                  href={`/custom-form/activity/${activity?.id}`}
-                  style={{ textDecoration: "none" }}
+        <div className={classes.header}>
+          <Card className={classes.title} padding="lg" radius="md" withBorder>
+            <Title order={1} size="h2">
+              {activity?.name}
+            </Title>
+            <Group gap={7} mt={10}>
+              <Badge variant="light">
+                {activity ? USER_LEVEL_RENDER[activity.minimum_level] : ""}
+              </Badge>
+              <Badge variant="light">
+                {activity
+                  ? ACTIVITY_CATEGORY_RENDER[activity.activity_category]
+                  : ""}
+              </Badge>
+            </Group>
+            {activity?.activity_start && (
+              <CardSection className={classes.section}>
+                <Text mt="md" className={classes.label} c="dimmed">
+                  Tanggal Mulai Kegiatan
+                </Text>
+                <Badge variant="light" leftSection={calenderMonthIcon}>
+                  {dayjs(activity?.activity_start)
+                    .locale("id")
+                    .format("DD MMMM YYYY")}
+                </Badge>
+              </CardSection>
+            )}
+          </Card>
+          <Card className={classes.control} padding="lg" radius="md" withBorder>
+            {isRegistered ? (
+              <Stack gap="xs">
+                <Title order={2} size="h4" ta="center">
+                  Status Pendaftaran
+                </Title>
+                <Badge
+                  color={
+                    activityRegistration?.status &&
+                    ACTIVITY_REGISTRANT_COLOR_STATUS_RENDER[
+                      activityRegistration.status as keyof typeof ACTIVITY_REGISTRANT_COLOR_STATUS_RENDER
+                    ]
+                      ? ACTIVITY_REGISTRANT_COLOR_STATUS_RENDER[
+                          activityRegistration.status as keyof typeof ACTIVITY_REGISTRANT_COLOR_STATUS_RENDER
+                        ]
+                      : "blue"
+                  }
+                  m="auto"
+                  size="lg"
+                  px="xl"
                 >
-                  <Button fullWidth>Daftar Kegiatan</Button>
-                </Link>
+                  {activityRegistration?.status}
+                </Badge>
+                {activityRegistration?.status ===
+                  ACTIVITY_REGISTRANT_STATUS_ENUM.BELUM_DIUMUMKAN &&
+                  activityRegistration?.visible_at && (
+                    <Group gap={6} justify="center" mt="xs">
+                      <IconClock
+                        size={14}
+                        color="var(--mantine-color-orange-6)"
+                      />
+                      <Text size="md" c="orange.6" fw={500}>
+                        Estimasi pengumuman:{" "}
+                        {dayjs(activityRegistration.visible_at)
+                          .locale("id")
+                          .format("DD MMMM YYYY, HH:mm")}
+                      </Text>
+                    </Group>
+                  )}
+                {certificateCta && (
+                  <CertificateCtaButton cta={certificateCta} />
+                )}
+              </Stack>
+            ) : sessionData.session ? (
+              // Logged in but not registered — registration is closed
+              <Stack gap="xs">
+                <Title order={2} size="h4" ta="center">
+                  {dayjs().isAfter(activity?.registration_end)
+                    ? "Cek Status Pendaftaran"
+                    : "Tutup Pendaftaran"}
+                </Title>
+                {!dayjs().isAfter(activity?.registration_end) && (
+                  <Badge m="auto" color="red" leftSection={calendarIcon}>
+                    {dayjs(activity?.registration_end)
+                      .locale("id")
+                      .format("DD MMMM YYYY")}
+                  </Badge>
+                )}
+              </Stack>
+            ) : (
+              // Not logged in — show registration end date; never show "Cek Status Pendaftaran"
+              // since unauthenticated users have no registration status to check
+              <Stack gap="xs">
+                <Title order={2} size="h4" ta="center">
+                  Tutup Pendaftaran
+                </Title>
+                {activity?.registration_end && (
+                  <Badge m="auto" color="red" leftSection={calendarIcon}>
+                    {dayjs(activity.registration_end)
+                      .locale("id")
+                      .format("DD MMMM YYYY")}
+                  </Badge>
+                )}
+              </Stack>
+            )}
+
+            {sessionData.session ? (
+              !isRegistered ? (
+                !isLevelEligible ? (
+                  <Button disabled fullWidth>
+                    Jenjang Tidak Cukup
+                  </Button>
+                ) : activity?.is_registration_open ? (
+                  <LinkButton
+                    href={`/custom-form/activity/${activity?.id}`}
+                    fullWidth
+                  >
+                    Daftar Kegiatan
+                  </LinkButton>
+                ) : null
               ) : null
-            ) : null
-          ) : (
-            <Stack gap="xs">
-              {activity?.is_registration_open ? (
-                <Link
-                  href={`/activity/${params.slug}/join`}
-                  style={{ textDecoration: "none" }}
-                >
-                  <Button fullWidth>Daftar Kegiatan</Button>
-                </Link>
-              ) : null}
-            </Stack>
-          )}
-        </Card>
-      </Container>
-      <Container w="100%">
-        <Card withBorder radius="md">
-          <Title order={2} ta="center" mt="sm">
-            Deskripsi Kegiatan
-          </Title>
-          <div
-            dangerouslySetInnerHTML={{ __html: activity?.description || "" }}
-          />
-        </Card>
-      </Container>
-    </Stack>
+            ) : (
+              <Stack gap="xs">
+                {activity?.is_registration_open ? (
+                  <LinkButton href={`/activity/${params.slug}/join`} fullWidth>
+                    Daftar Kegiatan
+                  </LinkButton>
+                ) : null}
+              </Stack>
+            )}
+          </Card>
+        </div>
+        {Boolean(activity?.additional_config?.images?.length) && (
+          <div className={classes["carousel-container"]}>
+            <ActivityCarousel
+              images={activity?.additional_config?.images ?? []}
+              activityName={activity?.name ?? ""}
+              imageBaseUrl={process.env.NEXT_PUBLIC_IMAGE_BASE_URL ?? ""}
+            />
+          </div>
+        )}
+        <div className={classes.description}>
+          <Card withBorder radius="md">
+            <Title order={2} size="h3" mb="md">
+              Deskripsi Kegiatan
+            </Title>
+            <div
+              dangerouslySetInnerHTML={{ __html: activity?.description || "" }}
+            />
+          </Card>
+        </div>
+      </Stack>
+    </PageContainer>
   );
 }

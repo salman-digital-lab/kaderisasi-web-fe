@@ -1,8 +1,9 @@
-import Image from "next/image";
+import LinkButton from "@/components/common/LinkButton";
+import PageHero from "@/components/layout/PageHero";
 import { Suspense } from "react";
 import type { ReactElement } from "react";
 import { FormSkeleton } from "@/components/skeletons/FormSkeleton";
-import { Button, Card, Container, Text, Title } from "@mantine/core";
+import { Card, Container, Text, Title } from "@mantine/core";
 import classes from "./index.module.css";
 import illustration from "@/assets/ruangcurhatpage-1.svg";
 import RegistrationForm from "@/features/ruangcurhat/RegistrationForm";
@@ -10,7 +11,6 @@ import { verifySession } from "@/functions/server/session";
 import { getProfile } from "@/services/profile";
 import ErrorWrapper from "@/components/layout/Error";
 import type { PublicUser, Member } from "@/types/model/members";
-import Link from "next/link";
 
 export const metadata = {
   title: "Ruang Curhat",
@@ -20,34 +20,28 @@ export const metadata = {
 
 export default function Home(): ReactElement {
   return (
-    <main>
-      <Container size="md">
-        <div className={classes.inner}>
-          <div className={classes.content}>
-            <h1 className={classes.title}>
-              Ruang Curhat{" "}
-              <Text component="span" c="blue" inherit>
-                Kaderisasi Salman
-              </Text>
-            </h1>
-            <Text c="dimmed" mt="md" className={classes.heroDescription}>
-              Ruang Curhat merupakan layanan konseling sebaya yang diberikan
-              oleh sesama Aktivis Salman. Aktivis Salman yang akan membersamai
-              kamu, sudah mendapatkan pelatihan dan bekal-bekal pengetahuan
-              psikologi praktis untuk menjadi seorang konselor lho.
+    <>
+      <PageHero
+        title={
+          <>
+            Ruang Curhat{" "}
+            <Text component="span" c="blue" inherit>
+              Kaderisasi Salman
             </Text>
-          </div>
-          <Image
-            width={400}
-            src={illustration}
-            alt="Selamat Datang di BMKA Salman ITB"
-            priority
-            className={classes.image}
-          />
-        </div>
-      </Container>
+          </>
+        }
+        description={
+          <>
+            Ruang Curhat merupakan layanan konseling sebaya yang diberikan oleh
+            sesama Aktivis Salman. Aktivis Salman yang akan membersamai kamu,
+            sudah mendapatkan pelatihan dan bekal-bekal pengetahuan psikologi
+            praktis untuk menjadi seorang konselor lho.
+          </>
+        }
+        illustration={illustration}
+      ></PageHero>
 
-      <Container size="lg" py="xl">
+      <Container size="lg" py="var(--page-space)">
         <Title ta="center" mt="sm" className={classes.sectionTitle}>
           Pendaftaran Sesi Curhat
         </Title>
@@ -64,13 +58,13 @@ export default function Home(): ReactElement {
           Ruang Curhat akan segera menghubungimu.
         </Text>
 
-        <Container size="sm">
+        <Container size="sm" px={0}>
           <Suspense fallback={<FormSkeleton />}>
             <ConsultationRegistration />
           </Suspense>
         </Container>
       </Container>
-    </main>
+    </>
   );
 }
 
@@ -111,14 +105,13 @@ async function ConsultationRegistration(): Promise<ReactElement> {
             Silahkan masuk ke akun anda terlebih dahulu untuk menggunakan
             layanan Ruang Curhat
           </Text>
-          <Link
+          <LinkButton
             href={`/login?redirect=${process.env.NEXT_PUBLIC_APP_URL}/consultation`}
-            style={{ textDecoration: "none" }}
+            fullWidth
+            mt="md"
           >
-            <Button fullWidth mt="md">
-              Masuk
-            </Button>
-          </Link>
+            Masuk
+          </LinkButton>
         </Card>
       )}
     </div>

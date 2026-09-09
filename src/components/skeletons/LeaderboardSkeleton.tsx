@@ -1,12 +1,8 @@
 "use client";
 
-import {
-  Paper,
-  Skeleton,
-  Stack,
-  Group,
-  Container,
-} from "@mantine/core";
+import PageContainer from "@/components/layout/PageContainer";
+
+import { Paper, Skeleton, Stack, Group } from "@mantine/core";
 
 export function LeaderboardItemSkeleton() {
   return (
@@ -32,7 +28,7 @@ export function LeaderboardItemSkeleton() {
 
 export function LeaderboardSkeleton({ count = 10 }: { count?: number }) {
   return (
-    <Container size="md" py="xl">
+    <PageContainer size="lg">
       <Group justify="space-between" mb="lg">
         <Skeleton height={28} width={180} />
       </Group>
@@ -45,9 +41,8 @@ export function LeaderboardSkeleton({ count = 10 }: { count?: number }) {
           <LeaderboardItemSkeleton key={i} />
         ))}
       </Stack>
-    </Container>
+    </PageContainer>
   );
 }
 
 export default LeaderboardSkeleton;
-

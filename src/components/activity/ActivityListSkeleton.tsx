@@ -6,7 +6,7 @@ import { ActivityGridSkeleton } from "@/components/skeletons";
 export function ActivityListSkeleton() {
   return (
     <>
-      <SimpleGrid cols={{ base: 1, md: 4 }} spacing="md" mt={50}>
+      <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="md" mt="xl">
         <ActivityGridSkeleton count={8} />
       </SimpleGrid>
 
@@ -18,4 +18,3 @@ export function ActivityListSkeleton() {
 }
 
 export default ActivityListSkeleton;
-

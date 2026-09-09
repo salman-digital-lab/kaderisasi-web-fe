@@ -1,6 +1,7 @@
+import PageContainer from "@/components/layout/PageContainer";
 import { normalizeCertificateAppUrl } from "@/features/certificate/utils/certificateData";
 import VerificationSearch from "@/features/certificate/VerificationSearch";
-import { Container, Paper, Stack, Text, Title } from "@mantine/core";
+import { Paper, Stack, Text, Title } from "@mantine/core";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
 
 export default function VerifyCertificatePage() {
   return (
-    <Container component="main" size="sm" py="xl">
+    <PageContainer size="sm">
       <Paper p={{ base: "lg", sm: "xl" }} radius="md" withBorder>
         <Stack gap="lg">
           <Stack gap="xs">
@@ -33,6 +34,6 @@ export default function VerifyCertificatePage() {
           />
         </Stack>
       </Paper>
-    </Container>
+    </PageContainer>
   );
 }

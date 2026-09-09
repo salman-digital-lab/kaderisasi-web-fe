@@ -1,106 +1,35 @@
 .tab {
   width: 100%;
+  min-width: 0;
 }
-
-/* TabsList styling - matching app's Paper/Card style */
 .tab :global(.mantine-Tabs-list) {
-  border-radius: var(--mantine-radius-md) !important;
-  padding: 4px !important;
-  border: 1px solid var(--mantine-color-gray-3) !important;
-  display: flex !important;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border: 1px solid var(--surface-border);
+  border-radius: var(--mantine-radius-md);
+  background: var(--mantine-color-body);
 }
-
-/* Large screens - horizontal layout */
-@media (min-width: 62em) {
-  .tab :global(.mantine-Tabs-list) {
-    justify-content: flex-start !important;
-    overflow-x: auto !important;
-    scrollbar-width: none !important;
-    -ms-overflow-style: none !important;
-  }
-  
-  .tab :global(.mantine-Tabs-list)::-webkit-scrollbar {
-    display: none;
-  }
-}
-
-/* Medium screens - wrap to 2 rows */
-@media (max-width: 62em) and (min-width: 48em) {
-  .tab :global(.mantine-Tabs-list) {
-    flex-wrap: wrap !important;
-    gap: 6px !important;
-    justify-content: center !important;
-  }
-}
-
-/* Small screens - stack vertically */
-@media (max-width: 48em) {
-  .tab :global(.mantine-Tabs-list) {
-    flex-direction: column !important;
-    gap: 6px !important;
-    padding: 8px !important;
-  }
-}
-
-/* Individual Tab styling - matching Mantine's default pills variant */
 .tab :global(.mantine-Tabs-tab) {
-  border-radius: var(--mantine-radius-sm) !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-  white-space: nowrap !important;
-  background: transparent !important;
-  color: var(--mantine-color-gray-7) !important;
-  border: none !important;
+  flex: 1 1 auto;
+  min-height: 2.75rem;
+  padding: 0.625rem 0.75rem;
+  font-weight: 500;
+  border-radius: var(--mantine-radius-sm);
 }
-
-/* Hover state */
-.tab :global(.mantine-Tabs-tab:hover:not([data-active])) {
-  background: var(--mantine-color-gray-0) !important;
-  color: var(--mantine-color-gray-8) !important;
+.tab :global(.mantine-Tabs-tab[data-active]) {
+  font-weight: 700;
 }
-
-/* Large screens */
-@media (min-width: 62em) {
-  .tab :global(.mantine-Tabs-tab) {
-    flex-shrink: 0 !important;
-    padding: 8px 16px !important;
-    font-size: var(--mantine-font-size-md) !important;
-  }
-}
-
-/* Medium screens - 2x2 grid */
-@media (max-width: 62em) and (min-width: 48em) {
-  .tab :global(.mantine-Tabs-tab) {
-    flex: 1 !important;
-    min-width: calc(50% - 3px) !important;
-    font-size: var(--mantine-font-size-md) !important;
-    padding: 8px 12px !important;
-    text-align: center !important;
-  }
-}
-
-/* Small screens - full width stack */
-@media (max-width: 48em) {
-  .tab :global(.mantine-Tabs-tab) {
-    width: 100% !important;
-    font-size: var(--mantine-font-size-md) !important;
-    padding: 12px 16px !important;
-    text-align: center !important;
-  }
-}
-
-/* Active state - matching Mantine's blue theme */
-.tab :global(.mantine-Tabs-tab[data-active="true"]) {
-  background: var(--mantine-color-blue-6) !important;
-  color: var(--mantine-color-white) !important;
-}
-
-/* Mobile Profile Card - only visible on mobile */
 .mobileProfileCard {
   display: none;
   margin-top: 1rem;
 }
-
+@media (max-width: $mantine-breakpoint-sm) {
+  .tab :global(.mantine-Tabs-tab) {
+    flex-basis: calc(50% - 0.25rem);
+  }
+}
 @media (max-width: $mantine-breakpoint-md) {
   .mobileProfileCard {
     display: block;

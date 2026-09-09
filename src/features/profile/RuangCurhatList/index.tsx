@@ -82,7 +82,7 @@ export default function RuangCurhatList({ data }: PersonalActivityDataProps) {
   if (data.length === 0) {
     return (
       <Paper radius="md" withBorder p="lg">
-        <Stack align="center" justify="center" h={300} gap="lg">
+        <Stack align="center" justify="center" mih={300} gap="lg">
           <ThemeIcon size={80} radius="xl" variant="light" color="gray">
             <IconMessageCircle size={40} />
           </ThemeIcon>
@@ -95,15 +95,15 @@ export default function RuangCurhatList({ data }: PersonalActivityDataProps) {
               mengatasi masalah Anda
             </Text>
           </Stack>
-          <Link href="/consultation" style={{ textDecoration: "none" }}>
-            <Button
-              leftSection={<IconPlus size={16} />}
-              variant="filled"
-              size="md"
-            >
-              Mulai Konseling Pertama
-            </Button>
-          </Link>
+          <Button
+            component={Link}
+            href="/consultation"
+            leftSection={<IconPlus size={16} />}
+            variant="filled"
+            size="md"
+          >
+            Mulai Konseling Pertama
+          </Button>
         </Stack>
       </Paper>
     );
@@ -124,15 +124,15 @@ export default function RuangCurhatList({ data }: PersonalActivityDataProps) {
                 dalam 30 hari terakhir
               </Text>
             </Box>
-            <Link href="/consultation" style={{ textDecoration: "none" }}>
-              <Button
-                leftSection={<IconPlus size={16} />}
-                variant="light"
-                size="md"
-              >
-                Curhat Baru
-              </Button>
-            </Link>
+            <Button
+              component={Link}
+              href="/consultation"
+              leftSection={<IconPlus size={16} />}
+              variant="light"
+              size="md"
+            >
+              Curhat Baru
+            </Button>
           </Flex>
         </Box>
 
@@ -211,6 +211,7 @@ export default function RuangCurhatList({ data }: PersonalActivityDataProps) {
         {/* Search */}
         <Box>
           <TextInput
+            aria-label="Cari sesi konseling"
             placeholder="Cari berdasarkan kategori, deskripsi, atau teknik penanganan..."
             leftSection={<IconSearch size={16} />}
             value={searchQuery}

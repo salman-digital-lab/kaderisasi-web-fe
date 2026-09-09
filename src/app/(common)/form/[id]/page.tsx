@@ -1,8 +1,8 @@
+import PageContainer from "@/components/layout/PageContainer";
 import { verifySession } from "@/functions/server/session";
 import { getProfile } from "@/services/profile";
 import { getProvinces, getCountries } from "@/services/profile.cache";
 import { getCustomFormByFeature } from "@/services/customForm";
-import { Container, Paper } from "@mantine/core";
 import { redirect } from "next/navigation";
 import ErrorWrapper from "@/components/layout/Error";
 import CustomFormContent from "@/features/customForm/CustomFormContent";
@@ -41,32 +41,23 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     }
 
     // Fetch profile and provinces data
-    [provinceData, countryData] = await Promise.all([getProvinces(), getCountries()]);
+    [provinceData, countryData] = await Promise.all([
+      getProvinces(),
+      getCountries(),
+    ]);
     profileData = await getProfile(sessionData.session || "");
 
     return (
-      <Container
-        size="md"
-        component="main"
-        py={{ base: "md", sm: "xl" }}
-        px={{ base: "xs", sm: "md" }}
-      >
-        <Paper
-          radius="md"
-          withBorder
-          p={{ base: "md", sm: "xl" }}
-          style={{ width: "100%", maxWidth: "100%" }}
-        >
-          <CustomFormContent
-            customForm={customForm}
-            profileData={profileData}
-            provinceData={provinceData}
-            countryData={countryData}
-            featureType="independent_form"
-            featureId={undefined}
-          />
-        </Paper>
-      </Container>
+      <PageContainer size="md">
+        <CustomFormContent
+          customForm={customForm}
+          profileData={profileData}
+          provinceData={provinceData}
+          countryData={countryData}
+          featureType="independent_form"
+          featureId={undefined}
+        />
+      </PageContainer>
     );
   } catch (error: unknown) {
     if (typeof error === "string" && error === "Unauthorized")

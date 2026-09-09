@@ -44,7 +44,7 @@ for (const route of routes) {
         await expect(
           page
             .locator("header")
-            .getByRole("img", { name: "bmka", exact: true }),
+            .getByRole("img", { name: "BMKA Salman ITB", exact: true }),
         ).toBeVisible();
         await expect(
           page.getByText(route.content, { exact: true }),

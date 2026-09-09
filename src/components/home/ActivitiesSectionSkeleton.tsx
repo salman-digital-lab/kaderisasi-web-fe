@@ -1,6 +1,13 @@
 "use client";
 
-import { SimpleGrid, Title, Text, Container, Skeleton, Center } from "@mantine/core";
+import {
+  SimpleGrid,
+  Title,
+  Text,
+  Container,
+  Skeleton,
+  Center,
+} from "@mantine/core";
 import { ActivityGridSkeleton } from "@/components/skeletons";
 
 export function ActivitiesSectionSkeleton() {
@@ -10,19 +17,12 @@ export function ActivitiesSectionSkeleton() {
         Kegiatan Baru
       </Title>
 
-      <Text
-        c="dimmed"
-        ta="center"
-        mt="md"
-        maw={600}
-        mx="auto"
-      >
-        Jelajahi dan saksikan peluang kegiatan yang dapat membantu Anda
-        mengasah potensi dan kontribusi unik Anda dalam lingkungan yang
-        mendukung.
+      <Text c="dimmed" ta="center" mt="md" maw={600} mx="auto">
+        Jelajahi dan saksikan peluang kegiatan yang dapat membantu Anda mengasah
+        potensi dan kontribusi unik Anda dalam lingkungan yang mendukung.
       </Text>
 
-      <SimpleGrid cols={{ base: 1, md: 4 }} spacing="md" mt={50}>
+      <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="md" mt="xl">
         <ActivityGridSkeleton count={4} />
       </SimpleGrid>
       <Center>
@@ -33,4 +33,3 @@ export function ActivitiesSectionSkeleton() {
 }
 
 export default ActivitiesSectionSkeleton;
-

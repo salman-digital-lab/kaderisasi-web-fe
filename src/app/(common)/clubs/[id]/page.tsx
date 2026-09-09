@@ -1,13 +1,14 @@
+import PageContainer from "@/components/layout/PageContainer";
 import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import {
   AspectRatio,
   Badge,
   Card,
   CardSection,
-  Container,
   Group,
   SimpleGrid,
   Stack,
@@ -38,8 +39,18 @@ type ClubDetailPageProps = {
   params: Promise<{ id: string }>;
 };
 
-export async function generateMetadata({ params }: ClubDetailPageProps) {
+function isValidClubId(id: string): boolean {
+  const parsedId = Number(id);
+  return /^\d+$/.test(id) && Number.isSafeInteger(parsedId) && parsedId > 0;
+}
+
+export async function generateMetadata({
+  params,
+}: ClubDetailPageProps): Promise<Metadata> {
   const { id } = await params;
+  if (!isValidClubId(id)) {
+    return { title: "Halaman tidak ditemukan" };
+  }
 
   try {
     const club = await getClub({ id });
@@ -73,9 +84,8 @@ function formatPeriod(club: ClubDetail): string | null {
 
 export default async function ClubDetailPage({ params }: ClubDetailPageProps) {
   const { id } = await params;
-  const parsedId = Number(id);
 
-  if (!/^\d+$/.test(id) || !Number.isSafeInteger(parsedId) || parsedId <= 0) {
+  if (!isValidClubId(id)) {
     notFound();
   }
 
@@ -95,7 +105,7 @@ export default async function ClubDetailPage({ params }: ClubDetailPageProps) {
   const period = formatPeriod(club);
 
   return (
-    <Container size="md" py={{ base: "md", md: "xl" }}>
+    <PageContainer size="md">
       <Stack gap="md">
         <Link href="/clubs" className={classes.backLink}>
           <IconArrowLeft size={18} aria-hidden="true" />
@@ -389,6 +399,6 @@ export default async function ClubDetailPage({ params }: ClubDetailPageProps) {
           )}
         </Stack>
       </Stack>
-    </Container>
+    </PageContainer>
   );
 }

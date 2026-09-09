@@ -17,7 +17,7 @@ export async function ClubsSection() {
     ({ data: clubs } = await getClubs({ per_page: "4" }));
   } catch {
     return (
-      <Container size="lg" py={{ base: "lg", md: "xl" }}>
+      <Container size="lg" py="var(--page-space)">
         <Title order={2} ta="center" mt="sm">
           Klub dan Kepanitiaan
         </Title>
@@ -34,7 +34,7 @@ export async function ClubsSection() {
   }
 
   return (
-    <Container size="lg" py={{ base: "lg", md: "xl" }}>
+    <Container size="lg" py="var(--page-space)">
       <Title order={2} ta="center" mt="sm">
         Klub dan Kepanitiaan
       </Title>
@@ -48,9 +48,9 @@ export async function ClubsSection() {
       {clubs.length > 0 ? (
         <>
           <SimpleGrid
-            cols={{ base: 1, sm: 2, md: 4 }}
+            cols={{ base: 1, sm: 2, lg: 4 }}
             spacing={{ base: "lg", md: "md" }}
-            mt={{ base: "xl", md: 50 }}
+            mt="xl"
           >
             {clubs.map((club) => (
               <ClubCard

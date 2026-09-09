@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import classes from "@/components/common/ActivityCard/index.module.css";
 import NextImage from "next/image";
 import { Card, Text, Group, Badge, Button, Stack, Box } from "@mantine/core";
-import { IconClock, IconAward } from "@tabler/icons-react";
+import { IconClock, IconAward, IconCalendarEvent } from "@tabler/icons-react";
 import { ACTIVITY_REGISTRANT_STATUS_ENUM } from "@/types/constants/activity";
 import { getCertificateCta } from "@/features/certificate/utils/certificateData";
 import type { CertificateLifecycleState } from "@/types/model/certificate";
@@ -79,19 +80,20 @@ export default function ActivityPersonalCard({
   return (
     <Card withBorder radius="md" p="md" h="100%">
       <Card.Section>
-        <NextImage
-          blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mN0qAcAAQUAwRZaSmYAAAAASUVORK5CYII="
-          placeholder="blur"
-          src={
-            imageUrl
-              ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${imageUrl}`
-              : "https://placehold.co/350x400?text=" + activityName
-          }
-          alt={activityName}
-          height={200}
-          width={400}
-          style={{ width: "100%", height: "auto", objectFit: "cover" }}
-        />
+        <div className={classes.media}>
+          {imageUrl ? (
+            <NextImage
+              src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${imageUrl}`}
+              alt={activityName}
+              height={200}
+              width={400}
+              sizes="(max-width: 48em) 100vw, 50vw"
+              className={classes.image}
+            />
+          ) : (
+            <IconCalendarEvent size={48} stroke={1.5} aria-hidden />
+          )}
+        </div>
       </Card.Section>
 
       <Stack gap="sm" mt="md" flex="1">

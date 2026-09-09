@@ -6,7 +6,7 @@ import { ClubGridSkeleton } from "@/components/skeletons";
 export function ClubsListSkeleton() {
   return (
     <div aria-busy="true" aria-label="Memuat daftar klub">
-      <SimpleGrid cols={{ base: 1, md: 4 }} spacing="md" mt={50}>
+      <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="md" mt="xl">
         <ClubGridSkeleton count={8} />
       </SimpleGrid>
       <Center mt="xl">

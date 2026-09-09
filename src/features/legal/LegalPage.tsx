@@ -1,5 +1,6 @@
+import PageContainer from "@/components/layout/PageContainer";
 import Link from "next/link";
-import { Container, Paper, Stack, Text, Title } from "@mantine/core";
+import { Paper, Stack, Text, Title } from "@mantine/core";
 import type { ReactElement } from "react";
 import {
   LEGAL_CONTACT_EMAIL,
@@ -26,7 +27,7 @@ export default function LegalPage({
   relatedTitle,
 }: Props): ReactElement {
   return (
-    <Container size="md" py="xl">
+    <PageContainer size="md">
       <Paper
         withBorder
         radius="md"
@@ -134,6 +135,6 @@ export default function LegalPage({
           </div>
         </Stack>
       </Paper>
-    </Container>
+    </PageContainer>
   );
 }

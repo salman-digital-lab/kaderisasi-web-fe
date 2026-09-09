@@ -1,8 +1,9 @@
-import Image from "next/image";
+import PageContainer from "@/components/layout/PageContainer";
+import PageHero from "@/components/layout/PageHero";
 import Form from "next/form";
 import type { ReactElement } from "react";
 import { Suspense } from "react";
-import { Button, Container, Group, Text, TextInput } from "@mantine/core";
+import { Button, Group, Text, TextInput } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
 import illustration from "@/assets/activitiespage-1.svg";
 import ClubsListContent from "@/components/clubs/ClubsListContent";
@@ -31,37 +32,30 @@ export default function ClubsPage({
 }: ClubsPageProps): ReactElement {
   return (
     <>
-      <Container size="md">
-        <div className={classes.inner}>
-          <div className={classes.content}>
-            <h1 className={classes.title}>
-              Klub di{" "}
-              <Text component="span" c="blue" inherit>
-                Kaderisasi Salman
-              </Text>
-            </h1>
-            <Text c="dimmed" mt="md" className={classes.heroDescription}>
-              Temukan ruang bertumbuh, berkarya, dan berkolaborasi melalui Unit,
-              Club Keprofesian, Club Bahasa, dan Avisman Regional di Kaderisasi
-              Salman.
+      <PageHero
+        title={
+          <>
+            Klub di{" "}
+            <Text component="span" c="blue" inherit>
+              Kaderisasi Salman
             </Text>
-          </div>
-          <Image
-            width={400}
-            src={illustration}
-            alt="Ilustrasi klub Kaderisasi Salman"
-            priority
-            className={classes.image}
-            sizes="(max-width: 992px) 0px, 376px"
-          />
-        </div>
-      </Container>
+          </>
+        }
+        description={
+          <>
+            Temukan ruang bertumbuh, berkarya, dan berkolaborasi melalui Unit,
+            Club Keprofesian, Club Bahasa, dan Avisman Regional di Kaderisasi
+            Salman.
+          </>
+        }
+        illustration={illustration}
+      ></PageHero>
 
-      <Container size="lg" py="xl">
+      <PageContainer>
         <Suspense fallback={<ClubsListSkeleton />}>
           <ClubsBrowser searchParams={searchParams} />
         </Suspense>
-      </Container>
+      </PageContainer>
     </>
   );
 }
@@ -94,14 +88,15 @@ async function ClubsBrowser({
       <Group
         mt="md"
         gap="xs"
-        justify="center"
+        justify="flex-start"
         role="group"
         aria-label="Filter jenis klub"
       >
         <LinkButton
           href={buildClubsHref({ search })}
           variant={!clubType ? "filled" : "light"}
-          radius="xs"
+          color={!clubType ? undefined : "gray"}
+          radius="md"
           size="md"
           mih={44}
           aria-current={!clubType ? "page" : undefined}
@@ -113,7 +108,8 @@ async function ClubsBrowser({
             key={type}
             href={buildClubsHref({ search, clubType: type })}
             variant={clubType === type ? "filled" : "light"}
-            radius="xs"
+            color={clubType === type ? undefined : "gray"}
+            radius="md"
             size="md"
             mih={44}
             aria-current={clubType === type ? "page" : undefined}

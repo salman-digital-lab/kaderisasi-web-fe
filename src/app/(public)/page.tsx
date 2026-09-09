@@ -1,4 +1,4 @@
-import Image from "next/image";
+import PageHero from "@/components/layout/PageHero";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import type { ReactElement } from "react";
@@ -29,45 +29,39 @@ export default function Home(): ReactElement {
   return (
     <div>
       {/* Hero Section - No data fetching, renders immediately */}
-      <Container size="md">
-        <div className={classes.inner}>
-          <div className={classes.content}>
-            <h1 className={classes.title}>
-              Selamat Datang di{" "}
-              <Text component="span" c="blue" inherit>
-                Kaderisasi Salman
-              </Text>
-            </h1>
-            <Text c="dimmed" mt="md" className={classes.heroDescription}>
-              Portal Aktivis Salman yang dikelola BMKA (Bidang Mahasiswa,
-              Kaderisasi dan Alumni) Salman yang berfungsi sebagai pusat
-              pendaftaran kegiatan di @kaderisasisalman. Program pembinaan dalam
-              rangka membentuk kader teladan untuk membangun Indonesia.
+      <PageHero
+        title={
+          <>
+            Selamat Datang di{" "}
+            <Text component="span" c="blue" inherit>
+              Kaderisasi Salman
             </Text>
-            <Text c="dimmed" mt="sm" className={classes.heroDescription}>
-              Temukan kegiatan dan klub, daftarkan diri, serta kelola profil,
-              prestasi, dan sertifikat keikutsertaan Anda. Informasi kegiatan
-              dan klub dapat dilihat tanpa masuk; akun diperlukan untuk
-              pendaftaran dan pengelolaan data pribadi.
-            </Text>
+          </>
+        }
+        description={
+          <>
+            Portal Aktivis Salman yang dikelola BMKA (Bidang Mahasiswa,
+            Kaderisasi dan Alumni) Salman yang berfungsi sebagai pusat
+            pendaftaran kegiatan di @kaderisasisalman. Program pembinaan dalam
+            rangka membentuk kader teladan untuk membangun Indonesia.
+          </>
+        }
+        illustration={illustration}
+      >
+        <Text c="dimmed" mt="sm">
+          Temukan kegiatan dan klub, daftarkan diri, serta kelola profil,
+          prestasi, dan sertifikat keikutsertaan Anda. Informasi kegiatan dan
+          klub dapat dilihat tanpa masuk; akun diperlukan untuk pendaftaran dan
+          pengelolaan data pribadi.
+        </Text>
 
-            <Group mt="lg">
-              <LinkButton href="/activity">Daftar Kegiatan Sekarang</LinkButton>
-            </Group>
-          </div>
-          <Image
-            width={400}
-            src={illustration}
-            alt="Selamat Datang di BMKA Salman ITB"
-            priority
-            className={classes.image}
-            sizes="(max-width: 768px) 90vw, 400px"
-          />
-        </div>
-      </Container>
+        <Group mt="lg">
+          <LinkButton href="/activity">Daftar Kegiatan Sekarang</LinkButton>
+        </Group>
+      </PageHero>
 
       {/* Statistics Section - Static content, no data fetching */}
-      <Container size="lg" py={{ base: "lg", md: "xl" }}>
+      <Container size="lg" py="var(--page-space)">
         <Title ta="center" mt="sm" order={2} className={classes.sectionTitle}>
           Bersama Membangun Generasi Pemimpin Masa Depan
         </Title>
@@ -127,9 +121,9 @@ export default function Home(): ReactElement {
       </Suspense>
 
       {/* CTA Section - Static content, no data fetching */}
-      <Container size="lg" py={{ base: "lg", md: "xl" }}>
+      <Container size="lg" py="var(--page-space)">
         <Stack
-          mt={{ base: 56, md: 120 }}
+          mt="xl"
           bg="var(--mantine-color-body)"
           align="center"
           justify="center"

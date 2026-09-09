@@ -1,8 +1,9 @@
 "use client";
 
+import LogoutAction from "@/components/common/LogoutAction";
+
 import {
   Text,
-  Button,
   Stack,
   Group,
   Badge,
@@ -12,12 +13,7 @@ import {
   Divider,
   Card,
 } from "@mantine/core";
-import {
-  IconLogout,
-  IconUser,
-  IconTrophy,
-  IconCalendar,
-} from "@tabler/icons-react";
+import { IconUser, IconTrophy, IconCalendar } from "@tabler/icons-react";
 
 import { ProfilePicture } from "../ProfilePicture";
 import { USER_LEVEL_RENDER } from "../../../constants/render/activity";
@@ -52,7 +48,7 @@ export function ProfileCard({
 }: ProfileCardProps) {
   return (
     <Box className={className}>
-      <Card radius="lg" withBorder p="xl" className={classes.profileCard}>
+      <Card radius="md" withBorder p="xl" className={classes.profileCard}>
         <Stack align="center" gap="md">
           <ProfilePicture
             src={profileData?.profile.picture}
@@ -132,15 +128,7 @@ export function ProfileCard({
             <>
               <Divider w="100%" />
 
-              <Button
-                variant="light"
-                color="red"
-                fullWidth
-                leftSection={<IconLogout size={16} />}
-                radius="md"
-              >
-                Keluar
-              </Button>
+              <LogoutAction />
             </>
           )}
         </Stack>

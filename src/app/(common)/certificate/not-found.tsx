@@ -1,25 +1,14 @@
-"use client";
+import type { ReactElement } from "react";
+import PageState from "@/components/layout/PageState";
+import LinkButton from "@/components/common/LinkButton";
 
-import Link from "next/link";
-import { Button, Container, Paper, Stack, Text, Title } from "@mantine/core";
-
-export default function CertificateNotFound() {
+export default function CertificateNotFound(): ReactElement {
   return (
-    <Container component="main" size="sm" py="xl">
-      <Paper p="xl" radius="md" withBorder>
-        <Stack align="center" gap="md" ta="center">
-          <Title order={1} size="h2">
-            Sertifikat tidak ditemukan
-          </Title>
-          <Text c="dimmed">
-            Periksa kembali kode sertifikat atau minta tautan resmi kepada
-            pemilik sertifikat.
-          </Text>
-          <Button component={Link} href="/certificate/verify">
-            Verifikasi kode lain
-          </Button>
-        </Stack>
-      </Paper>
-    </Container>
+    <PageState
+      title="Sertifikat tidak ditemukan"
+      description="Periksa kembali kode sertifikat atau minta tautan resmi kepada pemilik sertifikat."
+    >
+      <LinkButton href="/certificate/verify">Verifikasi kode lain</LinkButton>
+    </PageState>
   );
 }

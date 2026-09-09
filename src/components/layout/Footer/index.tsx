@@ -2,13 +2,7 @@
 
 import Link from "next/link";
 import type { ReactElement } from "react";
-import { Anchor, Text, Container, ActionIcon, Group, rem } from "@mantine/core";
-import {
-  IconBrandTwitter,
-  IconBrandYoutube,
-  IconBrandInstagram,
-} from "@tabler/icons-react";
-
+import { Anchor, Text, Container, Group } from "@mantine/core";
 import classes from "./index.module.css";
 
 export default function Footer(): ReactElement {
@@ -65,50 +59,6 @@ export default function Footer(): ReactElement {
         <Text c="dimmed" size="md" className={classes.copyright}>
           © 2026 BMKA Salman ITB All rights reserved.
         </Text>
-
-        <Group
-          gap={0}
-          className={classes.social}
-          justify="flex-end"
-          wrap="nowrap"
-        >
-          <ActionIcon
-            component="a"
-            href="#"
-            size="md"
-            color="gray"
-            variant="subtle"
-          >
-            <IconBrandTwitter
-              style={{ width: rem(16), height: rem(16) }}
-              stroke={1.5}
-            />
-          </ActionIcon>
-          <ActionIcon
-            component="a"
-            href="#"
-            size="md"
-            color="gray"
-            variant="subtle"
-          >
-            <IconBrandYoutube
-              style={{ width: rem(16), height: rem(16) }}
-              stroke={1.5}
-            />
-          </ActionIcon>
-          <ActionIcon
-            component="a"
-            href="#"
-            size="md"
-            color="gray"
-            variant="subtle"
-          >
-            <IconBrandInstagram
-              style={{ width: rem(16), height: rem(16) }}
-              stroke={1.5}
-            />
-          </ActionIcon>
-        </Group>
       </Container>
     </footer>
   );

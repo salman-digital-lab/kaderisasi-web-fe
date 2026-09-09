@@ -1,14 +1,6 @@
+import PageContainer from "@/components/layout/PageContainer";
 import type { Metadata } from "next";
-import {
-  Alert,
-  Badge,
-  Container,
-  Group,
-  Paper,
-  Stack,
-  Text,
-  Title,
-} from "@mantine/core";
+import { Alert, Badge, Group, Paper, Stack, Text, Title } from "@mantine/core";
 import {
   IconAlertTriangle,
   IconCircleCheck,
@@ -84,7 +76,7 @@ export default async function CertificateVerificationPage(props: {
       : "Sertifikat tidak ditemukan";
 
   return (
-    <Container component="main" size="sm" py="xl">
+    <PageContainer size="sm">
       <Stack gap="lg">
         <Paper p={{ base: "lg", sm: "xl" }} radius="md" withBorder>
           <Stack gap="lg">
@@ -200,6 +192,6 @@ export default async function CertificateVerificationPage(props: {
           </Stack>
         </Paper>
       </Stack>
-    </Container>
+    </PageContainer>
   );
 }

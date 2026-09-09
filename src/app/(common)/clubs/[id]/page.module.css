@@ -15,18 +15,21 @@
 }
 
 .header {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(16rem, 1fr);
   gap: var(--mantine-spacing-md);
   width: 100%;
 }
 
 .identityCard {
-  width: 75%;
+  width: 100%;
+  min-width: 0;
 }
 
 .actionCard {
   display: flex;
-  width: 25%;
+  width: 100%;
+  min-width: 0;
   flex-direction: column;
   justify-content: center;
   gap: var(--mantine-spacing-md);
@@ -199,5 +202,11 @@
 
   .logo {
     --club-logo-rendered-size: rem(64px);
+  }
+}
+
+@media (max-width: $mantine-breakpoint-md) {
+  .header {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

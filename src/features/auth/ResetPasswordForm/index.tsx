@@ -51,7 +51,12 @@ function Component() {
           {...form.getInputProps("password")}
           key={form.key("password")}
           label="Password"
+          autoComplete="new-password"
+          visibilityToggleButtonProps={{
+            "aria-label": "Tampilkan atau sembunyikan password",
+          }}
           placeholder="Password Anda"
+          description="Minimal 6 karakter"
           required
           mt="md"
         />
@@ -59,6 +64,10 @@ function Component() {
           {...form.getInputProps("confirmPassword")}
           key={form.key("confirmPassword")}
           label="Konfirmasi Password"
+          autoComplete="new-password"
+          visibilityToggleButtonProps={{
+            "aria-label": "Tampilkan atau sembunyikan konfirmasi password",
+          }}
           placeholder="Tulis Ulang Password Anda"
           required
           mt="md"

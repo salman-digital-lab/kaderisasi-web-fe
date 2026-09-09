@@ -1,7 +1,9 @@
 "use client";
 
+import PageContainer from "@/components/layout/PageContainer";
+
 import Link from "next/link";
-import { Alert, Button, Container, Stack, Text, Title } from "@mantine/core";
+import { Alert, Button, Stack, Text, Title } from "@mantine/core";
 import {
   IconAlertTriangle,
   IconBan,
@@ -85,7 +87,7 @@ export default function CertificateUnavailableView({
   const content = CONTENT[reason];
 
   return (
-    <Container component="main" size="sm" py="xl">
+    <PageContainer size="sm">
       <Stack gap="lg">
         <Title order={1} size="h2">
           {content.title}
@@ -103,6 +105,6 @@ export default function CertificateUnavailableView({
           </Stack>
         </Alert>
       </Stack>
-    </Container>
+    </PageContainer>
   );
 }

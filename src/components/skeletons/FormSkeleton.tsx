@@ -6,14 +6,20 @@ export function FormFieldSkeleton() {
   return (
     <Box>
       <Skeleton height={14} width={100} mb={6} />
-      <Skeleton height={36} width="100%" radius="md" />
+      <Skeleton height={44} width="100%" radius="md" />
     </Box>
   );
 }
 
 export function FormSkeleton({ fields = 5 }: { fields?: number }) {
   return (
-    <Paper radius="md" withBorder p="lg">
+    <Paper
+      radius="md"
+      withBorder
+      p="lg"
+      role="status"
+      aria-label="Memuat formulir"
+    >
       <Stack gap="md">
         {/* Form Title */}
         <Skeleton height={24} width="60%" mb="sm" />
@@ -25,11 +31,10 @@ export function FormSkeleton({ fields = 5 }: { fields?: number }) {
         ))}
 
         {/* Submit Button */}
-        <Skeleton height={42} width="100%" radius="md" mt="md" />
+        <Skeleton height={44} width="100%" radius="md" mt="md" />
       </Stack>
     </Paper>
   );
 }
 
 export default FormSkeleton;
-

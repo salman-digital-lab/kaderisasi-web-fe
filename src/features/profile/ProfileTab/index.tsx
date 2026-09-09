@@ -27,11 +27,11 @@ type ProfileTabProps = {
   provinceData: Province[] | undefined;
   countryData: Country[] | undefined;
   profileData:
-  | {
-    userData: PublicUser;
-    profile: Member;
-  }
-  | undefined;
+    | {
+        userData: PublicUser;
+        profile: Member;
+      }
+    | undefined;
   activitiesRegistration: ({ activity: Activity } & Registrant)[] | undefined;
   ruangcurhatData: RuangCurhatData[] | undefined;
   achievements: Achievement[] | undefined;
@@ -50,7 +50,7 @@ export function ProfileTab({
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
-  
+
   const urlTab = searchParams.get("tab") ?? "profiledata";
   const [activeTab, setActiveTab] = useState(urlTab);
 
@@ -64,7 +64,7 @@ export function ProfileTab({
   const onChangeTab = (value: string | null) => {
     const newTab = value || "profiledata";
     setActiveTab(newTab); // Update immediately for instant feedback
-    
+
     const params = new URLSearchParams(searchParams.toString());
     params.set("tab", newTab);
 
@@ -80,7 +80,7 @@ export function ProfileTab({
       className={classes.tab}
       onChange={onChangeTab}
     >
-      <TabsList>
+      <TabsList aria-label="Bagian profil">
         <TabsTab value="profiledata">Data Diri</TabsTab>
         <TabsTab value="activity">Kegiatan</TabsTab>
         <TabsTab value="ruangcurhat">Ruang Curhat</TabsTab>

@@ -30,7 +30,7 @@
 
 .label {
   text-transform: uppercase;
-  font-size: var(--mantine-font-size-md);
+  font-size: var(--mantine-font-size-sm);
   font-weight: 700;
   letter-spacing: 0.02em;
 }

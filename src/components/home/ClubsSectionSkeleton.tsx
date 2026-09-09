@@ -24,9 +24,9 @@ export function ClubsSectionSkeleton() {
       </Text>
 
       <SimpleGrid
-        cols={{ base: 1, sm: 2, md: 4 }}
+        cols={{ base: 1, sm: 2, lg: 4 }}
         spacing={{ base: "lg", md: "md" }}
-        mt={{ base: "xl", md: 50 }}
+        mt="xl"
       >
         <ClubGridSkeleton count={4} />
       </SimpleGrid>

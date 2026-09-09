@@ -1,13 +1,12 @@
 import {
   SimpleGrid,
   Center,
-  Button,
   Title,
   Text,
   Container,
   Card,
 } from "@mantine/core";
-import Link from "next/link";
+import LinkButton from "@/components/common/LinkButton";
 import ActivityCard from "@/components/common/ActivityCard";
 import { getActivities } from "@/services/activity.cache";
 
@@ -15,7 +14,7 @@ export async function ActivitiesSection() {
   const { data: activities } = await getActivities({ per_page: "4" });
 
   return (
-    <Container size="lg" py={{ base: "lg", md: "xl" }}>
+    <Container size="lg" py="var(--page-space)">
       <Title ta="center" mt="sm">
         Kegiatan Baru
       </Title>
@@ -28,9 +27,9 @@ export async function ActivitiesSection() {
       {activities.length > 0 ? (
         <>
           <SimpleGrid
-            cols={{ base: 1, sm: 2, md: 4 }}
+            cols={{ base: 1, sm: 2, lg: 4 }}
             spacing={{ base: "lg", md: "md" }}
-            mt={{ base: "xl", md: 50 }}
+            mt="xl"
           >
             {activities.map((activity) => (
               <ActivityCard
@@ -50,11 +49,7 @@ export async function ActivitiesSection() {
           </SimpleGrid>
           {activities.length > 3 && (
             <Center mt="lg">
-              <Link href="/activity" style={{ textDecoration: "none" }}>
-                <Button>
-                  Lihat Kegiatan Lainnya
-                </Button>
-              </Link>
+              <LinkButton href="/activity">Lihat Kegiatan Lainnya</LinkButton>
             </Center>
           )}
         </>

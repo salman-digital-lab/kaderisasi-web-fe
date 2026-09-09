@@ -1,13 +1,14 @@
 "use client";
 
+import LinkButton from "@/components/common/LinkButton";
+
 import dayjs from "dayjs";
 import "dayjs/locale/id";
-import Link from "next/link";
 import NextImage from "next/image";
-import { Text, Group, Badge, Button, rem, Card } from "@mantine/core";
+import { Text, Group, Badge, rem, Card } from "@mantine/core";
 import classes from "./index.module.css";
 import { USER_LEVEL_RENDER } from "../../../constants/render/activity";
-import { IconCalendarTime } from "@tabler/icons-react";
+import { IconCalendarTime, IconCalendarEvent } from "@tabler/icons-react";
 import { USER_LEVEL_ENUM } from "@/types/constants/profile";
 
 // Set the locale globally for this component
@@ -33,26 +34,32 @@ export default function ActivityCard({
   );
 
   return (
-    <Card withBorder radius="md" p="md" className={classes.card}>
+    <Card
+      component="article"
+      withBorder
+      radius="md"
+      p="md"
+      className={classes.card}
+    >
       <Card.Section>
-        <NextImage
-          placeholder="blur"
-          blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mN0qAcAAQUAwRZaSmYAAAAASUVORK5CYII="
-          src={
-            imageUrl
-              ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${imageUrl}`
-              : "https://placehold.co/350x400?text=" + activityName
-          }
-          alt={activityName}
-          height={350}
-          width={400}
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-          style={{ width: "100%", height: "auto" }}
-        />
+        <div className={classes.media}>
+          {imageUrl ? (
+            <NextImage
+              src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${imageUrl}`}
+              alt={activityName}
+              height={350}
+              width={400}
+              sizes="(max-width: 48em) 100vw, (max-width: 75em) 50vw, 25vw"
+              className={classes.image}
+            />
+          ) : (
+            <IconCalendarEvent size={48} stroke={1.5} aria-hidden />
+          )}
+        </div>
       </Card.Section>
 
       <Card.Section className={classes.section} mt="sm" flex="1">
-        <Group justify="apart">
+        <Group justify="space-between">
           <Text fz="md" fw={600}>
             {activityName}
           </Text>
@@ -75,21 +82,19 @@ export default function ActivityCard({
           Jenjang Minimum
         </Text>
         <Group gap={7} mt={5}>
-          <Badge variant="light">
-            {USER_LEVEL_RENDER[minimumLevel]}
-          </Badge>
+          <Badge variant="light">{USER_LEVEL_RENDER[minimumLevel]}</Badge>
         </Group>
       </Card.Section>
 
       <Group mt="sm">
-        <Link
+        <LinkButton
+          aria-label={`Lihat kegiatan ${activityName}`}
           href={`/activity/${slug}`}
-          style={{ flex: 1, textDecoration: "none" }}
+          radius="md"
+          fullWidth
         >
-          <Button radius="md" fullWidth>
-            Lihat Selengkapnya
-          </Button>
-        </Link>
+          Lihat Selengkapnya
+        </LinkButton>
       </Group>
     </Card>
   );

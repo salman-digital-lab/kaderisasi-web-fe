@@ -38,7 +38,11 @@ export default function RegistrationForm({ redirect }: { redirect?: string }) {
 
       if (response.success) {
         showNotif("Registrasi berhasil. Silahkan masuk ke akun anda.");
-        router.push(redirect ? `/login?redirect=${redirect}` : "/login");
+        router.push(
+          redirect
+            ? `/login?redirect=${encodeURIComponent(redirect)}`
+            : "/login",
+        );
       } else {
         showNotif(response.message, true);
       }
@@ -57,6 +61,7 @@ export default function RegistrationForm({ redirect }: { redirect?: string }) {
           {...form.getInputProps("fullname")}
           key={form.key("fullname")}
           label="Nama Lengkap"
+          autoComplete="name"
           placeholder="Nama Lengkap Anda"
           required
         />
@@ -64,6 +69,8 @@ export default function RegistrationForm({ redirect }: { redirect?: string }) {
           {...form.getInputProps("email")}
           key={form.key("email")}
           label="Email"
+          type="email"
+          autoComplete="email"
           placeholder="Email Anda"
           required
           mt="md"
@@ -72,7 +79,12 @@ export default function RegistrationForm({ redirect }: { redirect?: string }) {
           {...form.getInputProps("password")}
           key={form.key("password")}
           label="Password"
+          autoComplete="new-password"
+          visibilityToggleButtonProps={{
+            "aria-label": "Tampilkan atau sembunyikan password",
+          }}
           placeholder="Password Anda"
+          description="Minimal 6 karakter"
           required
           mt="md"
         />
@@ -80,6 +92,10 @@ export default function RegistrationForm({ redirect }: { redirect?: string }) {
           {...form.getInputProps("confirmPassword")}
           key={form.key("confirmPassword")}
           label="Konfirmasi Password"
+          autoComplete="new-password"
+          visibilityToggleButtonProps={{
+            "aria-label": "Tampilkan atau sembunyikan konfirmasi password",
+          }}
           placeholder="Tulis Ulang Password Anda"
           required
           mt="md"

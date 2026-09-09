@@ -40,6 +40,8 @@ export default function ForgotForm() {
           {...form.getInputProps("email")}
           key={form.key("email")}
           label="Email"
+          type="email"
+          autoComplete="email"
           placeholder="Email Anda"
           required
         />

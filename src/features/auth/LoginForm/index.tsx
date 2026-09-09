@@ -55,6 +55,8 @@ export default function LoginForm({ redirect }: { redirect?: string }) {
           {...form.getInputProps("email")}
           key={form.key("email")}
           label="Email"
+          type="email"
+          autoComplete="email"
           placeholder="Email Anda"
           required
         />
@@ -62,6 +64,10 @@ export default function LoginForm({ redirect }: { redirect?: string }) {
           {...form.getInputProps("password")}
           key={form.key("password")}
           label="Password"
+          autoComplete="current-password"
+          visibilityToggleButtonProps={{
+            "aria-label": "Tampilkan atau sembunyikan password",
+          }}
           placeholder="Password Anda"
           required
           mt="md"

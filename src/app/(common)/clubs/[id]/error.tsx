@@ -1,16 +1,9 @@
 "use client";
 
+import PageContainer from "@/components/layout/PageContainer";
 import { useEffect } from "react";
 import Link from "next/link";
-import {
-  Alert,
-  Button,
-  Container,
-  Group,
-  Stack,
-  Text,
-  Title,
-} from "@mantine/core";
+import { Alert, Button, Group, Stack, Text, Title } from "@mantine/core";
 import {
   IconAlertCircle,
   IconArrowLeft,
@@ -19,19 +12,19 @@ import {
 
 type ClubDetailErrorProps = {
   error: Error & { digest?: string };
-  unstable_retry: () => void;
+  retry: () => void;
 };
 
 export default function ClubDetailError({
   error,
-  unstable_retry,
+  retry,
 }: ClubDetailErrorProps) {
   useEffect(() => {
     console.error("Club detail error:", error);
   }, [error]);
 
   return (
-    <Container size="md" py={{ base: "xl", md: 80 }}>
+    <PageContainer size="md">
       <Stack gap="lg">
         <Title order={1} size="h2">
           Kami tidak dapat membuka klub ini
@@ -48,7 +41,7 @@ export default function ClubDetailError({
         </Alert>
         <Group>
           <Button
-            onClick={unstable_retry}
+            onClick={retry}
             size="lg"
             leftSection={<IconRefresh size={18} aria-hidden="true" />}
           >
@@ -65,6 +58,6 @@ export default function ClubDetailError({
           </Button>
         </Group>
       </Stack>
-    </Container>
+    </PageContainer>
   );
 }
