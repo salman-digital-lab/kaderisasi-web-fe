@@ -63,6 +63,16 @@ export default function Home(): ReactElement {
                 Syarat dan Ketentuan
               </Anchor>
             </Group>
+            <Text c="dimmed" size="sm" mt="md">
+              Nama, email, dan data yang Anda isi digunakan untuk mengelola akun
+              dan layanan yang Anda pilih. Pada dasbor admin, Masuk dengan Google
+              menggunakan identitas akun, nama, email, dan status verifikasi email
+              untuk autentikasi. Rincian penggunaan data tersedia dalam{" "}
+              <Anchor href="/privacy-policy#google" size="sm" underline="always">
+                Kebijakan Privasi
+              </Anchor>
+              .
+            </Text>
           </div>
           <Image
             width={400}

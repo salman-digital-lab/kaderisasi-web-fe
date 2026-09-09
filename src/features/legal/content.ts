@@ -30,7 +30,8 @@ export const privacySections: LegalSection[] = [
     id: "google",
     title: "Data dari Masuk dengan Google",
     paragraphs: [
-      "Saat Anda memilih Masuk dengan Google, kami memverifikasi token identitas dari Google untuk memperoleh identitas akun Google, alamat email, status verifikasi email, dan nama profil yang tersedia. Kami menyimpan pengenal akun Google, email, nama akun layanan, dan informasi waktu penggunaan untuk menghubungkan akun dan mengelola sesi masuk.",
+      "Saat Anda memilih Masuk dengan Google pada dasbor admin Kaderisasi Salman, kami memverifikasi token identitas dari Google untuk memperoleh pengenal unik akun Google, alamat email, status verifikasi email, dan nama profil yang tersedia. Pengenal akun digunakan untuk mengenali akun yang sama pada kunjungan berikutnya; email terverifikasi digunakan untuk membuat atau menghubungkan akun admin; nama digunakan sebagai nama tampilan saat akun dibuat.",
+      "Kami menyimpan pengenal akun Google, email, nama tampilan akun layanan, serta waktu pembuatan dan penggunaan hubungan akun. Google memberikan token identitas untuk memverifikasi proses masuk; sesi layanan dikelola dengan token layanan kami sendiri. Integrasi ini tidak meminta token akses atau token penyegaran untuk mengakses layanan Google lainnya.",
       "Fitur ini digunakan untuk autentikasi. Fitur Masuk dengan Google tidak meminta akses untuk membaca Gmail, Google Drive, kontak, atau kalender, dan kami tidak menerima kata sandi Google Anda. Masuk dengan Google tidak otomatis memberikan hak administrasi; akses fitur admin mengikuti peran yang diberikan.",
       "Data Google digunakan untuk menyediakan dan mengamankan layanan yang Anda gunakan, bukan untuk menjual data, membuat iklan yang dipersonalisasi, atau melatih model AI umum. Penggunaan informasi dari Google mengikuti Google API Services User Data Policy, termasuk ketentuan Limited Use yang berlaku.",
     ],
@@ -50,6 +51,7 @@ export const privacySections: LegalSection[] = [
       "Data dapat diakses oleh pengelola dan petugas yang berwenang untuk menjalankan tugasnya, misalnya panitia, pengelola klub, peninjau prestasi, konselor, atau administrator. Informasi Ruang Curhat digunakan untuk penanganan konsultasi dan bukan untuk ditampilkan pada peringkat publik.",
       "Fitur publik seperti peringkat dan verifikasi sertifikat dapat menampilkan informasi yang terkait dengan fitur tersebut, misalnya nama peserta, pencapaian, kegiatan, atau status sertifikat. Tautan dan berkas yang Anda bagikan kepada orang lain juga dapat diakses oleh penerimanya.",
       "Penyedia infrastruktur yang mendukung hosting, basis data, penyimpanan berkas, email, analitik, dan autentikasi dapat memproses data yang diperlukan untuk menyediakan layanan tersebut. Google memproses autentikasi menurut kebijakannya sendiri. Data juga dapat diungkapkan ketika diwajibkan oleh hukum atau diperlukan untuk menangani penyalahgunaan dan melindungi hak pengguna. Kami tidak menjual data pribadi Anda.",
+      "Untuk data Masuk dengan Google, akses oleh petugas berwenang dan pemrosesan oleh penyedia hosting atau basis data dibatasi pada kebutuhan autentikasi, pengelolaan akun, dukungan, dan keamanan layanan, atau kewajiban hukum. Kami tidak membagikan data Google kepada pengiklan atau pialang data.",
     ],
   },
   {
@@ -57,7 +59,15 @@ export const privacySections: LegalSection[] = [
     title: "Penyimpanan dan keamanan",
     paragraphs: [
       "Data akun dan layanan disimpan pada basis data serta penyimpanan berkas yang digunakan oleh pengelola. Kami menggunakan pembatasan akses berdasarkan peran dan mekanisme autentikasi untuk membantu melindungi data. Lokasi pemrosesan dapat mengikuti infrastruktur penyedia layanan yang digunakan. Tidak ada sistem yang sepenuhnya bebas dari risiko keamanan.",
+      "Perlindungan ini juga berlaku untuk data Masuk dengan Google yang kami simpan. Token identitas Google diverifikasi di server sebelum akun dihubungkan dan sesi layanan diterbitkan; hak akses admin tetap mengikuti peran dan status akun.",
+    ],
+  },
+  {
+    id: "retensi",
+    title: "Masa penyimpanan dan penghapusan data",
+    paragraphs: [
       "Data disimpan selama diperlukan untuk penyediaan layanan, pencatatan kegiatan dan sertifikat, keamanan, penyelesaian permintaan, atau kewajiban yang berlaku. Kebutuhan penyimpanan dapat berbeda antarjenis data. Penghapusan dapat dibatasi untuk catatan yang masih diperlukan; salinan cadangan dapat tetap ada sampai siklus penyimpanannya berakhir.",
+      "Ketentuan penyimpanan tersebut juga berlaku untuk pengenal akun Google, email, nama tampilan, dan riwayat hubungan akun yang tersimpan. Anda dapat meminta penghapusan data tersebut atau akun admin melalui kontak pengelola. Mencabut koneksi pada Akun Google menghentikan hubungan melalui Google, tetapi bukan permintaan penghapusan data yang telah tersimpan pada layanan kami. Prosedur permintaan dijelaskan pada bagian Pilihan, koreksi, dan penghapusan data.",
     ],
   },
   {

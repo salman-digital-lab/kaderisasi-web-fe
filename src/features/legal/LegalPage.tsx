@@ -121,6 +121,12 @@ export default function LegalPage({
             </a>
             <a
               className={classes.link}
+              href="https://developers.google.com/terms/api-services-user-data-policy"
+            >
+              Google API Services User Data Policy
+            </a>
+            <a
+              className={classes.link}
               href="https://myaccount.google.com/connections"
             >
               Kelola koneksi Akun Google
