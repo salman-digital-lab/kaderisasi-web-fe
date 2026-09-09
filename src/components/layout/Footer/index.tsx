@@ -1,6 +1,7 @@
 "use client";
 
-import { Text, Container, ActionIcon, Group, rem } from "@mantine/core";
+import Link from "next/link";
+import { Anchor, Text, Container, ActionIcon, Group, rem } from "@mantine/core";
 import {
   IconBrandTwitter,
   IconBrandYoutube,
@@ -17,6 +18,22 @@ export default function Footer() {
           Portal ini dikelola penuh oleh Masjid Salman ITB Bidang Mahasiswa,
           Kaderisasi dan Alumni (BMKA).
         </Text>
+      </Container>
+      <Container>
+        <Group
+          justify="center"
+          gap="lg"
+          mt="sm"
+          component="nav"
+          aria-label="Informasi hukum"
+        >
+          <Anchor component={Link} href="/privacy-policy" size="sm">
+            Kebijakan Privasi
+          </Anchor>
+          <Anchor component={Link} href="/terms-of-service" size="sm">
+            Syarat dan Ketentuan
+          </Anchor>
+        </Group>
       </Container>
       <Container className={classes.afterFooter}>
         <Text c="dimmed" size="md" className={classes.copyright}>
