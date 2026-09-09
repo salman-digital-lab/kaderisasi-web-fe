@@ -1,0 +1,90 @@
+.searchForm {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--mantine-spacing-sm);
+  width: 100%;
+}
+.searchInput {
+  min-width: 0;
+}
+.searchButton {
+  min-width: 5rem;
+}
+
+.card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--mantine-color-body);
+}
+.media {
+  display: grid;
+  height: 180px;
+  flex-shrink: 0;
+  place-items: center;
+  background: var(--surface-subtle);
+  border-bottom: 1px solid var(--surface-border);
+}
+.image {
+  width: 100%;
+  height: 180px;
+  object-fit: contain;
+}
+.logo {
+  width: 112px;
+  height: 112px;
+  object-fit: contain;
+}
+.placeholder {
+  display: grid;
+  place-items: center;
+  width: 112px;
+  height: 112px;
+  color: var(--mantine-primary-color-filled);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--mantine-radius-md);
+}
+.cardTitle {
+  flex: 1;
+  min-height: 4.5rem;
+  padding: var(--mantine-spacing-md);
+  overflow-wrap: anywhere;
+}
+.cardSection {
+  min-height: 5rem;
+  border-top: 1px solid var(--surface-border);
+  padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+  overflow-wrap: anywhere;
+}
+.label {
+  text-transform: uppercase;
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.cardSection :global(.mantine-Badge-root) {
+  height: auto;
+  min-height: 1.375rem;
+  padding-block: 3px;
+}
+.cardSection :global(.mantine-Badge-label) {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  line-height: 1.35;
+}
+.cardAction {
+  padding: var(--mantine-spacing-md);
+}
+.pageNumber {
+  min-width: 2.75rem;
+}
+
+@media (max-width: 350px) {
+  .searchForm {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .searchButton {
+    width: 100%;
+  }
+}

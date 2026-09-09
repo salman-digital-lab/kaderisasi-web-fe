@@ -1,7 +1,8 @@
+import DetailBackLink from "@/components/layout/DetailBackLink";
+import detailClasses from "@/components/layout/DetailLayout.module.css";
 import PageContainer from "@/components/layout/PageContainer";
 import { Suspense } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import {
@@ -15,17 +16,13 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import {
-  IconArrowLeft,
-  IconCalendar,
-  IconCalendarEvent,
-} from "@tabler/icons-react";
+import { IconCalendar, IconCalendarEvent } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
 import { getClub } from "@/services/club.cache";
 import ClubLogo from "@/components/common/ClubLogo";
 import ClubRegistrationInfo from "@/components/common/ClubRegistrationInfo";
-import ClubRichText from "@/components/common/ClubRichText";
+import RichTextContent from "@/components/common/RichTextContent";
 import {
   ClubRegistrationAction,
   ClubRegistrationActionFallback,
@@ -106,19 +103,16 @@ export default async function ClubDetailPage({ params }: ClubDetailPageProps) {
 
   return (
     <PageContainer size="md">
-      <Stack gap="md">
-        <Link href="/clubs" className={classes.backLink}>
-          <IconArrowLeft size={18} aria-hidden="true" />
-          Kembali ke daftar klub
-        </Link>
+      <Stack gap="lg">
+        <DetailBackLink href="/clubs">Kembali ke daftar klub</DetailBackLink>
 
-        <div className={classes.header}>
+        <div className={detailClasses.header}>
           <Card
             component="header"
             padding="lg"
             radius="md"
             withBorder
-            className={classes.identityCard}
+            className={detailClasses.identityCard}
           >
             <div className={classes.identityHeader}>
               <ClubLogo
@@ -130,7 +124,10 @@ export default async function ClubDetailPage({ params }: ClubDetailPageProps) {
               />
 
               <div className={classes.identity}>
-                <Group gap={7}>
+                <Title order={1} size="h2" className={classes.title}>
+                  {club.name}
+                </Title>
+                <Group gap={7} mt="xs">
                   <Badge variant="light">
                     {CLUB_TYPE_LABELS[club.club_type]}
                   </Badge>
@@ -143,9 +140,6 @@ export default async function ClubDetailPage({ params }: ClubDetailPageProps) {
                       : "Pendaftaran ditutup"}
                   </Badge>
                 </Group>
-                <Title order={1} size="h2" className={classes.title}>
-                  {club.name}
-                </Title>
                 {club.short_description && (
                   <Text className={classes.shortDescription}>
                     {club.short_description}
@@ -155,8 +149,8 @@ export default async function ClubDetailPage({ params }: ClubDetailPageProps) {
             </div>
 
             {(period || club.registration_end_date) && (
-              <CardSection className={classes.metadataSection}>
-                <Text mt="md" className={classes.label} c="dimmed">
+              <CardSection className={detailClasses.metadataSection}>
+                <Text mt="md" className={detailClasses.label} c="dimmed">
                   Informasi Klub
                 </Text>
                 <Group gap={7} mt={5}>
@@ -166,7 +160,6 @@ export default async function ClubDetailPage({ params }: ClubDetailPageProps) {
                       leftSection={
                         <IconCalendar size={14} aria-hidden="true" />
                       }
-                      className={classes.metadataBadge}
                     >
                       {period}
                     </Badge>
@@ -178,7 +171,6 @@ export default async function ClubDetailPage({ params }: ClubDetailPageProps) {
                       leftSection={
                         <IconCalendarEvent size={14} aria-hidden="true" />
                       }
-                      className={classes.metadataBadge}
                     >
                       Batas pendaftaran{" "}
                       {dayjs(club.registration_end_date)
@@ -196,7 +188,7 @@ export default async function ClubDetailPage({ params }: ClubDetailPageProps) {
             padding="lg"
             radius="md"
             withBorder
-            className={classes.actionCard}
+            className={detailClasses.actionCard}
             aria-label="Tindakan pendaftaran klub"
           >
             <Title order={2} size="h4" ta="center">
@@ -212,7 +204,7 @@ export default async function ClubDetailPage({ params }: ClubDetailPageProps) {
           </Card>
         </div>
 
-        <Stack className={classes.body}>
+        <Stack gap="lg">
           {registrationOpen && (
             <ClubRegistrationInfo
               registrationInfo={club.registration_info}
@@ -231,11 +223,11 @@ export default async function ClubDetailPage({ params }: ClubDetailPageProps) {
               <Title
                 order={2}
                 id="about-club-heading"
-                className={classes.heading}
+                className={detailClasses.sectionHeading}
               >
                 Tentang Klub
               </Title>
-              <ClubRichText html={club.description} />
+              <RichTextContent html={club.description} />
             </Card>
           )}
 
@@ -257,7 +249,7 @@ export default async function ClubDetailPage({ params }: ClubDetailPageProps) {
               <Title
                 order={2}
                 id="club-leadership-heading"
-                className={classes.heading}
+                className={detailClasses.sectionHeading}
               >
                 Pengurus
               </Title>
@@ -293,7 +285,7 @@ export default async function ClubDetailPage({ params }: ClubDetailPageProps) {
               <Title
                 order={2}
                 id="club-activities-heading"
-                className={classes.heading}
+                className={detailClasses.sectionHeading}
               >
                 Kegiatan Terkait
               </Title>
@@ -352,7 +344,7 @@ export default async function ClubDetailPage({ params }: ClubDetailPageProps) {
               <Title
                 order={2}
                 id="club-media-heading"
-                className={classes.heading}
+                className={detailClasses.sectionHeading}
               >
                 Media
               </Title>

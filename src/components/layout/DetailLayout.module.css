@@ -1,0 +1,65 @@
+.backLink {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  align-self: flex-start;
+  gap: var(--mantine-spacing-xs);
+  color: var(--mantine-primary-color-filled);
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: var(--mantine-radius-sm);
+}
+.backLink:hover {
+  text-decoration: underline;
+}
+.header {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(16rem, 1fr);
+  gap: var(--mantine-spacing-md);
+  width: 100%;
+}
+.identityCard {
+  width: 100%;
+  min-width: 0;
+}
+.actionCard {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--mantine-spacing-md);
+}
+.metadataSection {
+  border-top: 1px solid var(--surface-border);
+  padding-inline: var(--mantine-spacing-lg);
+  margin-top: var(--mantine-spacing-md);
+  padding-bottom: var(--mantine-spacing-sm);
+}
+.label {
+  text-transform: uppercase;
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.metadataSection :global(.mantine-Badge-root) {
+  max-width: 100%;
+  height: auto;
+  min-height: 1.375rem;
+  padding-block: 3px;
+  line-height: 1.35;
+}
+.metadataSection :global(.mantine-Badge-label) {
+  overflow: visible;
+  white-space: normal;
+  text-overflow: clip;
+}
+.sectionHeading {
+  margin-bottom: var(--mantine-spacing-md);
+  font-size: var(--mantine-h3-font-size);
+}
+@media (max-width: $mantine-breakpoint-md) {
+  .header {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

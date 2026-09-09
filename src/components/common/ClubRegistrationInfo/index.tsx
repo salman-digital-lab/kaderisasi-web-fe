@@ -1,5 +1,5 @@
 import { Card, Stack, Text, Title } from "@mantine/core";
-import ClubRichText from "@/components/common/ClubRichText";
+import RichTextContent from "@/components/common/RichTextContent";
 import type { RegistrationInfo } from "@/types/model/club";
 import classes from "./index.module.css";
 
@@ -44,7 +44,7 @@ export default function ClubRegistrationInfo({
             sebagai referensi dari periode pendaftaran sebelumnya.
           </Text>
         )}
-        <ClubRichText html={registrationInfo.registration_info} />
+        <RichTextContent html={registrationInfo.registration_info} />
       </Stack>
     </Card>
   );

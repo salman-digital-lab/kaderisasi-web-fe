@@ -2,16 +2,12 @@
 
 import { useEffect, useState } from "react";
 import type { ReactElement } from "react";
-import Form from "next/form";
 import { ACTIVITY_CATEGORY_OPTIONS } from "@/constants/form/activity";
-import { Button, Chip, ChipGroup, Group, TextInput } from "@mantine/core";
-import { IconSearch } from "@tabler/icons-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { getActivityCategories } from "@/services/activity";
-import classes from "./index.module.css";
+import CatalogueFilters from "@/components/common/Catalogue/CatalogueFilters";
 
 export default function ActivityFilter(): ReactElement {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [availableCategories, setAvailableCategories] = useState<number[]>([]);
   const category = searchParams.get("category") || "";
@@ -35,55 +31,31 @@ export default function ActivityFilter(): ReactElement {
     availableCategories.includes(option.value),
   );
 
-  const changeCategory = (value: string): void => {
+  const categoryHref = (value: string): string => {
     const params = new URLSearchParams(searchParams.toString());
     if (value) params.set("category", value);
     else params.delete("category");
     params.delete("page");
-    router.push(`/activity?${params}`, { scroll: false });
+    const query = params.toString();
+    return query ? `/activity?${query}` : "/activity";
   };
 
   return (
-    <>
-      <Form action="/activity" className={classes.searchForm}>
-        <TextInput
-          key={search}
-          name="search"
-          aria-label="Cari kegiatan"
-          placeholder="Cari Kegiatan"
-          defaultValue={search}
-          leftSection={<IconSearch size={18} aria-hidden />}
-          className={classes.searchInput}
-        />
-        <input type="hidden" name="category" value={category} />
-        <Button type="submit">Cari</Button>
-      </Form>
-      <ChipGroup
-        value={category}
-        onChange={(value) => {
-          if (typeof value === "string") changeCategory(value);
-        }}
-      >
-        <Group
-          mt="md"
-          gap="xs"
-          role="group"
-          aria-label="Filter kategori kegiatan"
-        >
-          <Chip radius="md" value="">
-            Semua
-          </Chip>
-          {filteredOptions.map((option) => (
-            <Chip
-              key={option.value}
-              radius="md"
-              value={option.value.toString()}
-            >
-              {option.label}
-            </Chip>
-          ))}
-        </Group>
-      </ChipGroup>
-    </>
+    <CatalogueFilters
+      action="/activity"
+      search={search}
+      searchLabel="Cari kegiatan"
+      filterLabel="Filter kategori kegiatan"
+      filterName="category"
+      filterValue={category}
+      options={[
+        { label: "Semua", href: categoryHref(""), active: !category },
+        ...filteredOptions.map((option) => ({
+          label: option.label,
+          href: categoryHref(String(option.value)),
+          active: category === String(option.value),
+        })),
+      ]}
+    />
   );
 }

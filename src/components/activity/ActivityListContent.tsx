@@ -50,7 +50,7 @@ export async function ActivityListContent({
         ))}
       </SimpleGrid>
 
-      <Center>
+      <Center mt="xl">
         <ActivityPagination
           total={activities.meta.last_page}
           current={activities.meta.current_page}

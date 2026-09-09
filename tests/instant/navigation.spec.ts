@@ -94,19 +94,16 @@ test("activity pagination stays in sync with URL and browser history", async ({
   page,
 }) => {
   await page.goto("/activity?page=2");
-  await expect(
-    page.getByRole("button", { name: "2", exact: true }),
-  ).toHaveAttribute("aria-current", "page");
+  const pagination = page.getByRole("navigation", {
+    name: "Navigasi halaman daftar kegiatan",
+  });
+  await expect(pagination.locator('a[aria-current="page"]')).toHaveText("2");
   await expect(page.getByText("Kegiatan uji 9", { exact: true })).toBeVisible();
-  await page.getByRole("button", { name: "1", exact: true }).click();
+  await pagination.getByRole("link", { name: "Halaman sebelumnya" }).click();
   await expect(page).toHaveURL("/activity?page=1");
-  await expect(
-    page.getByRole("button", { name: "1", exact: true }),
-  ).toHaveAttribute("aria-current", "page");
+  await expect(pagination.locator('a[aria-current="page"]')).toHaveText("1");
   await page.goBack();
-  await expect(
-    page.getByRole("button", { name: "2", exact: true }),
-  ).toHaveAttribute("aria-current", "page");
+  await expect(pagination.locator('a[aria-current="page"]')).toHaveText("2");
   await expect(page.getByText("Kegiatan uji 9", { exact: true })).toBeVisible();
 });
 

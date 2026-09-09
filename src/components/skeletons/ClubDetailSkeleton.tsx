@@ -1,5 +1,6 @@
 "use client";
 
+import detailClasses from "@/components/layout/DetailLayout.module.css";
 import PageContainer from "@/components/layout/PageContainer";
 
 import { Card, Group, SimpleGrid, Skeleton, Stack } from "@mantine/core";
@@ -12,10 +13,10 @@ export function ClubDetailSkeleton() {
         Memuat detail klub…
       </span>
 
-      <Stack gap="md">
-        <Skeleton height={18} width={190} my={13} />
+      <Stack gap="lg">
+        <Skeleton height={44} width={190} />
 
-        <div className={classes.header}>
+        <div className={detailClasses.header}>
           <Card withBorder radius="md" p="lg" className={classes.identityCard}>
             <Group
               align="flex-start"
@@ -40,14 +41,14 @@ export function ClubDetailSkeleton() {
           </Card>
 
           <Card withBorder radius="md" p="lg" className={classes.actionCard}>
-            <Stack gap="md">
+            <Stack gap="lg">
               <Skeleton height={18} width="72%" mx="auto" />
               <Skeleton height={44} width="100%" radius="sm" />
             </Stack>
           </Card>
         </div>
 
-        <Stack gap="md">
+        <Stack gap="lg">
           <Card withBorder radius="md" p="lg" aria-hidden="true">
             <Skeleton height={26} width={210} mb="lg" />
             <Stack gap="sm" className={classes.prose}>

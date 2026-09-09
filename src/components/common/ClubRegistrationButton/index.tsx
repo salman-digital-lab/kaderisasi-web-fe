@@ -132,12 +132,7 @@ export default function ClubRegistrationButton({
       >
         <Stack gap="sm">
           <Text size="md">{checkError}</Text>
-          <Button
-            variant="light"
-            color="red"
-            size="lg"
-            onClick={checkRegistration}
-          >
+          <Button variant="light" color="red" onClick={checkRegistration}>
             Coba lagi
           </Button>
         </Stack>
@@ -194,7 +189,6 @@ export default function ClubRegistrationButton({
             <Button
               color="red"
               variant="light"
-              size="lg"
               onClick={() => setShowCancelModal(true)}
               loading={isCancelling}
               leftSection={<IconX size={16} aria-hidden="true" />}
@@ -218,17 +212,11 @@ export default function ClubRegistrationButton({
             <Group justify="flex-end" gap="sm">
               <Button
                 variant="default"
-                size="lg"
                 onClick={() => setShowCancelModal(false)}
               >
                 Pertahankan
               </Button>
-              <Button
-                color="red"
-                size="lg"
-                onClick={handleCancel}
-                loading={isCancelling}
-              >
+              <Button color="red" onClick={handleCancel} loading={isCancelling}>
                 Ya, batalkan
               </Button>
             </Group>
@@ -254,9 +242,7 @@ export default function ClubRegistrationButton({
         <Button
           component={Link}
           href={loginHref}
-          size="lg"
           variant={isRegistrationOpen ? "filled" : "default"}
-          color={isRegistrationOpen ? "blue.8" : undefined}
           fullWidth
         >
           {isRegistrationOpen
@@ -295,9 +281,7 @@ export default function ClubRegistrationButton({
     <Button
       component={Link}
       href={`/custom-form/club/${clubId}`}
-      size="lg"
       variant="filled"
-      color="blue.8"
       fullWidth
     >
       Daftar untuk {clubName}

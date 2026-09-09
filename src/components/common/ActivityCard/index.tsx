@@ -1,18 +1,14 @@
-"use client";
-
-import LinkButton from "@/components/common/LinkButton";
-
 import dayjs from "dayjs";
 import "dayjs/locale/id";
-import NextImage from "next/image";
-import { Text, Group, Badge, rem, Card } from "@mantine/core";
-import classes from "./index.module.css";
-import { USER_LEVEL_RENDER } from "../../../constants/render/activity";
+import { Badge } from "@mantine/core";
 import { IconCalendarTime, IconCalendarEvent } from "@tabler/icons-react";
-import { USER_LEVEL_ENUM } from "@/types/constants/profile";
-
-// Set the locale globally for this component
-dayjs.locale("id");
+import type { ReactElement } from "react";
+import CatalogueCard, {
+  CatalogueCardSection,
+} from "@/components/common/Catalogue/CatalogueCard";
+import CatalogueImage from "@/components/common/Catalogue/CatalogueImage";
+import { USER_LEVEL_RENDER } from "@/constants/render/activity";
+import type { USER_LEVEL_ENUM } from "@/types/constants/profile";
 
 type ActivityCardProps = {
   activityName: string;
@@ -28,74 +24,37 @@ export default function ActivityCard({
   slug,
   minimumLevel,
   imageUrl,
-}: ActivityCardProps) {
-  const calendarIcon = (
-    <IconCalendarTime style={{ width: rem(14), height: rem(14) }} />
-  );
-
+}: ActivityCardProps): ReactElement {
   return (
-    <Card
-      component="article"
-      withBorder
-      radius="md"
-      p="md"
-      className={classes.card}
+    <CatalogueCard
+      title={activityName}
+      href={`/activity/${slug}`}
+      linkLabel={`Lihat kegiatan ${activityName}`}
+      media={
+        <CatalogueImage
+          src={
+            imageUrl
+              ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${imageUrl}`
+              : undefined
+          }
+          alt={activityName}
+          variant="poster"
+          fallback={<IconCalendarEvent size={48} stroke={1.5} aria-hidden />}
+        />
+      }
     >
-      <Card.Section>
-        <div className={classes.media}>
-          {imageUrl ? (
-            <NextImage
-              src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${imageUrl}`}
-              alt={activityName}
-              height={350}
-              width={400}
-              sizes="(max-width: 48em) 100vw, (max-width: 75em) 50vw, 25vw"
-              className={classes.image}
-            />
-          ) : (
-            <IconCalendarEvent size={48} stroke={1.5} aria-hidden />
-          )}
-        </div>
-      </Card.Section>
-
-      <Card.Section className={classes.section} mt="sm" flex="1">
-        <Group justify="space-between">
-          <Text fz="md" fw={600}>
-            {activityName}
-          </Text>
-        </Group>
-      </Card.Section>
-
-      <Card.Section className={classes.section}>
-        <Text mt="sm" className={classes.label} c="dimmed">
-          Tutup Pendaftaran
-        </Text>
-        <Group gap={7} mt={5}>
-          <Badge variant="light" color="red" leftSection={calendarIcon}>
-            {dayjs(registrationEnd).format("DD MMMM YYYY")}
-          </Badge>
-        </Group>
-      </Card.Section>
-
-      <Card.Section className={classes.section}>
-        <Text mt="sm" className={classes.label} c="dimmed">
-          Jenjang Minimum
-        </Text>
-        <Group gap={7} mt={5}>
-          <Badge variant="light">{USER_LEVEL_RENDER[minimumLevel]}</Badge>
-        </Group>
-      </Card.Section>
-
-      <Group mt="sm">
-        <LinkButton
-          aria-label={`Lihat kegiatan ${activityName}`}
-          href={`/activity/${slug}`}
-          radius="md"
-          fullWidth
+      <CatalogueCardSection label="Tutup Pendaftaran">
+        <Badge
+          variant="light"
+          color="red"
+          leftSection={<IconCalendarTime size={14} aria-hidden />}
         >
-          Lihat Selengkapnya
-        </LinkButton>
-      </Group>
-    </Card>
+          {dayjs(registrationEnd).locale("id").format("D MMMM YYYY")}
+        </Badge>
+      </CatalogueCardSection>
+      <CatalogueCardSection label="Jenjang Minimum">
+        <Badge variant="light">{USER_LEVEL_RENDER[minimumLevel]}</Badge>
+      </CatalogueCardSection>
+    </CatalogueCard>
   );
 }

@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import classes from "@/components/common/ActivityCard/index.module.css";
-import NextImage from "next/image";
+import classes from "@/components/common/Catalogue/Catalogue.module.css";
+import CatalogueImage from "@/components/common/Catalogue/CatalogueImage";
 import { Card, Text, Group, Badge, Button, Stack, Box } from "@mantine/core";
 import { IconClock, IconAward, IconCalendarEvent } from "@tabler/icons-react";
 import { ACTIVITY_REGISTRANT_STATUS_ENUM } from "@/types/constants/activity";
@@ -81,18 +81,16 @@ export default function ActivityPersonalCard({
     <Card withBorder radius="md" p="md" h="100%">
       <Card.Section>
         <div className={classes.media}>
-          {imageUrl ? (
-            <NextImage
-              src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${imageUrl}`}
-              alt={activityName}
-              height={200}
-              width={400}
-              sizes="(max-width: 48em) 100vw, 50vw"
-              className={classes.image}
-            />
-          ) : (
-            <IconCalendarEvent size={48} stroke={1.5} aria-hidden />
-          )}
+          <CatalogueImage
+            src={
+              imageUrl
+                ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${imageUrl}`
+                : undefined
+            }
+            alt={activityName}
+            variant="poster"
+            fallback={<IconCalendarEvent size={48} stroke={1.5} aria-hidden />}
+          />
         </div>
       </Card.Section>
 

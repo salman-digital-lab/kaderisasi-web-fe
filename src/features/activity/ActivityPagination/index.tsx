@@ -1,8 +1,8 @@
 "use client";
 
-import { Pagination } from "@mantine/core";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import type { ReactElement } from "react";
+import CataloguePagination from "@/components/common/Catalogue/CataloguePagination";
 
 export default function ActivityPagination({
   total,
@@ -11,22 +11,18 @@ export default function ActivityPagination({
   total: number;
   current: number;
 }): ReactElement {
-  const router = useRouter();
   const searchParams = useSearchParams();
-
-  const onPaginationChange = (value: number): void => {
+  const hrefForPage = (page: number): string => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set("page", String(value));
-
-    router.push("/activity?" + params);
+    params.set("page", String(page));
+    return `/activity?${params}`;
   };
-
   return (
-    <Pagination
-      total={total}
-      value={current}
-      mt="xl"
-      onChange={onPaginationChange}
+    <CataloguePagination
+      label="Navigasi halaman daftar kegiatan"
+      page={current}
+      totalPages={total}
+      hrefForPage={hrefForPage}
     />
   );
 }

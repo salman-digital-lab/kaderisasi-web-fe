@@ -1,3 +1,6 @@
+import RichTextContent from "@/components/common/RichTextContent";
+import DetailBackLink from "@/components/layout/DetailBackLink";
+import detailClasses from "@/components/layout/DetailLayout.module.css";
 import PageContainer from "@/components/layout/PageContainer";
 import LinkButton from "@/components/common/LinkButton";
 import {
@@ -36,19 +39,19 @@ import { getActivityRegistration } from "../../../../services/activity";
 import { getProfile } from "../../../../services/profile";
 import ErrorWrapper from "../../../../components/layout/Error";
 import { ACTIVITY_REGISTRANT_STATUS_ENUM } from "@/types/constants/activity";
-import { Activity } from "@/types/model/activity";
-import { PublicUser, Member } from "@/types/model/members";
+import type { Activity } from "@/types/model/activity";
+import type { PublicUser, Member } from "@/types/model/members";
 import { getCertificateCta } from "@/features/certificate/utils/certificateData";
 import CertificateCtaButton from "@/features/certificate/CertificateCtaButton";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
 
 const calendarIcon = (
-  <IconCalendarTime style={{ width: rem(12), height: rem(12) }} />
+  <IconCalendarTime style={{ width: rem(14), height: rem(14) }} />
 );
 
 const calenderMonthIcon = (
-  <IconCalendarMonth style={{ width: rem(12), height: rem(12) }} />
+  <IconCalendarMonth style={{ width: rem(14), height: rem(14) }} />
 );
 
 export async function generateMetadata(props: {
@@ -165,20 +168,22 @@ export default async function Page(props: {
   return (
     <PageContainer size="md">
       <Stack gap="lg">
-        <LinkButton
-          href="/activity"
-          variant="subtle"
-          style={{ alignSelf: "flex-start" }}
-        >
-          ← Kembali ke Kegiatan
-        </LinkButton>
+        <DetailBackLink href="/activity">
+          Kembali ke daftar kegiatan
+        </DetailBackLink>
 
-        <div className={classes.header}>
-          <Card className={classes.title} padding="lg" radius="md" withBorder>
+        <div className={detailClasses.header}>
+          <Card
+            component="header"
+            className={detailClasses.identityCard}
+            padding="lg"
+            radius="md"
+            withBorder
+          >
             <Title order={1} size="h2">
               {activity?.name}
             </Title>
-            <Group gap={7} mt={10}>
+            <Group gap={7} mt="xs">
               <Badge variant="light">
                 {activity ? USER_LEVEL_RENDER[activity.minimum_level] : ""}
               </Badge>
@@ -189,19 +194,26 @@ export default async function Page(props: {
               </Badge>
             </Group>
             {activity?.activity_start && (
-              <CardSection className={classes.section}>
-                <Text mt="md" className={classes.label} c="dimmed">
+              <CardSection className={detailClasses.metadataSection}>
+                <Text mt="md" className={detailClasses.label} c="dimmed">
                   Tanggal Mulai Kegiatan
                 </Text>
-                <Badge variant="light" leftSection={calenderMonthIcon}>
+                <Badge mt={5} variant="light" leftSection={calenderMonthIcon}>
                   {dayjs(activity?.activity_start)
                     .locale("id")
-                    .format("DD MMMM YYYY")}
+                    .format("D MMMM YYYY")}
                 </Badge>
               </CardSection>
             )}
           </Card>
-          <Card className={classes.control} padding="lg" radius="md" withBorder>
+          <Card
+            component="aside"
+            aria-label="Tindakan pendaftaran kegiatan"
+            className={detailClasses.actionCard}
+            padding="lg"
+            radius="md"
+            withBorder
+          >
             {isRegistered ? (
               <Stack gap="xs">
                 <Title order={2} size="h4" ta="center">
@@ -253,10 +265,15 @@ export default async function Page(props: {
                     : "Tutup Pendaftaran"}
                 </Title>
                 {!dayjs().isAfter(activity?.registration_end) && (
-                  <Badge m="auto" color="red" leftSection={calendarIcon}>
+                  <Badge
+                    m="auto"
+                    color="red"
+                    variant="light"
+                    leftSection={calendarIcon}
+                  >
                     {dayjs(activity?.registration_end)
                       .locale("id")
-                      .format("DD MMMM YYYY")}
+                      .format("D MMMM YYYY")}
                   </Badge>
                 )}
               </Stack>
@@ -268,10 +285,15 @@ export default async function Page(props: {
                   Tutup Pendaftaran
                 </Title>
                 {activity?.registration_end && (
-                  <Badge m="auto" color="red" leftSection={calendarIcon}>
+                  <Badge
+                    m="auto"
+                    color="red"
+                    variant="light"
+                    leftSection={calendarIcon}
+                  >
                     {dayjs(activity.registration_end)
                       .locale("id")
-                      .format("DD MMMM YYYY")}
+                      .format("D MMMM YYYY")}
                   </Badge>
                 )}
               </Stack>
@@ -312,16 +334,22 @@ export default async function Page(props: {
             />
           </div>
         )}
-        <div className={classes.description}>
-          <Card withBorder radius="md">
-            <Title order={2} size="h3" mb="md">
-              Deskripsi Kegiatan
-            </Title>
-            <div
-              dangerouslySetInnerHTML={{ __html: activity?.description || "" }}
-            />
-          </Card>
-        </div>
+        <Card
+          component="section"
+          aria-labelledby="about-activity-heading"
+          withBorder
+          radius="md"
+          p="lg"
+        >
+          <Title
+            order={2}
+            id="about-activity-heading"
+            className={detailClasses.sectionHeading}
+          >
+            Deskripsi Kegiatan
+          </Title>
+          <RichTextContent html={activity?.description || ""} />
+        </Card>
       </Stack>
     </PageContainer>
   );
