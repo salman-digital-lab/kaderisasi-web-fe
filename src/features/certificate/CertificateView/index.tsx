@@ -1,13 +1,12 @@
 "use client";
 
-import { useRef, useState } from "react";
-import Link from "next/link";
+import type { CertificateDownloadAccess } from "@/services/certificate";
+import type { PublicCertificateData } from "@/types/model/certificate";
 import {
   Alert,
   Badge,
   Button,
   Container,
-  CopyButton,
   Group,
   Paper,
   Stack,
@@ -18,311 +17,250 @@ import { notifications } from "@mantine/notifications";
 import {
   IconAlertTriangle,
   IconArrowLeft,
-  IconCertificate,
-  IconCheck,
-  IconCopy,
   IconDownload,
-  IconExternalLink,
   IconLogin,
   IconShare3,
 } from "@tabler/icons-react";
-import type {
-  CertificateData,
-  PublicCertificateData,
-} from "@/types/model/certificate";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useRef, useState } from "react";
 import CertificateCanvas from "../CertificateCanvas";
 import {
   formatCertificateTimestamp,
-  getCertificateFilename,
   getCertificatePath,
   getCertificateShareDetails,
   getVerificationPath,
-  resolveOwnerCertificateText,
 } from "../utils/certificateData";
-import { saveCertificatePdf } from "../utils/certificatePdf";
 import classes from "./index.module.css";
 
 type CertificateViewProps = {
   data: PublicCertificateData;
   imageBaseUrl: string;
   appUrl: string;
-  isLoggedIn: boolean;
+  access: CertificateDownloadAccess;
 };
-
-type DownloadApiResponse = {
-  data?: unknown;
-  message?: unknown;
-};
-
-function getApiErrorMessage(response: DownloadApiResponse): string {
-  return typeof response.message === "string"
-    ? response.message
-    : "Sertifikat belum dapat diproses. Coba lagi nanti.";
-}
 
 export default function CertificateView({
   data,
   imageBaseUrl,
   appUrl,
-  isLoggedIn,
-}: CertificateViewProps) {
-  const certificateRef = useRef<HTMLDivElement>(null);
-  const [isDownloading, setIsDownloading] = useState(false);
-  const certificateCode = data.certificate.certificate_code;
-  const certificatePath = getCertificatePath(certificateCode);
-  const verificationPath = getVerificationPath(certificateCode);
-  const certificateUrl = `${appUrl}${certificatePath}`;
+  access,
+}: CertificateViewProps): React.ReactElement {
+  const router = useRouter();
+  const downloadRef = useRef(false);
+  const [stage, setStage] = useState("");
+  const [downloadError, setDownloadError] = useState("");
+  const [revokedDuringDownload, setRevokedDuringDownload] = useState(false);
+  const code = data.certificate.certificate_code;
+  const path = getCertificatePath(code);
+  const certificateUrl = `${appUrl}${path}`;
+  const verificationPath = getVerificationPath(code);
   const verificationUrl = `${appUrl}${verificationPath}`;
-  const loginRedirect = `/login?redirect=${encodeURIComponent(certificatePath)}`;
-  const isRevoked = data.state === "issued_revoked";
+  const loginPath = `/login?redirect=${encodeURIComponent(path)}`;
+  const revoked = data.state === "issued_revoked" || revokedDuringDownload;
   const issuedAt = formatCertificateTimestamp(data.certificate.issued_at);
-  const revokedAt = formatCertificateTimestamp(data.certificate.revoked_at);
 
-  async function copyShareLink(): Promise<void> {
+  async function copyLink(): Promise<void> {
     try {
       await navigator.clipboard.writeText(certificateUrl);
       notifications.show({
         color: "green",
         message: "Tautan sertifikat disalin.",
-        title: "Berhasil",
       });
     } catch {
       notifications.show({
         color: "red",
-        message: "Tautan tidak dapat disalin dari peramban ini.",
-        title: "Gagal menyalin",
+        message:
+          "Tautan tidak dapat disalin. Salin alamat halaman dari peramban.",
       });
     }
   }
-
-  async function handleShare(): Promise<void> {
-    const shareDetails = getCertificateShareDetails(data, certificateUrl);
-
+  async function share(): Promise<void> {
     if (!navigator.share) {
-      await copyShareLink();
+      await copyLink();
       return;
     }
-
     try {
-      await navigator.share(shareDetails);
+      await navigator.share(getCertificateShareDetails(data, certificateUrl));
     } catch (error) {
-      if (error instanceof DOMException && error.name === "AbortError") return;
-      await copyShareLink();
+      if (!(error instanceof DOMException && error.name === "AbortError"))
+        await copyLink();
     }
   }
-
-  async function handleDownloadPdf(): Promise<void> {
-    if (!certificateRef.current || isRevoked) return;
-
-    setIsDownloading(true);
+  async function download(): Promise<void> {
+    if (downloadRef.current || revoked || access !== "owner") return;
+    downloadRef.current = true;
+    setStage("Memeriksa sertifikat…");
+    setDownloadError("");
     try {
       const response = await fetch(
-        `/api/certificates/${encodeURIComponent(certificateCode)}/download`,
+        `/api/certificates/${encodeURIComponent(code)}/download`,
         {
           method: "POST",
           headers: { Accept: "application/json" },
           cache: "no-store",
         },
       );
-      const payload = (await response.json()) as DownloadApiResponse;
-
       if (!response.ok) {
-        notifications.show({
-          color: "red",
-          message: getApiErrorMessage(payload),
-          title: "Unduhan gagal",
-        });
-        if (response.status === 401) window.location.assign(loginRedirect);
-        return;
+        if (response.status === 401) {
+          router.push(loginPath);
+          return;
+        }
+        if (response.status === 410) {
+          setRevokedDuringDownload(true);
+          router.refresh();
+          throw new Error("Sertifikat telah dicabut dan tidak dapat diunduh.");
+        }
+        if (response.status === 403) {
+          router.refresh();
+          throw new Error("Unduhan hanya tersedia untuk pemilik sertifikat.");
+        }
+        throw new Error(
+          "Sertifikat belum dapat diunduh. Periksa koneksi dan coba lagi.",
+        );
       }
-
+      const payload = (await response.json()) as { data?: unknown };
       const { certificateDataSchema } = await import("../schemas/certificate");
       const parsed = certificateDataSchema.safeParse(payload.data);
-      if (!parsed.success) {
-        throw new Error("INVALID_DOWNLOAD_RESPONSE");
-      }
-
-      const ownerData: CertificateData = parsed.data;
-      const publicTemplate = data.template.template_data;
-      const ownerTemplate = ownerData.template.template_data;
       if (
-        ownerData.certificate.certificate_code !== certificateCode ||
-        ownerData.certificate.revoked_at ||
-        ownerTemplate.canvasWidth !== publicTemplate.canvasWidth ||
-        ownerTemplate.canvasHeight !== publicTemplate.canvasHeight ||
-        ownerTemplate.elements.length !== publicTemplate.elements.length
-      ) {
-        throw new Error("INVALID_CERTIFICATE_STATE");
-      }
-
-      await saveCertificatePdf({
-        filename: getCertificateFilename(ownerData.participant.name),
-        resolveText: (element) =>
-          resolveOwnerCertificateText(element, ownerData),
-        sourceElement: certificateRef.current,
-        template: ownerData.template.template_data,
-      });
-
+        !parsed.success ||
+        parsed.data.certificate.certificate_code !== code ||
+        parsed.data.certificate.revoked_at
+      )
+        throw new Error(
+          "Sertifikat berubah. Muat ulang halaman sebelum mengunduh.",
+        );
+      const { saveOwnerCertificatePdf } =
+        await import("../utils/ownerCertificatePdf");
+      await saveOwnerCertificatePdf(
+        parsed.data,
+        imageBaseUrl,
+        verificationUrl,
+        setStage,
+      );
       notifications.show({
         color: "green",
-        message: "PDF sertifikat telah dibuat.",
-        title: "Unduhan siap",
+        message: "PDF sertifikat berhasil dibuat.",
       });
-    } catch {
-      notifications.show({
-        color: "red",
-        message: "PDF tidak dapat dibuat. Periksa koneksi lalu coba kembali.",
-        title: "Unduhan gagal",
-      });
+    } catch (error) {
+      const knownMessage =
+        error instanceof Error && /^(Sertifikat|Unduhan) /.test(error.message)
+          ? error.message
+          : "PDF tidak dapat dibuat. Periksa gambar dan koneksi, lalu coba lagi.";
+      setDownloadError(knownMessage);
     } finally {
-      setIsDownloading(false);
+      downloadRef.current = false;
+      setStage("");
     }
   }
 
   return (
     <Container component="main" size="lg" py="xl">
       <Stack gap="lg">
-        <div className={classes.topBar}>
-          <Button
-            className={classes.actionButton}
-            component={Link}
-            href={isLoggedIn ? "/profile?tab=activity" : "/"}
-            leftSection={<IconArrowLeft aria-hidden size={18} />}
-            variant="subtle"
-          >
-            Kembali
-          </Button>
-
-          <div className={classes.actions}>
-            <Button
-              className={classes.actionButton}
-              component={Link}
-              href={verificationPath}
-              leftSection={<IconCertificate aria-hidden size={18} />}
-              variant="light"
-            >
-              Verifikasi
-            </Button>
-
-            <CopyButton timeout={2500} value={certificateUrl}>
-              {({ copied, copy }) => (
-                <Button
-                  aria-label={
-                    copied
-                      ? "Tautan sertifikat telah disalin"
-                      : "Salin tautan sertifikat"
-                  }
-                  className={classes.actionButton}
-                  color={copied ? "green" : undefined}
-                  leftSection={
-                    copied ? (
-                      <IconCheck aria-hidden size={18} />
-                    ) : (
-                      <IconCopy aria-hidden size={18} />
-                    )
-                  }
-                  onClick={copy}
-                  variant="default"
-                >
-                  {copied ? "Tersalin" : "Salin tautan"}
-                </Button>
-              )}
-            </CopyButton>
-
-            <Button
-              className={classes.actionButton}
-              leftSection={<IconShare3 aria-hidden size={18} />}
-              onClick={handleShare}
-              variant="default"
-            >
-              Bagikan
-            </Button>
-
-            {!isRevoked &&
-              (isLoggedIn ? (
-                <Button
-                  className={classes.actionButton}
-                  disabled={isRevoked}
-                  leftSection={<IconDownload aria-hidden size={18} />}
-                  loading={isDownloading}
-                  onClick={handleDownloadPdf}
-                >
-                  Unduh PDF
-                </Button>
-              ) : (
-                <Button
-                  className={classes.actionButton}
-                  component={Link}
-                  href={loginRedirect}
-                  leftSection={<IconLogin aria-hidden size={18} />}
-                  variant="filled"
-                >
-                  Masuk untuk unduh
-                </Button>
-              ))}
-          </div>
-        </div>
-
-        {isRevoked && (
-          <Alert
-            color="red"
-            icon={<IconAlertTriangle aria-hidden size={20} />}
-            title="Sertifikat telah dicabut"
-          >
-            Sertifikat ini tidak lagi valid dan tidak dapat diunduh.
-            {revokedAt ? ` Dicabut pada ${revokedAt}.` : ""}
-            {data.certificate.revoked_reason
-              ? ` Alasan: ${data.certificate.revoked_reason}`
-              : ""}
-          </Alert>
-        )}
-
+        <Button
+          component={Link}
+          href={access === "signed_out" ? "/" : "/profile?tab=activity"}
+          variant="subtle"
+          leftSection={<IconArrowLeft aria-hidden size={18} />}
+          style={{ alignSelf: "flex-start" }}
+        >
+          Kembali
+        </Button>
         <Paper withBorder p={{ base: "md", sm: "lg" }} radius="md">
           <Stack gap="xs">
-            <Group justify="space-between" align="flex-start" wrap="wrap">
+            <Group justify="space-between" align="flex-start">
               <Title order={1} size="h2">
                 {data.activity.name}
               </Title>
-              <Badge
-                color={isRevoked ? "red" : "green"}
-                size="lg"
-                variant="light"
-              >
-                {isRevoked ? "Dicabut" : "Valid"}
+              <Badge color={revoked ? "red" : "green"} size="lg">
+                {revoked ? "Dicabut" : "Valid"}
               </Badge>
             </Group>
             <Text>
               Sertifikat atas nama <strong>{data.participant.name}</strong>
             </Text>
             <Text c="dimmed">
-              Tanggal kegiatan: {data.participant.activity_date}
+              {data.participant.activity_date}
+              {issuedAt ? ` · Diterbitkan ${issuedAt}` : ""}
             </Text>
-            {issuedAt && <Text c="dimmed">Diterbitkan: {issuedAt}</Text>}
-            <Text c="dimmed" className={classes.certificateCode}>
-              Kode sertifikat: <strong>{certificateCode}</strong>
-            </Text>
-            <Text
-              component={Link}
-              href={verificationPath}
-              size="md"
-              style={{ alignItems: "center", display: "inline-flex", gap: 4 }}
-            >
-              Buka hasil verifikasi
-              <IconExternalLink aria-hidden size={16} />
+            <Text size="sm" c="dimmed" className={classes.certificateCode}>
+              Kode: {code}
             </Text>
           </Stack>
         </Paper>
-
+        {revoked && (
+          <Alert
+            color="red"
+            title="Sertifikat telah dicabut"
+            icon={<IconAlertTriangle aria-hidden size={20} />}
+          >
+            Sertifikat ini tidak lagi valid dan tidak dapat diunduh.{" "}
+            {data.certificate.revoked_reason}
+          </Alert>
+        )}
         <CertificateCanvas
           data={data}
           imageBaseUrl={imageBaseUrl}
-          ref={certificateRef}
           verificationUrl={verificationUrl}
         />
-
-        <Text c="dimmed" size="md" ta="center">
-          Pindai kode QR atau buka halaman verifikasi untuk memeriksa keaslian
-          sertifikat ini.
+        <div className={classes.actions}>
+          {!revoked && access === "owner" && (
+            <Button
+              className={classes.actionButton}
+              onClick={download}
+              loading={Boolean(stage)}
+              leftSection={<IconDownload aria-hidden size={18} />}
+            >
+              {stage || "Unduh PDF"}
+            </Button>
+          )}
+          {!revoked && access === "signed_out" && (
+            <Button
+              className={classes.actionButton}
+              component={Link}
+              href={loginPath}
+              leftSection={<IconLogin aria-hidden size={18} />}
+            >
+              Masuk untuk unduh
+            </Button>
+          )}
+          <Button
+            className={classes.actionButton}
+            variant="default"
+            onClick={share}
+            leftSection={<IconShare3 aria-hidden size={18} />}
+          >
+            Bagikan
+          </Button>
+          <Text
+            component={Link}
+            href={verificationPath}
+            size="sm"
+            className={classes.verificationLink}
+          >
+            Periksa keaslian sertifikat
+          </Text>
+        </div>
+        {access === "not_owner" && (
+          <Text c="dimmed" size="sm">
+            Sertifikat dapat dilihat dan dibagikan. Unduhan tersedia untuk
+            pemilik sertifikat.
+          </Text>
+        )}
+        {access === "unavailable" && (
+          <Alert title="Akses unduhan belum dapat diperiksa" color="blue">
+            <Button variant="subtle" onClick={() => router.refresh()}>
+              Coba lagi
+            </Button>
+          </Alert>
+        )}
+        {downloadError && (
+          <Alert color="red" title="Unduhan belum berhasil">
+            {downloadError}
+          </Alert>
+        )}
+        <Text role="status" aria-live="polite" size="sm" c="dimmed">
+          {stage}
         </Text>
       </Stack>
     </Container>

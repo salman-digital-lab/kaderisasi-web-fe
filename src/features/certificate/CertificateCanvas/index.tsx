@@ -1,12 +1,12 @@
 "use client";
 
-import { forwardRef, type CSSProperties, type ReactNode } from "react";
-import { useElementSize } from "@mantine/hooks";
-import QRCode from "react-qr-code";
 import type {
   CertificateElement,
   PublicCertificateData,
 } from "@/types/model/certificate";
+import { useElementSize } from "@mantine/hooks";
+import { forwardRef, type CSSProperties, type ReactNode } from "react";
+import QRCode from "react-qr-code";
 import { resolvePublicCertificateText } from "../utils/certificateData";
 import classes from "./index.module.css";
 
@@ -73,7 +73,7 @@ function CertificateElementRenderer({
     height: "100%",
     justifyContent: getJustifyContent(element.textAlign),
     letterSpacing: element.letterSpacing ?? 0,
-    lineHeight: element.lineHeight ?? 1.4,
+    lineHeight: element.lineHeight ?? 1.2,
     margin: 0,
     textAlign: element.textAlign ?? "center",
     textDecoration: element.textDecoration ?? "none",
@@ -134,6 +134,7 @@ function CertificateElementRenderer({
 
   return (
     <div
+      data-certificate-element-id={element.id}
       data-certificate-text-element={isText ? "true" : undefined}
       style={{
         borderRadius: element.borderRadius ?? 0,
@@ -177,7 +178,11 @@ const CertificateCanvas = forwardRef<HTMLDivElement, CertificateCanvasProps>(
         <div
           className={classes.viewport}
           ref={viewportRef}
-          style={{ height: canvasHeight * scale }}
+          style={{
+            maxWidth: canvasWidth,
+            aspectRatio: `${canvasWidth} / ${canvasHeight}`,
+            marginInline: "auto",
+          }}
         >
           <div
             className={classes.scaleLayer}

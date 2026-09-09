@@ -1,6 +1,9 @@
 import Image from "next/image";
+import type { Metadata } from "next";
 import { Suspense } from "react";
+import type { ReactElement } from "react";
 import {
+  Anchor,
   Container,
   Text,
   Group,
@@ -16,13 +19,14 @@ import ClubsSection from "@/components/home/ClubsSection";
 import ClubsSectionSkeleton from "@/components/home/ClubsSectionSkeleton";
 import LinkButton from "@/components/common/LinkButton";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Beranda",
   description:
     "Portal Aktivis Salman - Pusat pendaftaran kegiatan kaderisasi, pembinaan mahasiswa, dan pengembangan diri bersama lebih dari 45.000 mahasiswa dari 320 kampus di Indonesia.",
+  alternates: { canonical: "/" },
 };
 
-export default function Home() {
+export default function Home(): ReactElement {
   return (
     <div>
       {/* Hero Section - No data fetching, renders immediately */}
@@ -41,9 +45,23 @@ export default function Home() {
               pendaftaran kegiatan di @kaderisasisalman. Program pembinaan dalam
               rangka membentuk kader teladan untuk membangun Indonesia.
             </Text>
+            <Text c="dimmed" mt="sm" className={classes.heroDescription}>
+              Temukan kegiatan dan klub, daftarkan diri, serta kelola profil,
+              prestasi, dan sertifikat keikutsertaan Anda. Informasi kegiatan
+              dan klub dapat dilihat tanpa masuk; akun diperlukan untuk
+              pendaftaran dan pengelolaan data pribadi.
+            </Text>
 
             <Group mt="lg">
               <LinkButton href="/activity">Daftar Kegiatan Sekarang</LinkButton>
+            </Group>
+            <Group mt="md" gap="md" aria-label="Privasi dan ketentuan layanan">
+              <Anchor href="/privacy-policy" size="sm" underline="always">
+                Kebijakan Privasi
+              </Anchor>
+              <Anchor href="/terms-of-service" size="sm" underline="always">
+                Syarat dan Ketentuan
+              </Anchor>
             </Group>
           </div>
           <Image
@@ -59,7 +77,7 @@ export default function Home() {
 
       {/* Statistics Section - Static content, no data fetching */}
       <Container size="lg" py={{ base: "lg", md: "xl" }}>
-        <Title ta="center" mt="sm" order={1} className={classes.sectionTitle}>
+        <Title ta="center" mt="sm" order={2} className={classes.sectionTitle}>
           Bersama Membangun Generasi Pemimpin Masa Depan
         </Title>
         <Text
@@ -75,7 +93,10 @@ export default function Home() {
           melalui Kaderisasi Salman. Kami telah membentuk generasi pemimpin masa
           depan yang siap menghadapi tantangan masa depan.
         </Text>
-        <SimpleGrid cols={{ base: 1, sm: 2 }} spacing={{ base: "lg", md: "xl" }}>
+        <SimpleGrid
+          cols={{ base: 1, sm: 2 }}
+          spacing={{ base: "lg", md: "xl" }}
+        >
           <Stack align="center" justify="center">
             <Title order={2} c="blue" size="h1" className={classes.statNumber}>
               45.000+

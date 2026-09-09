@@ -2,6 +2,8 @@ import { getCountries, getProvinces } from "@/services/profile.cache";
 import { getProfile } from "@/services/profile";
 import { verifySession } from "@/functions/server/session";
 import { Container } from "@mantine/core";
+import { Suspense } from "react";
+import type { ReactElement } from "react";
 
 import OnboardingForm from "@/features/onboarding/OnboardingForm";
 import ErrorWrapper from "@/components/layout/Error";
@@ -13,7 +15,15 @@ export const metadata = {
     "Buat akun atau lanjut tanpa akun sambil melengkapi profil Kaderisasi Salman dengan pengalaman pengisian yang nyaman di ponsel.",
 };
 
-export default async function Page() {
+export default function Page(): ReactElement {
+  return (
+    <Suspense>
+      <OnboardingContent />
+    </Suspense>
+  );
+}
+
+async function OnboardingContent(): Promise<ReactElement> {
   try {
     const sessionData = await verifySession();
     const [provinceData, countryData] = await Promise.all([

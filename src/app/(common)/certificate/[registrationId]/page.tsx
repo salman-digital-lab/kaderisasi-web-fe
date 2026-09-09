@@ -1,7 +1,5 @@
-import type { Metadata } from "next";
-import { notFound, redirect } from "next/navigation";
-import CertificateLifecycleView from "@/features/certificate/CertificateLifecycleView";
 import CertificateConfigurationError from "@/features/certificate/CertificateConfigurationError";
+import CertificateLifecycleView from "@/features/certificate/CertificateLifecycleView";
 import CertificateUnavailableView, {
   type CertificateUnavailableReason,
 } from "@/features/certificate/CertificateUnavailableView";
@@ -16,9 +14,12 @@ import {
 import { getToken } from "@/functions/auth/getToken";
 import { FetcherError } from "@/functions/common/fetcher";
 import {
+  getCertificateAccess,
   getCertificateByCode,
   getCertificateLifecycle,
 } from "@/services/certificate";
+import type { Metadata } from "next";
+import { notFound, redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Sertifikat | Kaderisasi Salman ITB",
@@ -82,9 +83,11 @@ export default async function CertificatePage(props: {
   if (!parsedCode.success) notFound();
 
   try {
-    const [certificateData, token] = await Promise.all([
+    const [certificateData, access] = await Promise.all([
       getCertificateByCode(parsedCode.data),
-      getToken(),
+      getToken().then((token) =>
+        getCertificateAccess(token ?? null, parsedCode.data),
+      ),
     ]);
 
     if (certificateParam !== certificateData.certificate.certificate_code) {
@@ -101,7 +104,7 @@ export default async function CertificatePage(props: {
         appUrl={appUrl}
         data={certificateData}
         imageBaseUrl={process.env.NEXT_PUBLIC_IMAGE_BASE_URL ?? ""}
-        isLoggedIn={Boolean(token)}
+        access={access}
       />
     );
   } catch (error) {

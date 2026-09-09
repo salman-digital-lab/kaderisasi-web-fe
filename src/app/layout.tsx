@@ -101,7 +101,7 @@ export default function RootLayout({
           <Suspense>
             <ScrollToTop />
           </Suspense>
-          <Suspense>{children}</Suspense>
+          {children}
         </AppProvider>
       </body>
     </html>

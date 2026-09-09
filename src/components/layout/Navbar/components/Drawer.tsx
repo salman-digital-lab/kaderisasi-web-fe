@@ -22,7 +22,6 @@ import {
   IconHome,
   IconCalendarEvent,
   IconMessageCircle,
-  IconTrophy,
   IconActivity,
   IconChevronRight,
   IconX,
@@ -50,7 +49,6 @@ const navItems: NavItem[] = [
   { label: "Kegiatan", href: "/activity", icon: IconCalendarEvent },
   { label: "Klub", href: "/clubs", icon: IconBuildingCommunity },
   { label: "Ruang Curhat", href: "/consultation", icon: IconMessageCircle },
-  { label: "Leaderboard", href: "/leaderboard", icon: IconTrophy },
 ];
 
 // User-specific menu items (only shown when logged in)

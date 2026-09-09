@@ -1,16 +1,15 @@
 import "server-only";
 
-import type { z } from "zod";
 import { getApiConfig } from "@/config/apiConfig";
-import fetcher, { FetcherError } from "@/functions/common/fetcher";
 import {
   certificateDataSchema,
   certificateLifecycleSchema,
-  publicCertificateDataSchema,
   certificateVerificationSchema,
   legacyCertificateDataSchema,
+  publicCertificateDataSchema,
 } from "@/features/certificate/schemas/certificate";
 import { toPublicCertificateData } from "@/features/certificate/utils/certificateData";
+import fetcher, { FetcherError } from "@/functions/common/fetcher";
 import type { APIResponse } from "@/types/helper";
 import type {
   CertificateData,
@@ -18,6 +17,7 @@ import type {
   CertificateVerificationData,
   PublicCertificateData,
 } from "@/types/model/certificate";
+import type { z } from "zod";
 
 const JSON_HEADERS = { "Content-Type": "application/json" } as const;
 
@@ -203,4 +203,41 @@ export async function downloadCertificate(
   });
 
   return parseResponse(certificateDataSchema, data);
+}
+
+export type CertificateDownloadAccess =
+  | "owner"
+  | "not_owner"
+  | "revoked"
+  | "signed_out"
+  | "unavailable";
+export async function getCertificateAccess(
+  token: string | null,
+  code: string,
+): Promise<CertificateDownloadAccess> {
+  if (!token) return "signed_out";
+  try {
+    const data = await fetchCertificateData(
+      `/code/${encodeURIComponent(code)}/access`,
+      {
+        method: "GET",
+        headers: { ...JSON_HEADERS, Authorization: `Bearer ${token}` },
+        cache: "no-store",
+      },
+    );
+    if (
+      data &&
+      typeof data === "object" &&
+      "reason" in data &&
+      "can_download" in data &&
+      data.can_download === (data.reason === "owner") &&
+      ["owner", "not_owner", "revoked"].includes(String(data.reason))
+    )
+      return data.reason as "owner" | "not_owner" | "revoked";
+    return "unavailable";
+  } catch (error) {
+    if (error instanceof FetcherError && error.status === 401)
+      return "signed_out";
+    return "unavailable";
+  }
 }

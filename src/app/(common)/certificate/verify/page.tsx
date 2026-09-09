@@ -1,6 +1,7 @@
-import type { Metadata } from "next";
-import { Container, Paper, Stack, Text, Title } from "@mantine/core";
+import { normalizeCertificateAppUrl } from "@/features/certificate/utils/certificateData";
 import VerificationSearch from "@/features/certificate/VerificationSearch";
+import { Container, Paper, Stack, Text, Title } from "@mantine/core";
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Verifikasi Sertifikat | Kaderisasi Salman ITB",
@@ -23,10 +24,13 @@ export default function VerifyCertificatePage() {
               Verifikasi sertifikat
             </Title>
             <Text c="dimmed">
-              Masukkan kode untuk melihat status dan data penerbitan sertifikat.
+              Masukkan kode atau tautan sertifikat untuk melihat status
+              penerbitannya.
             </Text>
           </Stack>
-          <VerificationSearch />
+          <VerificationSearch
+            appUrl={normalizeCertificateAppUrl(process.env.NEXT_PUBLIC_APP_URL)}
+          />
         </Stack>
       </Paper>
     </Container>

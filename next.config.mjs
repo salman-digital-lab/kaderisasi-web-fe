@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   cacheComponents: true,
+  partialPrefetching: true,
   images: {
     dangerouslyAllowSVG: true,
     remotePatterns: [
@@ -27,6 +28,7 @@ const nextConfig = {
     ],
   },
   experimental: {
+    exposeTestingApiInProductionBuild: process.env.NEXT_INSTANT_TEST === "1",
     optimizePackageImports: [
       "@mantine/core",
       "@mantine/hooks",

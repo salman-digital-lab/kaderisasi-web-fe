@@ -14,7 +14,12 @@ export default function ClientNavbar({
 
   return (
     <>
-      <Burger opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="md" />
+      <Burger
+        aria-label="Buka menu"
+        opened={drawerOpened}
+        onClick={toggleDrawer}
+        hiddenFrom="md"
+      />
       <NavDrawer
         drawerOpened={drawerOpened}
         closeDrawer={closeDrawer}

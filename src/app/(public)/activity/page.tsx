@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Suspense } from "react";
+import type { ReactElement } from "react";
 import { Container, Text } from "@mantine/core";
 import classes from "./index.module.css";
 import illustration from "@/assets/activitiespage-1.svg";
@@ -13,11 +14,13 @@ export const metadata = {
     "Daftar kegiatan kaderisasi Salman meliputi pelatihan, keasramaan, dan pembinaan mahasiswa Islam. Temukan kegiatan yang sesuai dengan level dan minat Anda.",
 };
 
-export default async function Page(props: {
+type ActivityPageProps = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
-  const searchParams = await props.searchParams;
+};
 
+export default function Page({
+  searchParams,
+}: ActivityPageProps): ReactElement {
   return (
     <main>
       {/* Hero Section - Static content, renders immediately */}
@@ -47,17 +50,25 @@ export default async function Page(props: {
       </Container>
 
       <Container size="lg" py="xl">
-        {/* Filter - Client component, renders immediately */}
-        <ActivityFilter />
-
-        {/* Activity Grid - Streamed with Suspense */}
-        <Suspense
-          key={JSON.stringify(searchParams)}
-          fallback={<ActivityListSkeleton />}
-        >
-          <ActivityListContent searchParams={searchParams} />
+        <Suspense fallback={<ActivityListSkeleton />}>
+          <ActivityResults searchParams={searchParams} />
         </Suspense>
       </Container>
     </main>
+  );
+}
+
+async function ActivityResults({
+  searchParams,
+}: ActivityPageProps): Promise<ReactElement> {
+  const query = await searchParams;
+
+  return (
+    <>
+      <ActivityFilter />
+      <Suspense key={JSON.stringify(query)} fallback={<ActivityListSkeleton />}>
+        <ActivityListContent searchParams={query} />
+      </Suspense>
+    </>
   );
 }

@@ -1,30 +1,31 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
-import { useRouter } from "next/navigation";
 import { Button, Stack, TextInput } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
-import { certificateCodeInputSchema } from "../schemas/certificate";
+import { useRouter } from "next/navigation";
+import { useState, useTransition, type FormEvent } from "react";
 import { getVerificationPath } from "../utils/certificateData";
+import { parseVerificationInput } from "../utils/verificationInput";
 
-export default function VerificationSearch() {
+export default function VerificationSearch({
+  appUrl,
+}: {
+  appUrl?: string | null;
+}) {
+  const [pending, startTransition] = useTransition();
   const router = useRouter();
   const [certificateCode, setCertificateCode] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault();
-    const result = certificateCodeInputSchema.safeParse(certificateCode);
-
-    if (!result.success) {
-      setError(
-        result.error.issues[0]?.message ?? "Kode sertifikat tidak valid.",
-      );
+    const code = parseVerificationInput(certificateCode, appUrl);
+    if (!code) {
+      setError("Masukkan kode atau tautan sertifikat dari situs ini.");
       return;
     }
-
     setError(null);
-    router.push(getVerificationPath(result.data));
+    startTransition(() => router.push(getVerificationPath(code)));
   }
 
   return (
@@ -35,9 +36,9 @@ export default function VerificationSearch() {
           autoComplete="off"
           description="Kode tercantum pada sertifikat atau tautan resmi."
           error={error}
-          label="Kode sertifikat"
+          label="Kode atau tautan sertifikat"
           leftSection={<IconSearch aria-hidden size={18} />}
-          maxLength={96}
+          maxLength={2048}
           name="certificateCode"
           onChange={(event) => {
             setCertificateCode(event.currentTarget.value);
@@ -47,7 +48,7 @@ export default function VerificationSearch() {
           required
           value={certificateCode}
         />
-        <Button size="md" type="submit">
+        <Button size="md" type="submit" loading={pending}>
           Periksa sertifikat
         </Button>
       </Stack>

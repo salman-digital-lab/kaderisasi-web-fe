@@ -43,7 +43,10 @@ export async function ActivityListContent({
       </SimpleGrid>
 
       <Center>
-        <ActivityPagination total={activities.meta.last_page} />
+        <ActivityPagination
+          total={activities.meta.last_page}
+          current={activities.meta.current_page}
+        />
       </Center>
     </>
   );

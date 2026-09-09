@@ -1,35 +1,27 @@
-.topBar {
-  display: grid;
+.actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
   gap: var(--mantine-spacing-sm);
 }
-
-.actions {
-  display: grid;
-  gap: var(--mantine-spacing-xs);
-  grid-template-columns: 1fr;
-}
-
 .actionButton {
   min-height: 44px;
-  width: 100%;
 }
-
 .certificateCode {
   overflow-wrap: anywhere;
 }
-
-@media (min-width: 48em) {
-  .topBar {
-    align-items: center;
-    grid-template-columns: auto 1fr;
-  }
-
+.verificationLink {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  text-decoration: underline;
+}
+@media (max-width: 47.99em) {
   .actions {
-    grid-template-columns: repeat(4, auto);
-    justify-content: end;
+    flex-direction: column;
+    align-items: stretch;
   }
-
   .actionButton {
-    width: auto;
+    width: 100%;
   }
 }
