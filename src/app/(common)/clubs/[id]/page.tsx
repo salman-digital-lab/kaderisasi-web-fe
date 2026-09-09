@@ -4,6 +4,7 @@ import PageContainer from "@/components/layout/PageContainer";
 import { Suspense } from "react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { connection } from "next/server";
 import type { Metadata } from "next";
 import {
   AspectRatio,
@@ -92,6 +93,8 @@ export default async function ClubDetailPage({ params }: ClubDetailPageProps) {
     notFound();
   }
 
+  // Registration deadlines must be evaluated for the current request.
+  await connection();
   const registrationOpen = isClubRegistrationOpen({
     isRegistrationOpen: Boolean(club.is_registration_open),
     registrationEndDate: club.registration_end_date,
