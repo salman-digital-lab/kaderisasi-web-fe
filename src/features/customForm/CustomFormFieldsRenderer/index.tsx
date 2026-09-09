@@ -21,6 +21,7 @@ import { DateInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { IconAlertCircle } from "@tabler/icons-react";
 import { CustomFormSection } from "@/types/api/customForm";
+import { validateCustomFormFields } from "./validation";
 import classes from "./index.module.css";
 
 // Helper function to render text with newlines
@@ -39,7 +40,7 @@ const renderTextWithNewlines = (text: string) => {
       ))}
     </>
   );
-};  
+};
 
 type CustomFormFieldsRendererProps = {
   section: CustomFormSection;
@@ -74,12 +75,12 @@ export default function CustomFormFieldsRenderer({
         // Otherwise, treat it as a boolean (single checkbox)
         initialValues[field.key] =
           (field.options?.length ?? 0) > 0
-            ? field.defaultValue || []
-            : field.defaultValue || false;
+            ? (field.defaultValue ?? [])
+            : (field.defaultValue ?? false);
       } else if (field.type === "multiselect") {
-        initialValues[field.key] = field.defaultValue || [];
+        initialValues[field.key] = field.defaultValue ?? [];
       } else {
-        initialValues[field.key] = field.defaultValue || "";
+        initialValues[field.key] = field.defaultValue ?? "";
       }
     }
   });
@@ -88,68 +89,7 @@ export default function CustomFormFieldsRenderer({
     mode: "uncontrolled",
     initialValues,
     validate: (values) => {
-      const errors: Record<string, string> = {};
-
-      section.fields.forEach((field) => {
-        if (field.required && !values[field.key]) {
-          errors[field.key] = `${field.label} wajib diisi`;
-        }
-
-        if (field.validation) {
-          const val = values[field.key];
-
-          if (val !== undefined && val !== null && val !== "") {
-            if (
-              field.validation.min !== undefined &&
-              Number(val) < field.validation.min
-            ) {
-              errors[field.key] =
-                field.validation.customMessage ||
-                `Minimal ${field.validation.min}`;
-            }
-
-            if (
-              field.validation.max !== undefined &&
-              Number(val) > field.validation.max
-            ) {
-              errors[field.key] =
-                field.validation.customMessage ||
-                `Maksimal ${field.validation.max}`;
-            }
-
-            if (
-              field.validation.minLength !== undefined &&
-              typeof val === "string" &&
-              val.length < field.validation.minLength
-            ) {
-              errors[field.key] =
-                field.validation.customMessage ||
-                `Minimal ${field.validation.minLength} karakter`;
-            }
-
-            if (
-              field.validation.maxLength !== undefined &&
-              typeof val === "string" &&
-              val.length > field.validation.maxLength
-            ) {
-              errors[field.key] =
-                field.validation.customMessage ||
-                `Maksimal ${field.validation.maxLength} karakter`;
-            }
-
-            if (field.validation.pattern) {
-              const regex = new RegExp(field.validation.pattern);
-              if (typeof val === "string" && !regex.test(val)) {
-                errors[field.key] =
-                  field.validation.customMessage ||
-                  `Format ${field.label} tidak valid`;
-              }
-            }
-          }
-        }
-      });
-
-      return errors;
+      return validateCustomFormFields(section.fields, values);
     },
   });
 
@@ -163,7 +103,12 @@ export default function CustomFormFieldsRenderer({
       required: field.required,
       disabled: field.disabled,
       size: "md" as const,
-      ...form.getInputProps(field.key),
+      ...form.getInputProps(field.key, {
+        type:
+          field.type === "checkbox" && !field.options?.length
+            ? "checkbox"
+            : "input",
+      }),
     };
 
     switch (field.type) {
@@ -243,7 +188,8 @@ export default function CustomFormFieldsRenderer({
               options: classes.multiSelectOptions,
               option: classes.multiSelectOption,
               inputField:
-                Array.isArray(form.values[field.key]) && form.values[field.key].length > 0
+                Array.isArray(form.values[field.key]) &&
+                form.values[field.key].length > 0
                   ? classes.multiSelectInputHidden
                   : undefined,
             }}
@@ -287,7 +233,9 @@ export default function CustomFormFieldsRenderer({
                   >
                     <Group wrap="nowrap" align="flex-start">
                       <Checkbox.Indicator />
-                      <Text className={classes.optionCardLabel}>{opt.label}</Text>
+                      <Text className={classes.optionCardLabel}>
+                        {opt.label}
+                      </Text>
                     </Group>
                   </Checkbox.Card>
                 ))}
@@ -300,7 +248,9 @@ export default function CustomFormFieldsRenderer({
             key={fieldKey}
             {...commonProps}
             label={renderTextWithNewlines(field.label)}
-            description={renderTextWithNewlines(field.helpText || field.description)}
+            description={renderTextWithNewlines(
+              field.helpText || field.description,
+            )}
           />
         );
 
@@ -315,7 +265,13 @@ export default function CustomFormFieldsRenderer({
         );
 
       default:
-        return <TextInput key={fieldKey} {...commonProps} placeholder="Isi di sini" />;
+        return (
+          <TextInput
+            key={fieldKey}
+            {...commonProps}
+            placeholder="Isi di sini"
+          />
+        );
     }
   };
 
@@ -369,7 +325,9 @@ export default function CustomFormFieldsRenderer({
         title={
           <Group gap="xs">
             <IconAlertCircle size={24} color="var(--mantine-color-blue-6)" />
-            <Text size="md" fw={600}>Konfirmasi Pengiriman</Text>
+            <Text size="md" fw={600}>
+              Konfirmasi Pengiriman
+            </Text>
           </Group>
         }
         centered
