@@ -26,19 +26,22 @@ for (const session of ["guest", "expired"] as const) {
         }),
       ).toBeVisible();
       await expect(
-        page.getByText(/Nama, email, dan data yang Anda isi/),
+        page
+          .getByRole("contentinfo")
+          .getByText(/Nama, email, dan data yang Anda isi/),
       ).toBeVisible();
 
       await page
-        .getByRole("main")
+        .getByRole("navigation", { name: "Informasi hukum" })
         .getByRole("link", { name: "Kebijakan Privasi", exact: true })
-        .first()
         .click();
       await expect(page).toHaveURL(/\/privacy-policy$/);
       await expect(
         page.getByRole("heading", { name: "Kebijakan Privasi", exact: true }),
       ).toBeVisible();
-      await page.screenshot({ path: testInfo.outputPath("privacy-policy.png") });
+      await page.screenshot({
+        path: testInfo.outputPath("privacy-policy.png"),
+      });
     });
 
     test("privacy disclosures are readable without signing in", async ({

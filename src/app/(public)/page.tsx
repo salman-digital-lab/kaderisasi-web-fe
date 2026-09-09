@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import type { ReactElement } from "react";
 import {
-  Anchor,
   Container,
   Text,
   Group,
@@ -55,24 +54,6 @@ export default function Home(): ReactElement {
             <Group mt="lg">
               <LinkButton href="/activity">Daftar Kegiatan Sekarang</LinkButton>
             </Group>
-            <Group mt="md" gap="md" aria-label="Privasi dan ketentuan layanan">
-              <Anchor href="/privacy-policy" size="sm" underline="always">
-                Kebijakan Privasi
-              </Anchor>
-              <Anchor href="/terms-of-service" size="sm" underline="always">
-                Syarat dan Ketentuan
-              </Anchor>
-            </Group>
-            <Text c="dimmed" size="sm" mt="md">
-              Nama, email, dan data yang Anda isi digunakan untuk mengelola akun
-              dan layanan yang Anda pilih. Pada dasbor admin, Masuk dengan Google
-              menggunakan identitas akun, nama, email, dan status verifikasi email
-              untuk autentikasi. Rincian penggunaan data tersedia dalam{" "}
-              <Anchor href="/privacy-policy#google" size="sm" underline="always">
-                Kebijakan Privasi
-              </Anchor>
-              .
-            </Text>
           </div>
           <Image
             width={400}
