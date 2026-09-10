@@ -11,6 +11,21 @@ const api = createServer((request, response) => {
   response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
   response.setHeader("Access-Control-Allow-Headers", "Content-Type");
   if (request.method === "OPTIONS") return response.end();
+  if (
+    process.env.GOOGLE_AUTH_BROWSER_TEST === "1" &&
+    ["/v2/auth/google", "/v2/auth/login"].includes(url.pathname)
+  ) {
+    return response.end(
+      JSON.stringify({
+        message: "LOGIN_SUCCESS",
+        data: {
+          user: { id: 1 },
+          data: { name: "UI test member", picture: "" },
+          token: { token: "ui-preview" },
+        },
+      }),
+    );
+  }
   let data = uiFixture(url, request.headers.authorization);
   if (data !== undefined) {
     return response.end(JSON.stringify({ message: "TEST_DATA", data }));
@@ -41,6 +56,12 @@ const env = {
   SERVER_BE_ADMIN_API: apiUrl,
   NEXT_PUBLIC_BE_API: apiUrl,
   NEXT_PUBLIC_BE_ADMIN_API: apiUrl,
+  ...(process.env.GOOGLE_AUTH_BROWSER_TEST === "1"
+    ? {
+        GOOGLE_CLIENT_ID: "browser-test.apps.googleusercontent.com",
+        GOOGLE_REDIRECT_URI: "http://localhost:3000/api/auth/google/callback",
+      }
+    : {}),
 };
 let child;
 function cleanup() {

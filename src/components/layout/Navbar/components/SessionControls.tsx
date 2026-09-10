@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
 import { Group } from "@mantine/core";
 import { verifySession } from "@/functions/server/session";
-import LinkButton from "@/components/common/LinkButton";
+import AuthLinks from "./AuthLinks";
 import ClientNavbar from "./ClientNavbar";
 import AccountMenu from "./AccountMenu";
 
@@ -16,12 +16,7 @@ export default async function SessionControls(): Promise<ReactElement> {
             profilePicture={sessionData.profilePicture}
           />
         ) : (
-          <>
-            <LinkButton href="/login" variant="default">
-              Masuk
-            </LinkButton>
-            <LinkButton href="/register">Daftar</LinkButton>
-          </>
+          <AuthLinks />
         )}
       </Group>
       <ClientNavbar session={sessionData} />

@@ -3,6 +3,8 @@ import type { ReactElement } from "react";
 import AuthLayout from "@/components/layout/AuthLayout";
 import RegistrationForm from "@/features/auth/RegistrationForm";
 import classes from "@/components/layout/AuthLayout.module.css";
+import GoogleLogin from "@/features/auth/GoogleLogin";
+import { getAuthRedirect } from "@/features/auth/redirect";
 
 export const metadata = {
   title: "Daftar",
@@ -15,9 +17,12 @@ export default async function Page({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }): Promise<ReactElement> {
-  const query = (await searchParams).redirect;
-  const value = Array.isArray(query) ? query[0] : query;
-  const redirect = value && value !== "undefined" ? value : undefined;
+  const query = await searchParams;
+  const redirect = getAuthRedirect(
+    Array.isArray(query.redirect) ? query.redirect[0] : query.redirect,
+  );
+  const error =
+    typeof query.googleError === "string" ? query.googleError : undefined;
   return (
     <AuthLayout
       title="Buat akun"
@@ -38,6 +43,7 @@ export default async function Page({
         </>
       }
     >
+      <GoogleLogin redirect={redirect} mode="register" error={error} />
       <RegistrationForm redirect={redirect} />
     </AuthLayout>
   );

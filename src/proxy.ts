@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { getAuthRedirect } from "@/features/auth/redirect";
 
 const protectedRoutes = ["/profile"];
-const publicRoutes = ["/login", "/signup", "/"];
+const publicRoutes = ["/login", "/register", "/signup", "/"];
 
 export default async function proxy(req: NextRequest) {
   const path = req.nextUrl.pathname;
@@ -21,7 +22,12 @@ export default async function proxy(req: NextRequest) {
     (req.nextUrl.pathname.startsWith("/login") ||
       req.nextUrl.pathname.startsWith("/register"))
   ) {
-    return NextResponse.redirect(new URL("/", req.nextUrl));
+    return NextResponse.redirect(
+      new URL(
+        getAuthRedirect(req.nextUrl.searchParams.get("redirect")),
+        req.nextUrl,
+      ),
+    );
   }
 
   return NextResponse.next();

@@ -6,14 +6,7 @@ import { isEmail, useForm } from "@mantine/form";
 
 import showNotif from "@/functions/common/notification";
 import login from "@/functions/server/login";
-
-function getLoginRedirect(redirect?: string) {
-  if (!redirect || redirect === "undefined" || redirect.startsWith("/login")) {
-    return "/";
-  }
-
-  return redirect;
-}
+import { getAuthRedirect } from "../redirect";
 
 export default function LoginForm({ redirect }: { redirect?: string }) {
   const router = useRouter();
@@ -38,7 +31,7 @@ export default function LoginForm({ redirect }: { redirect?: string }) {
 
       if (response.success) {
         showNotif("Anda berhasil masuk");
-        router.replace(getLoginRedirect(redirect));
+        router.replace(getAuthRedirect(redirect));
         router.refresh();
       } else {
         showNotif(response.message, true);

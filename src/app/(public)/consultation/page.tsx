@@ -105,11 +105,7 @@ async function ConsultationRegistration(): Promise<ReactElement> {
             Silahkan masuk ke akun anda terlebih dahulu untuk menggunakan
             layanan Ruang Curhat
           </Text>
-          <LinkButton
-            href={`/login?redirect=${process.env.NEXT_PUBLIC_APP_URL}/consultation`}
-            fullWidth
-            mt="md"
-          >
+          <LinkButton href="/login?redirect=%2Fconsultation" fullWidth mt="md">
             Masuk
           </LinkButton>
         </Card>

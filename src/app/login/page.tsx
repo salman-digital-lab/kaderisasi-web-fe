@@ -4,6 +4,8 @@ import type { ReactElement } from "react";
 import AuthLayout from "@/components/layout/AuthLayout";
 import LoginForm from "@/features/auth/LoginForm";
 import classes from "@/components/layout/AuthLayout.module.css";
+import GoogleLogin from "@/features/auth/GoogleLogin";
+import { getAuthRedirect } from "@/features/auth/redirect";
 
 export const metadata = {
   title: "Masuk",
@@ -11,22 +13,17 @@ export const metadata = {
     "Masuk ke akun Kaderisasi Salman untuk mendaftar kegiatan, mengakses Ruang Curhat, dan melihat status pendaftaran Anda.",
 };
 
-function normalizeRedirect(redirect: string | string[] | undefined) {
-  const value = Array.isArray(redirect) ? redirect[0] : redirect;
-
-  if (!value || value === "undefined") {
-    return undefined;
-  }
-
-  return value;
-}
-
 export default async function Page({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }): Promise<ReactElement> {
-  const redirect = normalizeRedirect((await searchParams).redirect);
+  const query = await searchParams;
+  const redirect = getAuthRedirect(
+    Array.isArray(query.redirect) ? query.redirect[0] : query.redirect,
+  );
+  const error =
+    typeof query.googleError === "string" ? query.googleError : undefined;
   return (
     <AuthLayout
       title="Masuk ke akun"
@@ -47,6 +44,7 @@ export default async function Page({
         </>
       }
     >
+      <GoogleLogin redirect={redirect} error={error} />
       <LoginForm redirect={redirect} />
       <Text ta="right" mt="md" size="sm">
         <Link className={classes.link} href="/forgot">

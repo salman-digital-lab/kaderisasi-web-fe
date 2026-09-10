@@ -29,6 +29,7 @@ import {
 import Link from "next/link";
 import classes from "../index.module.css";
 import { usePathname } from "next/navigation";
+import { getAuthRedirect } from "@/features/auth/redirect";
 
 import logout from "../../../../functions/server/logout";
 
@@ -253,7 +254,7 @@ export default function NavDrawer({
             <Stack gap="xs">
               <Button
                 component={Link}
-                href="/login"
+                href={`/login?redirect=${encodeURIComponent(getAuthRedirect(pathname))}`}
                 variant="filled"
                 radius="md"
                 fullWidth
@@ -263,7 +264,7 @@ export default function NavDrawer({
               </Button>
               <Button
                 component={Link}
-                href="/register"
+                href={`/register?redirect=${encodeURIComponent(getAuthRedirect(pathname))}`}
                 variant="default"
                 radius="md"
                 fullWidth
