@@ -1,17 +1,24 @@
 import { MantineProvider } from "@mantine/core";
+import { imageConfigDefault } from "next/dist/shared/lib/image-config";
+import { ImageConfigContext } from "next/dist/shared/lib/image-config-context.shared-runtime";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
+import nextConfig from "../../../../next.config.mjs";
 import ActivityPoster from "./index";
 
 function renderPoster(images: string[]): string {
   return renderToStaticMarkup(
-    <MantineProvider>
-      <ActivityPoster
-        images={images}
-        activityName="Kegiatan Salman"
-        imageBaseUrl="https://nos.wjv-1.neo.id/kaderisasi-prod"
-      />
-    </MantineProvider>,
+    <ImageConfigContext.Provider
+      value={{ ...imageConfigDefault, ...nextConfig.images }}
+    >
+      <MantineProvider>
+        <ActivityPoster
+          images={images}
+          activityName="Kegiatan Salman"
+          imageBaseUrl="https://nos.wjv-1.neo.id/kaderisasi-prod"
+        />
+      </MantineProvider>
+    </ImageConfigContext.Provider>,
   );
 }
 
