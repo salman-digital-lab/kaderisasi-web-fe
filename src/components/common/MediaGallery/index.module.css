@@ -1,0 +1,82 @@
+.thumbnail,
+.videoItem {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  border: rem(1px) solid var(--surface-border);
+  border-radius: var(--mantine-radius-md);
+}
+.thumbnail {
+  display: block;
+  width: 100%;
+}
+.thumbnail:hover {
+  border-color: var(--mantine-primary-color-filled);
+}
+.thumbnail:hover .caption {
+  color: var(--mantine-primary-color-filled);
+}
+.thumbnailVisual {
+  display: block;
+  position: relative;
+  aspect-ratio: 3 / 4;
+  background: var(--surface-subtle);
+}
+.imageFrame {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.image {
+  object-fit: contain;
+}
+.imageLoading {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.imageError {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: var(--mantine-spacing-md);
+  color: var(--mantine-color-dimmed);
+  text-align: center;
+}
+.caption {
+  padding: var(--mantine-spacing-sm);
+  border-top: rem(1px) solid var(--surface-border);
+  color: var(--mantine-color-dimmed);
+}
+.caption svg {
+  flex-shrink: 0;
+}
+.video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+}
+.videoItem {
+  align-self: start;
+  grid-column: 1 / -1;
+}
+.expandedVisual {
+  height: min(72dvh, 850px);
+  background: var(--surface-subtle);
+}
+.modalTitle {
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+@media (max-width: $mantine-breakpoint-xs) {
+  .caption {
+    padding: var(--mantine-spacing-xs);
+  }
+  .expandedVisual {
+    height: 65dvh;
+  }
+}

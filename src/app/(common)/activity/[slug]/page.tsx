@@ -1,169 +1,82 @@
-import RichTextContent from "@/components/common/RichTextContent";
-import DetailBackLink from "@/components/layout/DetailBackLink";
-import detailClasses from "@/components/layout/DetailLayout.module.css";
-import PageContainer from "@/components/layout/PageContainer";
-import LinkButton from "@/components/common/LinkButton";
+import { Suspense } from "react";
+import type { ReactElement } from "react";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { Anchor, Badge, Group, Paper, Stack, Text, Title } from "@mantine/core";
 import {
-  Badge,
-  Button,
-  Card,
-  Group,
-  rem,
-  Skeleton,
-  Stack,
-  Title,
-  Text,
-  CardSection,
-} from "@mantine/core";
-import {
-  IconCalendarTime,
-  IconCalendarMonth,
-  IconClock,
+  IconCalendar,
+  IconCalendarEvent,
+  IconSchool,
 } from "@tabler/icons-react";
-import dynamic from "next/dynamic";
-
-const ActivityCarousel = dynamic(() => import("./ActivityCarousel"), {
-  loading: () => <Skeleton height={700} radius="md" />,
-});
-
-import classes from "./index.module.css";
+import RichTextContent from "@/components/common/RichTextContent";
+import ActivityPoster from "@/features/activity/ActivityPoster";
+import DetailBackLink from "@/components/layout/DetailBackLink";
+import PageContainer from "@/components/layout/PageContainer";
+import {
+  ActivityRegistrationAction,
+  ActivityRegistrationActionFallback,
+} from "@/features/activity/ActivityRegistrationAction";
+import {
+  formatActivityDate,
+  formatActivityDateRange,
+} from "@/features/activity/activity-dates";
 import {
   ACTIVITY_CATEGORY_RENDER,
-  ACTIVITY_REGISTRANT_COLOR_STATUS_RENDER,
   USER_LEVEL_RENDER,
-} from "../../../../constants/render/activity";
-import { verifySession } from "../../../../functions/server/session";
-import { getActivity } from "../../../../services/activity.cache";
-import { preloadActivity } from "../../../../services/activity.preload";
-import { getActivityRegistration } from "../../../../services/activity";
-import { getProfile } from "../../../../services/profile";
-import ErrorWrapper from "../../../../components/layout/Error";
-import { ACTIVITY_REGISTRANT_STATUS_ENUM } from "@/types/constants/activity";
-import type { Activity } from "@/types/model/activity";
-import type { PublicUser, Member } from "@/types/model/members";
-import { getCertificateCta } from "@/features/certificate/utils/certificateData";
-import CertificateCtaButton from "@/features/certificate/CertificateCtaButton";
-import dayjs from "dayjs";
-import "dayjs/locale/id";
+} from "@/constants/render/activity";
+import { getActivityDetail } from "@/services/activity.cache";
+import classes from "./index.module.css";
 
-const calendarIcon = (
-  <IconCalendarTime style={{ width: rem(14), height: rem(14) }} />
-);
+type ActivityDetailPageProps = { params: Promise<{ slug: string }> };
 
-const calenderMonthIcon = (
-  <IconCalendarMonth style={{ width: rem(14), height: rem(14) }} />
-);
-
-export async function generateMetadata(props: {
-  params: Promise<{ slug: string }>;
-}) {
-  const param = await props.params;
-  preloadActivity(param);
-
-  const activity = await getActivity(param);
-  const activityDescription = `${activity?.name} - Ayo daftar kegiatan ini di Kaderisasi Salman`;
-  const activityImage = activity?.additional_config?.images?.length
-    ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${activity.additional_config.images[0]}`
-    : undefined;
-
-  return {
-    title: activity?.name,
-    description: activityDescription,
-    openGraph: {
-      title: activity?.name,
-      description: activityDescription,
-      url: `${process.env.NEXT_PUBLIC_APP_URL}/activity/${param.slug}`,
-      type: "website",
-      images: activityImage
-        ? [
-            {
-              url: activityImage,
-              width: 800,
-              height: 800,
-              alt: activity?.name,
-            },
-          ]
-        : undefined,
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: activity?.name,
-      description: activityDescription,
-      images: activityImage ? [activityImage] : undefined,
-    },
-  };
+export async function generateMetadata({
+  params,
+}: ActivityDetailPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  try {
+    const activity = await getActivityDetail({ slug });
+    if (!activity) return { title: "Kegiatan tidak ditemukan" };
+    const description = `${activity.name} - Ayo daftar kegiatan ini di Kaderisasi Salman`;
+    const image = activity.additional_config?.images?.[0];
+    const imageUrl = image
+      ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${image}`
+      : undefined;
+    return {
+      title: activity.name,
+      description,
+      openGraph: {
+        title: activity.name,
+        description,
+        url: `${process.env.NEXT_PUBLIC_APP_URL}/activity/${slug}`,
+        type: "website",
+        images: imageUrl ? [{ url: imageUrl, alt: activity.name }] : undefined,
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: activity.name,
+        description,
+        images: imageUrl ? [imageUrl] : undefined,
+      },
+    };
+  } catch {
+    return { title: "Kegiatan" };
+  }
 }
 
-export default async function Page(props: {
-  params: Promise<{ slug: string }>;
-}) {
-  const params = await props.params;
-  let activityRegistration:
-    | {
-        status: string;
-        visible_at?: string;
-        registration_id?: number;
-        certificate_code?: string | null;
-        certificate_state?:
-          | "not_eligible"
-          | "eligible_not_issued"
-          | "issued_active"
-          | "issued_revoked";
-      }
-    | undefined;
-
-  let profileData:
-    | {
-        userData: PublicUser;
-        profile: Member;
-      }
-    | undefined;
-
-  let activity: Activity | undefined;
-  const sessionData = await verifySession();
-
-  try {
-    // getActivity is a near-instant cache hit (preloaded in generateMetadata)
-    activity = await getActivity(params);
-
-    // Run all remaining fetches in parallel now that we have activity.id
-    const [profileResult, activityRegistrationResult] = await Promise.all([
-      getProfile(sessionData.session || ""),
-      sessionData.session
-        ? getActivityRegistration(sessionData.session, params)
-        : Promise.resolve(undefined),
-    ]);
-    profileData = profileResult;
-    activityRegistration = activityRegistrationResult;
-  } catch (error: unknown) {
-    if (typeof error === "string" && error !== "Unauthorized")
-      return <ErrorWrapper message={error} />;
-  }
-
-  const isRegistered =
-    !!activityRegistration?.status &&
-    activityRegistration?.status !==
-      ACTIVITY_REGISTRANT_STATUS_ENUM.BELUM_TERDAFTAR;
-
-  const isLevelEligible = Boolean(
-    activity &&
-    profileData?.profile?.level !== undefined &&
-    profileData?.profile?.level >= activity.minimum_level,
-  );
-
-  const certificateCta = activityRegistration
-    ? getCertificateCta({
-        certificateCode: activityRegistration.certificate_code,
-        certificateState: activityRegistration.certificate_state,
-        hasTemplate: Boolean(
-          activity?.additional_config?.certificate_template_id,
-        ),
-        isPassed:
-          activityRegistration.status ===
-          ACTIVITY_REGISTRANT_STATUS_ENUM.LULUS_KEGIATAN,
-        registrationId: activityRegistration.registration_id,
-      })
-    : null;
+export default async function ActivityDetailPage({
+  params,
+}: ActivityDetailPageProps): Promise<ReactElement> {
+  const { slug } = await params;
+  const activity = await getActivityDetail({ slug });
+  if (!activity) notFound();
+  const images = activity.additional_config?.images ?? [];
+  const sections = [
+    ...(images.length
+      ? [{ href: "#activity-poster", label: "Poster kegiatan" }]
+      : []),
+    { href: "#activity-registration", label: "Pendaftaran" },
+    { href: "#about-activity", label: "Tentang kegiatan" },
+  ];
 
   return (
     <PageContainer size="md">
@@ -171,185 +84,156 @@ export default async function Page(props: {
         <DetailBackLink href="/activity">
           Kembali ke daftar kegiatan
         </DetailBackLink>
-
-        <div className={detailClasses.header}>
-          <Card
-            component="header"
-            className={detailClasses.identityCard}
-            padding="lg"
-            radius="md"
-            withBorder
-          >
-            <Title order={1} size="h2">
-              {activity?.name}
-            </Title>
-            <Group gap={7} mt="xs">
-              <Badge variant="light">
-                {activity ? USER_LEVEL_RENDER[activity.minimum_level] : ""}
-              </Badge>
-              <Badge variant="light">
-                {activity
-                  ? ACTIVITY_CATEGORY_RENDER[activity.activity_category]
-                  : ""}
-              </Badge>
-            </Group>
-            {activity?.activity_start && (
-              <CardSection className={detailClasses.metadataSection}>
-                <Text mt="md" className={detailClasses.label} c="dimmed">
-                  Tanggal Mulai Kegiatan
-                </Text>
-                <Badge mt={5} variant="light" leftSection={calenderMonthIcon}>
-                  {dayjs(activity?.activity_start)
-                    .locale("id")
-                    .format("D MMMM YYYY")}
-                </Badge>
-              </CardSection>
-            )}
-          </Card>
-          <Card
-            component="aside"
-            aria-label="Tindakan pendaftaran kegiatan"
-            className={detailClasses.actionCard}
-            padding="lg"
-            radius="md"
-            withBorder
-          >
-            {isRegistered ? (
-              <Stack gap="xs">
-                <Title order={2} size="h4" ta="center">
-                  Status Pendaftaran
-                </Title>
-                <Badge
-                  color={
-                    activityRegistration?.status &&
-                    ACTIVITY_REGISTRANT_COLOR_STATUS_RENDER[
-                      activityRegistration.status as keyof typeof ACTIVITY_REGISTRANT_COLOR_STATUS_RENDER
-                    ]
-                      ? ACTIVITY_REGISTRANT_COLOR_STATUS_RENDER[
-                          activityRegistration.status as keyof typeof ACTIVITY_REGISTRANT_COLOR_STATUS_RENDER
-                        ]
-                      : "blue"
-                  }
-                  m="auto"
-                  size="lg"
-                  px="xl"
-                >
-                  {activityRegistration?.status}
-                </Badge>
-                {activityRegistration?.status ===
-                  ACTIVITY_REGISTRANT_STATUS_ENUM.BELUM_DIUMUMKAN &&
-                  activityRegistration?.visible_at && (
-                    <Group gap={6} justify="center" mt="xs">
-                      <IconClock
-                        size={14}
-                        color="var(--mantine-color-orange-6)"
-                      />
-                      <Text size="md" c="orange.6" fw={500}>
-                        Estimasi pengumuman:{" "}
-                        {dayjs(activityRegistration.visible_at)
-                          .locale("id")
-                          .format("DD MMMM YYYY, HH:mm")}
-                      </Text>
-                    </Group>
-                  )}
-                {certificateCta && (
-                  <CertificateCtaButton cta={certificateCta} />
-                )}
-              </Stack>
-            ) : sessionData.session ? (
-              // Logged in but not registered — registration is closed
-              <Stack gap="xs">
-                <Title order={2} size="h4" ta="center">
-                  {dayjs().isAfter(activity?.registration_end)
-                    ? "Cek Status Pendaftaran"
-                    : "Tutup Pendaftaran"}
-                </Title>
-                {!dayjs().isAfter(activity?.registration_end) && (
-                  <Badge
-                    m="auto"
-                    color="red"
-                    variant="light"
-                    leftSection={calendarIcon}
-                  >
-                    {dayjs(activity?.registration_end)
-                      .locale("id")
-                      .format("D MMMM YYYY")}
-                  </Badge>
-                )}
-              </Stack>
-            ) : (
-              // Not logged in — show registration end date; never show "Cek Status Pendaftaran"
-              // since unauthenticated users have no registration status to check
-              <Stack gap="xs">
-                <Title order={2} size="h4" ta="center">
-                  Tutup Pendaftaran
-                </Title>
-                {activity?.registration_end && (
-                  <Badge
-                    m="auto"
-                    color="red"
-                    variant="light"
-                    leftSection={calendarIcon}
-                  >
-                    {dayjs(activity.registration_end)
-                      .locale("id")
-                      .format("D MMMM YYYY")}
-                  </Badge>
-                )}
-              </Stack>
-            )}
-
-            {sessionData.session ? (
-              !isRegistered ? (
-                !isLevelEligible ? (
-                  <Button disabled fullWidth>
-                    Jenjang Tidak Cukup
-                  </Button>
-                ) : activity?.is_registration_open ? (
-                  <LinkButton
-                    href={`/custom-form/activity/${activity?.id}`}
-                    fullWidth
-                  >
-                    Daftar Kegiatan
-                  </LinkButton>
-                ) : null
-              ) : null
-            ) : (
-              <Stack gap="xs">
-                {activity?.is_registration_open ? (
-                  <LinkButton href={`/activity/${params.slug}/join`} fullWidth>
-                    Daftar Kegiatan
-                  </LinkButton>
-                ) : null}
-              </Stack>
-            )}
-          </Card>
-        </div>
-        {Boolean(activity?.additional_config?.images?.length) && (
-          <div className={classes["carousel-container"]}>
-            <ActivityCarousel
-              images={activity?.additional_config?.images ?? []}
-              activityName={activity?.name ?? ""}
-              imageBaseUrl={process.env.NEXT_PUBLIC_IMAGE_BASE_URL ?? ""}
-            />
-          </div>
-        )}
-        <Card
-          component="section"
-          aria-labelledby="about-activity-heading"
+        <Paper
+          component="header"
           withBorder
           radius="md"
-          p="lg"
+          className={classes.header}
         >
-          <Title
-            order={2}
-            id="about-activity-heading"
-            className={detailClasses.sectionHeading}
-          >
-            Deskripsi Kegiatan
+          <Badge variant="light" className={classes.badge}>
+            {ACTIVITY_CATEGORY_RENDER[activity.activity_category]}
+          </Badge>
+          <Title order={1} size="h2" mt="xs" className={classes.title}>
+            {activity.name}
           </Title>
-          <RichTextContent html={activity?.description || ""} />
-        </Card>
+          <Group
+            gap="xs"
+            wrap="nowrap"
+            mt="md"
+            align="flex-start"
+            className={classes.schedule}
+          >
+            <IconCalendarEvent size={20} aria-hidden="true" />
+            <div>
+              <Text size="sm" c="dimmed">
+                Pelaksanaan kegiatan
+              </Text>
+              <Text fw={600}>
+                {formatActivityDateRange(
+                  activity.activity_start,
+                  activity.activity_end,
+                )}
+              </Text>
+            </div>
+          </Group>
+        </Paper>
+
+        <Group
+          component="nav"
+          aria-label="Bagian halaman kegiatan"
+          gap={4}
+          className={classes.sectionNav}
+        >
+          {sections.map((section) => (
+            <Anchor
+              key={section.href}
+              href={section.href}
+              underline="never"
+              className={classes.sectionLink}
+            >
+              {section.label}
+            </Anchor>
+          ))}
+        </Group>
+
+        <div
+          className={classes.overview}
+          data-has-poster={images.length > 0 || undefined}
+        >
+          {images.length ? (
+            <section
+              id="activity-poster"
+              aria-label="Poster kegiatan"
+              className={classes.posterSection}
+            >
+              <ActivityPoster
+                key={activity.slug}
+                images={images}
+                activityName={activity.name}
+                imageBaseUrl={process.env.NEXT_PUBLIC_IMAGE_BASE_URL ?? ""}
+              />
+            </section>
+          ) : null}
+          <Paper
+            component="aside"
+            id="activity-registration"
+            aria-labelledby="activity-registration-heading"
+            withBorder
+            radius="md"
+            className={classes.registrationCard}
+          >
+            <Title order={2} size="h3" id="activity-registration-heading">
+              Pendaftaran
+            </Title>
+            <Badge
+              variant="light"
+              color={activity.is_registration_open ? "green" : "gray"}
+              mt="sm"
+              mb="lg"
+              className={classes.badge}
+            >
+              {activity.is_registration_open
+                ? "Pendaftaran dibuka"
+                : "Pendaftaran ditutup"}
+            </Badge>
+            <Stack
+              component="dl"
+              gap="md"
+              className={classes.registrationFacts}
+            >
+              {activity.registration_start ? (
+                <div>
+                  <Text component="dt" size="sm" c="dimmed">
+                    <IconCalendar size={16} aria-hidden="true" />
+                    Mulai pendaftaran
+                  </Text>
+                  <Text component="dd" fw={600}>
+                    {formatActivityDate(activity.registration_start)}
+                  </Text>
+                </div>
+              ) : null}
+              <div>
+                <Text component="dt" size="sm" c="dimmed">
+                  <IconCalendarEvent size={16} aria-hidden="true" />
+                  Batas pendaftaran
+                </Text>
+                <Text component="dd" fw={600}>
+                  {formatActivityDate(activity.registration_end)}
+                </Text>
+              </div>
+              <div>
+                <Text component="dt" size="sm" c="dimmed">
+                  <IconSchool size={16} aria-hidden="true" />
+                  Jenjang minimum
+                </Text>
+                <Text component="dd" fw={600}>
+                  {USER_LEVEL_RENDER[activity.minimum_level]}
+                </Text>
+              </div>
+            </Stack>
+            <Suspense fallback={<ActivityRegistrationActionFallback />}>
+              <ActivityRegistrationAction activity={activity} />
+            </Suspense>
+          </Paper>
+
+          <Paper
+            component="section"
+            id="about-activity"
+            aria-labelledby="about-activity-heading"
+            withBorder
+            radius="md"
+            className={classes.contentSection}
+          >
+            <Title order={2} size="h3" id="about-activity-heading" mb="md">
+              Tentang kegiatan
+            </Title>
+            {activity.description?.trim() ? (
+              <RichTextContent html={activity.description} />
+            ) : (
+              <Text c="dimmed">Deskripsi kegiatan belum tersedia.</Text>
+            )}
+          </Paper>
+        </div>
       </Stack>
     </PageContainer>
   );

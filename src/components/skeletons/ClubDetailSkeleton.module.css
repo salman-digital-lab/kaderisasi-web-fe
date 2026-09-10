@@ -1,82 +1,54 @@
-.status {
-  position: absolute;
-  width: rem(1px);
-  height: rem(1px);
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
+.profileHeader {
+  padding: var(--mantine-spacing-xl);
+  background: var(--surface-subtle);
 }
-
-.header {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(16rem, 1fr);
-  gap: var(--mantine-spacing-md);
-  width: 100%;
-}
-
-.identityCard {
-  width: 100%;
-  min-width: 0;
-}
-
-.actionCard {
-  width: 100%;
-  min-width: 0;
-  align-content: center;
-}
-
-.logo {
-  width: rem(96px);
-  height: rem(96px);
-  flex: 0 0 rem(96px);
-}
-
-.identity {
-  flex: 1;
-  min-width: 0;
-}
-
 .identityHeader {
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--mantine-spacing-xl);
+  align-items: center;
 }
-
-.prose {
-  max-width: 70ch;
+.logo {
+  width: rem(112px);
+  height: rem(112px);
 }
-
-@media (max-width: $mantine-breakpoint-md) {
-  .header {
-    flex-direction: column;
+.identity,
+.registration,
+.content {
+  min-width: 0;
+}
+.overview {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) rem(280px);
+  grid-template-areas: "content registration";
+  align-items: start;
+  gap: var(--mantine-spacing-lg);
+}
+.registration {
+  grid-area: registration;
+}
+.content {
+  grid-area: content;
+}
+@media (max-width: $mantine-breakpoint-sm) {
+  .overview {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "registration" "content";
   }
-
-  .identityCard,
-  .actionCard {
-    width: 100%;
+  .profileHeader {
+    padding: var(--mantine-spacing-lg);
   }
-}
-
-@media (max-width: $mantine-breakpoint-xs) {
   .identityHeader {
-    flex-direction: column;
+    align-items: start;
+    gap: var(--mantine-spacing-md);
   }
-
   .logo {
     width: rem(72px);
     height: rem(72px);
-    flex-basis: rem(72px);
   }
 }
-
-@media (max-width: rem(359px)) {
-  .logo {
-    width: rem(64px);
-    height: rem(64px);
-    flex-basis: rem(64px);
-  }
-}
-
-@media (max-width: $mantine-breakpoint-md) {
-  .header {
+@media (max-width: $mantine-breakpoint-xs) {
+  .identityHeader {
     grid-template-columns: minmax(0, 1fr);
   }
 }

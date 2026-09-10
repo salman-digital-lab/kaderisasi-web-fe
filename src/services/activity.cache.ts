@@ -8,6 +8,8 @@ import {
   getActivity as _getActivity,
 } from "./activity";
 import type { GetActivitiesReq, GetActivityReq } from "@/types/api/activity";
+import { FetcherError } from "@/functions/common/fetcher";
+import type { Activity } from "@/types/model/activity";
 
 /**
  * Cached wrapper for getActivityCategories.
@@ -44,3 +46,16 @@ export async function getActivity(props: GetActivityReq) {
   return _getActivity(props);
 }
 
+export async function getActivityDetail(
+  props: GetActivityReq,
+): Promise<Activity | null> {
+  cacheLife("minutes");
+  cacheTag(CACHE_TAGS.ACTIVITIES, CACHE_TAGS.ACTIVITY(props.slug));
+  try {
+    return await _getActivity(props);
+  } catch (error) {
+    // Handle HTTP status before errors are serialized across the cache boundary.
+    if (error instanceof FetcherError && error.status === 404) return null;
+    throw error;
+  }
+}

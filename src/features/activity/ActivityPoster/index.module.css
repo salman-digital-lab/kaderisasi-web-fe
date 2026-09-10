@@ -1,0 +1,90 @@
+.poster,
+.thumbnail {
+  overflow: hidden;
+  border: rem(1px) solid var(--surface-border);
+  border-radius: var(--mantine-radius-md);
+}
+.poster {
+  display: block;
+  width: 100%;
+}
+.poster:hover,
+.thumbnail:hover {
+  border-color: var(--mantine-primary-color-filled);
+}
+.posterVisual {
+  display: block;
+  aspect-ratio: 4 / 5;
+  max-height: min(78svh, rem(800px));
+  background: var(--surface-subtle);
+}
+.imageFrame {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.image {
+  object-fit: contain;
+}
+.loading {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.imageError {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: var(--mantine-spacing-sm);
+  color: var(--mantine-color-dimmed);
+  font-size: var(--mantine-font-size-sm);
+  text-align: center;
+}
+.caption {
+  min-height: rem(44px);
+  padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+  border-top: rem(1px) solid var(--surface-border);
+  color: var(--mantine-primary-color-filled);
+}
+.caption svg {
+  flex-shrink: 0;
+}
+.thumbnail {
+  width: rem(68px);
+  border-width: rem(2px);
+  border-radius: var(--mantine-radius-sm);
+  background: var(--mantine-color-body);
+}
+.thumbnail[aria-pressed="true"] {
+  border-color: var(--mantine-primary-color-filled);
+}
+.thumbnailVisual {
+  display: block;
+  height: rem(80px);
+  background: var(--surface-subtle);
+}
+.thumbnailNumber {
+  display: block;
+  padding-block: rem(2px);
+  text-align: center;
+}
+.thumbnail[aria-pressed="true"] .thumbnailNumber {
+  background: var(--mantine-primary-color-filled);
+  color: var(--mantine-color-white);
+}
+.expandedVisual {
+  height: min(72dvh, rem(850px));
+  background: var(--surface-subtle);
+}
+.modalTitle {
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+@media (max-width: $mantine-breakpoint-xs) {
+  .expandedVisual {
+    height: 65dvh;
+  }
+}

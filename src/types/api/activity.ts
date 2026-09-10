@@ -1,5 +1,6 @@
-import { APIPagiResponse, APIResponse } from "../helper";
-import { Activity, Registrant } from "../model/activity";
+import type { APIPagiResponse, APIResponse } from "../helper";
+import type { Activity, Registrant } from "../model/activity";
+import type { CertificateLifecycleState } from "../model/certificate";
 
 export type GetActivitiesReq = {
   per_page?: string;
@@ -24,6 +25,8 @@ export type GetActivityRegistrationResp = APIResponse<{
   status: string;
   visible_at?: string;
   registration_id?: number;
+  certificate_code?: string | null;
+  certificate_state?: CertificateLifecycleState;
 }>;
 
 export type GetActivityRegistrationDataReq = {

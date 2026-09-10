@@ -1,59 +1,116 @@
-.carousel-container {
-  width: 100%;
-  max-width: 640px;
-  margin: 0 auto;
-
-  @media (max-width: $mantine-breakpoint-sm) {
-    max-width: 100%;
-    padding: 0;
-  }
+.header {
+  padding: var(--mantine-spacing-xl);
+  background: var(--surface-subtle);
 }
-
-.carousel-control {
-  background-color: var(--mantine-color-body);
+.title {
+  overflow-wrap: anywhere;
+}
+.badge {
+  max-width: 100%;
+  height: auto;
+  padding-block: rem(4px);
+}
+.badge :global(.mantine-Badge-label) {
+  white-space: normal;
+}
+.schedule svg {
+  flex-shrink: 0;
+  margin-top: rem(2px);
   color: var(--mantine-primary-color-filled);
-  opacity: 1;
-
-  @media (max-width: $mantine-breakpoint-sm) {
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
-    min-height: 44px;
+}
+.sectionNav {
+  border-bottom: rem(1px) solid var(--surface-border);
+  padding-bottom: var(--mantine-spacing-xs);
+}
+.sectionLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: rem(44px);
+  padding-inline: var(--mantine-spacing-xs);
+  border-radius: var(--mantine-radius-sm);
+  color: var(--mantine-color-dimmed);
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 600;
+}
+.sectionLink:hover {
+  background: var(--surface-subtle);
+  color: var(--mantine-primary-color-filled);
+}
+.overview {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) rem(280px);
+  grid-template-areas: "content registration";
+  align-items: start;
+  gap: var(--mantine-spacing-lg);
+}
+.overview[data-has-poster] {
+  grid-template-areas: "poster registration" "content registration";
+}
+.posterSection {
+  grid-area: poster;
+  min-width: 0;
+  scroll-margin-top: var(--mantine-spacing-lg);
+}
+.posterSkeleton {
+  aspect-ratio: 4 / 5;
+  max-height: min(78svh, rem(800px));
+}
+.registrationCard {
+  grid-area: registration;
+  position: sticky;
+  top: var(--mantine-spacing-lg);
+  min-width: 0;
+  padding: var(--mantine-spacing-lg);
+  scroll-margin-top: var(--mantine-spacing-lg);
+}
+.registrationFacts {
+  margin: 0 0 var(--mantine-spacing-lg);
+  padding-bottom: var(--mantine-spacing-lg);
+  border-bottom: rem(1px) solid var(--surface-border);
+}
+.registrationFacts dt {
+  display: flex;
+  align-items: center;
+  gap: var(--mantine-spacing-xs);
+}
+.registrationFacts dt svg {
+  flex-shrink: 0;
+}
+.registrationFacts dd {
+  margin: rem(4px) 0 0;
+  font-size: var(--mantine-font-size-sm);
+  overflow-wrap: anywhere;
+}
+.contentSection {
+  min-width: 0;
+  padding: var(--mantine-spacing-lg);
+  scroll-margin-top: var(--mantine-spacing-lg);
+}
+.overview > .contentSection {
+  grid-area: content;
+}
+@media (max-width: $mantine-breakpoint-sm) {
+  .overview {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "registration" "content";
   }
-}
-
-.carousel-control:hover {
-  background-color: var(--mantine-primary-color-light);
-  opacity: 1;
-}
-
-.carousel-indicator {
-  background-color: var(--mantine-color-blue-3);
-  opacity: 75%;
-}
-
-.carousel-indicator[data-active] {
-  background-color: var(--mantine-color-blue-6);
-  opacity: 75%;
-}
-
-.carousel-image {
-  height: 440px;
-  max-height: 65vh;
-  object-fit: contain;
-
-  @media (max-width: $mantine-breakpoint-sm) {
-    height: auto;
-    aspect-ratio: 4 / 5;
-    object-fit: contain;
-    width: 100%;
+  .overview[data-has-poster] {
+    grid-template-areas: "poster" "registration" "content";
   }
-}
-
-.carousel-slide {
-  @media (max-width: $mantine-breakpoint-sm) {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .registrationCard {
+    position: static;
+  }
+  .header {
+    padding: var(--mantine-spacing-lg);
+  }
+  .registrationFacts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .registrationFacts dt {
+    align-items: start;
+  }
+  .registrationFacts dt svg {
+    margin-top: rem(2px);
   }
 }

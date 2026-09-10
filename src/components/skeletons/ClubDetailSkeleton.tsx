@@ -1,78 +1,49 @@
-"use client";
-
-import detailClasses from "@/components/layout/DetailLayout.module.css";
+import type { ReactElement } from "react";
+import { Group, Paper, Skeleton, Stack, VisuallyHidden } from "@mantine/core";
 import PageContainer from "@/components/layout/PageContainer";
-
-import { Card, Group, SimpleGrid, Skeleton, Stack } from "@mantine/core";
 import classes from "./ClubDetailSkeleton.module.css";
 
-export function ClubDetailSkeleton() {
+export function ClubDetailSkeleton(): ReactElement {
   return (
     <PageContainer size="md">
-      <span className={classes.status} role="status">
-        Memuat detail klub…
-      </span>
-
-      <Stack gap="lg">
+      <VisuallyHidden role="status">Memuat detail klub…</VisuallyHidden>
+      <Stack gap="lg" aria-hidden="true">
         <Skeleton height={44} width={190} />
-
-        <div className={detailClasses.header}>
-          <Card withBorder radius="md" p="lg" className={classes.identityCard}>
-            <Group
-              align="flex-start"
-              wrap="nowrap"
-              gap="lg"
-              className={classes.identityHeader}
-            >
-              <Skeleton className={classes.logo} radius="md" />
-              <Stack gap="xs" className={classes.identity}>
-                <Group gap="xs">
-                  <Skeleton height={22} width={54} radius="xl" />
-                  <Skeleton height={22} width={132} radius="xl" />
-                </Group>
-                <Skeleton height={34} width="min(100%, 430px)" />
-                <Skeleton height={16} width="min(92%, 520px)" />
-              </Stack>
-            </Group>
-            <Group gap="xs" mt="lg">
-              <Skeleton height={22} width={176} radius="xl" />
-              <Skeleton height={22} width={218} radius="xl" />
-            </Group>
-          </Card>
-
-          <Card withBorder radius="md" p="lg" className={classes.actionCard}>
+        <Paper withBorder radius="md" className={classes.profileHeader}>
+          <div className={classes.identityHeader}>
+            <Skeleton className={classes.logo} radius="md" />
+            <Stack gap="sm" className={classes.identity}>
+              <Skeleton height={22} width={150} />
+              <Skeleton height={38} width="85%" />
+              <Skeleton height={16} width="100%" />
+              <Skeleton height={16} width="80%" />
+            </Stack>
+          </div>
+        </Paper>
+        <Group gap="md">
+          <Skeleton height={44} width={100} />
+          <Skeleton height={44} width={100} />
+          <Skeleton height={44} width={80} />
+        </Group>
+        <div className={classes.overview}>
+          <Paper withBorder radius="md" p="lg" className={classes.registration}>
             <Stack gap="lg">
-              <Skeleton height={18} width="72%" mx="auto" />
-              <Skeleton height={44} width="100%" radius="sm" />
+              <Skeleton height={26} width="75%" />
+              <Skeleton height={22} width="80%" />
+              <Skeleton height={42} />
+              <Skeleton height={42} />
+              <Skeleton height={44} />
             </Stack>
-          </Card>
-        </div>
-
-        <Stack gap="lg">
-          <Card withBorder radius="md" p="lg" aria-hidden="true">
-            <Skeleton height={26} width={210} mb="lg" />
-            <Stack gap="sm" className={classes.prose}>
-              <Skeleton height={14} width="100%" />
-              <Skeleton height={14} width="96%" />
-              <Skeleton height={14} width="90%" />
-              <Skeleton height={14} width="72%" />
-            </Stack>
-          </Card>
-
-          <Card withBorder radius="md" p="lg" aria-hidden="true">
-            <Skeleton height={26} width={130} mb="lg" />
-            <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="md">
-              {Array.from({ length: 3 }, (_, index) => (
-                <Card withBorder p="md" radius="md" key={index}>
-                  <Stack gap="xs">
-                    <Skeleton height={18} width="75%" />
-                    <Skeleton height={14} width="50%" />
-                  </Stack>
-                </Card>
+          </Paper>
+          <Paper withBorder radius="md" p="lg" className={classes.content}>
+            <Skeleton height={26} width={160} mb="lg" />
+            <Stack gap="md">
+              {[100, 96, 90, 72, 100, 92, 80].map((width, index) => (
+                <Skeleton key={index} height={16} width={`${width}%`} />
               ))}
-            </SimpleGrid>
-          </Card>
-        </Stack>
+            </Stack>
+          </Paper>
+        </div>
       </Stack>
     </PageContainer>
   );

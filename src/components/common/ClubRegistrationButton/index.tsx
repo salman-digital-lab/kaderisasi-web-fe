@@ -229,11 +229,11 @@ export default function ClubRegistrationButton({
   if (checkState === "unauthenticated") {
     return (
       <Stack gap="sm">
-        {!isRegistrationOpen && (
-          <Alert color="gray" title="Pendaftaran telah ditutup">
-            Masuk untuk melihat status pendaftaran Anda.
-          </Alert>
-        )}
+        <Text size="sm" c="dimmed" lh={1.6}>
+          {isRegistrationOpen
+            ? "Masuk ke akun Anda untuk melanjutkan pendaftaran klub."
+            : "Sudah mendaftar? Masuk untuk melihat status pendaftaran Anda."}
+        </Text>
         {checkError && (
           <Alert color="yellow" title="Sesi berakhir">
             {checkError}
@@ -247,7 +247,7 @@ export default function ClubRegistrationButton({
         >
           {isRegistrationOpen
             ? "Masuk untuk mendaftar"
-            : "Masuk untuk melihat status"}
+            : "Lihat status pendaftaran"}
         </Button>
       </Stack>
     );
