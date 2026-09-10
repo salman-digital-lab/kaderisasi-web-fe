@@ -5,6 +5,7 @@ import type {
   CertificateLifecycleSummary,
 } from "@/types/model/certificate";
 import {
+  formatCertificateApproval,
   getCertificateFilename,
   formatCertificateTimestamp,
   getCertificateCta,
@@ -18,6 +19,32 @@ import {
   resolvePublicCertificateText,
   toPublicCertificateData,
 } from "./certificateData";
+
+describe("certificate approval rendering", () => {
+  it("uses the approval date in Jakarta and keeps audit identifiers out of public data", () => {
+    const approval = {
+      signer_name: "Penandatangan",
+      signer_title: "Ketua kegiatan",
+      approved_at: "2026-09-09T18:00:00.000Z",
+      signer_id: 2,
+      request_id: 3,
+      content_hash: "private",
+    };
+    const text = formatCertificateApproval(approval);
+    expect(text).toContain("10 September 2026");
+    expect(text).toContain("Penandatangan");
+    const data = toPublicCertificateData({
+      ...renderData,
+      certificate: { ...renderData.certificate, approval },
+    });
+    expect(data.certificate.approval).toEqual({
+      signer_name: approval.signer_name,
+      signer_title: approval.signer_title,
+      approved_at: approval.approved_at,
+    });
+    expect(JSON.stringify(data)).not.toContain("content_hash");
+  });
+});
 
 const renderData: CertificateData = {
   activity: {

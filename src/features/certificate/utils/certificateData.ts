@@ -1,4 +1,5 @@
 import type {
+  CertificateApproval,
   CertificateData,
   CertificateElement,
   CertificateLifecycleSummary,
@@ -7,6 +8,19 @@ import type {
 } from "@/types/model/certificate";
 
 const LEGACY_REGISTRATION_PATTERN = /^[1-9]\d*$/;
+
+export function formatCertificateApproval(
+  approval?: CertificateApproval,
+): string {
+  if (!approval) return "Menunggu persetujuan penandatangan";
+  const date = new Date(approval.approved_at).toLocaleDateString("id-ID", {
+    timeZone: "Asia/Jakarta",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+  return `Disetujui secara elektronik oleh\n${approval.signer_name}\n${approval.signer_title}\n${date}`;
+}
 
 export function normalizeCertificateAppUrl(
   value: string | undefined,
@@ -141,6 +155,15 @@ export function toPublicCertificateData(
       gender: data.participant.gender,
     },
     certificate: {
+      ...(data.certificate.approval
+        ? {
+            approval: {
+              signer_name: data.certificate.approval.signer_name,
+              signer_title: data.certificate.approval.signer_title,
+              approved_at: data.certificate.approval.approved_at,
+            },
+          }
+        : {}),
       certificate_code: data.certificate.certificate_code,
       issued_at: data.certificate.issued_at,
       revoked_at: data.certificate.revoked_at,
@@ -161,6 +184,8 @@ export function resolvePublicCertificateText(
   if (element.type !== "variable-text") return "";
 
   switch (normalizeVariable(element.variable)) {
+    case "approval":
+      return formatCertificateApproval(data.certificate.approval);
     case "name":
       return data.participant.name;
     case "activity_name":
@@ -188,6 +213,8 @@ export function resolveOwnerCertificateText(
   if (element.type !== "variable-text") return "";
 
   switch (normalizeVariable(element.variable)) {
+    case "approval":
+      return formatCertificateApproval(data.certificate.approval);
     case "name":
       return data.participant.name;
     case "email":

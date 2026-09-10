@@ -68,7 +68,14 @@ const certificateCodeSchema = z
   .max(96)
   .regex(/^[A-Z0-9-]+$/);
 
+const certificateApprovalSchema = z.object({
+  signer_name: z.string().min(1),
+  signer_title: z.string().min(1),
+  approved_at: z.string().min(1),
+});
+
 const certificateRecordSchema = z.object({
+  approval: certificateApprovalSchema.optional(),
   id: optionalPositiveIdSchema,
   certificate_code: certificateCodeSchema,
   registration_id: optionalPositiveIdSchema,
@@ -180,6 +187,7 @@ export const certificateVerificationSchema: z.ZodType<CertificateVerificationDat
   z
     .object({
       valid: z.boolean(),
+      approval: certificateApprovalSchema.optional(),
       state: z.enum(["issued_active", "issued_revoked", "not_found"]),
       certificate_code: certificateCodeSchema,
       participant_name: nullableTextSchema,

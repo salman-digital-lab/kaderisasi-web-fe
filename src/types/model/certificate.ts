@@ -34,7 +34,14 @@ export type CertificateTemplateData = {
   canvasHeight: number;
 };
 
+export type CertificateApproval = {
+  signer_name: string;
+  signer_title: string;
+  approved_at: string;
+};
+
 export type CertificateRecord = {
+  approval?: CertificateApproval;
   certificate_code: string;
   issued_at: string;
   revoked_at: string | null;
@@ -88,7 +95,11 @@ export type PublicCertificateData = {
   >;
   certificate: Pick<
     CertificateRecord,
-    "certificate_code" | "issued_at" | "revoked_at" | "revoked_reason"
+    | "certificate_code"
+    | "issued_at"
+    | "revoked_at"
+    | "revoked_reason"
+    | "approval"
   >;
 };
 
@@ -107,6 +118,7 @@ export type CertificateVerificationState =
   "issued_active" | "issued_revoked" | "not_found";
 
 export type CertificateVerificationData = {
+  approval?: CertificateApproval;
   valid: boolean;
   state: CertificateVerificationState;
   certificate_code: string;

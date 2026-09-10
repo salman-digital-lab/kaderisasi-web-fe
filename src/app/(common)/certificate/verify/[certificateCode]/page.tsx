@@ -163,6 +163,34 @@ export default async function CertificateVerificationPage(props: {
                   </Text>
                 </div>
               )}
+              {result.approval && (
+                <>
+                  <div>
+                    <Text c="dimmed" component="dt" size="md">
+                      Disetujui secara elektronik oleh
+                    </Text>
+                    <Text component="dd" m={0}>
+                      {result.approval.signer_name}
+                    </Text>
+                  </div>
+                  <div>
+                    <Text c="dimmed" component="dt" size="md">
+                      Jabatan penandatangan
+                    </Text>
+                    <Text component="dd" m={0}>
+                      {result.approval.signer_title}
+                    </Text>
+                  </div>
+                  <div>
+                    <Text c="dimmed" component="dt" size="md">
+                      Waktu persetujuan
+                    </Text>
+                    <Text component="dd" m={0}>
+                      {formatCertificateTimestamp(result.approval.approved_at)}
+                    </Text>
+                  </div>
+                </>
+              )}
               {isRevoked && result.revoked_at && (
                 <div>
                   <Text c="dimmed" component="dt" size="md">
