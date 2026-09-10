@@ -17,7 +17,7 @@ type SubmitPublicMemberProfilePayload = {
   origin_city_id?: number;
   country?: string;
   education_history: {
-    degree: "bachelor" | "master" | "doctoral";
+    degree?: "bachelor" | "master" | "doctoral";
     institution: string;
     faculty: string;
     major: string;

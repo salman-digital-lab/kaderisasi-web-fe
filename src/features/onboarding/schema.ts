@@ -169,15 +169,16 @@ export const degreeOptions = [
 
 const educationEntrySchema = z
   .object({
-    degree: z.enum(["bachelor", "master", "doctoral"]),
+    degree: z.union([z.enum(["bachelor", "master", "doctoral"]), z.literal("")])
+      .refine((value): boolean => value !== "", "Jenjang wajib dipilih"),
     institution: z.string().trim().min(1, "Institusi wajib diisi"),
     faculty: z.string().trim().min(1, "Fakultas wajib diisi"),
     major: z.string().trim().min(1, "Jurusan wajib diisi"),
     intakeYear: z
       .number()
       .int("Tahun masuk tidak valid")
-      .min(1950, "Tahun masuk tidak valid")
-      .max(new Date().getFullYear() + 5, "Tahun masuk tidak valid")
+      .min(1900, "Tahun masuk tidak valid")
+      .max(new Date().getFullYear() + 10, "Tahun masuk tidak valid")
       .nullable(),
   })
   .superRefine((value, context) => {
@@ -197,14 +198,14 @@ const workEntrySchema = z
     startYear: z
       .number()
       .int("Tahun mulai tidak valid")
-      .min(1950, "Tahun mulai tidak valid")
-      .max(new Date().getFullYear() + 5, "Tahun mulai tidak valid")
+      .min(1900, "Tahun mulai tidak valid")
+      .max(new Date().getFullYear() + 10, "Tahun mulai tidak valid")
       .nullable(),
     endYear: z
       .number()
       .int("Tahun selesai tidak valid")
-      .min(1950, "Tahun selesai tidak valid")
-      .max(new Date().getFullYear() + 5, "Tahun selesai tidak valid")
+      .min(1900, "Tahun selesai tidak valid")
+      .max(new Date().getFullYear() + 10, "Tahun selesai tidak valid")
       .nullable(),
   })
   .superRefine((value, context) => {
@@ -427,7 +428,7 @@ function normalizeId(value: string) {
 
 function normalizeEducationEntries(values: OnboardingFormValues) {
   return values.educationHistory.map((entry) => ({
-    degree: entry.degree,
+    degree: entry.degree || undefined,
     institution: normalizeString(entry.institution),
     faculty: normalizeString(entry.faculty),
     major: normalizeString(entry.major),

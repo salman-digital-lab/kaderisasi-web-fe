@@ -1,6 +1,7 @@
 import type { Country } from "@/types/model/country";
 import type { Member, PublicUser } from "@/types/model/members";
 import { USER_LEVEL_ENUM } from "@/types/constants/profile";
+import { normalizeEducationHistory, normalizeWorkHistory } from "@/utils/profile-history";
 
 import {
   currentActivityFocusOptions,
@@ -176,7 +177,7 @@ export function buildPrefilledValues(profileData?: {
     return onboardingInitialValues;
   }
 
-  const history = profileData.profile.education_history ?? [];
+  const history = normalizeEducationHistory(profileData.profile.education_history);
 
   const kaderisasiPath = profileData.profile.extra_data?.kaderisasi_path;
   const parsedBadges = profileData.profile.badges ?? [];
@@ -254,13 +255,13 @@ export function buildPrefilledValues(profileData?: {
     originCityId: profileData.profile.origin_city_id?.toString() ?? "",
     country: profileData.profile.country ?? "",
     educationHistory: history.map((entry) => ({
-      degree: entry.degree,
+      degree: entry.degree ?? "",
       institution: entry.institution,
       faculty: entry.faculty,
       major: entry.major,
-      intakeYear: entry.intake_year,
+      intakeYear: entry.intake_year ?? null,
     })),
-    workHistory: (profileData.profile.work_history ?? []).map((entry) => ({
+    workHistory: normalizeWorkHistory(profileData.profile.work_history).map((entry) => ({
       jobTitle: entry.job_title ?? "",
       company: entry.company ?? "",
       startYear: entry.start_year ?? null,

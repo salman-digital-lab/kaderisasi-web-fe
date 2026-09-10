@@ -111,6 +111,7 @@ export default function CustomFormContent({
   }, []);
 
   const [loading, setLoading] = useState(false);
+  const [savedProfileData, setSavedProfileData] = useState(profileData);
 
   const profileFields = customForm.form_schema.fields[0]?.fields ?? [];
   const customFormSections = customForm.form_schema.fields.slice(1);
@@ -322,7 +323,10 @@ export default function CustomFormContent({
             <CustomFormProfileSection
               formRef={formRef}
               profileFields={profileFields}
-              profileData={profileData}
+              profileData={savedProfileData}
+              onProfileSaved={(profile) => {
+                setSavedProfileData((previous) => previous ? { ...previous, profile } : previous);
+              }}
               provinceData={provinceData}
               countryData={countryData}
               onSubmit={handleProfileSubmit}

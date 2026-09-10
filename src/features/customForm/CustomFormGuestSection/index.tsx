@@ -1,5 +1,8 @@
 "use client";
 
+import { normalizeEducationHistory } from "@/utils/profile-history";
+import { educationEntrySchema, historyValidationErrors } from "@/features/profile/history-schema";
+
 import { useState, type RefObject } from "react";
 import {
   ActionIcon,
@@ -71,12 +74,10 @@ export default function CustomFormGuestSection({
   profileFields.forEach((field) => {
     if (field.key === "education_history") {
       const stored = initialData["education_history"];
-      initialValues[field.key] = Array.isArray(stored) ? stored : [];
+      initialValues[field.key] = normalizeEducationHistory(stored);
     } else if (field.key === "current_education") {
       const stored = initialData["current_education"];
-      initialValues[field.key] = stored && typeof stored === "object"
-        ? stored
-        : {
+      initialValues[field.key] = normalizeEducationHistory([stored])[0] ?? {
             degree: "bachelor",
             institution: "",
             faculty: "",
@@ -94,7 +95,15 @@ export default function CustomFormGuestSection({
     mode: "uncontrolled",
     initialValues,
     validate: (values) => {
-      const errors: Record<string, string> = {};
+      const errors: Record<string, string> = historyValidationErrors({
+        education_history: values.education_history,
+      });
+      const currentResult = educationEntrySchema.safeParse(values.current_education);
+      if (values.current_education && !currentResult.success) {
+        currentResult.error.issues.forEach((issue) => {
+          errors[`current_education.${issue.path.join(".")}`] = issue.message;
+        });
+      }
       const name = values["name"];
       const email = values["email"];
 
@@ -116,7 +125,7 @@ export default function CustomFormGuestSection({
           field.key === "education_history"
             ? !Array.isArray(val) || (val as unknown[]).length === 0
             : field.key === "current_education"
-            ? !(val as any)?.institution
+            ? !educationEntrySchema.safeParse(val).data?.institution.trim()
             : !val;
         if (field.required && isEmpty) {
           errors[field.key] = `${field.label} wajib diisi`;
@@ -391,6 +400,14 @@ export default function CustomFormGuestSection({
           ? toISODateString(values[field.key] as Parameters<typeof toISODateString>[0])
           : values[field.key];
     });
+
+    if (processed.education_history !== undefined) {
+      processed.education_history = normalizeEducationHistory(processed.education_history);
+    }
+    if (processed.current_education !== undefined) {
+      const entry = educationEntrySchema.parse(processed.current_education);
+      processed.current_education = entry.institution ? entry : undefined;
+    }
 
     // Carry name/email even when not part of the schema fields
     if (!hasNameField) processed["name"] = values["name"];

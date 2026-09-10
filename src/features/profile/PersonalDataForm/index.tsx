@@ -26,13 +26,15 @@ import { useState, useEffect } from "react";
 import { GENDER_OPTION } from "@/constants/form/profile";
 import showNotif from "@/functions/common/notification";
 import editProfile from "@/functions/server/editProfile";
-import { ExtraData, Member, PublicUser, WorkEntry, EducationEntry } from "@/types/model/members";
-import { Province } from "@/types/model/province";
+import type { ExtraData, Member, PublicUser, WorkEntry, EducationEntry } from "@/types/model/members";
+import type { Province } from "@/types/model/province";
 import type { City } from "@/types/model/city";
 import type { Country } from "@/types/model/country";
 import { toISODateString } from "@/utils/dateUtils";
 import UniversityNameSelect from "@/components/common/UniversityNameSelect";
 import { getCitiesByProvince } from "@/services/profile";
+import { normalizeEducationHistory, normalizeWorkHistory } from "@/utils/profile-history";
+import { historyValidationErrors, profileHistorySchema } from "@/features/profile/history-schema";
 import classes from "./index.module.css";
 
 const CURRENT_ACTIVITY_FOCUS_OPTIONS = [
@@ -48,24 +50,6 @@ const DEGREE_OPTIONS = [
   { value: "master", label: "S2" },
   { value: "doctoral", label: "S3" },
 ];
-
-const normalizeYearValue = (value: number | string | null | undefined): number | undefined => {
-  if (typeof value === "number" && !Number.isNaN(value)) return value;
-  if (typeof value === "string" && value.trim() !== "") {
-    const parsedValue = Number(value);
-    return Number.isNaN(parsedValue) ? undefined : parsedValue;
-  }
-
-  return undefined;
-};
-
-const normalizeWorkHistory = (entries: WorkEntry[] | undefined): WorkEntry[] =>
-  (entries ?? []).map((entry) => ({
-    job_title: entry.job_title ?? "",
-    company: entry.company ?? "",
-    start_year: normalizeYearValue(entry.start_year),
-    end_year: normalizeYearValue(entry.end_year),
-  }));
 
 type PersonalDataFormProps = {
   provinces?: Province[];
@@ -114,6 +98,7 @@ export default function PersonalDataForm({
 
   const form = useForm({
     mode: "uncontrolled",
+    validate: historyValidationErrors,
     initialValues: {
       name: profileData?.profile.name,
       gender: profileData?.profile.gender,
@@ -130,7 +115,7 @@ export default function PersonalDataForm({
         : undefined,
       origin_province_id: profileData?.profile.origin_province_id?.toString(),
       country: profileData?.profile.country,
-      education_history: (profileData?.profile.education_history ?? []) as EducationEntry[],
+      education_history: normalizeEducationHistory(profileData?.profile.education_history),
       work_history: normalizeWorkHistory(profileData?.profile.work_history),
       extra_data: {
         preferred_name: profileData?.profile.extra_data?.preferred_name ?? "",
@@ -172,6 +157,7 @@ export default function PersonalDataForm({
 
     const finalFormData = {
       ...rawFormData,
+      ...profileHistorySchema.parse(rawFormData),
       province_id: rawFormData.province_id
         ? Number(rawFormData.province_id)
         : undefined,
@@ -186,7 +172,7 @@ export default function PersonalDataForm({
 
     try {
       const resp = await editProfile(finalFormData);
-      if (resp) showNotif(resp.message);
+      showNotif(resp.message, !resp.success);
     } catch (error: unknown) {
       if (error instanceof Error) showNotif(error.message, true);
     }
@@ -224,12 +210,16 @@ export default function PersonalDataForm({
   const cancelEditEducation = (index: number) => {
     if (educationSnapshot) {
       form.replaceListItem("education_history", index, educationSnapshot);
+    } else {
+      form.removeListItem("education_history", index);
     }
     setEducationSnapshot(null);
     setEditingEducationIndex(null);
   };
 
   const saveEditEducation = () => {
+    if (form.validate().hasErrors) return;
+    form.setFieldValue("education_history", profileHistorySchema.parse(form.getValues()).education_history ?? []);
     setEducationSnapshot(null);
     setEditingEducationIndex(null);
   };
@@ -249,12 +239,16 @@ export default function PersonalDataForm({
   const cancelEditWork = (index: number) => {
     if (workSnapshot) {
       form.replaceListItem("work_history", index, workSnapshot);
+    } else {
+      form.removeListItem("work_history", index);
     }
     setWorkSnapshot(null);
     setEditingWorkIndex(null);
   };
 
   const saveEditWork = () => {
+    if (form.validate().hasErrors) return;
+    form.setFieldValue("work_history", profileHistorySchema.parse(form.getValues()).work_history ?? []);
     setWorkSnapshot(null);
     setEditingWorkIndex(null);
   };
@@ -485,6 +479,7 @@ export default function PersonalDataForm({
                     variant="filled"
                     size="lg"
                     aria-label="Edit pendidikan"
+                    disabled={editingEducationIndex !== null}
                     onClick={() => startEditEducation(index)}
                   >
                     <IconPencil size={18} />
@@ -496,7 +491,6 @@ export default function PersonalDataForm({
                     aria-label="Hapus pendidikan"
                     onClick={() => {
                       form.removeListItem("education_history", index);
-                      setEducationSnapshot(null);
                       setEditingEducationIndex((currentValue) => {
                         if (currentValue === index) return null;
                         if (currentValue !== null && currentValue > index) return currentValue - 1;
@@ -574,6 +568,7 @@ export default function PersonalDataForm({
         size="md"
         mt="xs"
         className={classes.addButton}
+        disabled={editingEducationIndex !== null}
         onClick={() => {
           form.insertListItem("education_history", {
             degree: "bachelor",
@@ -632,6 +627,7 @@ export default function PersonalDataForm({
                     variant="filled"
                     size="lg"
                     aria-label="Edit pekerjaan"
+                    disabled={editingWorkIndex !== null}
                     onClick={() => startEditWork(index)}
                   >
                     <IconPencil size={18} />
@@ -643,7 +639,6 @@ export default function PersonalDataForm({
                     aria-label="Hapus pekerjaan"
                     onClick={() => {
                       form.removeListItem("work_history", index);
-                      setWorkSnapshot(null);
                       setEditingWorkIndex((currentValue) => {
                         if (currentValue === index) return null;
                         if (currentValue !== null && currentValue > index) return currentValue - 1;
@@ -716,6 +711,7 @@ export default function PersonalDataForm({
         size="md"
         mt="xs"
         className={classes.addButton}
+        disabled={editingWorkIndex !== null}
         onClick={() => {
           form.insertListItem("work_history", {
             job_title: "",

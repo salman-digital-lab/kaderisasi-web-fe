@@ -29,6 +29,9 @@ import showNotif from "@/functions/common/notification";
 import { toISODateString } from "@/utils/dateUtils";
 import UniversityNameSelect from "@/components/common/UniversityNameSelect";
 import { getCitiesByProvince } from "@/services/profile";
+import { normalizeEducationHistory } from "@/utils/profile-history";
+import { educationEntrySchema, historyValidationErrors } from "@/features/profile/history-schema";
+import { selectCurrentEducation } from "@/features/customForm/education-history";
 
 const DEGREE_OPTIONS = [
   { value: "bachelor", label: "S1 (Sarjana)" },
@@ -59,6 +62,7 @@ type CustomFormProfileSectionProps = {
   provinceData?: Province[];
   countryData?: Country[];
   onSubmit: (data?: Record<string, any>) => void;
+  onProfileSaved?: (profile: Member) => void;
   onLoadingChange?: (value: boolean) => void;
   loading?: boolean;
   isSingleSection?: boolean;
@@ -71,6 +75,7 @@ export default function CustomFormProfileSection({
   provinceData,
   countryData,
   onSubmit,
+  onProfileSaved,
   onLoadingChange,
   loading = false,
   isSingleSection = false,
@@ -97,7 +102,7 @@ export default function CustomFormProfileSection({
     }
   }, [profileData]);
 
-  const history = profileData?.profile?.education_history ?? [];
+  const history = normalizeEducationHistory(profileData?.profile?.education_history);
 
   // Default to last item (= current education) pre-selected
   const initialCeKey = history.length > 0 ? String(history.length - 1) : null;
@@ -107,8 +112,6 @@ export default function CustomFormProfileSection({
   const [ceSelectedKey, setCeSelectedKey] = useState<string | null>(initialCeKey);
   const [ceFormKey, setCeFormKey] = useState(0);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  // local copy of history for in-place display updates before main form submit
-  const [localHistory, setLocalHistory] = useState<EducationEntry[]>(history);
 
   const updateCeKey = (val: string | null) => {
     ceSelectedKeyRef.current = val;
@@ -124,7 +127,7 @@ export default function CustomFormProfileSection({
     } else {
       updateCeKey(val);
       // use localHistory so previously confirmed edits are preserved
-      form.setFieldValue("current_education", localHistory[Number(val)]);
+      form.setFieldValue("current_education", { ...form.getValues().education_history[Number(val)] });
     }
   };
 
@@ -139,16 +142,15 @@ export default function CustomFormProfileSection({
 
   const handleConfirmEdit = () => {
     if (editingIndex === null) return;
+    if (form.validate().hasErrors) return;
     const edited = form.getValues().current_education as EducationEntry;
-    setLocalHistory((prev) =>
-      prev.map((e, i) => (i === editingIndex ? { ...edited } : e)),
-    );
+    form.replaceListItem("education_history", editingIndex, { ...edited });
     setEditingIndex(null);
   };
 
 
   // Build initial values from profile data
-  const initialValues: Record<string, any> = {};
+  const initialValues: Record<string, any> = { education_history: history };
 
   profileFields.forEach((field) => {
     const profile = profileData?.profile;
@@ -203,7 +205,7 @@ export default function CustomFormProfileSection({
           : undefined;
         break;
       case "education_history":
-        initialValues[field.key] = profile?.education_history ?? [];
+        initialValues[field.key] = history;
         break;
       case "current_education":
         initialValues[field.key] = history.length > 0
@@ -219,7 +221,15 @@ export default function CustomFormProfileSection({
     mode: "uncontrolled",
     initialValues,
     validate: (values) => {
-      const errors: Record<string, string> = {};
+      const errors: Record<string, string> = profileFields.some(
+        (field) => field.key === "education_history" || field.key === "current_education",
+      ) ? historyValidationErrors({ education_history: values.education_history }) : {};
+      const currentResult = educationEntrySchema.safeParse(values.current_education);
+      if (values.current_education && !currentResult.success) {
+        currentResult.error.issues.forEach((issue) => {
+          errors[`current_education.${issue.path.join(".")}`] = issue.message;
+        });
+      }
 
       profileFields.forEach((field) => {
         let isEmpty: boolean;
@@ -229,11 +239,11 @@ export default function CustomFormProfileSection({
             (values[field.key] as any[]).length === 0;
         } else if (field.key === "current_education") {
           // If history exists, user must select something
-          if (history.length > 0 && ceSelectedKeyRef.current === null) {
+          if (values.education_history.length > 0 && ceSelectedKeyRef.current === null) {
             isEmpty = true;
           } else {
             // New entry must have at least institution filled
-            isEmpty = !(values["current_education"] as any)?.institution;
+            isEmpty = !values.current_education?.institution?.trim();
           }
         } else {
           isEmpty = !values[field.key];
@@ -269,6 +279,7 @@ export default function CustomFormProfileSection({
       return errors;
     },
   });
+  const localHistory = form.getValues().education_history as EducationEntry[];
 
   const renderField = (field: CustomFormField) => {
     const commonProps = {
@@ -444,7 +455,19 @@ export default function CustomFormProfileSection({
                     color="red"
                     variant="subtle"
                     size="md"
-                    onClick={() => form.removeListItem("education_history", index)}
+                    onClick={() => {
+                      form.removeListItem("education_history", index);
+                      if (ceSelectedKeyRef.current !== null && ceSelectedKeyRef.current !== "new") {
+                        const selected = Number(ceSelectedKeyRef.current);
+                        if (selected === index) {
+                          updateCeKey(null);
+                          form.setFieldValue("current_education", { ...BLANK_EDUCATION });
+                        } else if (selected > index) {
+                          updateCeKey(String(selected - 1));
+                        }
+                      }
+                      setEditingIndex(null);
+                    }}
                   >
                     ×
                   </ActionIcon>
@@ -512,7 +535,7 @@ export default function CustomFormProfileSection({
 
       case "current_education": {
         const ceError = form.errors["current_education"];
-        const isCreating = ceSelectedKey === "new" || history.length === 0;
+        const isCreating = ceSelectedKey === "new" || localHistory.length === 0;
 
         return (
           <Stack gap={4}>
@@ -531,7 +554,7 @@ export default function CustomFormProfileSection({
               </Text>
             )}
 
-            {history.length > 0 && (
+            {localHistory.length > 0 && (
               <Stack gap="xs">
                 {localHistory.map((e, i) => {
                   const val = String(i);
@@ -565,7 +588,7 @@ export default function CustomFormProfileSection({
                           />
                           <Stack gap={2}>
                             <Text size="md" fw={500}>
-                              {DEGREE_LABEL[e.degree] ?? e.degree} — {e.institution || "-"}
+                              {e.degree ? DEGREE_LABEL[e.degree] : "-"} - {e.institution || "-"}
                             </Text>
                             <Text size="md" c="dimmed">
                               {[e.faculty, e.major].filter(Boolean).join(" · ") || "-"}
@@ -631,7 +654,7 @@ export default function CustomFormProfileSection({
                                 color="gray"
                                 onClick={() => {
                                   // revert form to the original (unedited) local value
-                                  form.setFieldValue("current_education", localHistory[i]);
+                                  form.setFieldValue("current_education", { ...localHistory[i] });
                                   setEditingIndex(null);
                                 }}
                               >
@@ -774,22 +797,15 @@ export default function CustomFormProfileSection({
         }
       });
 
-      // current_education always becomes the last item in education_history
       const hasCeField = profileFields.some((f) => f.key === "current_education");
       if (hasCeField) {
-        const selectedEntry = values["current_education"] as EducationEntry;
-        if (selectedEntry?.institution) {
-          if (ceSelectedKeyRef.current === "new" || localHistory.length === 0) {
-            // New entry: append to local history
-            profileUpdateData["education_history"] = [...localHistory, selectedEntry];
-          } else if (ceSelectedKeyRef.current !== null) {
-            // Existing entry: apply any in-progress edit, then move to last
-            const idx = Number(ceSelectedKeyRef.current);
-            const merged = localHistory.map((e, i) => (i === idx ? selectedEntry : e));
-            const withoutSelected = merged.filter((_, i) => i !== idx);
-            profileUpdateData["education_history"] = [...withoutSelected, selectedEntry];
-          }
-        }
+        const selectedEntry = values.current_education as EducationEntry | undefined;
+        profileUpdateData.education_history = selectCurrentEducation(
+          normalizeEducationHistory(values.education_history),
+          selectedEntry ? educationEntrySchema.parse(selectedEntry) : undefined,
+          ceSelectedKeyRef.current,
+          editingIndex !== null,
+        );
       }
 
       const response = await editProfile(profileUpdateData);
@@ -799,7 +815,12 @@ export default function CustomFormProfileSection({
         return;
       }
 
-      onSubmit(values);
+      if (hasCeField && values.current_education?.institution?.trim()) {
+        form.setFieldValue("education_history", profileUpdateData.education_history);
+        updateCeKey(String(profileUpdateData.education_history.length - 1));
+      }
+      if (response.data) onProfileSaved?.(response.data);
+      onSubmit(Object.fromEntries(profileFields.map((field) => [field.key, values[field.key]])));
     } catch {
       showNotif("Terjadi kesalahan jaringan. Silakan coba lagi.", true);
     } finally {
