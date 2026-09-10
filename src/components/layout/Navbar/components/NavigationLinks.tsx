@@ -8,6 +8,7 @@ import classes from "../index.module.css";
 const LINKS = [
   { href: "/activity", label: "Kegiatan" },
   { href: "/clubs", label: "Klub" },
+  { href: "/kelas", label: "Kelas" },
   { href: "/consultation", label: "Ruang Curhat" },
 ];
 

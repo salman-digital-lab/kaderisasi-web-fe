@@ -25,6 +25,7 @@ import {
   IconChevronRight,
   IconX,
   IconBuildingCommunity,
+  IconBook,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import classes from "../index.module.css";
@@ -49,6 +50,7 @@ const navItems: NavItem[] = [
   { label: "Beranda", href: "/", icon: IconHome },
   { label: "Kegiatan", href: "/activity", icon: IconCalendarEvent },
   { label: "Klub", href: "/clubs", icon: IconBuildingCommunity },
+  { label: "Kelas", href: "/kelas", icon: IconBook },
   { label: "Ruang Curhat", href: "/consultation", icon: IconMessageCircle },
 ];
 
