@@ -197,13 +197,27 @@ const CertificateCanvas = forwardRef<HTMLDivElement, CertificateCanvasProps>(
               data-certificate-content
               ref={forwardedRef}
               style={{
-                backgroundImage: backgroundImage
-                  ? `url(${JSON.stringify(backgroundImage)})`
-                  : undefined,
                 height: canvasHeight,
                 width: canvasWidth,
               }}
             >
+              {backgroundImage ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  alt=""
+                  crossOrigin="anonymous"
+                  draggable={false}
+                  src={backgroundImage}
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    pointerEvents: "none",
+                  }}
+                />
+              ) : null}
               {data.template.template_data.elements.map((element) => (
                 <CertificateElementRenderer
                   data={data}
