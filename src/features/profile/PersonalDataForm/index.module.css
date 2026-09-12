@@ -7,6 +7,10 @@
 .form input {
   scroll-margin-block: 6rem 12rem;
 }
+.surface {
+  --form-inset: var(--mantine-spacing-lg);
+  padding: var(--form-inset);
+}
 .section {
   padding: var(--mantine-spacing-lg) 0;
   border-bottom: 1px solid var(--surface-border);
@@ -36,20 +40,22 @@
   align-self: flex-start;
 }
 .saveBar {
-  position: sticky;
-  bottom: 0;
-  z-index: 10;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: var(--mantine-spacing-md);
-  padding: var(--mantine-spacing-md);
-  padding-bottom: max(var(--mantine-spacing-md), env(safe-area-inset-bottom));
-  margin-top: var(--mantine-spacing-lg);
-  border: 1px solid var(--surface-border);
-  border-radius: var(--mantine-radius-md);
+  padding: var(--mantine-spacing-sm) var(--form-inset);
+  padding-bottom: max(var(--mantine-spacing-sm), env(safe-area-inset-bottom));
+  margin: var(--mantine-spacing-lg) calc(-1 * var(--form-inset))
+    calc(-1 * var(--form-inset));
+  border-top: 1px solid var(--surface-border);
+  border-radius: 0 0 var(--mantine-radius-md) var(--mantine-radius-md);
   background: var(--mantine-color-body);
-  box-shadow: 0 -3px 12px rgb(0 0 0 / 5%);
+}
+.saveBar[data-sticky] {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
 }
 .saveStatus {
   min-width: 0;
@@ -58,6 +64,12 @@
   display: flex;
   gap: var(--mantine-spacing-sm);
   flex-shrink: 0;
+}
+.saveActions > * {
+  padding-inline: var(--mantine-spacing-sm);
+}
+.discardButton:disabled {
+  background: transparent;
 }
 .focusOption {
   min-height: 44px;
@@ -69,19 +81,20 @@
   overflow-wrap: anywhere;
 }
 @media (max-width: 48em) {
+  .surface {
+    --form-inset: var(--mantine-spacing-md);
+  }
   .fields {
     grid-template-columns: minmax(0, 1fr);
   }
   .saveBar {
     flex-wrap: wrap;
-    padding: var(--mantine-spacing-sm);
+    gap: var(--mantine-spacing-xs);
   }
   .saveActions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     width: 100%;
-    flex-wrap: wrap;
-  }
-  .saveActions > * {
-    flex: 1 1 auto;
   }
   .addButton {
     width: 100%;

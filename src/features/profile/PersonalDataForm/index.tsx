@@ -160,8 +160,8 @@ export default function PersonalDataForm({
       <Text c="dimmed" mb="lg">
         Perbarui informasi Anda, lalu simpan perubahan di bagian bawah.
       </Text>
-      <Paper withBorder p={{ base: "md", sm: "lg" }}>
-        <Fieldset unstyled disabled={form.submitting}>
+      <Paper withBorder className={classes.surface}>
+        <Fieldset variant="unstyled" disabled={form.submitting}>
           <Section title="Identitas">
             <div className={classes.fields}>
               <TextInput
@@ -337,39 +337,45 @@ export default function PersonalDataForm({
             />
           </Section>
         </Fieldset>
+        <div
+          className={classes.saveBar}
+          data-sticky={dirty || form.submitting || feedback ? true : undefined}
+        >
+          <div className={classes.saveStatus}>
+            {feedback?.error ? (
+              <Text role="alert" c="red">
+                {feedback.message}
+              </Text>
+            ) : (
+              <Text role="status" size="sm" c="dimmed">
+                {dirty
+                  ? "Ada perubahan yang belum disimpan."
+                  : feedback?.message || "Belum ada perubahan."}
+              </Text>
+            )}
+          </div>
+          <div className={classes.saveActions}>
+            <Button
+              variant="subtle"
+              size="sm"
+              className={classes.discardButton}
+              disabled={!dirty || form.submitting}
+              onClick={discard}
+            >
+              Batalkan perubahan
+            </Button>
+            <Button
+              type="submit"
+              color="blue.8"
+              size="sm"
+              loading={form.submitting}
+              disabled={!dirty}
+            >
+              Simpan perubahan
+            </Button>
+          </div>
+        </div>
       </Paper>
-      <div className={classes.saveBar}>
-        <div className={classes.saveStatus}>
-          {feedback?.error ? (
-            <Text role="alert" c="red">
-              {feedback.message}
-            </Text>
-          ) : (
-            <Text role="status" size="sm" c="dimmed">
-              {dirty
-                ? "Ada perubahan yang belum disimpan."
-                : feedback?.message || "Belum ada perubahan."}
-            </Text>
-          )}
-        </div>
-        <div className={classes.saveActions}>
-          <Button
-            variant="subtle"
-            disabled={!dirty || form.submitting}
-            onClick={discard}
-          >
-            Batalkan perubahan
-          </Button>
-          <Button
-            type="submit"
-            color="blue.8"
-            loading={form.submitting}
-            disabled={!dirty}
-          >
-            Simpan perubahan
-          </Button>
-        </div>
-      </div>
     </form>
   );
 }
