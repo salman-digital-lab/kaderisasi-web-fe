@@ -1,81 +1,88 @@
-.focusSection {
-  position: relative;
+.form {
+  min-width: 0;
 }
-
-.focusLabel {
-  font-weight: 600;
-  font-size: 16px;
-  margin-bottom: 6px;
+.form fieldset {
+  min-width: 0;
 }
-
-.focusDescription {
-  margin-bottom: 8px;
-  font-size: 16px;
+.form input {
+  scroll-margin-block: 6rem 12rem;
 }
-
-.focusInput {
-  min-height: 52px;
-  padding: 10px 12px;
-  font-size: 16px;
+.section {
+  padding: var(--mantine-spacing-lg) 0;
+  border-bottom: 1px solid var(--surface-border);
 }
-
-.focusPillsList {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-  align-content: center;
-  width: 100%;
+.section:first-child {
+  padding-top: 0;
 }
-
-.focusPill {
-  font-size: 16px;
-  margin: 0;
+.section:last-child {
+  border-bottom: 0;
 }
-
-.focusInputHidden::placeholder {
-  color: transparent;
+.sectionHeader {
+  margin-bottom: var(--mantine-spacing-md);
 }
-
-.focusDropdown {
-  margin-top: 6px;
-  border-radius: var(--mantine-radius-md);
-  border: 1px solid var(--mantine-color-gray-3);
-  box-shadow: var(--mantine-shadow-sm);
-  overflow: hidden;
-  background-color: var(--mantine-color-white);
+.fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--mantine-spacing-lg);
+  align-items: start;
 }
-
-.focusOptions {
-  font-size: 16px;
+.fields > * {
+  min-width: 0;
 }
-
-.focusOption {
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  padding-top: 10px;
-  padding-bottom: 10px;
+.summary {
+  overflow-wrap: anywhere;
 }
-
 .addButton {
   align-self: flex-start;
 }
-
+.saveBar {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--mantine-spacing-md);
+  padding: var(--mantine-spacing-md);
+  padding-bottom: max(var(--mantine-spacing-md), env(safe-area-inset-bottom));
+  margin-top: var(--mantine-spacing-lg);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--mantine-radius-md);
+  background: var(--mantine-color-body);
+  box-shadow: 0 -3px 12px rgb(0 0 0 / 5%);
+}
+.saveStatus {
+  min-width: 0;
+}
+.saveActions {
+  display: flex;
+  gap: var(--mantine-spacing-sm);
+  flex-shrink: 0;
+}
+.focusOption {
+  min-height: 44px;
+}
+.readOnly {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  overflow-wrap: anywhere;
+}
 @media (max-width: 48em) {
-  .focusInput {
-    min-height: 56px;
-    padding: 12px;
+  .fields {
+    grid-template-columns: minmax(0, 1fr);
   }
-
-  .focusPillsList {
-    gap: 6px;
+  .saveBar {
+    flex-wrap: wrap;
+    padding: var(--mantine-spacing-sm);
   }
-
-  .focusOption {
-    min-height: 48px;
+  .saveActions {
+    width: 100%;
+    flex-wrap: wrap;
   }
-
+  .saveActions > * {
+    flex: 1 1 auto;
+  }
   .addButton {
     width: 100%;
   }

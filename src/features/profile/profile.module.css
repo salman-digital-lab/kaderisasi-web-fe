@@ -1,0 +1,95 @@
+.page {
+  --mantine-color-dimmed: light-dark(
+    var(--mantine-color-gray-7),
+    var(--mantine-color-dark-1)
+  );
+}
+.identity {
+  display: flex;
+  align-items: center;
+  gap: var(--mantine-spacing-lg);
+}
+.identityDetails {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.logout {
+  flex-shrink: 0;
+}
+.toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 15rem;
+  gap: var(--mantine-spacing-md);
+  align-items: end;
+}
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: var(--mantine-spacing-md);
+}
+.sectionHeader > div {
+  min-width: 0;
+}
+.empty {
+  padding: 2rem 1rem;
+  text-align: center;
+}
+.record {
+  min-width: 0;
+}
+.paginationControl {
+  font-size: var(--mantine-font-size-md);
+}
+.metadata {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+}
+.description {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.badge {
+  color: light-dark(
+    color-mix(in srgb, var(--badge-color) 80%, black),
+    color-mix(in srgb, var(--badge-color) 80%, white)
+  );
+  font-size: var(--mantine-font-size-sm);
+  max-width: 100%;
+  height: auto;
+  min-height: 1.5rem;
+  white-space: normal;
+}
+.badge :global(.mantine-Badge-label) {
+  white-space: normal;
+  overflow: visible;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mantine-spacing-sm);
+}
+@media (max-width: 48em) {
+  .identity {
+    flex-wrap: wrap;
+    gap: var(--mantine-spacing-md);
+    align-items: start;
+  }
+  .identityDetails {
+    flex: 1 1 10rem;
+  }
+  .logout {
+    margin-left: auto;
+  }
+  .toolbar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .sectionHeader {
+    flex-wrap: wrap;
+  }
+  .actions > * {
+    flex: 1 1 auto;
+  }
+}

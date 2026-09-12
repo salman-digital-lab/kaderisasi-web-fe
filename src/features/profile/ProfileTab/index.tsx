@@ -1,136 +1,118 @@
 "use client";
 
-import { useState, useTransition, useEffect } from "react";
-import { Tabs, TabsList, TabsPanel, TabsTab } from "@mantine/core";
+import { useState } from "react";
+import type { ReactElement } from "react";
+import { Tabs, Stack } from "@mantine/core";
+import { useSearchParams } from "next/navigation";
 import PersonalDataForm from "../PersonalDataForm";
 import PersonalActivityData from "../PersonalActivityData";
 import PersonalAchievementData from "../PersonalAchievementData";
-import { ProfileCard } from "../ProfileCard";
-
-import classes from "./index.module.css";
-import { useRouter, useSearchParams } from "next/navigation";
 import RuangCurhatList from "../RuangCurhatList";
-import { Province } from "@/types/model/province";
-import type { Country } from "@/types/model/country";
-import { PublicUser } from "@/types/model/members";
-import { RuangCurhatData } from "@/types/model/ruangcurhat";
-import { Activity, Registrant } from "@/types/model/activity";
-import { Member } from "@/types/model/members";
-import { Achievement } from "@/types/model/achievement";
-import {
-  PersonalDataFormSkeleton,
-  ActivityListSkeleton,
-  AchievementListSkeleton,
-} from "@/components/skeletons/ProfileTabSkeleton";
+import ProfileHeader from "../ProfileHeader";
+import ProfileSectionError from "../ProfileSectionError";
+import { PROFILE_TABS, profileTabId } from "../types";
+import type { ProfileSections } from "../types";
+import classes from "./index.module.css";
 
-type ProfileTabProps = {
-  provinceData: Province[] | undefined;
-  countryData: Country[] | undefined;
-  profileData:
-    | {
-        userData: PublicUser;
-        profile: Member;
-      }
-    | undefined;
-  activitiesRegistration: ({ activity: Activity } & Registrant)[] | undefined;
-  ruangcurhatData: RuangCurhatData[] | undefined;
-  achievements: Achievement[] | undefined;
-  token: string;
-};
-
-export function ProfileTab({
-  provinceData,
-  countryData,
-  profileData,
-  activitiesRegistration,
-  ruangcurhatData,
-  achievements,
-  token,
-}: ProfileTabProps) {
-  const router = useRouter();
+type ProfileTabProps = { sections: ProfileSections; token: string };
+export function ProfileTab({ sections, token }: ProfileTabProps): ReactElement {
   const searchParams = useSearchParams();
-  const [isPending, startTransition] = useTransition();
-
-  const urlTab = searchParams.get("tab") ?? "profiledata";
-  const [activeTab, setActiveTab] = useState(urlTab);
-
-  // Sync activeTab when URL changes (e.g., browser back/forward)
-  useEffect(() => {
-    if (!isPending) {
-      setActiveTab(urlTab);
-    }
-  }, [urlTab, isPending]);
-
-  const onChangeTab = (value: string | null) => {
-    const newTab = value || "profiledata";
-    setActiveTab(newTab); // Update immediately for instant feedback
-
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("tab", newTab);
-
-    startTransition(() => {
-      router.push("/profile?" + params, { scroll: false });
-    });
-  };
-
+  const activeTab = profileTabId(searchParams.get("tab"));
+  const [savedName, setSavedName] = useState<string>();
+  const [availableProfile, setAvailableProfile] = useState(
+    sections.profile.data,
+  );
+  if (sections.profile.data && sections.profile.data !== availableProfile)
+    setAvailableProfile(sections.profile.data);
+  function changeTab(value: string | null): void {
+    const nextTab = profileTabId(value);
+    if (nextTab === activeTab) return;
+    const url = new URL(window.location.href);
+    url.searchParams.set("tab", nextTab);
+    window.history.pushState(
+      null,
+      "",
+      `${url.pathname}${url.search}${url.hash}`,
+    );
+  }
   return (
-    <Tabs
-      variant="pills"
-      value={activeTab}
-      className={classes.tab}
-      onChange={onChangeTab}
-    >
-      <TabsList aria-label="Bagian profil">
-        <TabsTab value="profiledata">Data Diri</TabsTab>
-        <TabsTab value="activity">Kegiatan</TabsTab>
-        <TabsTab value="ruangcurhat">Ruang Curhat</TabsTab>
-        <TabsTab value="achievements">Prestasi</TabsTab>
-      </TabsList>
-
-      {/* Profile Card - Mobile only, shown when Data Diri tab is active */}
-      {activeTab === "profiledata" && (
-        <ProfileCard
-          profileData={profileData}
-          activitiesRegistration={activitiesRegistration}
-          achievements={achievements}
+    <Stack gap="lg">
+      {availableProfile && (
+        <ProfileHeader
+          profileData={availableProfile}
           token={token}
-          className={classes.mobileProfileCard}
-          showLogoutButton={false}
+          savedName={savedName}
         />
       )}
-
-      <TabsPanel value="profiledata" mt="md">
-        {isPending ? (
-          <PersonalDataFormSkeleton />
-        ) : (
-          <PersonalDataForm
-            provinces={provinceData}
-            countries={countryData}
-            profileData={profileData}
-          />
-        )}
-      </TabsPanel>
-      <TabsPanel value="activity" mt="md">
-        {isPending ? (
-          <ActivityListSkeleton />
-        ) : (
-          <PersonalActivityData activities={activitiesRegistration || []} />
-        )}
-      </TabsPanel>
-      <TabsPanel value="ruangcurhat" mt="md">
-        {isPending ? (
-          <ActivityListSkeleton />
-        ) : (
-          <RuangCurhatList data={ruangcurhatData || []} />
-        )}
-      </TabsPanel>
-      <TabsPanel value="achievements" mt="md">
-        {isPending ? (
-          <AchievementListSkeleton />
-        ) : (
-          <PersonalAchievementData achievements={achievements || []} />
-        )}
-      </TabsPanel>
-    </Tabs>
+      <Tabs
+        variant="pills"
+        color="blue.8"
+        value={activeTab}
+        onChange={changeTab}
+        keepMounted
+        keepMountedMode="display-none"
+        className={classes.tab}
+      >
+        <Tabs.List
+          aria-label="Bagian profil"
+          onKeyDownCapture={(event) => {
+            if (event.key !== "Home" && event.key !== "End") return;
+            event.preventDefault();
+            const value = event.key === "Home" ? "profiledata" : "achievements";
+            const index = event.key === "Home" ? 0 : 3;
+            event.currentTarget
+              .querySelectorAll<HTMLButtonElement>('[role="tab"]')
+              [index]?.focus();
+            changeTab(value);
+          }}
+        >
+          {Object.entries(PROFILE_TABS).map(([value, label]) => (
+            <Tabs.Tab key={value} value={value}>
+              {label}
+            </Tabs.Tab>
+          ))}
+        </Tabs.List>
+        <Tabs.Panel value="profiledata" pt="lg" tabIndex={0}>
+          <Stack gap="md">
+            {sections.profile.error && (
+              <ProfileSectionError message={sections.profile.error} />
+            )}
+            {availableProfile && (
+              <PersonalDataForm
+                profileData={availableProfile}
+                provinces={sections.provinces.data}
+                countries={sections.countries.data}
+                provinceError={sections.provinces.error}
+                countryError={sections.countries.error}
+                onSaved={setSavedName}
+              />
+            )}
+          </Stack>
+        </Tabs.Panel>
+        <Tabs.Panel value="activity" pt="lg" tabIndex={0}>
+          {sections.activities.data ? (
+            <PersonalActivityData activities={sections.activities.data} />
+          ) : (
+            <ProfileSectionError message={sections.activities.error} />
+          )}
+        </Tabs.Panel>
+        <Tabs.Panel value="ruangcurhat" pt="lg" tabIndex={0}>
+          {sections.consultations.data ? (
+            <RuangCurhatList data={sections.consultations.data} />
+          ) : (
+            <ProfileSectionError message={sections.consultations.error} />
+          )}
+        </Tabs.Panel>
+        <Tabs.Panel value="achievements" pt="lg" tabIndex={0}>
+          {sections.achievements.data ? (
+            <PersonalAchievementData
+              achievements={sections.achievements.data}
+            />
+          ) : (
+            <ProfileSectionError message={sections.achievements.error} />
+          )}
+        </Tabs.Panel>
+      </Tabs>
+    </Stack>
   );
 }

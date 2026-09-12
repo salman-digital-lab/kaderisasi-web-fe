@@ -1,168 +1,107 @@
+"use client";
+import { Badge, Button, Group, Paper, Stack, Text, Title } from "@mantine/core";
+import { useId, useState } from "react";
+import type { ReactElement } from "react";
+import type { RuangCurhatData } from "@/types/model/ruangcurhat";
+import { PROBLEM_OWNER_ENUM } from "@/types/constants/ruangcurhat";
 import {
-  Badge,
-  Card,
-  Group,
-  Text,
-  Avatar,
-  Stack,
-  Flex,
-  Box,
-  ThemeIcon,
-} from "@mantine/core";
-import {
-  IconMessageCircle, 
-  IconClock,
-  IconCheck,
-  IconX,
-  IconAlertCircle,
-} from "@tabler/icons-react";
-
-import {
-  PROBLEM_OWNER_RENDER,
   PROBLEM_STATUS_RENDER,
   PROBLEM_STATUS_RENDER_COLOR,
-} from "../../../constants/render/ruangcurhat";
-import { RuangCurhatData } from "@/types/model/ruangcurhat";
-import { PROBLEM_OWNER_ENUM, PROBLEM_STATUS_ENUM } from "@/types/constants/ruangcurhat";
-import dayjs from "dayjs";
-import "dayjs/locale/id";
+} from "@/constants/render/ruangcurhat";
+import classes from "@/features/profile/profile.module.css";
 
-// Set the locale globally for this component
-dayjs.locale("id");
-
-type RuangCurhatCardProps = {
+export default function RuangCurhatCard({
+  data,
+}: {
   data: RuangCurhatData;
-};
-
-export default function RuangCurhatCard({ data }: RuangCurhatCardProps) {
-  const getStatusIcon = (status: PROBLEM_STATUS_ENUM) => {
-    switch (status) {
-      case PROBLEM_STATUS_ENUM.SUDAH_DITANGANI:
-        return <IconCheck size={12} />;
-      case PROBLEM_STATUS_ENUM.SEDANG_MEMILIH_JADWAL:
-      case PROBLEM_STATUS_ENUM.SEDANG_DITANGANI:
-        return <IconClock size={12} />;
-      case PROBLEM_STATUS_ENUM.BATAL:
-        return <IconX size={12} />;
-      default:
-        return <IconAlertCircle size={12} />;
-    }
-  };
-
+}): ReactElement {
+  const [expanded, setExpanded] = useState(false);
+  const descriptionId = useId();
+  const longDescription = data.problem_description.length > 180;
   return (
-    <Card withBorder radius="md" p="md">
+    <Paper
+      component="article"
+      withBorder
+      p={{ base: "md", sm: "lg" }}
+      className={classes.record}
+    >
       <Stack gap="md">
-        {/* Header */}
-        <Flex justify="space-between" align="flex-start" wrap="wrap" gap="sm">
-          <Group gap="sm" wrap="nowrap">
-            <ThemeIcon size="md" radius="xl" variant="light" color="blue">
-              <IconMessageCircle size={16} />
-            </ThemeIcon>
-            <Box>
-              <Text fw={600} size="md" lineClamp={1}>
-                {PROBLEM_OWNER_RENDER[data.problem_ownership]}
-              </Text>
-              <Text size="md" c="dimmed">
-                {dayjs(data.created_at).format("DD MMMM YYYY")}
-              </Text>
-            </Box>
-          </Group>
-          <Badge 
+        <div className={classes.sectionHeader}>
+          <div>
+            <Title order={3} size="h4">
+              {data.problem_category}
+            </Title>
+            <Text c="dimmed" mt={4}>
+              Diajukan{" "}
+              {new Date(data.created_at).toLocaleDateString("id-ID", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })}
+            </Text>
+          </div>
+          <Badge
             color={PROBLEM_STATUS_RENDER_COLOR[data.status]}
-            leftSection={getStatusIcon(data.status)}
             variant="light"
+            tt="none"
+            className={classes.badge}
           >
             {PROBLEM_STATUS_RENDER[data.status]}
           </Badge>
-        </Flex>
-
-        {/* Tags */}
-        <Group gap="xs" wrap="wrap">
-          <Badge variant="light" color="yellow" size="md">
+        </div>
+        <div className={classes.metadata}>
+          <Text>
+            <Text span c="dimmed">
+              Metode:{" "}
+            </Text>
             {data.handling_technic}
-          </Badge>
-          <Badge variant="light" color="purple" size="md">
-            {data.problem_category}
-          </Badge>
-        </Group>
-
-        {/* Problem Description */}
-        <Box>
-          <Text size="md" c="dimmed" mb="xs">
-            Deskripsi Masalah
           </Text>
-          <Text 
-            size="md" 
-            lineClamp={3}
-            style={{ 
-              lineHeight: 1.5,
-              wordBreak: 'break-word',
-              hyphens: 'auto'
-            }}
-          >
-            {data.problem_description}
-          </Text>
-        </Box>
-
-        {/* Owner Name (if applicable) */}
-        {data.problem_ownership === PROBLEM_OWNER_ENUM.TEMAN && (
-          <Box>
-            <Text size="md" c="dimmed" mb="xs">
-              Pemilik Masalah
+          <Text>
+            <Text span c="dimmed">
+              Untuk:{" "}
             </Text>
-            <Text 
-              size="md" 
-              fw={500}
-              lineClamp={2}
-              style={{ 
-                wordBreak: 'break-word',
-                lineHeight: 1.4
-              }}
+            {data.problem_ownership === PROBLEM_OWNER_ENUM.TEMAN
+              ? data.owner_name || "Teman"
+              : "Diri sendiri"}
+          </Text>
+        </div>
+        <div>
+          <Text fw={600} mb={4}>
+            Deskripsi
+          </Text>
+          <Text id={descriptionId} className={classes.description}>
+            {longDescription && !expanded
+              ? `${data.problem_description.slice(0, 180)}…`
+              : data.problem_description}
+          </Text>
+          {longDescription && (
+            <Button
+              variant="subtle"
+              px={0}
+              mt={4}
+              aria-expanded={expanded}
+              aria-controls={descriptionId}
+              onClick={() => setExpanded((value) => !value)}
             >
-              {data.owner_name}
-            </Text>
-          </Box>
-        )}
-
-        {/* Counselor Info */}
-        <Box>
-          <Text size="md" c="dimmed" mb="xs">
-            Konselor
-          </Text>
-          {data.adminUser ? (
-            <Group gap="sm" align="flex-start">
-              <Avatar radius="xl" size="md" />
-              <Box flex={1}>
-                <Text 
-                  size="md" 
-                  fw={500}
-                  lineClamp={1}
-                  style={{ wordBreak: 'break-word' }}
-                >
-                  {data.adminUser?.display_name}
-                </Text>
-                <Text 
-                  size="md" 
-                  c="dimmed"
-                  lineClamp={1}
-                  style={{ wordBreak: 'break-all' }}
-                >
-                  {data.adminUser?.email}
-                </Text>
-              </Box>
-            </Group>
-          ) : (
-            <Group gap="xs">
-              <ThemeIcon size="md" variant="light" color="yellow">
-                <IconClock size={12} />
-              </ThemeIcon>
-              <Text size="md" c="dimmed">
-                Belum ada konselor yang ditugaskan
-              </Text>
-            </Group>
+              {expanded ? "Ringkas deskripsi" : "Baca selengkapnya"}
+            </Button>
           )}
-        </Box>
+        </div>
+        <Group gap="xs" align="start">
+          <Text fw={600}>Konselor:</Text>
+          <div>
+            <Text>
+              {data.adminUser?.display_name ||
+                "Informasi konselor belum tersedia."}
+            </Text>
+            {data.adminUser?.email && (
+              <Text c="dimmed" className={classes.description}>
+                {data.adminUser.email}
+              </Text>
+            )}
+          </div>
+        </Group>
       </Stack>
-    </Card>
+    </Paper>
   );
 }

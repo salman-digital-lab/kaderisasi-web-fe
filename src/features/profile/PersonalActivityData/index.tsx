@@ -1,256 +1,155 @@
 "use client";
 
-import ActivityPersonalCard from "@/components/common/ActivityPersonalCard";
 import {
+  Button,
   Paper,
   Stack,
   Text,
-  Grid,
-  Box,
-  ThemeIcon,
+  Title,
   TextInput,
-  Card,
-  Group,
-  Button,
-  Center,
+  Select,
   Pagination,
+  Group,
 } from "@mantine/core";
-import {
-  IconSearch,
-  IconPlus,
-  IconActivity,
-  IconCheck,
-  IconX,
-} from "@tabler/icons-react";
-import { useEffect, useState, useMemo } from "react";
+import { IconSearch, IconPlus } from "@tabler/icons-react";
+import { useState } from "react";
+import type { ReactElement } from "react";
 import Link from "next/link";
-import { Activity, Registrant } from "@/types/model/activity";
+import ActivityPersonalCard from "@/components/common/ActivityPersonalCard";
+import type { Activity, Registrant } from "@/types/model/activity";
 import { ACTIVITY_REGISTRANT_STATUS_ENUM } from "@/types/constants/activity";
-
-type PersonalActivityDataProps = {
-  activities: ({ activity: Activity } & Registrant)[];
-};
+import classes from "../profile.module.css";
 
 export default function PersonalActivityData({
   activities,
-}: PersonalActivityDataProps) {
+}: {
+  activities: ({ activity: Activity } & Registrant)[];
+}): ReactElement {
   const [page, setPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState("");
-
-  // Calculate statistics
-  const stats = useMemo(() => {
-    const totalActivities = activities.length;
-
-    // Rejected: Tidak diterima & Tidak lulus
-    const rejectedCount = activities.filter(
-      (a) =>
-        a.status === ACTIVITY_REGISTRANT_STATUS_ENUM.TIDAK_DITERIMA ||
-        a.status === ACTIVITY_REGISTRANT_STATUS_ENUM.TIDAK_LULUS,
-    ).length;
-
-    // Registered: All except rejected
-    const registeredCount = activities.filter(
-      (a) =>
-        a.status !== ACTIVITY_REGISTRANT_STATUS_ENUM.TIDAK_DITERIMA &&
-        a.status !== ACTIVITY_REGISTRANT_STATUS_ENUM.TIDAK_LULUS,
-    ).length;
-
-    return {
-      totalActivities,
-      registeredCount,
-      rejectedCount,
-    };
-  }, [activities]);
-
-  // Filter activities by search query
-  const filteredActivities = useMemo(() => {
-    return activities.filter((activity) => {
-      const searchLower = searchQuery.toLowerCase();
-      return (
-        activity.activity.name.toLowerCase().includes(searchLower) ||
-        activity.activity.description?.toLowerCase().includes(searchLower) ||
-        activity.status.toLowerCase().includes(searchLower)
-      );
-    });
-  }, [activities, searchQuery]);
-
-  // Pagination logic
-  const itemsPerPage = 6;
-  const totalPages = Math.ceil(filteredActivities.length / itemsPerPage);
-  const paginatedActivities = filteredActivities.slice(
-    (page - 1) * itemsPerPage,
-    page * itemsPerPage,
+  const [query, setQuery] = useState("");
+  const [status, setStatus] = useState("all");
+  const filtered = activities.filter(
+    (item) =>
+      (status === "all" || item.status === status) &&
+      [item.activity.name, item.activity.description, item.status].some(
+        (value) =>
+          value
+            ?.toLocaleLowerCase("id")
+            .includes(query.trim().toLocaleLowerCase("id")),
+      ),
   );
-
-  // Reset page when search changes
-  useEffect(() => {
+  const pages = Math.ceil(filtered.length / 6);
+  const currentPage = Math.max(1, Math.min(page, pages));
+  function clear(): void {
+    setQuery("");
+    setStatus("all");
     setPage(1);
-  }, [searchQuery]);
-
-  if (activities.length === 0) {
-    return (
-      <Paper radius="md" withBorder p="lg">
-        <Stack align="center" justify="center" h={300} gap="lg">
-          <ThemeIcon size={80} radius="xl" variant="light" color="gray">
-            <IconActivity size={40} />
-          </ThemeIcon>
-          <Stack align="center" gap="xs">
-            <Text size="xl" fw={600} c="dimmed">
-              Belum Ada Kegiatan
-            </Text>
-            <Text size="md" c="dimmed" ta="center" maw={300}>
-              Mulai daftarkan diri Anda pada kegiatan-kegiatan menarik untuk
-              mengembangkan kemampuan dan jaringan
-            </Text>
-          </Stack>
-          <Button
-            component={Link}
-            href="/activity"
-            leftSection={<IconPlus size={16} />}
-            variant="filled"
-            size="md"
-          >
-            Jelajahi Kegiatan
-          </Button>
-        </Stack>
-      </Paper>
-    );
   }
-
   return (
-    <Paper p={{ base: "md", sm: "lg" }} radius="md" withBorder>
-      <Stack gap="lg">
-        {/* Statistics Cards */}
-        <Grid>
-          <Grid.Col span={{ base: 12, sm: 4 }}>
-            <Card withBorder p="sm" radius="md">
-              <Group gap="xs">
-                <ThemeIcon size="md" variant="light" color="blue">
-                  <IconActivity size={14} />
-                </ThemeIcon>
-                <Box>
-                  <Text size="md" c="dimmed">
-                    Total Kegiatan
-                  </Text>
-                  <Text size="md" fw={600}>
-                    {stats.totalActivities}
-                  </Text>
-                </Box>
-              </Group>
-            </Card>
-          </Grid.Col>
-          <Grid.Col span={{ base: 12, sm: 4 }}>
-            <Card withBorder p="sm" radius="md">
-              <Group gap="xs">
-                <ThemeIcon size="md" variant="light" color="green">
-                  <IconCheck size={14} />
-                </ThemeIcon>
-                <Box>
-                  <Text size="md" c="dimmed">
-                    Terdaftar
-                  </Text>
-                  <Text size="md" fw={600}>
-                    {stats.registeredCount}
-                  </Text>
-                </Box>
-              </Group>
-            </Card>
-          </Grid.Col>
-          <Grid.Col span={{ base: 12, sm: 4 }}>
-            <Card withBorder p="sm" radius="md">
-              <Group gap="xs">
-                <ThemeIcon size="md" variant="light" color="red">
-                  <IconX size={14} />
-                </ThemeIcon>
-                <Box>
-                  <Text size="md" c="dimmed">
-                    Ditolak
-                  </Text>
-                  <Text size="md" fw={600}>
-                    {stats.rejectedCount}
-                  </Text>
-                </Box>
-              </Group>
-            </Card>
-          </Grid.Col>
-        </Grid>
-
-        {/* Search */}
-        <Box>
-          <TextInput
-            placeholder="Cari berdasarkan nama kegiatan atau status..."
-            leftSection={<IconSearch size={16} />}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </Box>
-
-        {/* Results Count */}
-        {filteredActivities.length !== activities.length && (
-          <Text size="md" c="dimmed">
-            Menampilkan {filteredActivities.length} dari {activities.length}{" "}
-            kegiatan
+    <Stack gap="lg">
+      <div className={classes.sectionHeader}>
+        <div>
+          <Title order={2} size="h3">
+            Kegiatan saya
+          </Title>
+          <Text c="dimmed" mt={4}>
+            Pendaftaran, hasil seleksi, dan sertifikat kegiatan Anda.
           </Text>
-        )}
-
-        {/* Activities Grid */}
-        <Grid>
-          {paginatedActivities.map((activity) => (
-            <Grid.Col
-              key={activity.activity_id}
-              span={{ base: 12, sm: 6, lg: 4 }}
-            >
-              <ActivityPersonalCard
-                activityName={activity.activity.name}
-                slug={activity.activity.slug}
-                registrationStatus={activity.status}
-                imageUrl={activity.activity.additional_config?.images?.[0]}
-                visibleAt={activity.visible_at}
-                registrationId={activity.id}
-                hasCertificate={
-                  !!activity.activity.additional_config?.certificate_template_id
-                }
-                certificateCode={activity.certificate_code}
-                certificateState={activity.certificate_state}
-              />
-            </Grid.Col>
-          ))}
-        </Grid>
-
-        {/* No Results */}
-        {filteredActivities.length === 0 && activities.length > 0 && (
-          <Box ta="center" py="xl">
-            <ThemeIcon
-              size={60}
-              radius="xl"
-              variant="light"
-              color="gray"
-              mb="md"
-            >
-              <IconSearch size={30} />
-            </ThemeIcon>
-            <Text size="lg" c="dimmed" mb="xs">
-              Tidak ada kegiatan yang ditemukan
-            </Text>
-            <Text size="md" c="dimmed">
-              Coba ubah kata kunci pencarian atau filter yang digunakan
-            </Text>
-          </Box>
-        )}
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <Center>
-            <Pagination
-              total={totalPages}
-              onChange={setPage}
-              value={page}
-              siblings={1}
-              size="md"
+        </div>
+        <Button
+          component={Link}
+          href="/activity"
+          variant="light"
+          leftSection={<IconPlus size={16} aria-hidden />}
+        >
+          Cari kegiatan
+        </Button>
+      </div>
+      {activities.length ? (
+        <>
+          <div className={classes.toolbar}>
+            <TextInput
+              label="Cari kegiatan"
+              placeholder="Nama kegiatan atau status"
+              leftSection={<IconSearch size={16} aria-hidden />}
+              value={query}
+              onChange={(event) => {
+                setQuery(event.currentTarget.value);
+                setPage(1);
+              }}
             />
-          </Center>
-        )}
-      </Stack>
-    </Paper>
+            <Select
+              label="Status pendaftaran"
+              allowDeselect={false}
+              value={status}
+              onChange={(value) => {
+                setStatus(value ?? "all");
+                setPage(1);
+              }}
+              data={[
+                { value: "all", label: "Semua status" },
+                ...Object.values(ACTIVITY_REGISTRANT_STATUS_ENUM).map(
+                  (value) => ({
+                    value,
+                    label: value.charAt(0) + value.slice(1).toLowerCase(),
+                  }),
+                ),
+              ]}
+            />
+          </div>
+          <Text c="dimmed" role="status">
+            {filtered.length} kegiatan sesuai dari {activities.length}{" "}
+            pendaftaran
+          </Text>
+          <Stack gap="md">
+            {filtered
+              .slice((currentPage - 1) * 6, currentPage * 6)
+              .map((item) => (
+                <ActivityPersonalCard
+                  key={item.id}
+                  activityName={item.activity.name}
+                  slug={item.activity.slug}
+                  registrationStatus={item.status}
+                  imageUrl={item.activity.additional_config?.images?.[0]}
+                  visibleAt={item.visible_at}
+                  registrationId={item.id}
+                  hasCertificate={
+                    !!item.activity.additional_config?.certificate_template_id
+                  }
+                  certificateCode={item.certificate_code}
+                  certificateState={item.certificate_state}
+                />
+              ))}
+          </Stack>
+          {!filtered.length && (
+            <Paper withBorder className={classes.empty}>
+              <Text fw={600}>Tidak ada kegiatan yang sesuai</Text>
+              <Button mt="sm" variant="light" onClick={clear}>
+                Hapus pencarian
+              </Button>
+            </Paper>
+          )}
+          {pages > 1 && (
+            <Group justify="center">
+              <Pagination
+                classNames={{ control: classes.paginationControl }}
+                aria-label="Halaman kegiatan saya"
+                total={pages}
+                value={currentPage}
+                onChange={setPage}
+                getItemProps={(value) => ({ "aria-label": `Halaman ${value}` })}
+              />
+            </Group>
+          )}
+        </>
+      ) : (
+        <Paper withBorder className={classes.empty}>
+          <Text fw={600}>Belum ada kegiatan</Text>
+          <Text c="dimmed" mt="xs">
+            Kegiatan yang Anda daftarkan akan muncul di sini.
+          </Text>
+        </Paper>
+      )}
+    </Stack>
   );
 }

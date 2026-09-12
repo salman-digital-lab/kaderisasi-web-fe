@@ -21,17 +21,8 @@
 .tab :global(.mantine-Tabs-tab[data-active]) {
   font-weight: 700;
 }
-.mobileProfileCard {
-  display: none;
-  margin-top: 1rem;
-}
 @media (max-width: $mantine-breakpoint-sm) {
   .tab :global(.mantine-Tabs-tab) {
     flex-basis: calc(50% - 0.25rem);
-  }
-}
-@media (max-width: $mantine-breakpoint-md) {
-  .mobileProfileCard {
-    display: block;
   }
 }

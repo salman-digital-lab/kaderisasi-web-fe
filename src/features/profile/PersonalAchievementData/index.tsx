@@ -1,458 +1,223 @@
+"use client";
 import {
+  Accordion,
+  Alert,
+  Badge,
+  Button,
+  Group,
   Paper,
+  Select,
   Stack,
   Text,
-  Accordion,
-  Badge,
-  Group,
-  Alert,
-  Button,
-  Grid,
-  Flex,
-  Box,
-  Divider,
-  ThemeIcon,
   TextInput,
-  Card,
+  Title,
 } from "@mantine/core";
 import {
-  IconExclamationCircle,
-  IconAlertCircle,
   IconDownload,
   IconEdit,
-  IconTrophy,
-  IconCalendar,
-  IconStar,
-  IconFileText,
-  IconSearch,
   IconPlus,
-  IconTrendingUp,
-  IconAward,
-  IconClock,
+  IconSearch,
 } from "@tabler/icons-react";
-import { Achievement } from "@/types/model/achievement";
+import { useState } from "react";
+import type { ReactElement } from "react";
+import Link from "next/link";
+import type { Achievement } from "@/types/model/achievement";
+import { ACHIEVEMENT_STATUS_ENUM as Status } from "@/types/constants/achievement";
 import {
   ACHIEVEMENT_STATUS_RENDER,
   ACHIEVEMENT_STATUS_COLOR,
   ACHIEVEMENT_TYPE_RENDER,
 } from "@/constants/render/leaderboard";
 import { handleDownloadFile } from "@/functions/common/handler";
-import Link from "next/link";
-import { ACHIEVEMENT_STATUS_ENUM } from "@/types/constants/achievement";
-import { useState, useMemo } from "react";
+import classes from "../profile.module.css";
 
-type PersonalAchievementDataProps = {
-  achievements: Achievement[];
-};
-
-export default function PersonalAchievementData({
-  achievements,
-}: PersonalAchievementDataProps) {
-  const [searchQuery, setSearchQuery] = useState("");
-
-  // Calculate statistics
-  const stats = useMemo(() => {
-    const totalScore = achievements.reduce(
-      (sum, achievement) => sum + achievement.score,
-      0,
-    );
-    const approvedCount = achievements.filter(
-      (a) => a.status === ACHIEVEMENT_STATUS_ENUM.APPROVED,
-    ).length;
-    const pendingCount = achievements.filter(
-      (a) => a.status === ACHIEVEMENT_STATUS_ENUM.PENDING,
-    ).length;
-    const rejectedCount = achievements.filter(
-      (a) => a.status === ACHIEVEMENT_STATUS_ENUM.REJECTED,
-    ).length;
-
-    return {
-      totalScore,
-      approvedCount,
-      pendingCount,
-      rejectedCount,
-      totalCount: achievements.length,
-    };
-  }, [achievements]);
-
-  // Filter achievements by name
-  const filteredAchievements = useMemo(() => {
-    return achievements.filter((achievement) => {
-      return achievement.name.toLowerCase().includes(searchQuery.toLowerCase());
-    });
-  }, [achievements, searchQuery]);
-
-  if (achievements.length === 0) {
-    return (
-      <Paper radius="md" withBorder p="lg">
-        <Stack align="center" justify="center" h={300} gap="lg">
-          <ThemeIcon size={80} radius="xl" variant="light" color="gray">
-            <IconTrophy size={40} />
-          </ThemeIcon>
-          <Stack align="center" gap="xs">
-            <Text size="xl" fw={600} c="dimmed">
-              Belum Ada Prestasi
-            </Text>
-            <Text size="md" c="dimmed" ta="center" maw={300}>
-              Mulai tambahkan prestasi Anda untuk meningkatkan skor leaderboard
-              dan membangun portfolio yang mengesankan
-            </Text>
-          </Stack>
+function AchievementDetails({
+  achievement,
+}: {
+  achievement: Achievement;
+}): ReactElement {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  async function download(): Promise<void> {
+    setLoading(true);
+    setError("");
+    try {
+      await handleDownloadFile(
+        achievement.proof,
+        `bukti-prestasi-${achievement.name}.pdf`,
+      );
+    } catch {
+      setError("Bukti belum dapat diunduh. Silakan coba lagi.");
+    } finally {
+      setLoading(false);
+    }
+  }
+  return (
+    <Stack gap="md">
+      <Text className={classes.description}>{achievement.description}</Text>
+      <Text c="dimmed">
+        Tanggal prestasi:{" "}
+        {new Date(achievement.achievement_date).toLocaleDateString("id-ID", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        })}
+      </Text>
+      {achievement.status === Status.REJECTED && (
+        <Alert title="Alasan penolakan" color="red">
+          {achievement.remark || "Alasan belum tersedia."}
+        </Alert>
+      )}
+      {error && (
+        <Text role="alert" c="red">
+          {error}
+        </Text>
+      )}
+      <div className={classes.actions}>
+        {achievement.proof ? (
+          <Button
+            variant="light"
+            loading={loading}
+            leftSection={<IconDownload size={16} aria-hidden />}
+            onClick={download}
+          >
+            Unduh bukti
+          </Button>
+        ) : (
+          <Text c="dimmed">Bukti belum tersedia.</Text>
+        )}
+        {(achievement.status === Status.PENDING ||
+          achievement.status === Status.REJECTED) && (
           <Button
             component={Link}
-            href="/leaderboard/submit"
-            leftSection={<IconPlus size={16} />}
-            variant="filled"
-            size="md"
+            href={`/leaderboard/edit/${achievement.id}`}
+            variant="outline"
+            leftSection={<IconEdit size={16} aria-hidden />}
           >
-            Tambah Prestasi Pertama
+            Edit prestasi
           </Button>
-        </Stack>
-      </Paper>
-    );
-  }
-
+        )}
+      </div>
+    </Stack>
+  );
+}
+export default function PersonalAchievementData({
+  achievements,
+}: {
+  achievements: Achievement[];
+}): ReactElement {
+  const [query, setQuery] = useState("");
+  const [status, setStatus] = useState("all");
+  const totalScore = achievements.reduce((sum, item) => sum + item.score, 0);
+  const filtered = achievements.filter(
+    (item) =>
+      (status === "all" || String(item.status) === status) &&
+      item.name
+        .toLocaleLowerCase("id")
+        .includes(query.trim().toLocaleLowerCase("id")),
+  );
   return (
-    <Paper p={{ base: "md", sm: "lg" }} radius="md" withBorder>
-      <Stack gap="md">
-        {/* Header with Statistics */}
-        <Box>
-          <Flex justify="space-between" align="center" wrap="wrap" gap="sm">
-            <Box>
-              <Text size="lg" fw={600} mb="xs">
-                Prestasi Saya
-              </Text>
-              <Text size="md" c="dimmed">
-                Total {stats.totalCount} prestasi • {stats.totalScore} poin
-              </Text>
-            </Box>
-            <Button
-              component={Link}
-              href="/leaderboard/submit"
-              leftSection={<IconPlus size={16} />}
-              variant="light"
-              size="md"
-            >
-              Tambah Prestasi
-            </Button>
-          </Flex>
-        </Box>
-
-        {/* Statistics Cards */}
-        <Grid>
-          <Grid.Col span={{ base: 6, sm: 3 }}>
-            <Card withBorder p="sm" radius="md">
-              <Group gap="xs">
-                <ThemeIcon size="md" variant="light" color="green">
-                  <IconAward size={14} />
-                </ThemeIcon>
-                <Box>
-                  <Text size="md" c="dimmed">
-                    Disetujui
-                  </Text>
-                  <Text size="md" fw={600}>
-                    {stats.approvedCount}
-                  </Text>
-                </Box>
-              </Group>
-            </Card>
-          </Grid.Col>
-          <Grid.Col span={{ base: 6, sm: 3 }}>
-            <Card withBorder p="sm" radius="md">
-              <Group gap="xs">
-                <ThemeIcon size="md" variant="light" color="yellow">
-                  <IconClock size={14} />
-                </ThemeIcon>
-                <Box>
-                  <Text size="md" c="dimmed">
-                    Menunggu
-                  </Text>
-                  <Text size="md" fw={600}>
-                    {stats.pendingCount}
-                  </Text>
-                </Box>
-              </Group>
-            </Card>
-          </Grid.Col>
-          <Grid.Col span={{ base: 6, sm: 3 }}>
-            <Card withBorder p="sm" radius="md">
-              <Group gap="xs">
-                <ThemeIcon size="md" variant="light" color="red">
-                  <IconExclamationCircle size={14} />
-                </ThemeIcon>
-                <Box>
-                  <Text size="md" c="dimmed">
-                    Ditolak
-                  </Text>
-                  <Text size="md" fw={600}>
-                    {stats.rejectedCount}
-                  </Text>
-                </Box>
-              </Group>
-            </Card>
-          </Grid.Col>
-          <Grid.Col span={{ base: 6, sm: 3 }}>
-            <Card withBorder p="sm" radius="md">
-              <Group gap="xs">
-                <ThemeIcon size="md" variant="light" color="blue">
-                  <IconTrendingUp size={14} />
-                </ThemeIcon>
-                <Box>
-                  <Text size="md" c="dimmed">
-                    Total Poin
-                  </Text>
-                  <Text size="md" fw={600}>
-                    {stats.totalScore}
-                  </Text>
-                </Box>
-              </Group>
-            </Card>
-          </Grid.Col>
-        </Grid>
-
-        {/* Search */}
-        <Box>
-          <TextInput
-            placeholder="Cari prestasi..."
-            leftSection={<IconSearch size={16} />}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </Box>
-
-        {/* Results Count */}
-        {filteredAchievements.length !== achievements.length && (
-          <Text size="md" c="dimmed">
-            Menampilkan {filteredAchievements.length} dari {achievements.length}{" "}
-            prestasi
+    <Stack gap="lg">
+      <div className={classes.sectionHeader}>
+        <div>
+          <Title order={2} size="h3">
+            Prestasi saya
+          </Title>
+          <Text c="dimmed" mt={4}>
+            {achievements.length} prestasi · {totalScore} total poin
           </Text>
-        )}
-
-        {/* Achievements List */}
-        <Accordion variant="separated" radius="md">
-          {filteredAchievements.map((achievement) => (
-            <Accordion.Item
-              key={achievement.id}
-              value={achievement.id.toString()}
-            >
-              <Accordion.Control>
-                <Flex
-                  justify="space-between"
-                  align="center"
-                  wrap="wrap"
-                  gap="sm"
-                >
-                  <Group gap="sm" wrap="nowrap">
-                    <ThemeIcon
-                      size="md"
-                      radius="xl"
-                      variant="light"
-                      color={ACHIEVEMENT_STATUS_COLOR[achievement.status]}
-                    >
-                      <IconStar size={14} />
-                    </ThemeIcon>
-                    <Box>
-                      <Text fw={600} size="md" lineClamp={1}>
-                        {achievement.name}
+        </div>
+        <Button
+          component={Link}
+          href="/leaderboard/submit"
+          variant="light"
+          leftSection={<IconPlus size={16} aria-hidden />}
+        >
+          Tambah prestasi
+        </Button>
+      </div>
+      {achievements.length ? (
+        <>
+          <div className={classes.toolbar}>
+            <TextInput
+              label="Cari prestasi"
+              placeholder="Nama prestasi"
+              value={query}
+              onChange={(event) => setQuery(event.currentTarget.value)}
+              leftSection={<IconSearch size={16} aria-hidden />}
+            />
+            <Select
+              label="Status prestasi"
+              value={status}
+              onChange={(value) => setStatus(value ?? "all")}
+              allowDeselect={false}
+              data={[
+                { value: "all", label: "Semua status" },
+                ...Object.entries(ACHIEVEMENT_STATUS_RENDER).map(
+                  ([value, label]) => ({ value, label }),
+                ),
+              ]}
+            />
+          </div>
+          <Text c="dimmed" role="status">
+            Menampilkan {filtered.length} dari {achievements.length} prestasi
+          </Text>
+          <Accordion variant="separated" radius="md">
+            {filtered.map((item) => (
+              <Accordion.Item key={item.id} value={String(item.id)}>
+                <Accordion.Control>
+                  <Stack gap="xs">
+                    <Text fw={600} size="lg" className={classes.description}>
+                      {item.name}
+                    </Text>
+                    <Group gap="sm">
+                      <Text size="sm" c="dimmed">
+                        {ACHIEVEMENT_TYPE_RENDER[item.type]}
                       </Text>
-                      <Group gap="xs" mt={4}>
-                        <Badge size="md" variant="light">
-                          {ACHIEVEMENT_TYPE_RENDER[achievement.type]}
-                        </Badge>
-                        <Badge
-                          size="md"
-                          variant="outline"
-                          color={ACHIEVEMENT_STATUS_COLOR[achievement.status]}
-                          leftSection={
-                            achievement.status ===
-                            ACHIEVEMENT_STATUS_ENUM.REJECTED ? (
-                              <IconExclamationCircle size={10} />
-                            ) : undefined
-                          }
-                        >
-                          {ACHIEVEMENT_STATUS_RENDER[achievement.status]}
-                        </Badge>
-                      </Group>
-                    </Box>
-                  </Group>
-                  <Group gap="xs" wrap="nowrap">
-                    <Text size="md" fw={500} c="blue">
-                      {achievement.score} poin
-                    </Text>
-                  </Group>
-                </Flex>
-              </Accordion.Control>
-
-              <Accordion.Panel>
-                <Stack gap="md">
-                  {/* Description */}
-                  <Box>
-                    <Text size="md" c="dimmed" mb="xs">
-                      Deskripsi
-                    </Text>
-                    <Text size="md" lineClamp={3}>
-                      {achievement.description}
-                    </Text>
-                  </Box>
-
-                  {/* Achievement Details */}
-                  <Grid>
-                    <Grid.Col span={{ base: 12, sm: 6 }}>
-                      <Group gap="xs">
-                        <ThemeIcon size="md" variant="light" color="gray">
-                          <IconCalendar size={12} />
-                        </ThemeIcon>
-                        <Box>
-                          <Text size="md" c="dimmed">
-                            Tanggal Prestasi
-                          </Text>
-                          <Text size="md" fw={500}>
-                            {new Date(
-                              achievement.achievement_date,
-                            ).toLocaleDateString("id-ID")}
-                          </Text>
-                        </Box>
-                      </Group>
-                    </Grid.Col>
-                    <Grid.Col span={{ base: 12, sm: 6 }}>
-                      <Group gap="xs">
-                        <ThemeIcon size="md" variant="light" color="blue">
-                          <IconStar size={12} />
-                        </ThemeIcon>
-                        <Box>
-                          <Text size="md" c="dimmed">
-                            Poin
-                          </Text>
-                          <Text size="md" fw={500}>
-                            {achievement.score} poin
-                          </Text>
-                        </Box>
-                      </Group>
-                    </Grid.Col>
-                  </Grid>
-
-                  {/* Rejection Alert */}
-                  {achievement.status === ACHIEVEMENT_STATUS_ENUM.REJECTED && (
-                    <Alert
-                      variant="light"
-                      color="red"
-                      title="Alasan Penolakan"
-                      icon={<IconAlertCircle size={16} />}
-                    >
-                      <Text size="md" mb="sm">
-                        {achievement.remark}
+                      <Badge
+                        tt="none"
+                        variant="light"
+                        color={ACHIEVEMENT_STATUS_COLOR[item.status]}
+                        className={classes.badge}
+                      >
+                        {ACHIEVEMENT_STATUS_RENDER[item.status]}
+                      </Badge>
+                      <Text size="sm" fw={600}>
+                        {item.score} poin
                       </Text>
-                      <Group gap="xs" wrap="wrap">
-                        <Button
-                          variant="light"
-                          color="red"
-                          size="sm"
-                          leftSection={<IconDownload size={14} />}
-                          onClick={() =>
-                            handleDownloadFile(
-                              achievement.proof,
-                              `bukti-prestasi-${achievement.name}.pdf`,
-                            )
-                          }
-                        >
-                          Unduh Bukti
-                        </Button>
-                        <Button
-                          component={Link}
-                          href={`/leaderboard/edit/${achievement.id}`}
-                          variant="light"
-                          color="blue"
-                          size="sm"
-                          leftSection={<IconEdit size={14} />}
-                        >
-                          Edit Prestasi
-                        </Button>
-                      </Group>
-                    </Alert>
-                  )}
-
-                  {/* Pending Actions */}
-                  {achievement.status === ACHIEVEMENT_STATUS_ENUM.PENDING && (
-                    <Box>
-                      <Divider my="sm" />
-                      <Group gap="xs" wrap="wrap">
-                        <Button
-                          variant="light"
-                          color="blue"
-                          size="sm"
-                          leftSection={<IconDownload size={14} />}
-                          onClick={() =>
-                            handleDownloadFile(
-                              achievement.proof,
-                              `bukti-prestasi-${achievement.name}.pdf`,
-                            )
-                          }
-                        >
-                          Unduh Bukti
-                        </Button>
-                        <Button
-                          component={Link}
-                          href={`/leaderboard/edit/${achievement.id}`}
-                          variant="light"
-                          color="blue"
-                          size="sm"
-                          leftSection={<IconEdit size={14} />}
-                        >
-                          Banding Prestasi
-                        </Button>
-                      </Group>
-                    </Box>
-                  )}
-
-                  {/* Approved Status */}
-                  {achievement.status === ACHIEVEMENT_STATUS_ENUM.APPROVED && (
-                    <Box>
-                      <Divider my="sm" />
-                      <Group gap="xs" wrap="wrap">
-                        <Button
-                          variant="light"
-                          color="green"
-                          size="sm"
-                          leftSection={<IconFileText size={14} />}
-                          onClick={() =>
-                            handleDownloadFile(
-                              achievement.proof,
-                              `bukti-prestasi-${achievement.name}.pdf`,
-                            )
-                          }
-                        >
-                          Lihat Bukti
-                        </Button>
-                      </Group>
-                    </Box>
-                  )}
-                </Stack>
-              </Accordion.Panel>
-            </Accordion.Item>
-          ))}
-        </Accordion>
-
-        {/* No Results */}
-        {filteredAchievements.length === 0 && achievements.length > 0 && (
-          <Box ta="center" py="xl">
-            <ThemeIcon
-              size={60}
-              radius="xl"
-              variant="light"
-              color="gray"
-              mb="md"
-            >
-              <IconSearch size={30} />
-            </ThemeIcon>
-            <Text size="lg" c="dimmed" mb="xs">
-              Tidak ada prestasi yang ditemukan
-            </Text>
-            <Text size="md" c="dimmed">
-              Coba ubah kata kunci pencarian atau filter yang digunakan
-            </Text>
-          </Box>
-        )}
-      </Stack>
-    </Paper>
+                    </Group>
+                  </Stack>
+                </Accordion.Control>
+                <Accordion.Panel>
+                  <AchievementDetails achievement={item} />
+                </Accordion.Panel>
+              </Accordion.Item>
+            ))}
+          </Accordion>
+          {!filtered.length && (
+            <Paper withBorder className={classes.empty}>
+              <Text fw={600}>Tidak ada prestasi yang sesuai</Text>
+              <Button
+                variant="light"
+                mt="sm"
+                onClick={() => {
+                  setQuery("");
+                  setStatus("all");
+                }}
+              >
+                Hapus pencarian
+              </Button>
+            </Paper>
+          )}
+        </>
+      ) : (
+        <Paper withBorder className={classes.empty}>
+          <Text fw={600}>Belum ada prestasi</Text>
+          <Text c="dimmed" mt="xs">
+            Tambahkan prestasi beserta buktinya untuk ditinjau.
+          </Text>
+        </Paper>
+      )}
+    </Stack>
   );
 }

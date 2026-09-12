@@ -1,777 +1,375 @@
 "use client";
-
 import {
-  ActionIcon,
   Button,
-  Divider,
-  Group,
+  Fieldset,
   MultiSelect,
-  NumberInput,
   Paper,
   Select,
   Text,
   TextInput,
   Title,
 } from "@mantine/core";
-import {
-  IconCheck,
-  IconPencil,
-  IconTrash,
-  IconX,
-} from "@tabler/icons-react";
-import { useForm } from "@mantine/form";
 import { DateInput } from "@mantine/dates";
-import { useState, useEffect } from "react";
-
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+import { useForm } from "@mantine/form";
+import { useRef, useState } from "react";
+import type { ReactElement, ReactNode } from "react";
 import { GENDER_OPTION } from "@/constants/form/profile";
-import showNotif from "@/functions/common/notification";
 import editProfile from "@/functions/server/editProfile";
-import type { ExtraData, Member, PublicUser, WorkEntry, EducationEntry } from "@/types/model/members";
 import type { Province } from "@/types/model/province";
-import type { City } from "@/types/model/city";
 import type { Country } from "@/types/model/country";
-import { toISODateString } from "@/utils/dateUtils";
-import UniversityNameSelect from "@/components/common/UniversityNameSelect";
-import { getCitiesByProvince } from "@/services/profile";
-import { normalizeEducationHistory, normalizeWorkHistory } from "@/utils/profile-history";
-import { historyValidationErrors, profileHistorySchema } from "@/features/profile/history-schema";
+import type { ProfileData } from "../types";
+import { profileHistorySchema } from "../history-schema";
+import { profileValidationErrors } from "../form-schema";
+import { profileFormValues, profileFormRequest } from "../form-values";
+import type { ProfileFormValues } from "../form-values";
+import HistoryFields from "../HistoryFields";
+import CitySelect from "../CitySelect";
+import ProfileSectionError from "../ProfileSectionError";
 import classes from "./index.module.css";
 
-const CURRENT_ACTIVITY_FOCUS_OPTIONS = [
+dayjs.extend(customParseFormat);
+
+const FOCUS_OPTIONS = [
   { value: "professional", label: "Profesional" },
   { value: "academic", label: "Akademik" },
   { value: "social", label: "Sosial" },
   { value: "entrepreneur", label: "Wirausaha" },
   { value: "politics", label: "Politik" },
+  { value: "other", label: "Lainnya" },
 ];
-
-const DEGREE_OPTIONS = [
-  { value: "bachelor", label: "S1" },
-  { value: "master", label: "S2" },
-  { value: "doctoral", label: "S3" },
-];
-
-type PersonalDataFormProps = {
+function Section({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}): ReactElement {
+  return (
+    <section className={classes.section}>
+      <Title order={3} size="h4" className={classes.sectionHeader}>
+        {title}
+      </Title>
+      {children}
+    </section>
+  );
+}
+type Props = {
   provinces?: Province[];
   countries?: Country[];
-  profileData?: {
-    userData: PublicUser;
-    profile: Member;
-  };
+  profileData: ProfileData;
+  provinceError?: string;
+  countryError?: string;
+  onSaved: (name: string) => void;
 };
-
 export default function PersonalDataForm({
   provinces,
   countries,
   profileData,
-}: PersonalDataFormProps) {
-  const [currentCities, setCurrentCities] = useState<City[]>([]);
-  const [originCities, setOriginCities] = useState<City[]>([]);
-  const [editingEducationIndex, setEditingEducationIndex] = useState<number | null>(null);
-  const [editingWorkIndex, setEditingWorkIndex] = useState<number | null>(null);
-  const [educationSnapshot, setEducationSnapshot] = useState<EducationEntry | null>(null);
-  const [workSnapshot, setWorkSnapshot] = useState<WorkEntry | null>(null);
-  const [currentCityId, setCurrentCityId] = useState<string | null>(
-    profileData?.profile.city_id?.toString() ?? null,
+  provinceError,
+  countryError,
+  onSaved,
+}: Props): ReactElement {
+  const [initial] = useState(() => profileFormValues(profileData.profile));
+  const [province, setProvince] = useState(initial.province_id);
+  const [originProvince, setOriginProvince] = useState(
+    initial.origin_province_id,
   );
-  const [originCityId, setOriginCityId] = useState<string | null>(
-    profileData?.profile.origin_city_id?.toString() ?? null,
-  );
-  const [currentActivityFocus, setCurrentActivityFocus] = useState<string[]>(
-    profileData?.profile.extra_data?.current_activity_focus ?? [],
-  );
-
-  useEffect(() => {
-    if (profileData?.profile.province_id) {
-      getCitiesByProvince(profileData.profile.province_id).then(setCurrentCities);
-    }
-    if (profileData?.profile.origin_province_id) {
-      getCitiesByProvince(profileData.profile.origin_province_id).then(setOriginCities);
-    }
-  }, [profileData]);
-
-  useEffect(() => {
-    setCurrentActivityFocus(
-      profileData?.profile.extra_data?.current_activity_focus ?? [],
-    );
-  }, [profileData?.profile.extra_data?.current_activity_focus]);
-
-  const form = useForm({
+  const [feedback, setFeedback] = useState<{
+    error: boolean;
+    message: string;
+  } | null>(null);
+  const [historyVersion, setHistoryVersion] = useState(0);
+  const busy = useRef(false);
+  const form = useForm<ProfileFormValues>({
     mode: "uncontrolled",
-    validate: historyValidationErrors,
-    initialValues: {
-      name: profileData?.profile.name,
-      gender: profileData?.profile.gender,
-      email: profileData?.userData.email,
-      personal_id: profileData?.profile.personal_id,
-      province_id: profileData?.profile.province_id?.toString(),
-      line: profileData?.profile.line,
-      instagram: profileData?.profile.instagram,
-      tiktok: profileData?.profile.tiktok,
-      linkedin: profileData?.profile.linkedin,
-      whatsapp: profileData?.profile.whatsapp,
-      birth_date: profileData?.profile.birth_date
-        ? new Date(profileData.profile.birth_date)
-        : undefined,
-      origin_province_id: profileData?.profile.origin_province_id?.toString(),
-      country: profileData?.profile.country,
-      education_history: normalizeEducationHistory(profileData?.profile.education_history),
-      work_history: normalizeWorkHistory(profileData?.profile.work_history),
-      extra_data: {
-        preferred_name: profileData?.profile.extra_data?.preferred_name ?? "",
-        salman_activity_history:
-          profileData?.profile.extra_data?.salman_activity_history ?? [],
-        current_activity_focus:
-          profileData?.profile.extra_data?.current_activity_focus ?? [],
-      } as ExtraData,
-    },
+    initialValues: initial,
+    validate: profileValidationErrors,
   });
-
-  const handleEditProfile = async (
-    rawFormData: Partial<
-      Omit<Member, "province_id" | "origin_province_id" | "birth_date"> & {
-        province_id: string;
-        origin_province_id: string;
-        birth_date: Date | undefined;
-      }
-    >,
-  ) => {
-    const normalizedWorkHistoryEntries = normalizeWorkHistory(rawFormData.work_history).filter((entry) =>
-      entry.job_title.trim() !== "" ||
-      entry.company.trim() !== "" ||
-      entry.start_year !== undefined ||
-      entry.end_year !== undefined,
-    );
-
-    const hasInvalidWorkYearRange = normalizedWorkHistoryEntries.some(
-      (entry) =>
-        entry.start_year !== undefined &&
-        entry.end_year !== undefined &&
-        entry.end_year < entry.start_year,
-    );
-
-    if (hasInvalidWorkYearRange) {
-      showNotif("Tahun selesai tidak boleh lebih kecil dari tahun mulai", true);
-      return;
-    }
-
-    const finalFormData = {
-      ...rawFormData,
-      ...profileHistorySchema.parse(rawFormData),
-      province_id: rawFormData.province_id
-        ? Number(rawFormData.province_id)
-        : undefined,
-      city_id: currentCityId ? Number(currentCityId) : undefined,
-      origin_province_id: rawFormData.origin_province_id
-        ? Number(rawFormData.origin_province_id)
-        : undefined,
-      origin_city_id: originCityId ? Number(originCityId) : undefined,
-      birth_date: toISODateString(rawFormData.birth_date),
-      work_history: normalizedWorkHistoryEntries,
-    };
-
+  const dirty = form.isDirty();
+  function focusError(errors: Record<string, ReactNode>): void {
+    const first = Object.keys(errors)[0];
+    setFeedback({
+      error: true,
+      message: "Periksa isian yang ditandai sebelum menyimpan.",
+    });
+    if (first) requestAnimationFrame(() => form.getInputNode(first)?.focus());
+  }
+  function discard(): void {
+    form.reset();
+    setProvince(form.getValues().province_id);
+    setOriginProvince(form.getValues().origin_province_id);
+    setHistoryVersion((value) => value + 1);
+    setFeedback(null);
+  }
+  async function save(values: ProfileFormValues): Promise<void> {
+    if (busy.current) return;
+    busy.current = true;
+    setFeedback(null);
     try {
-      const resp = await editProfile(finalFormData);
-      showNotif(resp.message, !resp.success);
-    } catch (error: unknown) {
-      if (error instanceof Error) showNotif(error.message, true);
+      const request = profileFormRequest({
+        ...values,
+        ...profileHistorySchema.parse(values),
+      });
+      const response = await editProfile(request);
+      if (!response.success) {
+        setFeedback({ error: true, message: response.message });
+        return;
+      }
+      const saved = profileFormValues({
+        ...profileData.profile,
+        ...request,
+        ...response.data,
+      });
+      form.setInitialValues(saved);
+      form.setValues(saved);
+      form.resetDirty(saved);
+      setProvince(saved.province_id);
+      setOriginProvince(saved.origin_province_id);
+      setHistoryVersion((value) => value + 1);
+      onSaved(saved.name);
+      setFeedback({ error: false, message: "Perubahan berhasil disimpan." });
+    } catch {
+      setFeedback({
+        error: true,
+        message: "Perubahan belum tersimpan. Silakan coba lagi.",
+      });
+    } finally {
+      busy.current = false;
     }
-  };
-
-  const getEducationSummary = (entry: EducationEntry) => {
-    const degreeLabel =
-      DEGREE_OPTIONS.find((option) => option.value === entry.degree)?.label || "-";
-    const primary = [entry.institution, entry.faculty, entry.major].filter(Boolean).join(" / ");
-    return [degreeLabel, primary || "Data belum lengkap", entry.intake_year || "-"].join(" • ");
-  };
-
-  const getWorkSummary = (entry: WorkEntry) => {
-    const primary = [entry.job_title, entry.company].filter(Boolean).join(" - ");
-    const years =
-      entry.start_year || entry.end_year
-        ? `${entry.start_year ?? "?"} - ${entry.end_year ?? "Sekarang"}`
-        : "Tahun belum diisi";
-    return [primary || "Data belum lengkap", years].join(" • ");
-  };
-
-  const startEditEducation = (index: number) => {
-    setEducationSnapshot({
-      ...(form.getValues().education_history?.[index] ?? {
-        degree: "bachelor",
-        institution: "",
-        faculty: "",
-        major: "",
-        intake_year: new Date().getFullYear(),
-      }),
-    });
-    setEditingEducationIndex(index);
-  };
-
-  const cancelEditEducation = (index: number) => {
-    if (educationSnapshot) {
-      form.replaceListItem("education_history", index, educationSnapshot);
-    } else {
-      form.removeListItem("education_history", index);
-    }
-    setEducationSnapshot(null);
-    setEditingEducationIndex(null);
-  };
-
-  const saveEditEducation = () => {
-    if (form.validate().hasErrors) return;
-    form.setFieldValue("education_history", profileHistorySchema.parse(form.getValues()).education_history ?? []);
-    setEducationSnapshot(null);
-    setEditingEducationIndex(null);
-  };
-
-  const startEditWork = (index: number) => {
-    setWorkSnapshot({
-      ...(form.getValues().work_history?.[index] ?? {
-        job_title: "",
-        company: "",
-        start_year: undefined,
-        end_year: undefined,
-      }),
-    });
-    setEditingWorkIndex(index);
-  };
-
-  const cancelEditWork = (index: number) => {
-    if (workSnapshot) {
-      form.replaceListItem("work_history", index, workSnapshot);
-    } else {
-      form.removeListItem("work_history", index);
-    }
-    setWorkSnapshot(null);
-    setEditingWorkIndex(null);
-  };
-
-  const saveEditWork = () => {
-    if (form.validate().hasErrors) return;
-    form.setFieldValue("work_history", profileHistorySchema.parse(form.getValues()).work_history ?? []);
-    setWorkSnapshot(null);
-    setEditingWorkIndex(null);
-  };
-
+  }
+  const provinceOptions =
+    provinces?.map((item) => ({ value: String(item.id), label: item.name })) ??
+    [];
   return (
-    <Paper p={{ base: "md", sm: "lg" }} radius="md" withBorder>
-    <form onSubmit={form.onSubmit((val) => handleEditProfile(val))}>
-      {/* Personal */}
-      <Title order={5} mb="sm">Personal</Title>
-      <TextInput
-        {...form.getInputProps("name")}
-        key={form.key("name")}
-        label="Nama Lengkap"
-        placeholder="Nama Lengkap"
-        radius="md"
-      />
-      <TextInput
-        {...form.getInputProps("extra_data.preferred_name")}
-        key={form.key("extra_data.preferred_name")}
-        label="Nama Panggilan"
-        placeholder="Nama yang sering dipakai"
-        mt="md"
-        radius="md"
-      />
-      <Select
-        {...form.getInputProps("gender")}
-        key={form.key("gender")}
-        label="Jenis Kelamin"
-        placeholder="Pilih Jenis Kelamin"
-        data={GENDER_OPTION}
-        mt="md"
-        radius="md"
-      />
-      <TextInput
-        {...form.getInputProps("email")}
-        key={form.key("email")}
-        disabled
-        label="Alamat Email"
-        placeholder="Alamat Email"
-        mt="md"
-        radius="md"
-      />
-      <TextInput
-        {...form.getInputProps("personal_id")}
-        key={form.key("personal_id")}
-        label="Nomor Identitas"
-        placeholder="Nomor Identitas"
-        mt="md"
-        radius="md"
-      />
-      <DateInput
-        {...form.getInputProps("birth_date")}
-        key={form.key("birth_date")}
-        label="Tanggal Lahir"
-        placeholder="Pilih tanggal lahir"
-        valueFormat="YYYY-MM-DD"
-        mt="md"
-        radius="md"
-      />
-
-      <Divider my="xl" />
-
-      {/* Domicile */}
-      <Title order={5} mb="sm">Domisili Saat Ini</Title>
-      <Select
-        {...form.getInputProps("province_id")}
-        key={form.key("province_id")}
-        label="Provinsi"
-        placeholder="Pilih Provinsi"
-        data={provinces?.map((province) => ({
-          label: province.name,
-          value: province.id.toString(),
-        }))}
-        searchable
-        radius="md"
-        onChange={(val) => {
-          form.getInputProps("province_id").onChange(val);
-          setCurrentCityId(null);
-          setCurrentCities([]);
-          if (val) {
-            getCitiesByProvince(Number(val)).then(setCurrentCities);
-          }
-        }}
-      />
-      <Select
-        label="Kota / Kabupaten"
-        placeholder="Pilih Kota / Kabupaten"
-        data={currentCities.map((c) => ({ label: c.name, value: c.id.toString() }))}
-        value={currentCityId}
-        onChange={setCurrentCityId}
-        searchable
-        disabled={currentCities.length === 0}
-        mt="md"
-        radius="md"
-      />
-      <Select
-        {...form.getInputProps("country")}
-        key={form.key("country")}
-        label="Negara"
-        placeholder="Pilih negara domisili"
-        data={countries?.map((c) => ({ label: c.name, value: c.name })) ?? []}
-        searchable
-        mt="md"
-        radius="md"
-      />
-
-      <Divider my="xl" />
-
-      {/* Origin */}
-      <Title order={5} mb="sm">Asal Daerah</Title>
-      <Select
-        {...form.getInputProps("origin_province_id")}
-        key={form.key("origin_province_id")}
-        label="Provinsi Asal"
-        placeholder="Pilih Provinsi Asal"
-        data={provinces?.map((province) => ({
-          label: province.name,
-          value: province.id.toString(),
-        }))}
-        searchable
-        radius="md"
-        onChange={(val) => {
-          form.getInputProps("origin_province_id").onChange(val);
-          setOriginCityId(null);
-          setOriginCities([]);
-          if (val) {
-            getCitiesByProvince(Number(val)).then(setOriginCities);
-          }
-        }}
-      />
-      <Select
-        label="Kota / Kabupaten Asal"
-        placeholder="Pilih Kota / Kabupaten Asal"
-        data={originCities.map((c) => ({ label: c.name, value: c.id.toString() }))}
-        value={originCityId}
-        onChange={setOriginCityId}
-        searchable
-        disabled={originCities.length === 0}
-        mt="md"
-        radius="md"
-      />
-
-      <Divider my="xl" />
-
-      {/* Social media */}
-      <Title order={5} mb="sm">Sosial Media</Title>
-      <TextInput
-        {...form.getInputProps("line")}
-        key={form.key("line")}
-        label="ID Line"
-        placeholder="ID Line"
-        radius="md"
-      />
-      <TextInput
-        {...form.getInputProps("whatsapp")}
-        key={form.key("whatsapp")}
-        label="Nomor Whatsapp Aktif"
-        description="Cth: 6281234567890. Pastikan nomor whatsapp kamu aktif."
-        placeholder="Cth: 6281234567890"
-        mt="md"
-        radius="md"
-      />
-      <TextInput
-        {...form.getInputProps("linkedin")}
-        key={form.key("linkedin")}
-        label="Akun Linkedin"
-        placeholder="Akun Linkedin"
-        mt="md"
-        radius="md"
-      />
-      <TextInput
-        {...form.getInputProps("instagram")}
-        key={form.key("instagram")}
-        label="Akun Instagram"
-        placeholder="Akun Instagram"
-        mt="md"
-        radius="md"
-      />
-      <TextInput
-        {...form.getInputProps("tiktok")}
-        key={form.key("tiktok")}
-        label="Akun Tiktok"
-        placeholder="Akun Tiktok"
-        mt="md"
-        radius="md"
-      />
-
-      <Divider my="xl" />
-
-      {/* Education history */}
-      <Title order={5} mb="sm">Riwayat Pendidikan</Title>
-      {form.getValues().education_history?.map((_, index) => (
-        <Paper key={index} withBorder p={editingEducationIndex === index ? "md" : "sm"} mb="sm" radius="md">
-          <div>
-            <Group
-              justify="space-between"
-              mb={editingEducationIndex !== index ? "sm" : "md"}
-              align="center"
-              wrap="nowrap"
-            >
-              <Text size="md" fw={500}>
-                Pendidikan {index + 1}
-              </Text>
-              <Group gap={4}>
-              {editingEducationIndex === index ? (
-                <>
-                  <ActionIcon
-                    color="gray"
-                    variant="filled"
-                    size="lg"
-                    aria-label="Batal edit pendidikan"
-                    onClick={() => cancelEditEducation(index)}
-                  >
-                    <IconX size={18} />
-                  </ActionIcon>
-                  <ActionIcon
-                    variant="filled"
-                    size="lg"
-                    aria-label="Simpan pendidikan"
-                    onClick={saveEditEducation}
-                  >
-                    <IconCheck size={18} />
-                  </ActionIcon>
-                </>
-              ) : (
-                <>
-                  <ActionIcon
-                    variant="filled"
-                    size="lg"
-                    aria-label="Edit pendidikan"
-                    disabled={editingEducationIndex !== null}
-                    onClick={() => startEditEducation(index)}
-                  >
-                    <IconPencil size={18} />
-                  </ActionIcon>
-                  <ActionIcon
-                    color="red"
-                    variant="filled"
-                    size="lg"
-                    aria-label="Hapus pendidikan"
-                    onClick={() => {
-                      form.removeListItem("education_history", index);
-                      setEditingEducationIndex((currentValue) => {
-                        if (currentValue === index) return null;
-                        if (currentValue !== null && currentValue > index) return currentValue - 1;
-                        return currentValue;
-                      });
-                    }}
-                  >
-                    <IconTrash size={18} />
-                  </ActionIcon>
-                </>
-              )}
-            </Group>
-            </Group>
-            {editingEducationIndex !== index ? (
-              <Text size="md" c="dimmed">
-                {getEducationSummary(
-                  form.getValues().education_history?.[index] ?? {
-                    degree: "bachelor",
-                    institution: "",
-                    faculty: "",
-                    major: "",
-                    intake_year: new Date().getFullYear(),
-                  },
-                )}
-              </Text>
-            ) : null}
-          </div>
-          {editingEducationIndex === index ? (
-            <>
-              <Select
-                {...form.getInputProps(`education_history.${index}.degree`)}
-                key={form.key(`education_history.${index}.degree`)}
-                label="Jenjang"
-                data={DEGREE_OPTIONS}
-                radius="md"
-              />
-              <UniversityNameSelect
-                {...form.getInputProps(`education_history.${index}.institution`)}
-                key={form.key(`education_history.${index}.institution`)}
-                label="Institusi"
-                placeholder="Cari universitas"
-                mt="xs"
-                radius="md"
-              />
-              <TextInput
-                {...form.getInputProps(`education_history.${index}.faculty`)}
-                key={form.key(`education_history.${index}.faculty`)}
-                label="Fakultas"
-                placeholder="Fakultas"
-                mt="xs"
-                radius="md"
-              />
-              <TextInput
-                {...form.getInputProps(`education_history.${index}.major`)}
-                key={form.key(`education_history.${index}.major`)}
-                label="Jurusan"
-                placeholder="Jurusan"
-                mt="xs"
-                radius="md"
-              />
-              <NumberInput
-                {...form.getInputProps(`education_history.${index}.intake_year`)}
-                key={form.key(`education_history.${index}.intake_year`)}
-                label="Tahun Masuk"
-                placeholder="Tahun masuk"
-                mt="xs"
-                radius="md"
-              />
-            </>
-          ) : null}
-        </Paper>
-      ))}
-      <Button
-        variant="light"
-        size="md"
-        mt="xs"
-        className={classes.addButton}
-        disabled={editingEducationIndex !== null}
-        onClick={() => {
-          form.insertListItem("education_history", {
-            degree: "bachelor",
-            institution: "",
-            faculty: "",
-            major: "",
-            intake_year: new Date().getFullYear(),
-          });
-          setEducationSnapshot(null);
-          setEditingEducationIndex(form.getValues().education_history.length - 1);
-        }}
-      >
-        + Tambah Pendidikan
-      </Button>
-
-      <Divider my="xl" />
-
-      {/* Work history */}
-      <Title order={5} mb="sm">Riwayat Pekerjaan / Aktivitas</Title>
-      {form.getValues().work_history?.map((_, index) => (
-        <Paper key={index} withBorder p={editingWorkIndex === index ? "md" : "sm"} mb="sm" radius="md">
-          <div>
-            <Group
-              justify="space-between"
-              mb={editingWorkIndex !== index ? "sm" : "md"}
-              align="center"
-              wrap="nowrap"
-            >
-              <Text size="md" fw={500}>
-                Pekerjaan / Aktivitas {index + 1}
-              </Text>
-              <Group gap={4}>
-              {editingWorkIndex === index ? (
-                <>
-                  <ActionIcon
-                    color="gray"
-                    variant="filled"
-                    size="lg"
-                    aria-label="Batal edit pekerjaan"
-                    onClick={() => cancelEditWork(index)}
-                  >
-                    <IconX size={18} />
-                  </ActionIcon>
-                  <ActionIcon
-                    variant="filled"
-                    size="lg"
-                    aria-label="Simpan pekerjaan"
-                    onClick={saveEditWork}
-                  >
-                    <IconCheck size={18} />
-                  </ActionIcon>
-                </>
-              ) : (
-                <>
-                  <ActionIcon
-                    variant="filled"
-                    size="lg"
-                    aria-label="Edit pekerjaan"
-                    disabled={editingWorkIndex !== null}
-                    onClick={() => startEditWork(index)}
-                  >
-                    <IconPencil size={18} />
-                  </ActionIcon>
-                  <ActionIcon
-                    color="red"
-                    variant="filled"
-                    size="lg"
-                    aria-label="Hapus pekerjaan"
-                    onClick={() => {
-                      form.removeListItem("work_history", index);
-                      setEditingWorkIndex((currentValue) => {
-                        if (currentValue === index) return null;
-                        if (currentValue !== null && currentValue > index) return currentValue - 1;
-                        return currentValue;
-                      });
-                    }}
-                  >
-                    <IconTrash size={18} />
-                  </ActionIcon>
-                </>
-              )}
-            </Group>
-            </Group>
-            {editingWorkIndex !== index ? (
-              <Text size="md" c="dimmed">
-                {getWorkSummary(
-                  form.getValues().work_history?.[index] ?? {
-                    job_title: "",
-                    company: "",
-                    start_year: undefined,
-                    end_year: undefined,
-                  },
-                )}
-              </Text>
-            ) : null}
-          </div>
-          {editingWorkIndex === index ? (
-            <>
-              <TextInput
-                {...form.getInputProps(`work_history.${index}.job_title`)}
-                key={form.key(`work_history.${index}.job_title`)}
-                label="Posisi / Jabatan"
-                placeholder="Contoh: Software Engineer"
-                radius="md"
-              />
-              <TextInput
-                {...form.getInputProps(`work_history.${index}.company`)}
-                key={form.key(`work_history.${index}.company`)}
-                label="Perusahaan / Organisasi"
-                placeholder="Nama perusahaan atau organisasi"
-                mt="xs"
-                radius="md"
-              />
-              <NumberInput
-                {...form.getInputProps(`work_history.${index}.start_year`)}
-                key={form.key(`work_history.${index}.start_year`)}
-                label="Tahun Mulai"
-                placeholder="Contoh: 2022"
-                mt="xs"
-                radius="md"
-                min={1900}
-                max={new Date().getFullYear() + 10}
-              />
-              <NumberInput
-                {...form.getInputProps(`work_history.${index}.end_year`)}
-                key={form.key(`work_history.${index}.end_year`)}
-                label="Tahun Selesai"
-                placeholder="Kosongkan jika masih aktif"
-                mt="xs"
-                radius="md"
-                min={1900}
-                max={new Date().getFullYear() + 10}
-              />
-            </>
-          ) : null}
-        </Paper>
-      ))}
-      <Button
-        variant="light"
-        size="md"
-        mt="xs"
-        className={classes.addButton}
-        disabled={editingWorkIndex !== null}
-        onClick={() => {
-          form.insertListItem("work_history", {
-            job_title: "",
-            company: "",
-            start_year: undefined,
-            end_year: undefined,
-          });
-          setWorkSnapshot(null);
-          setEditingWorkIndex(form.getValues().work_history.length - 1);
-        }}
-      >
-        + Tambah Pekerjaan / Aktivitas
-      </Button>
-
-      <Divider my="xl" />
-
-      {/* Activity focus */}
-      <Title order={5} mb="sm">Fokus Aktivitas Saat Ini</Title>
-      <Text size="md" c="dimmed" mb="md">
-        Pilih satu atau beberapa fokus yang paling sesuai dengan aktivitas Anda saat ini.
+    <form
+      className={classes.form}
+      noValidate
+      onSubmit={(event) => {
+        if (busy.current) {
+          event.preventDefault();
+          return;
+        }
+        form.onSubmit(save, focusError)(event);
+      }}
+    >
+      <Title order={2} size="h3" mb={4}>
+        Data diri
+      </Title>
+      <Text c="dimmed" mb="lg">
+        Perbarui informasi Anda, lalu simpan perubahan di bagian bawah.
       </Text>
-      <MultiSelect
-        label="Bidang Fokus"
-        description="Bisa pilih lebih dari satu. Cari lalu ketuk untuk menambahkan."
-        placeholder="Pilih fokus aktivitas"
-        data={CURRENT_ACTIVITY_FOCUS_OPTIONS}
-        value={currentActivityFocus}
-        onChange={(value) => {
-          setCurrentActivityFocus(value);
-          form.setFieldValue("extra_data.current_activity_focus", value);
-        }}
-        searchable={false}
-        hidePickedOptions={false}
-        radius="md"
-        size="md"
-        maxDropdownHeight={280}
-        classNames={{
-          label: classes.focusLabel,
-          description: classes.focusDescription,
-          input: classes.focusInput,
-          pill: classes.focusPill,
-          pillsList: classes.focusPillsList,
-          dropdown: classes.focusDropdown,
-          option: classes.focusOption,
-          inputField:
-            currentActivityFocus.length > 0 ? classes.focusInputHidden : undefined,
-        }}
-      />
-
-      <Button
-        type="submit"
-        size="md"
-        radius="md"
-        loading={form.submitting}
-        fullWidth
-        style={{ marginTop: "2rem" }}
-      >
-        Ubah Data Diri
-      </Button>
+      <Paper withBorder p={{ base: "md", sm: "lg" }}>
+        <Fieldset unstyled disabled={form.submitting}>
+          <Section title="Identitas">
+            <div className={classes.fields}>
+              <TextInput
+                {...form.getInputProps("name")}
+                key={form.key("name")}
+                label="Nama lengkap"
+                autoComplete="name"
+              />
+              <TextInput
+                {...form.getInputProps("extra_data.preferred_name")}
+                key={form.key("extra_data.preferred_name")}
+                label="Nama panggilan"
+                autoComplete="nickname"
+              />
+              <Select
+                {...form.getInputProps("gender")}
+                key={form.key("gender")}
+                label="Jenis kelamin"
+                allowDeselect={false}
+                data={GENDER_OPTION}
+              />
+              <DateInput
+                {...form.getInputProps("birth_date")}
+                key={form.key("birth_date")}
+                label="Tanggal lahir"
+                valueFormat="DD/MM/YYYY"
+                dateParser={(input) => {
+                  const parsed = dayjs(input, "DD/MM/YYYY", true);
+                  return parsed.isValid() ? parsed.format("YYYY-MM-DD") : null;
+                }}
+                placeholder="DD/MM/YYYY"
+              />
+              <TextInput
+                {...form.getInputProps("personal_id")}
+                key={form.key("personal_id")}
+                label="Nomor identitas"
+                inputMode="numeric"
+              />
+              <div>
+                <Text fw={600} size="sm">
+                  Email akun
+                </Text>
+                <Text className={classes.readOnly}>
+                  {profileData.userData.email || "Belum tersedia"}
+                </Text>
+                <Text c="dimmed" size="sm">
+                  Email akun tidak dapat diubah di sini.
+                </Text>
+              </div>
+            </div>
+          </Section>
+          <Section title="Domisili">
+            {provinceError && <ProfileSectionError message={provinceError} />}
+            {countryError && <ProfileSectionError message={countryError} />}
+            <div className={classes.fields}>
+              <Select
+                {...form.getInputProps("province_id")}
+                key={form.key("province_id")}
+                label="Provinsi"
+                allowDeselect={false}
+                data={provinceOptions}
+                searchable
+                disabled={Boolean(provinceError)}
+                onChange={(value) => {
+                  form.setFieldValue("province_id", value);
+                  form.setFieldValue("city_id", null);
+                  setProvince(value);
+                }}
+              />
+              <CitySelect
+                {...form.getInputProps("city_id")}
+                key={form.key("city_id")}
+                provinceId={province}
+                label="Kota / kabupaten"
+              />
+              <Select
+                {...form.getInputProps("country")}
+                key={form.key("country")}
+                label="Negara"
+                allowDeselect={false}
+                searchable
+                disabled={Boolean(countryError)}
+                data={
+                  countries?.map((item) => ({
+                    value: item.name,
+                    label: item.name,
+                  })) ?? []
+                }
+              />
+            </div>
+          </Section>
+          <Section title="Asal daerah">
+            <div className={classes.fields}>
+              <Select
+                {...form.getInputProps("origin_province_id")}
+                key={form.key("origin_province_id")}
+                label="Provinsi asal"
+                allowDeselect={false}
+                data={provinceOptions}
+                searchable
+                disabled={Boolean(provinceError)}
+                onChange={(value) => {
+                  form.setFieldValue("origin_province_id", value);
+                  form.setFieldValue("origin_city_id", null);
+                  setOriginProvince(value);
+                }}
+              />
+              <CitySelect
+                {...form.getInputProps("origin_city_id")}
+                key={form.key("origin_city_id")}
+                provinceId={originProvince}
+                label="Kota / kabupaten asal"
+              />
+            </div>
+          </Section>
+          <Section title="Kontak dan media sosial">
+            <div className={classes.fields}>
+              <TextInput
+                {...form.getInputProps("whatsapp")}
+                key={form.key("whatsapp")}
+                label="Nomor WhatsApp aktif"
+                type="tel"
+                autoComplete="tel"
+                description="Gunakan kode negara, misalnya 6281234567890."
+              />
+              <TextInput
+                {...form.getInputProps("line")}
+                key={form.key("line")}
+                label="ID LINE"
+              />
+              <TextInput
+                {...form.getInputProps("linkedin")}
+                key={form.key("linkedin")}
+                label="LinkedIn"
+                placeholder="Tautan profil LinkedIn"
+              />
+              <TextInput
+                {...form.getInputProps("instagram")}
+                key={form.key("instagram")}
+                label="Instagram"
+                placeholder="Nama pengguna"
+              />
+              <TextInput
+                {...form.getInputProps("tiktok")}
+                key={form.key("tiktok")}
+                label="TikTok"
+                placeholder="Nama pengguna"
+              />
+            </div>
+          </Section>
+          <Section title="Pendidikan">
+            <HistoryFields
+              key={`education-${historyVersion}`}
+              form={form}
+              kind="education_history"
+            />
+          </Section>
+          <Section title="Pekerjaan / aktivitas">
+            <HistoryFields
+              key={`work-${historyVersion}`}
+              form={form}
+              kind="work_history"
+            />
+          </Section>
+          <Section title="Fokus aktivitas">
+            <MultiSelect
+              {...form.getInputProps("extra_data.current_activity_focus")}
+              key={form.key("extra_data.current_activity_focus")}
+              label="Bidang fokus"
+              description="Pilih satu atau beberapa bidang yang sesuai dengan aktivitas Anda saat ini."
+              data={FOCUS_OPTIONS}
+              classNames={{ option: classes.focusOption }}
+            />
+          </Section>
+        </Fieldset>
+      </Paper>
+      <div className={classes.saveBar}>
+        <div className={classes.saveStatus}>
+          {feedback?.error ? (
+            <Text role="alert" c="red">
+              {feedback.message}
+            </Text>
+          ) : (
+            <Text role="status" size="sm" c="dimmed">
+              {dirty
+                ? "Ada perubahan yang belum disimpan."
+                : feedback?.message || "Belum ada perubahan."}
+            </Text>
+          )}
+        </div>
+        <div className={classes.saveActions}>
+          <Button
+            variant="subtle"
+            disabled={!dirty || form.submitting}
+            onClick={discard}
+          >
+            Batalkan perubahan
+          </Button>
+          <Button
+            type="submit"
+            color="blue.8"
+            loading={form.submitting}
+            disabled={!dirty}
+          >
+            Simpan perubahan
+          </Button>
+        </div>
+      </div>
     </form>
-    </Paper>
   );
 }

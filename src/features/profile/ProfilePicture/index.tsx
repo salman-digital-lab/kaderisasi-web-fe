@@ -1,17 +1,12 @@
 "use client";
 
-import showNotif from "@/functions/common/notification";
+import { Avatar, Button, FileButton, Stack, Text } from "@mantine/core";
+import { IconPencil } from "@tabler/icons-react";
+import { useId, useRef, useState } from "react";
+import type { ReactElement } from "react";
 import { postProfilePicture } from "@/services/profile";
 import updateProfilePictureCookie from "@/functions/server/updateProfilePictureCookie";
-import {
-  Avatar,
-  FileButton,
-  Indicator,
-  LoadingOverlay,
-  Stack,
-} from "@mantine/core";
-import { IconPencil } from "@tabler/icons-react";
-import { useState } from "react";
+import { validateProfilePicture } from "../picture-validation";
 
 interface ProfilePictureProps {
   src?: string;
@@ -19,65 +14,87 @@ interface ProfilePictureProps {
   radius?: number;
   token: string;
 }
-
 export function ProfilePicture({
   src,
-  size = 120,
-  radius = 120,
+  size = 72,
+  radius = 72,
   token,
-}: ProfilePictureProps) {
-  const [fileName, setFileName] = useState<string | null>(src || "");
-  const [loading, setLoading] = useState<boolean>(false);
-
-  const handleUploadPicture = async (file: File | null) => {
-    if (!file) return;
-    try {
-      setLoading(true);
-      const resp = await postProfilePicture(token, file);
-      if (resp) {
-        showNotif(resp.message);
-        setFileName(resp.data.picture);
-        // Update the profile picture cookie
-        await updateProfilePictureCookie(resp.data.picture);
-      }
-    } catch (error: unknown) {
-      if (error instanceof Error) showNotif(error.message, true);
-    } finally {
-      setLoading(false);
+}: ProfilePictureProps): ReactElement {
+  const [uploadedPicture, setUploadedPicture] = useState<string>();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+  const busy = useRef(false);
+  const resetRef = useRef<() => void>(null);
+  const hintId = useId();
+  async function upload(file: File | null): Promise<void> {
+    if (!file || busy.current) return;
+    setMessage("");
+    const problem = validateProfilePicture(file);
+    setError(problem ?? "");
+    if (problem) {
+      resetRef.current?.();
+      return;
     }
-  };
-
+    busy.current = true;
+    setLoading(true);
+    try {
+      const response = await postProfilePicture(token, file);
+      setUploadedPicture(response.data.picture);
+      await updateProfilePictureCookie(response.data.picture);
+      setMessage("Foto berhasil diperbarui.");
+    } catch {
+      setError(
+        "Foto belum berhasil diperbarui. Silakan pilih foto dan coba lagi.",
+      );
+    } finally {
+      busy.current = false;
+      setLoading(false);
+      resetRef.current?.();
+    }
+  }
+  const picture = uploadedPicture ?? src;
   return (
-    <Stack align="center">
-      <FileButton onChange={handleUploadPicture} accept="image/png,image/jpeg">
+    <Stack align="center" gap={4} maw={180}>
+      <Avatar
+        size={size}
+        radius={radius}
+        alt="Foto profil"
+        src={
+          picture
+            ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${picture}`
+            : undefined
+        }
+      />
+      <FileButton
+        onChange={upload}
+        accept="image/png,image/jpeg"
+        resetRef={resetRef}
+      >
         {(props) => (
-          <Indicator
+          <Button
             {...props}
-            offset={16}
-            label={<IconPencil size={16} />}
-            size={28}
-            w="fit-content"
-            mx="auto"
-            style={{ cursor: "pointer" }}
+            variant="subtle"
+            px="xs"
+            loading={loading}
+            aria-describedby={hintId}
+            leftSection={<IconPencil size={16} aria-hidden />}
           >
-            <LoadingOverlay
-              visible={loading}
-              zIndex={1000}
-              overlayProps={{ radius: "50%", blur: 2 }}
-            />
-            <Avatar
-              size={size}
-              radius={radius}
-              mx="auto"
-              src={
-                fileName && fileName !== ""
-                  ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${fileName}`
-                  : undefined
-              }
-            />
-          </Indicator>
+            Ubah foto
+          </Button>
         )}
       </FileButton>
+      <Text id={hintId} size="xs" c="dimmed" ta="center">
+        JPG / PNG, maks. 2 MB
+      </Text>
+      {error && (
+        <Text role="alert" size="sm" c="red" ta="center">
+          {error}
+        </Text>
+      )}
+      <Text role="status" size="sm" ta="center">
+        {loading ? "Mengunggah foto..." : message}
+      </Text>
     </Stack>
   );
 }

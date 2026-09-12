@@ -1,13 +1,14 @@
 "use client";
-
 import Link from "next/link";
-import classes from "@/components/common/Catalogue/Catalogue.module.css";
+import { Badge, Box, Button, Paper, Stack, Text, Title } from "@mantine/core";
+import { IconAward, IconCalendarEvent } from "@tabler/icons-react";
+import type { ReactElement } from "react";
 import CatalogueImage from "@/components/common/Catalogue/CatalogueImage";
-import { Card, Text, Group, Badge, Button, Stack, Box } from "@mantine/core";
-import { IconClock, IconAward, IconCalendarEvent } from "@tabler/icons-react";
-import { ACTIVITY_REGISTRANT_STATUS_ENUM } from "@/types/constants/activity";
+import { ACTIVITY_REGISTRANT_STATUS_ENUM as Status } from "@/types/constants/activity";
 import { getCertificateCta } from "@/features/certificate/utils/certificateData";
 import type { CertificateLifecycleState } from "@/types/model/certificate";
+import classes from "./index.module.css";
+import shared from "@/features/profile/profile.module.css";
 
 type ActivityCardProps = {
   activityName: string;
@@ -20,37 +21,13 @@ type ActivityCardProps = {
   certificateCode?: string | null;
   certificateState?: CertificateLifecycleState;
 };
-
-// Format date to readable string
-const formatDate = (dateString: string): string => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString("id-ID", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-};
-
-// Get badge color based on status
-const getStatusColor = (status: string): string => {
-  switch (status) {
-    case ACTIVITY_REGISTRANT_STATUS_ENUM.DITERIMA:
-    case ACTIVITY_REGISTRANT_STATUS_ENUM.LULUS_KEGIATAN:
-      return "green";
-    case ACTIVITY_REGISTRANT_STATUS_ENUM.TIDAK_DITERIMA:
-    case ACTIVITY_REGISTRANT_STATUS_ENUM.TIDAK_LULUS:
-      return "red";
-    case ACTIVITY_REGISTRANT_STATUS_ENUM.TERDAFTAR:
-      return "blue";
-    case ACTIVITY_REGISTRANT_STATUS_ENUM.BELUM_DIUMUMKAN:
-      return "orange";
-    default:
-      return "gray";
-  }
-};
-
+function statusColor(status: string): string {
+  if (status === Status.DITERIMA || status === Status.LULUS_KEGIATAN)
+    return "green";
+  if (status === Status.TIDAK_DITERIMA || status === Status.TIDAK_LULUS)
+    return "red";
+  return status === Status.BELUM_DIUMUMKAN ? "orange" : "blue";
+}
 export default function ActivityPersonalCard({
   activityName,
   registrationStatus,
@@ -61,103 +38,92 @@ export default function ActivityPersonalCard({
   hasCertificate,
   certificateCode,
   certificateState,
-}: ActivityCardProps) {
-  const isUnannounced =
-    registrationStatus === ACTIVITY_REGISTRANT_STATUS_ENUM.BELUM_DIUMUMKAN;
-
-  const certificateCta = getCertificateCta({
+}: ActivityCardProps): ReactElement {
+  const certificate = getCertificateCta({
     certificateCode,
     certificateState,
     hasTemplate: Boolean(hasCertificate),
-    isPassed:
-      registrationStatus === ACTIVITY_REGISTRANT_STATUS_ENUM.LULUS_KEGIATAN,
+    isPassed: registrationStatus === Status.LULUS_KEGIATAN,
     registrationId,
   });
-
-  const canEditForm =
-    registrationStatus === ACTIVITY_REGISTRANT_STATUS_ENUM.TERDAFTAR;
-
   return (
-    <Card withBorder radius="md" p="md" h="100%">
-      <Card.Section>
-        <div className={classes.media}>
-          <CatalogueImage
-            src={
-              imageUrl
-                ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${imageUrl}`
-                : undefined
-            }
-            alt={activityName}
-            variant="poster"
-            fallback={<IconCalendarEvent size={48} stroke={1.5} aria-hidden />}
-          />
-        </div>
-      </Card.Section>
-
-      <Stack gap="sm" mt="md" flex="1">
-        <Text fz="lg" fw={500} lineClamp={2}>
+    <Paper
+      component="article"
+      withBorder
+      p={{ base: "md", sm: "lg" }}
+      className={classes.row}
+    >
+      <div className={classes.thumbnail}>
+        <CatalogueImage
+          src={
+            imageUrl
+              ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${imageUrl}`
+              : undefined
+          }
+          alt={activityName}
+          variant="poster"
+          fallback={<IconCalendarEvent size={28} stroke={1.5} aria-hidden />}
+        />
+      </div>
+      <Stack gap="xs" className={classes.details}>
+        <Title order={3} size="h4">
           {activityName}
-        </Text>
-
+        </Title>
         <Box>
-          <Text size="md" c="dimmed" tt="uppercase" fw={700}>
-            Status
-          </Text>
-          <Group gap="xs" mt={4}>
-            <Badge
-              size="md"
-              variant="light"
-              color={getStatusColor(registrationStatus)}
-            >
-              {registrationStatus}
-            </Badge>
-          </Group>
-          {isUnannounced && visibleAt && (
-            <Group gap={4} mt={8}>
-              <IconClock size={14} color="var(--mantine-color-orange-6)" />
-              <Text size="md" c="orange.6">
-                Diumumkan: {formatDate(visibleAt)}
-              </Text>
-            </Group>
-          )}
-        </Box>
-      </Stack>
-
-      <Stack mt="md" gap="xs">
-        <Button
-          component={Link}
-          fullWidth
-          href={`/profile/activity/${slug}`}
-          radius="md"
-          variant="filled"
-        >
-          Lihat Detail
-        </Button>
-        {canEditForm && (
-          <Button
-            component={Link}
-            fullWidth
-            href={`/activity/register/${slug}/edit-activity-form`}
-            radius="md"
-            variant="outline"
-          >
-            Edit Formulir
-          </Button>
-        )}
-        {certificateCta && (
-          <Button
-            color={certificateCta.color}
-            component={Link}
-            fullWidth
-            href={certificateCta.href}
-            leftSection={<IconAward aria-hidden size={16} />}
-            radius="md"
+          <Badge
             variant="light"
+            tt="none"
+            color={statusColor(registrationStatus)}
+            className={shared.badge}
           >
-            {certificateCta.label}
-          </Button>
+            {registrationStatus.charAt(0) +
+              registrationStatus.slice(1).toLowerCase()}
+          </Badge>
+        </Box>
+        {registrationStatus === Status.BELUM_DIUMUMKAN && visibleAt && (
+          <Text c="dimmed" size="sm">
+            Diumumkan:{" "}
+            {new Date(visibleAt).toLocaleString("id-ID", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </Text>
         )}
+        <div className={shared.actions}>
+          <Button
+            component={Link}
+            href={`/profile/activity/${slug}`}
+            variant="light"
+            aria-label={`Lihat detail ${activityName}`}
+          >
+            Lihat detail
+          </Button>
+          {registrationStatus === Status.TERDAFTAR && (
+            <Button
+              component={Link}
+              href={`/profile/activity/${slug}?edit=form`}
+              variant="outline"
+              aria-label={`Edit formulir ${activityName}`}
+            >
+              Edit formulir
+            </Button>
+          )}
+          {certificate && (
+            <Button
+              component={Link}
+              href={certificate.href}
+              color={certificate.color}
+              variant="light"
+              leftSection={<IconAward size={16} aria-hidden />}
+            >
+              {certificate.label}
+            </Button>
+          )}
+        </div>
       </Stack>
-    </Card>
+    </Paper>
   );
 }

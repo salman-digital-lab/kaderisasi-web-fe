@@ -14,9 +14,10 @@ export function handleCatchError(error: unknown) {
   throw new Error(message);
 }
 
-export async function handleDownloadFile(fileUrl: string, filename: string) {
+export async function handleDownloadFile(fileUrl: string, filename: string): Promise<void> {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${fileUrl}`);
+    if (!response.ok) throw new Error("File download failed");
     const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
