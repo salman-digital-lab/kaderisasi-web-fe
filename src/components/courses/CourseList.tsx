@@ -1,28 +1,13 @@
-import {
-  Badge,
-  Button,
-  Group,
-  Paper,
-  Progress,
-  Stack,
-  Text,
-  TextInput,
-  Title,
-} from "@mantine/core";
+import { Center, Group, SimpleGrid, Stack, Text, Title } from "@mantine/core";
+import { redirect } from "next/navigation";
 import type { ReactElement } from "react";
-import PageContainer from "@/components/layout/PageContainer";
-import PageHeader from "@/components/layout/PageHeader";
 import LinkButton from "@/components/common/LinkButton";
+import CatalogueSearch from "@/components/common/Catalogue/CatalogueSearch";
 import CataloguePagination from "@/components/common/Catalogue/CataloguePagination";
 import { readCourseData } from "@/services/course";
-import {
-  completionPercentage,
-  courseHref,
-  courseListHref,
-  COURSE_LEVEL_LABELS,
-} from "@/features/courses/paths";
+import { courseListHref } from "@/features/courses/paths";
 import type { CoursePage } from "@/types/api/course";
-import classes from "./Courses.module.css";
+import CourseCard from "./CourseCard";
 
 export default async function CourseList({
   searchParams,
@@ -45,97 +30,62 @@ export default async function CourseList({
     `?${query}`,
     courseListHref(search, page),
   );
+  const totalPages = Math.max(1, courses.meta.last_page);
+  if (page > totalPages) redirect(courseListHref(search, totalPages));
+
   return (
-    <PageContainer>
-      <PageHeader
-        title="Kelas"
-        description="Pelajari materi sesuai jenjang Anda dan lanjutkan dari progres terakhir."
+    <Stack gap="xl">
+      <CatalogueSearch
+        action="/kelas"
+        search={search}
+        searchLabel="Cari kelas"
+        maxLength={200}
       />
-      <Stack gap="xl">
-        <form action="/kelas">
-          <Group align="end">
-            <TextInput
-              name="search"
-              label="Cari kelas"
-              placeholder="Judul kelas"
-              defaultValue={search}
-              maxLength={200}
-              style={{ flex: 1 }}
-            />
-            <Button type="submit" mih={44}>
-              Cari
-            </Button>
+      {courses.data.length ? (
+        <div>
+          <Group justify="space-between" gap="xs" mb="md">
+            <Text size="sm" c="dimmed" role="status">
+              {search
+                ? `${courses.meta.total} kelas ditemukan`
+                : `${courses.meta.total} kelas tersedia untuk Anda`}
+            </Text>
+            {search && (
+              <LinkButton href="/kelas" variant="subtle">
+                Hapus pencarian
+              </LinkButton>
+            )}
           </Group>
-        </form>
-        {courses.data.length ? (
-          <div className={classes.grid}>
+          <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="md">
             {courses.data.map((course) => (
-              <Paper
-                component="article"
-                key={course.id}
-                withBorder
-                radius="md"
-                p="lg"
-                className={classes.card}
-              >
-                <Badge variant="light">
-                  {COURSE_LEVEL_LABELS[course.minimum_level]}
-                </Badge>
-                <Title order={2} size="h3">
-                  {course.title}
-                </Title>
-                {course.summary && (
-                  <Text c="dimmed" lineClamp={3}>
-                    {course.summary}
-                  </Text>
-                )}
-                <Text size="sm">
-                  {course.completed_lessons} dari {course.total_lessons} materi
-                  selesai
-                </Text>
-                <Progress
-                  value={completionPercentage(
-                    course.completed_lessons,
-                    course.total_lessons,
-                  )}
-                  aria-label={`Progres ${course.title}`}
-                />
-                <div className={classes.cardAction}>
-                  <LinkButton href={courseHref(course.id)} fullWidth mih={44}>
-                    Buka kelas
-                  </LinkButton>
-                </div>
-              </Paper>
+              <CourseCard key={course.id} course={course} />
             ))}
-          </div>
-        ) : (
-          <Paper withBorder radius="md" p="xl">
-            <Stack gap="sm">
-              <Title order={2} size="h3">
-                {search
-                  ? "Kelas tidak ditemukan"
-                  : "Belum ada kelas untuk Anda"}
-              </Title>
-              <Text c="dimmed">
-                {search
-                  ? "Coba judul lain atau tampilkan semua kelas."
-                  : "Kelas yang tersedia untuk jenjang Anda akan muncul di sini."}
-              </Text>
-              {(search || page > 1) && (
-                <LinkButton href="/kelas" variant="light">
-                  Tampilkan semua kelas
-                </LinkButton>
-              )}
-            </Stack>
-          </Paper>
-        )}
-        <CataloguePagination
-          label="Halaman kelas"
-          page={page}
-          totalPages={courses.meta.last_page}
-          hrefForPage={(next) => courseListHref(search, next)}
-        />
-      </Stack>
-    </PageContainer>
+          </SimpleGrid>
+        </div>
+      ) : (
+        <Center py="xl">
+          <Stack gap="sm" align="center" ta="center" maw={480} role="status">
+            <Title order={2} size="h3">
+              {search ? "Kelas tidak ditemukan" : "Belum ada kelas untuk Anda"}
+            </Title>
+            <Text c="dimmed">
+              {search
+                ? "Coba judul lain atau tampilkan semua kelas."
+                : "Kelas yang tersedia untuk jenjang Anda akan muncul di sini."}
+            </Text>
+            {search && (
+              <LinkButton href="/kelas" variant="outline" mt="xs">
+                Tampilkan semua kelas
+              </LinkButton>
+            )}
+          </Stack>
+        </Center>
+      )}
+      <CataloguePagination
+        label="Halaman kelas"
+        page={page}
+        totalPages={totalPages}
+        hrefForPage={(next) => courseListHref(search, next)}
+      />
+    </Stack>
   );
 }

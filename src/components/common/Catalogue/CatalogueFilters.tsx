@@ -1,9 +1,7 @@
-import Form from "next/form";
-import { Button, Group, TextInput } from "@mantine/core";
-import { IconSearch } from "@tabler/icons-react";
+import { Group } from "@mantine/core";
 import type { ReactElement } from "react";
 import LinkButton from "@/components/common/LinkButton";
-import classes from "./Catalogue.module.css";
+import CatalogueSearch from "./CatalogueSearch";
 
 type CatalogueFiltersProps = {
   action: string;
@@ -28,27 +26,14 @@ export default function CatalogueFilters({
 }: CatalogueFiltersProps): ReactElement {
   return (
     <div>
-      <Form
+      <CatalogueSearch
         action={action}
-        role="search"
-        aria-label={searchLabel}
-        className={classes.searchForm}
+        search={search}
+        searchLabel={searchLabel}
+        maxLength={maxLength}
       >
-        <TextInput
-          key={search}
-          name="search"
-          aria-label={searchLabel}
-          placeholder={searchLabel}
-          defaultValue={search}
-          maxLength={maxLength}
-          leftSection={<IconSearch size={18} aria-hidden />}
-          className={classes.searchInput}
-        />
         <input type="hidden" name={filterName} value={filterValue} />
-        <Button type="submit" className={classes.searchButton}>
-          Cari
-        </Button>
-      </Form>
+      </CatalogueSearch>
       <Group mt="md" gap="xs" role="group" aria-label={filterLabel}>
         {options.map((option) => (
           <LinkButton

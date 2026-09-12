@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="376" height="356" viewBox="0 0 376 356" fill="none">
+  <title>Belajar dengan video dan bahan bacaan</title>
+  <desc>Layar video, buku terbuka, dan catatan belajar dalam warna biru Kaderisasi Salman.</desc>
+  <path d="M94 172C94 99.1 153.1 40 226 40S358 99.1 358 172V308H94V172Z" fill="#8DBCDD" stroke="#F7F5F5" stroke-width="10"/>
+  <path d="M28 318H356" stroke="#C8D3DD" stroke-width="2" stroke-linecap="round"/>
+  <rect x="28" y="82" width="272" height="190" rx="12" fill="#29475D"/>
+  <rect x="37" y="91" width="254" height="167" rx="6" fill="#F8FAFC"/>
+  <path d="M37 116H291" stroke="#DEE7EE" stroke-width="2"/>
+  <circle cx="50" cy="104" r="3" fill="#8DBCDD"/>
+  <path d="M62 104H110" stroke="#A7BCCB" stroke-width="4" stroke-linecap="round"/>
+  <rect x="51" y="130" width="170" height="99" rx="5" fill="#D9EAF5"/>
+  <path d="M51 204L91 173L127 197L164 166L221 207V224C221 226.8 218.8 229 216 229H56C53.2 229 51 226.8 51 224V204Z" fill="#B5D5EA"/>
+  <circle cx="136" cy="178" r="26" fill="#3973B9"/>
+  <path d="M131 167L146 178L131 189V167Z" fill="#fff" stroke="#fff" stroke-width="2" stroke-linejoin="round"/>
+  <rect x="233" y="134" width="42" height="27" rx="3" fill="#D9EAF5"/>
+  <path d="M244 148L249 153L264 141" stroke="#3973B9" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M235 173H271M235 182H260M235 202H271M235 211H254" stroke="#BACAD6" stroke-width="4" stroke-linecap="round"/>
+  <path d="M54 242H216" stroke="#DCE5EC" stroke-width="4" stroke-linecap="round"/>
+  <path d="M54 242H113" stroke="#3973B9" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="113" cy="242" r="4" fill="#3973B9"/>
+  <path d="M144 272H184L189 293H139L144 272Z" fill="#A7BCCB"/>
+  <path d="M126 297C126 294.8 127.8 293 130 293H198C200.2 293 202 294.8 202 297V300H126V297Z" fill="#29475D"/>
+  <g transform="rotate(9 290 249)">
+    <rect x="252" y="199" width="76" height="104" rx="5" fill="#3973B9"/>
+    <rect x="260" y="199" width="68" height="98" rx="4" fill="#fff"/>
+    <path d="M275 219H311M275 229H303M275 254H311M275 264H306M275 274H296" stroke="#C2D4E1" stroke-width="3" stroke-linecap="round"/>
+    <path d="M275 241L280 246L288 236" stroke="#3973B9" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <path d="M40 274C65 267 91 270 114 284C136 270 165 267 190 274V314C162 309 136 311 114 322C90 311 66 309 40 314V274Z" fill="#3973B9"/>
+  <path d="M45 269C69 265 94 270 114 282C134 270 162 265 185 269V305C159 302 135 307 114 317C91 307 70 302 45 305V269Z" fill="#F8FAFC" stroke="#D5E2EC" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M114 283V317M57 281C73 280 90 285 102 290M57 291C73 290 90 295 102 300M126 290C140 283 155 280 172 281M126 300C140 293 155 290 172 291" stroke="#B4C9D9" stroke-width="2" stroke-linecap="round"/>
+  <path d="M156 270V289L162 285L168 288V268" fill="#E2AC61"/>
+</svg>

@@ -4,6 +4,7 @@ import { createServer } from "node:http";
 import { activities, clubs, paginate } from "../tests/instant/fixtures.mjs";
 import { uiFixture } from "../tests/ui/fixtures.mjs";
 import { handleProfileFixture } from "../tests/ui/profile-fixtures.mjs";
+import { handleCourseFixture } from "../tests/ui/course-fixtures.mjs";
 
 // These endpoints serve synthetic public data only, on an OS-assigned test port.
 const api = createServer(async (request, response) => {
@@ -17,6 +18,7 @@ const api = createServer(async (request, response) => {
   response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS");
   if (request.method === "OPTIONS") return response.end();
   if (await handleProfileFixture(request, response, url)) return;
+  if (handleCourseFixture(request, response, url)) return;
   if (
     process.env.GOOGLE_AUTH_BROWSER_TEST === "1" &&
     ["/v2/auth/google", "/v2/auth/login"].includes(url.pathname)

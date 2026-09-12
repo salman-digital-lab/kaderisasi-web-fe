@@ -7,7 +7,9 @@ type CatalogueCardProps = {
   title: string;
   href: string;
   linkLabel: string;
-  media: ReactNode;
+  media?: ReactNode;
+  description?: string;
+  actionLabel?: string;
   children: ReactNode;
 };
 
@@ -16,6 +18,8 @@ export default function CatalogueCard({
   href,
   linkLabel,
   media,
+  description,
+  actionLabel = "Lihat Selengkapnya",
   children,
 }: CatalogueCardProps): ReactElement {
   return (
@@ -26,16 +30,21 @@ export default function CatalogueCard({
       p={0}
       className={classes.card}
     >
-      <div className={classes.media}>{media}</div>
+      {media && <div className={classes.media}>{media}</div>}
       <div className={classes.cardTitle}>
-        <Text fw={600} fz="md">
+        <Text component="h2" m={0} fw={600} fz="md">
           {title}
         </Text>
+        {description && (
+          <Text c="dimmed" size="sm" mt="xs" lineClamp={3}>
+            {description}
+          </Text>
+        )}
       </div>
       {children}
       <div className={classes.cardAction}>
         <LinkButton href={href} aria-label={linkLabel} fullWidth>
-          Lihat Selengkapnya
+          {actionLabel}
         </LinkButton>
       </div>
     </Card>
