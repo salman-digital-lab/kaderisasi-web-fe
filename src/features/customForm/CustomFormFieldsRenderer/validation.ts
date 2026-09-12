@@ -21,12 +21,44 @@ export function validateCustomFormFields(
       errors[field.key] = `${field.label} wajib diisi`;
     }
 
+    if (!empty) {
+      const validType =
+        field.type === "number"
+          ? typeof value === "number" && Number.isFinite(value)
+          : field.type === "multiselect" ||
+              (field.type === "checkbox" && !!field.options?.length)
+            ? Array.isArray(value) &&
+              value.every((item) => typeof item === "string")
+            : field.type === "checkbox"
+              ? typeof value === "boolean"
+              : typeof value === "string";
+      if (!validType) errors[field.key] = `Format ${field.label} tidak valid.`;
+      if (field.options?.length) {
+        const allowed = field.options
+          .filter((option) => !option.disabled)
+          .map((option) =>
+            option.value == null
+              ? option.label
+              : String(option.value) || option.label,
+          );
+        if (
+          !(Array.isArray(value) ? value : [value]).every(
+            (item) => typeof item === "string" && allowed.includes(item),
+          )
+        )
+          errors[field.key] = `Pilihan ${field.label} tidak valid.`;
+      }
+      if (typeof value === "string" && value.length > 10_000)
+        errors[field.key] = `${field.label} terlalu panjang.`;
+    }
+
     if (field.validation) {
       const val = values[field.key];
 
       if (!empty) {
         if (
           field.validation.min !== undefined &&
+          typeof val === "number" &&
           Number(val) < field.validation.min
         ) {
           errors[field.key] =
@@ -35,6 +67,7 @@ export function validateCustomFormFields(
 
         if (
           field.validation.max !== undefined &&
+          typeof val === "number" &&
           Number(val) > field.validation.max
         ) {
           errors[field.key] =

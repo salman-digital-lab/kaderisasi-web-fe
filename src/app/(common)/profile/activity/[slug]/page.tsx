@@ -29,7 +29,11 @@ import { getActivity } from "@/services/activity.cache";
 import { getActivityRegistrationData } from "@/services/activity";
 import ErrorWrapper from "@/components/layout/Error";
 import { ACTIVITY_REGISTRANT_STATUS_ENUM } from "@/types/constants/activity";
-import { Activity } from "@/types/model/activity";
+import type { Activity } from "@/types/model/activity";
+import type { CustomForm } from "@/types/api/customForm";
+import { getCustomFormByFeature } from "@/services/customForm";
+import { FetcherError } from "@/functions/common/fetcher";
+import CustomFormContentEdit from "@/features/customForm/CustomFormContentEdit";
 import { getCertificateCta } from "@/features/certificate/utils/certificateData";
 import CertificateCtaButton from "@/features/certificate/CertificateCtaButton";
 
@@ -47,8 +51,10 @@ export async function generateMetadata(props: {
 
 export default async function Page(props: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ edit?: string }>;
 }) {
   const params = await props.params;
+  const searchParams = await props.searchParams;
   const sessionData = await verifySession();
 
   if (!sessionData.session) {
@@ -90,6 +96,19 @@ export default async function Page(props: {
 
   if (!registrationData) {
     return <ErrorWrapper message="Registration not found" />;
+  }
+
+  let customForm: CustomForm | undefined;
+  try {
+    customForm = await getCustomFormByFeature({
+      feature_type: "activity_registration",
+      feature_id: activity.id,
+    });
+  } catch (error: unknown) {
+    if (!(error instanceof FetcherError && error.status === 404))
+      return (
+        <ErrorWrapper message="Formulir belum dapat dimuat. Silakan coba kembali." />
+      );
   }
 
   const certificateCta = getCertificateCta({
@@ -271,16 +290,25 @@ export default async function Page(props: {
           )}
         </Card>
 
-        <Card withBorder radius="md" p="lg" mt="md">
-          <Group gap="xs" justify="center">
-            <ThemeIcon size="md" variant="light" color="green">
-              <IconCheck size={14} />
-            </ThemeIcon>
-            <Text size="md" c="dimmed" ta="center">
-              Data formulir dapat dilihat pada halaman edit formulir
-            </Text>
-          </Group>
-        </Card>
+        {customForm &&
+          (searchParams.edit === "form" ? (
+            <Stack mt="md">
+              <CustomFormContentEdit
+                customForm={customForm}
+                registrationData={registrationData}
+                slug={params.slug}
+              />
+            </Stack>
+          ) : (
+            <Card withBorder radius="md" p="lg" mt="md">
+              <LinkButton
+                href={`/profile/activity/${params.slug}?edit=form`}
+                variant="default"
+              >
+                Ubah jawaban formulir
+              </LinkButton>
+            </Card>
+          ))}
       </PageContainer>
     </Stack>
   );

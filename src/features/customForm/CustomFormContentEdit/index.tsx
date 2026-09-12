@@ -1,7 +1,18 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { Stack, Title, Text, Stepper, Button, Paper, Group } from "@mantine/core";
+import { useState, useRef, useEffect } from "react";
+import {
+  Stack,
+  Title,
+  Text,
+  Stepper,
+  Button,
+  Paper,
+  Group,
+  Alert,
+} from "@mantine/core";
+import { useFormRoute } from "../use-form-route";
+import { customSections } from "../form-routing";
 import type { CustomForm } from "@/types/api/customForm";
 import type { Registrant } from "@/types/model/activity";
 import CustomFormFieldsRenderer from "../CustomFormFieldsRenderer";
@@ -11,7 +22,7 @@ import { useRouter } from "next/navigation";
 
 type CustomFormContentEditProps = {
   customForm: CustomForm;
-  registrationData: Registrant;
+  registrationData: Pick<Registrant, "questionnaire_answer">;
   slug: string;
 };
 
@@ -29,22 +40,41 @@ export default function CustomFormContentEdit({
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const [loading, setLoading] = useState(false);
-  const [currentStep, setCurrentStep] = useState(0);
-  const [accumulatedData, setAccumulatedData] = useState<Record<string, any>>(
+  const flow = useFormRoute(
+    customForm.form_schema,
+    null,
+    false,
     registrationData.questionnaire_answer || {},
   );
-
-  const customFormSections = customForm.form_schema.fields.slice(1);
+  const accumulatedData = flow.answers;
+  const currentStep = flow.history.length;
+  const customFormSections = customSections(customForm.form_schema);
   const totalSteps = customFormSections.length;
-  const isLastSection = currentStep === totalSteps - 1;
-  const currentSection = customFormSections[currentStep];
+  const isLastSection = flow.isLast;
+  const currentSection = flow.currentSection;
+  useEffect(() => {
+    formRef.current
+      ?.querySelector<HTMLElement>("[data-form-section-title]")
+      ?.focus();
+  }, [flow.currentId]);
+
+  if (flow.configurationError)
+    return (
+      <Alert color="red" title="Formulir tidak tersedia">
+        {flow.configurationError}
+      </Alert>
+    );
 
   if (totalSteps === 0) {
     return (
       <Stack gap="md">
         <Paper {...paperProps}>
-          <Title order={3} mb="xs">{customForm.form_name}</Title>
-          <Text size="md" c="dimmed">Tidak ada formulir tambahan untuk diubah.</Text>
+          <Title order={3} mb="xs">
+            {customForm.form_name}
+          </Title>
+          <Text size="md" c="dimmed">
+            Tidak ada formulir tambahan untuk diubah.
+          </Text>
         </Paper>
       </Stack>
     );
@@ -53,13 +83,8 @@ export default function CustomFormContentEdit({
   if (!currentSection) return null;
 
   const handleSectionSubmit = async (data: Record<string, any>) => {
-    const allFormData = { ...accumulatedData, ...data };
-    setAccumulatedData(allFormData);
-
-    if (!isLastSection) {
-      setCurrentStep(currentStep + 1);
-      return;
-    }
+    const allFormData = flow.advance(data);
+    if (!allFormData) return;
 
     try {
       setLoading(true);
@@ -79,23 +104,42 @@ export default function CustomFormContentEdit({
 
   const handleBack = () => {
     if (currentStep === 0) router.push(`/profile?tab=activity`);
-    else setCurrentStep(currentStep - 1);
+    else flow.back();
   };
 
   return (
     <Stack gap="md">
       {/* Header card */}
       <Paper {...paperProps}>
-        <Title order={3} mb="xs">Ubah Formulir — {customForm.form_name}</Title>
+        <Title order={3} mb="xs">
+          Ubah Formulir: {customForm.form_name}
+        </Title>
         {totalSteps > 1 && (
           <>
             <Text size="md" c="dimmed" hiddenFrom="sm" mt="md">
-              Langkah {currentStep + 1} dari {totalSteps}: {currentSection.section_name}
+              Langkah {currentStep + 1}: {currentSection.section_name}
             </Text>
-            <Stepper active={currentStep} size="md" mt="lg" iconSize={32} visibleFrom="sm">
-              {customFormSections.map((section, idx) => (
-                <Stepper.Step key={idx} label={section.section_name} description={`Bagian ${idx + 1}`} />
-              ))}
+            <Stepper
+              active={currentStep}
+              size="md"
+              mt="lg"
+              iconSize={32}
+              visibleFrom="sm"
+            >
+              {customFormSections
+                .filter(
+                  (section) =>
+                    flow.history.includes(section.id) ||
+                    currentSection.id === section.id,
+                )
+                .map((section, idx) => (
+                  <Stepper.Step
+                    allowStepClick={false}
+                    key={idx}
+                    label={section.section_name}
+                    description={`Bagian ${idx + 1}`}
+                  />
+                ))}
             </Stepper>
           </>
         )}
@@ -104,11 +148,12 @@ export default function CustomFormContentEdit({
       {/* Form card */}
       <Paper {...paperProps}>
         <CustomFormFieldsRenderer
-          key={currentStep}
+          key={currentSection.id}
           formRef={formRef}
           section={currentSection}
           formData={accumulatedData}
           onSubmit={handleSectionSubmit}
+          onChange={flow.updateAnswers}
           loading={loading}
           isLastSection={isLastSection}
         />

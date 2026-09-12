@@ -1,3 +1,7 @@
+.form {
+  --mantine-color-error: #b42318;
+}
+
 .multiSelectLabel {
   font-size: 16px;
   font-weight: 600;

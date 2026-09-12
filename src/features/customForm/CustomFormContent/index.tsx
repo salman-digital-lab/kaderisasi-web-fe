@@ -9,6 +9,7 @@ import {
   Button,
   Paper,
   Group,
+  Alert,
 } from "@mantine/core";
 import { IconArrowLeft } from "@tabler/icons-react";
 import Link from "next/link";
@@ -24,7 +25,8 @@ import registerCustomForm from "@/functions/server/registerCustomForm";
 import { postGuestActivity } from "@/services/activity";
 import { FetcherError } from "@/functions/common/fetcher";
 import { useRouter } from "next/navigation";
-import { useFormLocalStorage } from "@/hooks/useFormLocalStorage";
+import { useFormRoute } from "../use-form-route";
+import { customSections } from "../form-routing";
 
 type CustomFormContentProps = {
   customForm: CustomForm;
@@ -91,15 +93,22 @@ export default function CustomFormContent({
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
 
-  const storageKey = `customForm_${featureType}_${featureId || "independent"}`;
+  const storageKey = `customForm:v2:${isGuest ? "guest" : profileData?.userData.id}:${customForm.id}`;
+  const flow = useFormRoute(
+    customForm.form_schema,
+    storageKey,
+    true,
+    {},
+    resetOnMount,
+  );
   const {
-    formData: customFormData,
-    setFormData: setCustomFormData,
-    currentStep,
-    setCurrentStep,
-    clearStorage,
+    answers: customFormData,
+    currentSection,
+    isLast: isLastStep,
     isLoaded,
-  } = useFormLocalStorage(storageKey, {}, 0, resetOnMount);
+  } = flow;
+  const currentStep = flow.history.length;
+  const isProfileStep = flow.isProfileStep;
 
   // Strip the reset param from the URL so a page refresh doesn't re-reset
   useEffect(() => {
@@ -113,18 +122,19 @@ export default function CustomFormContent({
   const [loading, setLoading] = useState(false);
   const [savedProfileData, setSavedProfileData] = useState(profileData);
 
-  const profileFields = customForm.form_schema.fields[0]?.fields ?? [];
-  const customFormSections = customForm.form_schema.fields.slice(1);
+  const profileFields =
+    customForm.form_schema.fields.find(
+      (section) => section.section_name === "profile_data",
+    )?.fields ?? [];
+  const customFormSections = customSections(customForm.form_schema);
   const hasCustomSections = customFormSections.length > 0;
-  const totalSteps = hasCustomSections ? customFormSections.length + 1 : 1;
-  const isLastStep = currentStep === totalSteps - 1;
-
-  const sectionIndex = currentStep - 1;
-  const currentSection = customFormSections[sectionIndex] ?? null;
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
-  }, [currentStep]);
+    formRef.current
+      ?.querySelector<HTMLElement>("[data-form-section-title]")
+      ?.focus({ preventScroll: true });
+  }, [flow.currentId, isLoaded]);
 
   const getSuccessUrl = () => {
     const typeMap = {
@@ -188,7 +198,7 @@ export default function CustomFormContent({
           return;
         }
       }
-      clearStorage();
+      flow.clear();
       if (featureType === "club_registration") {
         router.replace(getSuccessUrl());
       } else {
@@ -202,22 +212,13 @@ export default function CustomFormContent({
   };
 
   const handleProfileSubmit = async (data?: Record<string, unknown>) => {
-    if (!hasCustomSections) {
-      await finishAndRedirect({ ...(customFormData ?? {}), ...(data ?? {}) });
-      return;
-    }
-    if (isGuest && data) setCustomFormData({ ...customFormData, ...data });
-    setCurrentStep(1);
+    const submission = flow.advance(isGuest ? (data ?? {}) : {});
+    if (submission) await finishAndRedirect(submission);
   };
 
   const handleSectionSubmit = async (data: Record<string, unknown>) => {
-    const allFormData = { ...customFormData, ...data };
-    setCustomFormData(allFormData);
-    if (isLastStep) {
-      await finishAndRedirect(allFormData);
-    } else {
-      setCurrentStep(currentStep + 1);
-    }
+    const submission = flow.advance(data);
+    if (submission) await finishAndRedirect(submission);
   };
 
   const activityBackUrl =
@@ -236,6 +237,13 @@ export default function CustomFormContent({
       ? "Kembali ke Klub"
       : "Kembali ke Kegiatan";
 
+  if (flow.configurationError)
+    return (
+      <Alert color="red" title="Formulir tidak tersedia">
+        {flow.configurationError} Hubungi pengelola.
+      </Alert>
+    );
+
   if (!isLoaded) {
     return (
       <Stack gap="md">
@@ -253,6 +261,7 @@ export default function CustomFormContent({
 
   return (
     <Stack gap="md">
+      {flow.notice && <Alert title="Draf formulir">{flow.notice}</Alert>}
       {backUrl && (
         <Button
           component={Link}
@@ -280,7 +289,7 @@ export default function CustomFormContent({
         {hasCustomSections && (
           <>
             <Text size="md" c="dimmed" hiddenFrom="sm" mt="md">
-              Langkah {currentStep + 1} dari {totalSteps}:{" "}
+              Langkah {currentStep + 1}:{" "}
               {currentStep === 0 ? "Data Diri" : currentSection?.section_name}
             </Text>
             <Stepper
@@ -291,16 +300,24 @@ export default function CustomFormContent({
               visibleFrom="sm"
             >
               <Stepper.Step
+                allowStepClick={false}
                 label="Data Diri"
                 description="Lengkapi data diri"
               />
-              {customFormSections.map((section, idx) => (
-                <Stepper.Step
-                  key={idx}
-                  label={section.section_name}
-                  description={`Bagian ${idx + 1}`}
-                />
-              ))}
+              {customFormSections
+                .filter(
+                  (section) =>
+                    flow.history.includes(section.id) ||
+                    currentSection?.id === section.id,
+                )
+                .map((section, idx) => (
+                  <Stepper.Step
+                    allowStepClick={false}
+                    key={idx}
+                    label={section.section_name}
+                    description={`Bagian ${idx + 1}`}
+                  />
+                ))}
             </Stepper>
           </>
         )}
@@ -308,7 +325,7 @@ export default function CustomFormContent({
 
       {/* Form card */}
       <Paper {...paperProps}>
-        {currentStep === 0 ? (
+        {isProfileStep ? (
           isGuest ? (
             <CustomFormGuestSection
               formRef={formRef}
@@ -325,7 +342,9 @@ export default function CustomFormContent({
               profileFields={profileFields}
               profileData={savedProfileData}
               onProfileSaved={(profile) => {
-                setSavedProfileData((previous) => previous ? { ...previous, profile } : previous);
+                setSavedProfileData((previous) =>
+                  previous ? { ...previous, profile } : previous,
+                );
               }}
               provinceData={provinceData}
               countryData={countryData}
@@ -337,11 +356,12 @@ export default function CustomFormContent({
           )
         ) : currentSection ? (
           <CustomFormFieldsRenderer
-            key={sectionIndex}
+            key={currentSection.id}
             formRef={formRef}
             section={currentSection}
             formData={customFormData}
             onSubmit={handleSectionSubmit}
+            onChange={flow.updateAnswers}
             loading={loading}
             isLastSection={isLastStep}
           />
@@ -354,7 +374,7 @@ export default function CustomFormContent({
           <Button
             type="button"
             variant="default"
-            onClick={() => setCurrentStep(currentStep - 1)}
+            onClick={flow.back}
             disabled={loading}
             style={{ flex: "0 1 auto", minWidth: "100px" }}
           >

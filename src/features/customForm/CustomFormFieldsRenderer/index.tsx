@@ -46,6 +46,7 @@ type CustomFormFieldsRendererProps = {
   section: CustomFormSection;
   formData: Record<string, any>;
   onSubmit: (data: Record<string, any>) => void;
+  onChange?: (data: Record<string, unknown>) => void;
   loading?: boolean;
   isLastSection: boolean;
   formRef?: RefObject<HTMLFormElement | null>;
@@ -55,6 +56,7 @@ export default function CustomFormFieldsRenderer({
   section,
   formData,
   onSubmit,
+  onChange,
   loading,
   isLastSection,
   formRef,
@@ -88,6 +90,12 @@ export default function CustomFormFieldsRenderer({
   const form = useForm({
     mode: "uncontrolled",
     initialValues,
+    onValuesChange: (values) =>
+      onChange?.(
+        Object.fromEntries(
+          section.fields.map((field) => [field.key, values[field.key]]),
+        ),
+      ),
     validate: (values) => {
       return validateCustomFormFields(section.fields, values);
     },
@@ -301,10 +309,25 @@ export default function CustomFormFieldsRenderer({
 
   return (
     <>
-      <form ref={formRef} onSubmit={form.onSubmit(handleSubmit)}>
+      <form
+        ref={formRef}
+        className={classes.form}
+        noValidate
+        onSubmit={form.onSubmit(handleSubmit, (errors) => {
+          const key = Object.keys(errors)[0];
+          if (key) form.getInputNode(key)?.focus();
+        })}
+      >
         <Stack gap="xl">
           <Box>
-            <Title order={4}>{section.section_name}</Title>
+            <Title order={4} tabIndex={-1} data-form-section-title>
+              {section.section_name}
+            </Title>
+            {section.description && (
+              <Text style={{ whiteSpace: "pre-wrap" }}>
+                {section.description}
+              </Text>
+            )}
             {section.fields.length > 0 && (
               <Text size="md" c="dimmed" mt="xs">
                 Silakan lengkapi formulir di bawah ini
@@ -335,8 +358,7 @@ export default function CustomFormFieldsRenderer({
       >
         <Stack gap="lg">
           <Text size="md">
-            Pastikan semua data yang Anda isi sudah benar. Setelah mengirim,
-            data tidak dapat diubah kembali.
+            Pastikan semua data yang Anda isi sudah benar sebelum mengirim.
           </Text>
           <Text size="md" fw={500}>
             Apakah Anda yakin ingin mengirim formulir ini?
