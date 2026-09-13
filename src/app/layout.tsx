@@ -93,6 +93,7 @@ export default function RootLayout({
             defer
             src="https://umami-kaderisasi.salmanitb.com/script.js"
             data-website-id="2bf5419c-a004-4d29-9fd2-999176beb2ab"
+            data-performance="true"
           />
         )}
         <ColorSchemeScript />
