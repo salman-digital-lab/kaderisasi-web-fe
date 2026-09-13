@@ -3,7 +3,7 @@ import PageHero from "@/components/layout/PageHero";
 import type { ReactElement } from "react";
 import { Suspense } from "react";
 import { Text } from "@mantine/core";
-import illustration from "@/assets/activitiespage-1.svg";
+import illustration from "@/assets/clubspage-1.svg";
 import ClubsListContent from "@/components/clubs/ClubsListContent";
 import ClubsListSkeleton from "@/components/clubs/ClubsListSkeleton";
 import CatalogueFilters from "@/components/common/Catalogue/CatalogueFilters";
