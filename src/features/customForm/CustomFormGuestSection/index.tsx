@@ -267,26 +267,47 @@ export default function CustomFormGuestSection({
                 <Select
                   {...form.getInputProps(`education_history.${index}.degree`)}
                   key={form.key(`education_history.${index}.degree`)}
+                  onChange={(value) => {
+                    form.setFieldValue(`education_history.${index}.degree`, value);
+                    if (value === "high_school") form.setFieldValue(`education_history.${index}.faculty`, "");
+                  }}
                   label="Jenjang"
                   data={DEGREE_OPTIONS}
                   radius="md"
                 />
-                <UniversityNameSelect
-                  {...form.getInputProps(`education_history.${index}.institution`)}
-                  key={form.key(`education_history.${index}.institution`)}
-                  label="Institusi"
-                  placeholder="Cari atau ketik nama institusi"
-                  mt="xs"
-                  radius="md"
-                />
-                <TextInput
-                  {...form.getInputProps(`education_history.${index}.faculty`)}
-                  key={form.key(`education_history.${index}.faculty`)}
-                  label="Fakultas"
-                  placeholder="Fakultas"
-                  mt="xs"
-                  radius="md"
-                />
+                {form.getInputProps(`education_history.${index}.degree`).defaultValue ===
+                "high_school" ? (
+                  <TextInput
+                    {...form.getInputProps(`education_history.${index}.institution`)}
+                    key={form.key(`education_history.${index}.institution`)}
+                    label="Nama Sekolah"
+                    placeholder="Nama sekolah"
+                    mt="xs"
+                    radius="md"
+                  />
+                ) : (
+                  <UniversityNameSelect
+                    {...form.getInputProps(`education_history.${index}.institution`)}
+                    key={form.key(`education_history.${index}.institution`)}
+                    label="Institusi"
+                    placeholder="Cari atau ketik nama institusi"
+                    mt="xs"
+                    radius="md"
+                  />
+                )}
+                {!(
+                  form.getInputProps(`education_history.${index}.degree`).defaultValue ===
+                  "high_school"
+                ) && (
+                  <TextInput
+                    {...form.getInputProps(`education_history.${index}.faculty`)}
+                    key={form.key(`education_history.${index}.faculty`)}
+                    label="Fakultas"
+                    placeholder="Fakultas"
+                    mt="xs"
+                    radius="md"
+                  />
+                )}
                 <TextInput
                   {...form.getInputProps(`education_history.${index}.major`)}
                   key={form.key(`education_history.${index}.major`)}
@@ -347,26 +368,47 @@ export default function CustomFormGuestSection({
               <Select
                 {...form.getInputProps("current_education.degree")}
                 key={form.key("current_education.degree")}
+                onChange={(value) => {
+                  form.setFieldValue("current_education.degree", value);
+                  if (value === "high_school") form.setFieldValue("current_education.faculty", "");
+                }}
                 label="Jenjang"
                 data={DEGREE_OPTIONS}
                 radius="md"
               />
-              <UniversityNameSelect
-                {...form.getInputProps("current_education.institution")}
-                key={form.key("current_education.institution")}
-                label="Institusi"
-                placeholder="Cari atau ketik nama institusi"
-                mt="xs"
-                radius="md"
-              />
-              <TextInput
-                {...form.getInputProps("current_education.faculty")}
-                key={form.key("current_education.faculty")}
-                label="Fakultas"
-                placeholder="Fakultas"
-                mt="xs"
-                radius="md"
-              />
+              {form.getInputProps("current_education.degree").defaultValue ===
+              "high_school" ? (
+                <TextInput
+                  {...form.getInputProps("current_education.institution")}
+                  key={form.key("current_education.institution")}
+                  label="Nama Sekolah"
+                  placeholder="Nama sekolah"
+                  mt="xs"
+                  radius="md"
+                />
+              ) : (
+                <UniversityNameSelect
+                  {...form.getInputProps("current_education.institution")}
+                  key={form.key("current_education.institution")}
+                  label="Institusi"
+                  placeholder="Cari atau ketik nama institusi"
+                  mt="xs"
+                  radius="md"
+                />
+              )}
+              {!(
+                form.getInputProps("current_education.degree").defaultValue ===
+                "high_school"
+              ) && (
+                <TextInput
+                  {...form.getInputProps("current_education.faculty")}
+                  key={form.key("current_education.faculty")}
+                  label="Fakultas"
+                  placeholder="Fakultas"
+                  mt="xs"
+                  radius="md"
+                />
+              )}
               <TextInput
                 {...form.getInputProps("current_education.major")}
                 key={form.key("current_education.major")}

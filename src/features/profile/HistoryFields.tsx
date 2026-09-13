@@ -127,7 +127,7 @@ export default function HistoryFields({
         [
           DEGREES.find((degree) => degree.value === item.degree)?.label,
           item.institution,
-          item.faculty,
+          item.degree === "high_school" ? "" : item.faculty,
           item.major,
           item.intake_year,
         ]
@@ -199,20 +199,38 @@ export default function HistoryFields({
                     <Select
                       {...form.getInputProps(`${kind}.${index}.degree`)}
                       key={form.key(`${kind}.${index}.degree`)}
+                      onChange={(value) => {
+                        form.setFieldValue(`${kind}.${index}.degree`, value);
+                        if (value === "high_school") form.setFieldValue(`${kind}.${index}.faculty`, "");
+                      }}
                       label="Jenjang"
                       data={DEGREES}
                     />
-                    <UniversityNameSelect
-                      {...form.getInputProps(`${kind}.${index}.institution`)}
-                      key={form.key(`${kind}.${index}.institution`)}
-                      label="Institusi"
-                      placeholder="Cari atau ketik nama institusi"
-                    />
-                    <TextInput
-                      {...form.getInputProps(`${kind}.${index}.faculty`)}
-                      key={form.key(`${kind}.${index}.faculty`)}
-                      label="Fakultas"
-                    />
+                    {form.getInputProps(`${kind}.${index}.degree`).defaultValue ===
+                    "high_school" ? (
+                      <TextInput
+                        {...form.getInputProps(`${kind}.${index}.institution`)}
+                        key={form.key(`${kind}.${index}.institution`)}
+                        label="Nama Sekolah"
+                        placeholder="Nama sekolah"
+                      />
+                    ) : (
+                      <UniversityNameSelect
+                        {...form.getInputProps(`${kind}.${index}.institution`)}
+                        key={form.key(`${kind}.${index}.institution`)}
+                        label="Institusi"
+                        placeholder="Cari atau ketik nama institusi"
+                      />
+                    )}
+                    {!(
+                      form.getInputProps(`${kind}.${index}.degree`).defaultValue === "high_school"
+                    ) && (
+                      <TextInput
+                        {...form.getInputProps(`${kind}.${index}.faculty`)}
+                        key={form.key(`${kind}.${index}.faculty`)}
+                        label="Fakultas"
+                      />
+                    )}
                     <TextInput
                       {...form.getInputProps(`${kind}.${index}.major`)}
                       key={form.key(`${kind}.${index}.major`)}

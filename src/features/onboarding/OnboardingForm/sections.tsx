@@ -774,6 +774,10 @@ export function ProfileStep({
                         `educationHistory.${index}.degree`,
                       )}
                       key={form.key(`educationHistory.${index}.degree`)}
+                      onChange={(value) => {
+                        form.setFieldValue(`educationHistory.${index}.degree`, value);
+                        if (value === "high_school") form.setFieldValue(`educationHistory.${index}.faculty`, "");
+                      }}
                       name={`educationHistory.${index}.degree`}
                       label="Jenjang"
                       data={degreeOptions.map((option) => ({
@@ -795,27 +799,41 @@ export function ProfileStep({
                       size="md"
                       radius="md"
                     />
-                    <UniversityNameSelect
-                      {...form.getInputProps(
-                        `educationHistory.${index}.institution`,
-                      )}
-                      key={form.key(`educationHistory.${index}.institution`)}
-                      name={`educationHistory.${index}.institution`}
-                      label="Institusi"
-                      placeholder="Cari atau ketik nama institusi"
-                      size="md"
-                      radius="md"
-                    />
-                    <TextInput
-                      {...form.getInputProps(
-                        `educationHistory.${index}.faculty`,
-                      )}
-                      key={form.key(`educationHistory.${index}.faculty`)}
-                      name={`educationHistory.${index}.faculty`}
-                      label="Fakultas"
-                      size="md"
-                      radius="md"
-                    />
+                    {form.getInputProps(`educationHistory.${index}.degree`).value ===
+                    "high_school" ? (
+                      <TextInput
+                        {...form.getInputProps(`educationHistory.${index}.institution`)}
+                        key={form.key(`educationHistory.${index}.institution`)}
+                        name={`educationHistory.${index}.institution`}
+                        label="Nama Sekolah"
+                        placeholder="Nama sekolah"
+                        size="md"
+                        radius="md"
+                      />
+                    ) : (
+                      <UniversityNameSelect
+                        {...form.getInputProps(`educationHistory.${index}.institution`)}
+                        key={form.key(`educationHistory.${index}.institution`)}
+                        name={`educationHistory.${index}.institution`}
+                        label="Institusi"
+                        placeholder="Cari atau ketik nama institusi"
+                        size="md"
+                        radius="md"
+                      />
+                    )}
+                    {!(
+                      form.getInputProps(`educationHistory.${index}.degree`).value ===
+                      "high_school"
+                    ) && (
+                      <TextInput
+                        {...form.getInputProps(`educationHistory.${index}.faculty`)}
+                        key={form.key(`educationHistory.${index}.faculty`)}
+                        name={`educationHistory.${index}.faculty`}
+                        label="Fakultas"
+                        size="md"
+                        radius="md"
+                      />
+                    )}
                     <TextInput
                       {...form.getInputProps(`educationHistory.${index}.major`)}
                       key={form.key(`educationHistory.${index}.major`)}
@@ -1376,8 +1394,8 @@ export function ReviewStep({
                         (option) => option.value === entry.degree,
                       )?.label || "-"}
                     </Text>
-                    <Text size="md">Institusi: {entry.institution || "-"}</Text>
-                    <Text size="md">Fakultas: {entry.faculty || "-"}</Text>
+                    <Text size="md">{entry.degree === "high_school" ? "Nama Sekolah" : "Institusi"}: {entry.institution || "-"}</Text>
+                    {entry.degree !== "high_school" && <Text size="md">Fakultas: {entry.faculty || "-"}</Text>}
                     <Text size="md">Jurusan: {entry.major || "-"}</Text>
                     <Text size="md">
                       Tahun masuk: {entry.intakeYear || "-"}
