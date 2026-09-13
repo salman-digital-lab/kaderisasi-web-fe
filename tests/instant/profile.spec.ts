@@ -767,6 +767,27 @@ test("a new profile-service failure during retry preserves the mounted draft", a
   );
 });
 
+for (const degree of ["SMA/SMK", "D3 (Diploma)"]) {
+  test(`education saves and reloads ${degree} with a typed institution`, async ({ page, context }) => {
+    await signIn(context);
+    await page.goto("/profile");
+    await page.getByRole("button", { name: "Edit pendidikan 1", exact: true }).click();
+    await page.getByRole("combobox", { name: "Jenjang", exact: true }).click();
+    await page.getByRole("option", { name: degree, exact: true }).click();
+    await page.getByRole("combobox", { name: "Institusi", exact: true }).fill("Sekolah Peserta");
+    await page.getByRole("option", { name: "Sekolah Peserta", exact: true }).click();
+    await page.getByLabel("Fakultas", { exact: true }).fill("");
+    await page.getByRole("button", { name: "Selesai", exact: true }).click();
+    await page.getByRole("button", { name: "Simpan perubahan", exact: true }).click();
+    await expect(page.getByText("Perubahan berhasil disimpan.")).toBeVisible();
+    await page.reload();
+    await page.getByRole("button", { name: "Edit pendidikan 1", exact: true }).click();
+    await expect(page.getByRole("combobox", { name: "Jenjang", exact: true })).toHaveValue(degree);
+    await expect(page.getByRole("combobox", { name: "Institusi", exact: true })).toHaveValue("Sekolah Peserta");
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
+  });
+}
+
 test("education and focus edits save only through the main save action", async ({
   page,
   context,

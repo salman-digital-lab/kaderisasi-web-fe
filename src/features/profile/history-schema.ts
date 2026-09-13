@@ -11,7 +11,7 @@ const optionalYear = z.preprocess(
 export const educationEntrySchema = z.object({
   degree: z.preprocess(
     (value) => value === "" || value === null ? undefined : value,
-    z.enum(["bachelor", "master", "doctoral"]).optional(),
+    z.enum(["high_school", "diploma", "bachelor", "master", "doctoral"]).optional(),
   ),
   institution: z.string().trim().default(""),
   faculty: z.string().trim().default(""),

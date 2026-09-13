@@ -70,19 +70,25 @@ export default function UniversityNameSelect({
     fetchUniversities(value);
   }, 300);
 
+  const institutionName = searchValue.trim();
+  const institutionOptions =
+    institutionName && !options.some((option) => option.value === institutionName)
+      ? [{ label: institutionName, value: institutionName }, ...options]
+      : options;
+
   return (
     <Select
       {...props}
       value={value}
       defaultValue={defaultValue}
-      data={options}
+      data={institutionOptions}
       searchable
       searchValue={searchValue}
       onSearchChange={(value) => {
         setSearchValue(value);
         debouncedFetch(value);
       }}
-      nothingFoundMessage="Universitas tidak ditemukan"
+      nothingFoundMessage="Ketik nama sekolah atau perguruan tinggi"
       allowDeselect={false}
     />
   );

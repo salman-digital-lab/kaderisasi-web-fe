@@ -20,6 +20,8 @@ import { educationEntrySchema, workEntrySchema } from "./history-schema";
 import classes from "./PersonalDataForm/index.module.css";
 
 const DEGREES = [
+  { value: "high_school", label: "SMA/SMK" },
+  { value: "diploma", label: "D3 (Diploma)" },
   { value: "bachelor", label: "S1" },
   { value: "master", label: "S2" },
   { value: "doctoral", label: "S3" },
@@ -204,7 +206,7 @@ export default function HistoryFields({
                       {...form.getInputProps(`${kind}.${index}.institution`)}
                       key={form.key(`${kind}.${index}.institution`)}
                       label="Institusi"
-                      placeholder="Cari universitas"
+                      placeholder="Cari atau ketik nama institusi"
                     />
                     <TextInput
                       {...form.getInputProps(`${kind}.${index}.faculty`)}

@@ -34,12 +34,16 @@ import { educationEntrySchema, historyValidationErrors } from "@/features/profil
 import { selectCurrentEducation } from "@/features/customForm/education-history";
 
 const DEGREE_OPTIONS = [
+  { value: "high_school", label: "SMA/SMK" },
+  { value: "diploma", label: "D3 (Diploma)" },
   { value: "bachelor", label: "S1 (Sarjana)" },
   { value: "master", label: "S2 (Magister)" },
   { value: "doctoral", label: "S3 (Doktor)" },
 ];
 
 const DEGREE_LABEL: Record<string, string> = {
+  high_school: "SMA/SMK",
+  diploma: "D3",
   bachelor: "S1",
   master: "S2",
   doctoral: "S3",
@@ -483,7 +487,7 @@ export default function CustomFormProfileSection({
                   {...form.getInputProps(`education_history.${index}.institution`)}
                   key={form.key(`education_history.${index}.institution`)}
                   label="Institusi"
-                  placeholder="Cari universitas"
+                  placeholder="Cari atau ketik nama institusi"
                   mt="xs"
                   radius="md"
                 />
@@ -623,7 +627,7 @@ export default function CustomFormProfileSection({
                               {...form.getInputProps("current_education.institution")}
                               key={form.key("current_education.institution")}
                               label="Institusi"
-                              placeholder="Cari universitas"
+                              placeholder="Cari atau ketik nama institusi"
                               radius="md"
                             />
                             <TextInput
@@ -713,7 +717,7 @@ export default function CustomFormProfileSection({
                   {...form.getInputProps("current_education.institution")}
                   key={form.key("current_education.institution")}
                   label="Institusi"
-                  placeholder="Cari universitas"
+                  placeholder="Cari atau ketik nama institusi"
                   mt="xs"
                   radius="md"
                 />

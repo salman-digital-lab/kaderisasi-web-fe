@@ -162,6 +162,8 @@ export const kaderisasiParticipationOptions = [
 ] as const;
 
 export const degreeOptions = [
+  { value: "high_school", label: "SMA/SMK" },
+  { value: "diploma", label: "D3 (Diploma)" },
   { value: "bachelor", label: "S1 (Sarjana)" },
   { value: "master", label: "S2 (Magister)" },
   { value: "doctoral", label: "S3 (Doktor)" },
@@ -169,10 +171,10 @@ export const degreeOptions = [
 
 const educationEntrySchema = z
   .object({
-    degree: z.union([z.enum(["bachelor", "master", "doctoral"]), z.literal("")])
+    degree: z.union([z.enum(["high_school", "diploma", "bachelor", "master", "doctoral"]), z.literal("")])
       .refine((value): boolean => value !== "", "Jenjang wajib dipilih"),
     institution: z.string().trim().min(1, "Institusi wajib diisi"),
-    faculty: z.string().trim().min(1, "Fakultas wajib diisi"),
+    faculty: z.string().trim(),
     major: z.string().trim().min(1, "Jurusan wajib diisi"),
     intakeYear: z
       .number()
@@ -182,6 +184,13 @@ const educationEntrySchema = z
       .nullable(),
   })
   .superRefine((value, context) => {
+    if (value.degree !== "high_school" && value.degree !== "diploma" && !value.faculty) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["faculty"],
+        message: "Fakultas wajib diisi",
+      });
+    }
     if (value.intakeYear === null) {
       context.addIssue({
         code: z.ZodIssueCode.custom,

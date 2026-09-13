@@ -1,9 +1,20 @@
 import { describe, expect, it } from "vitest";
 import { profileHistorySchema } from "./history-schema";
+import { onboardingFormBaseSchema } from "@/features/onboarding/schema";
 import { normalizeEducationHistory, normalizeWorkHistory } from "@/utils/profile-history";
 import { selectCurrentEducation } from "@/features/customForm/education-history";
 
 describe("profile histories across forms", () => {
+  it.each(["high_school", "diploma"])("preserves %s through validation and profile reload", (degree) => {
+    const parsed = profileHistorySchema.parse({
+      education_history: [{ degree, institution: "Institusi peserta", faculty: "", major: "" }],
+    });
+    expect(normalizeEducationHistory(JSON.stringify(parsed.education_history))[0]?.degree).toBe(degree);
+    expect(onboardingFormBaseSchema.shape.educationHistory.safeParse([{
+      degree, institution: "Institusi peserta", faculty: "", major: "Teknik", intakeYear: 2024,
+    }]).success).toBe(true);
+  });
+
   it("loads imported partial entries, string years, and null elements safely", () => {
     expect(normalizeEducationHistory(JSON.stringify([null, {
       degree: "bachelor", institution: " ITB ", major: "Informatika", intake_year: "2017",

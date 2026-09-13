@@ -802,7 +802,7 @@ export function ProfileStep({
                       key={form.key(`educationHistory.${index}.institution`)}
                       name={`educationHistory.${index}.institution`}
                       label="Institusi"
-                      placeholder="Cari universitas"
+                      placeholder="Cari atau ketik nama institusi"
                       size="md"
                       radius="md"
                     />

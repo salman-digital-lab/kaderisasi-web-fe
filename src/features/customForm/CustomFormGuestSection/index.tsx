@@ -27,6 +27,8 @@ import { toISODateString } from "@/utils/dateUtils";
 import UniversityNameSelect from "@/components/common/UniversityNameSelect";
 
 const DEGREE_OPTIONS = [
+  { value: "high_school", label: "SMA/SMK" },
+  { value: "diploma", label: "D3 (Diploma)" },
   { value: "bachelor", label: "S1 (Sarjana)" },
   { value: "master", label: "S2 (Magister)" },
   { value: "doctoral", label: "S3 (Doktor)" },
@@ -273,7 +275,7 @@ export default function CustomFormGuestSection({
                   {...form.getInputProps(`education_history.${index}.institution`)}
                   key={form.key(`education_history.${index}.institution`)}
                   label="Institusi"
-                  placeholder="Cari universitas"
+                  placeholder="Cari atau ketik nama institusi"
                   mt="xs"
                   radius="md"
                 />
@@ -353,7 +355,7 @@ export default function CustomFormGuestSection({
                 {...form.getInputProps("current_education.institution")}
                 key={form.key("current_education.institution")}
                 label="Institusi"
-                placeholder="Cari universitas"
+                placeholder="Cari atau ketik nama institusi"
                 mt="xs"
                 radius="md"
               />
