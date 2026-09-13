@@ -36,6 +36,8 @@ import { FetcherError } from "@/functions/common/fetcher";
 import CustomFormContentEdit from "@/features/customForm/CustomFormContentEdit";
 import { getCertificateCta } from "@/features/certificate/utils/certificateData";
 import CertificateCtaButton from "@/features/certificate/CertificateCtaButton";
+import ActivityScoringResult from "@/features/activity/ActivityScoringResult";
+import type { PublishedScoringResult } from "@/types/api/scoring";
 
 export async function generateMetadata(props: {
   params: Promise<{ slug: string }>;
@@ -65,6 +67,7 @@ export default async function Page(props: {
   let registrationData:
     | {
         id: number;
+        scoring_result?: PublishedScoringResult | null;
         status: string;
         questionnaire_answer: Record<string, string>;
         created_at: string;
@@ -289,6 +292,10 @@ export default async function Page(props: {
             <CertificateCtaButton cta={certificateCta} marginTop="lg" />
           )}
         </Card>
+
+        {registrationData.scoring_result && (
+          <ActivityScoringResult score={registrationData.scoring_result} />
+        )}
 
         {customForm &&
           (searchParams.edit === "form" ? (

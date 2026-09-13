@@ -1,5 +1,6 @@
 import { ACTIVITY_CATEGORY_ENUM } from "../constants/activity";
 import { USER_LEVEL_ENUM } from "../constants/profile";
+import type { PublishedScoringResult } from "../api/scoring";
 
 export type Questionnaire =
   | {
@@ -54,6 +55,7 @@ export type Activity = {
 };
 
 export type Registrant = {
+  scoring_result?: PublishedScoringResult | null;
   id: number;
   user_id: number;
   activity_id: number;
