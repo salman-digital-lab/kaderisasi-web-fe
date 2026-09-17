@@ -43,7 +43,10 @@ export type GetActivityCategoriesResp = APIResponse<number[]>;
 
 export type PutActivityReq = {
   slug: string;
-  data: { questionnaire_answer: Record<string, string> };
+  data: {
+    questionnaire_answer: Record<string, unknown>;
+    session_token?: string;
+  };
 };
 
 export type PutActivityResp = APIResponse<Registrant>;
@@ -51,6 +54,7 @@ export type PutActivityResp = APIResponse<Registrant>;
 export type PostGuestActivityReq = {
   slug: string;
   data: {
+    session_token?: string;
     guest_data: Record<string, unknown>;
     questionnaire_answer: Record<string, unknown>;
   };

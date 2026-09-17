@@ -19,6 +19,7 @@ import CustomFormFieldsRenderer from "../CustomFormFieldsRenderer";
 import showNotif from "@/functions/common/notification";
 import updateActivityCustomForm from "@/functions/server/updateActivityCustomForm";
 import { useRouter } from "next/navigation";
+import { FormUploadProvider, useFormUploads } from "../FormUploadContext";
 
 type CustomFormContentEditProps = {
   customForm: CustomForm;
@@ -32,11 +33,36 @@ const paperProps = {
   p: { base: "md", sm: "xl" } as const,
 };
 
-export default function CustomFormContentEdit({
+export default function CustomFormContentEdit(
+  props: CustomFormContentEditProps,
+): React.ReactElement {
+  const existingFiles = props.customForm.form_schema.fields.flatMap((section) =>
+    section.fields
+      .filter((field) => field.type === "file")
+      .flatMap((field) => {
+        const value: unknown =
+          props.registrationData.questionnaire_answer?.[field.key];
+        return Array.isArray(value)
+          ? value.filter((id): id is string => typeof id === "string")
+          : [];
+      }),
+  );
+  return (
+    <FormUploadProvider
+      formId={props.customForm.id}
+      schemaHash={props.customForm.schema_hash}
+      existingFiles={existingFiles}
+    >
+      <EditBody {...props} />
+    </FormUploadProvider>
+  );
+}
+function EditBody({
   customForm,
   registrationData,
   slug,
 }: CustomFormContentEditProps) {
+  const uploads = useFormUploads();
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const [loading, setLoading] = useState(false);
@@ -83,12 +109,28 @@ export default function CustomFormContentEdit({
   if (!currentSection) return null;
 
   const handleSectionSubmit = async (data: Record<string, any>) => {
+    if (uploads?.pending) return;
     const allFormData = flow.advance(data);
     if (!allFormData) return;
 
     try {
       setLoading(true);
-      const response = await updateActivityCustomForm(slug, allFormData);
+      const hasFiles = customForm.form_schema.fields.some((section) =>
+        section.fields.some(
+          (field) =>
+            field.type === "file" &&
+            Array.isArray(allFormData[field.key]) &&
+            (allFormData[field.key] as unknown[]).some(
+              (id) =>
+                typeof id === "string" && !uploads?.existingFiles.includes(id),
+            ),
+        ),
+      );
+      const response = await updateActivityCustomForm(
+        slug,
+        allFormData,
+        hasFiles ? await uploads?.ensureSession() : undefined,
+      );
       if (!response.success) {
         showNotif(response.message, true);
         return;
@@ -165,7 +207,7 @@ export default function CustomFormContentEdit({
           type="button"
           variant="default"
           onClick={handleBack}
-          disabled={loading}
+          disabled={loading || !!uploads?.pending}
           style={{ flex: "0 1 auto", minWidth: "100px" }}
         >
           Kembali
@@ -173,6 +215,7 @@ export default function CustomFormContentEdit({
         <Button
           type="button"
           loading={loading}
+          disabled={!!uploads?.pending}
           onClick={() => formRef.current?.requestSubmit()}
           style={{ flex: "1 1 auto", minWidth: "120px" }}
         >

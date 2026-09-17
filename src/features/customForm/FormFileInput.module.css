@@ -1,0 +1,44 @@
+.field {
+  display: grid;
+  gap: 8px;
+}
+.field p {
+  margin: 0;
+  color: var(--mantine-color-gray-7);
+  font-size: 14px;
+}
+.field ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.field li {
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  padding-block: 8px;
+  overflow-wrap: anywhere;
+}
+.field button {
+  font: inherit;
+  justify-self: start;
+  flex-shrink: 0;
+  background: white;
+  border: 1px solid var(--mantine-color-gray-4);
+  border-radius: var(--mantine-radius-default);
+  padding: 6px 12px;
+  cursor: pointer;
+}
+.field button:disabled {
+  cursor: not-allowed;
+  color: var(--mantine-color-gray-6);
+  background: var(--mantine-color-gray-1);
+}
+.field button:focus-visible,
+.field input:focus-visible {
+  outline: 2px solid var(--mantine-primary-color-filled);
+  outline-offset: 2px;
+}
+.error {
+  color: var(--mantine-color-red-8);
+}

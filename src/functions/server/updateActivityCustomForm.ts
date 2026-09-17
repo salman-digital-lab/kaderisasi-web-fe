@@ -9,13 +9,17 @@ import { verifySession } from "./session";
 export default async function updateActivityCustomForm(
   slug: string,
   customFormData: Record<string, any>,
+  sessionToken?: string,
 ): Promise<ServerActionResult> {
   const { session } = await verifySession();
 
   try {
     const response = await putActivity(session || "", {
       slug,
-      data: { questionnaire_answer: customFormData },
+      data: {
+        questionnaire_answer: customFormData,
+        session_token: sessionToken,
+      },
     });
     revalidateTag(CACHE_TAGS.ACTIVITIES, {});
     return {

@@ -22,6 +22,7 @@ export default async function Page(props: {
   searchParams: Promise<Record<string, string>>;
 }) {
   const params = await props.params;
+  if (params.type === "independent") redirect(`/form/${params.id}`);
   const searchParams = await props.searchParams;
   const { type, id } = params;
 

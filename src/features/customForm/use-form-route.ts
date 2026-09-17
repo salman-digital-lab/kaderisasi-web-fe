@@ -13,6 +13,7 @@ import {
   validateFormRouting,
 } from "./form-routing";
 import { validateCustomFormFields } from "./CustomFormFieldsRenderer/validation";
+import { useFormUploads } from "./FormUploadContext";
 
 type RouteState = {
   answers: Record<string, unknown>;
@@ -55,6 +56,7 @@ export function useFormRoute(
   initialAnswers: Record<string, unknown> = {},
   reset = false,
 ): FormRouteState {
+  const uploads = useFormUploads();
   const sections = customSections(schema);
   let profileId = "__profile__";
   while (sections.some((section) => section.id === profileId)) profileId += "_";
@@ -103,6 +105,24 @@ export function useFormRoute(
           !Array.isArray(saved.answers)
         ) {
           const answers = pruneFormAnswers(schema, saved.answers);
+          let filesCleared = false;
+          for (const field of schema.fields.flatMap(
+            (section) => section.fields,
+          )) {
+            if (field.type !== "file" || !Array.isArray(answers[field.key]))
+              continue;
+            const existing = initialAnswers[field.key];
+            const retained = (answers[field.key] as unknown[]).filter(
+              (id) => Array.isArray(existing) && existing.includes(id),
+            );
+            if (retained.length !== (answers[field.key] as unknown[]).length)
+              filesCleared = true;
+            answers[field.key] = retained;
+          }
+          if (filesCleared)
+            setNotice(
+              "Draf dimuat. Pilih kembali berkas yang belum dikirim agar sesi unggahan tetap aman.",
+            );
           const path = [
             ...(includeProfile ? [profileId] : []),
             ...formRoute(schema, answers),
@@ -172,7 +192,28 @@ export function useFormRoute(
   const advance = (
     values: Record<string, unknown>,
   ): Record<string, unknown> | null => {
-    const answers = pruneFormAnswers(schema, { ...state.answers, ...values });
+    const previous = { ...state.answers, ...values };
+    const answers = pruneFormAnswers(schema, previous);
+    const discarded = schema.fields
+      .flatMap((section) => section.fields)
+      .filter((field) => field.type === "file" && !(field.key in answers))
+      .flatMap((field) =>
+        Array.isArray(previous[field.key])
+          ? (previous[field.key] as unknown[]).filter(
+              (id): id is string => typeof id === "string",
+            )
+          : [],
+      );
+    if (discarded.length && uploads)
+      void uploads
+        .discard(discarded)
+        .catch((error: unknown) =>
+          setNotice(
+            error instanceof Error
+              ? error.message
+              : "Berkas belum dapat dihapus.",
+          ),
+        );
     const next =
       state.currentId === profileId
         ? (sections[0]?.id ?? null)

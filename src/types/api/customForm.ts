@@ -1,6 +1,11 @@
 import type { SectionNavigation } from "@/features/customForm/form-routing";
 
 export interface CustomFormField {
+  file?: {
+    accept: "pdf" | "image" | "pdf_or_image";
+    maxFiles: number;
+    maxSizeMB: number;
+  };
   key: string;
   label: string;
   required: boolean;
@@ -39,11 +44,13 @@ export interface CustomFormSection {
 }
 
 export interface CustomFormSchema {
+  settings?: { accessMode: "public" | "members" };
   version?: number;
   fields: CustomFormSection[];
 }
 
 export interface CustomForm {
+  schema_hash: string;
   id: number;
   form_name: string;
   form_description: string;
@@ -70,6 +77,7 @@ export interface GetCustomFormByFeatureResp {
 }
 
 export interface PostCustomFormRegistrationReq {
+  session_token?: string;
   feature_type:
     "activity_registration" | "club_registration" | "independent_form";
   feature_id?: number;

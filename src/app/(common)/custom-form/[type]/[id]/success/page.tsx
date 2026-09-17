@@ -15,6 +15,7 @@ export default async function SuccessPage(props: {
 }) {
   const params = await props.params;
   const { type, id } = params;
+  if (type === "independent") redirect(`/form/${id}`);
 
   const { session } = await verifySession();
 

@@ -1,7 +1,10 @@
 "use client";
 
 import { normalizeEducationHistory } from "@/utils/profile-history";
-import { educationEntrySchema, historyValidationErrors } from "@/features/profile/history-schema";
+import {
+  educationEntrySchema,
+  historyValidationErrors,
+} from "@/features/profile/history-schema";
 
 import { useState, type RefObject } from "react";
 import {
@@ -25,6 +28,7 @@ import type { Province } from "@/types/model/province";
 import { GENDER_OPTION } from "@/constants/form/profile";
 import { toISODateString } from "@/utils/dateUtils";
 import UniversityNameSelect from "@/components/common/UniversityNameSelect";
+import { FormLocationInput } from "../FormLocationInput";
 
 const DEGREE_OPTIONS = [
   { value: "high_school", label: "SMA/SMK" },
@@ -44,6 +48,7 @@ type CustomFormGuestSectionProps = {
   isSingleSection?: boolean;
   initialData?: FormValues;
   formRef?: RefObject<HTMLFormElement | null>;
+  requireGuestIdentity?: boolean;
 };
 
 export default function CustomFormGuestSection({
@@ -54,16 +59,24 @@ export default function CustomFormGuestSection({
   isSingleSection = false,
   initialData = {},
   formRef,
+  requireGuestIdentity = true,
 }: CustomFormGuestSectionProps) {
   const [confirmModalOpened, setConfirmModalOpened] = useState(false);
   const [pendingValues, setPendingValues] = useState<FormValues | null>(null);
+  const [province, setProvince] = useState(
+    String(initialData.province_id ?? ""),
+  );
+  const [originProvince, setOriginProvince] = useState(
+    String(initialData.origin_province_id ?? ""),
+  );
 
   const hasNameField = profileFields.some((f) => f.key === "name");
   const hasEmailField = profileFields.some((f) => f.key === "email");
 
   const resolveInitialValue = (key: string, fallback: unknown): unknown => {
     const stored = initialData[key];
-    if (stored === undefined || stored === null || stored === "") return fallback ?? "";
+    if (stored === undefined || stored === null || stored === "")
+      return fallback ?? "";
     // DateInput requires a Date object; stored value is an ISO string after processValues
     if (key === "birth_date" && typeof stored === "string") {
       const parsed = new Date(stored);
@@ -80,18 +93,23 @@ export default function CustomFormGuestSection({
     } else if (field.key === "current_education") {
       const stored = initialData["current_education"];
       initialValues[field.key] = normalizeEducationHistory([stored])[0] ?? {
-            degree: "bachelor",
-            institution: "",
-            faculty: "",
-            major: "",
-            intake_year: new Date().getFullYear(),
-          };
+        degree: "bachelor",
+        institution: "",
+        faculty: "",
+        major: "",
+        intake_year: new Date().getFullYear(),
+      };
     } else {
-      initialValues[field.key] = resolveInitialValue(field.key, field.defaultValue as unknown);
+      initialValues[field.key] = resolveInitialValue(
+        field.key,
+        field.defaultValue as unknown,
+      );
     }
   });
-  if (!hasNameField) initialValues["name"] = resolveInitialValue("name", "");
-  if (!hasEmailField) initialValues["email"] = resolveInitialValue("email", "");
+  if (requireGuestIdentity && !hasNameField)
+    initialValues["name"] = resolveInitialValue("name", "");
+  if (requireGuestIdentity && !hasEmailField)
+    initialValues["email"] = resolveInitialValue("email", "");
 
   const form = useForm<FormValues>({
     mode: "uncontrolled",
@@ -100,7 +118,9 @@ export default function CustomFormGuestSection({
       const errors: Record<string, string> = historyValidationErrors({
         education_history: values.education_history,
       });
-      const currentResult = educationEntrySchema.safeParse(values.current_education);
+      const currentResult = educationEntrySchema.safeParse(
+        values.current_education,
+      );
       if (values.current_education && !currentResult.success) {
         currentResult.error.issues.forEach((issue) => {
           errors[`current_education.${issue.path.join(".")}`] = issue.message;
@@ -109,17 +129,23 @@ export default function CustomFormGuestSection({
       const name = values["name"];
       const email = values["email"];
 
-      if (!String(name ?? "").trim()) {
+      if (requireGuestIdentity && !String(name ?? "").trim()) {
         errors["name"] = "Nama wajib diisi";
       }
-      if (!String(email ?? "").trim()) {
+      if (requireGuestIdentity && !String(email ?? "").trim()) {
         errors["email"] = "Email wajib diisi";
-      } else if (!/^\S+@\S+\.\S+$/.test(String(email))) {
+      } else if (email && !/^\S+@\S+\.\S+$/.test(String(email))) {
         errors["email"] = "Format email tidak valid";
       }
 
       profileFields.forEach((field) => {
-        if (field.key === "name" || field.key === "email") return;
+        if (
+          field.hidden ||
+          field.disabled ||
+          (requireGuestIdentity &&
+            (field.key === "name" || field.key === "email"))
+        )
+          return;
 
         const val = values[field.key];
 
@@ -127,8 +153,8 @@ export default function CustomFormGuestSection({
           field.key === "education_history"
             ? !Array.isArray(val) || (val as unknown[]).length === 0
             : field.key === "current_education"
-            ? !educationEntrySchema.safeParse(val).data?.institution.trim()
-            : !val;
+              ? !educationEntrySchema.safeParse(val).data?.institution.trim()
+              : !val;
         if (field.required && isEmpty) {
           errors[field.key] = `${field.label} wajib diisi`;
           return;
@@ -140,11 +166,16 @@ export default function CustomFormGuestSection({
 
         if (validation.minLength && str.length < validation.minLength) {
           errors[field.key] =
-            validation.customMessage ?? `Minimal ${validation.minLength} karakter`;
+            validation.customMessage ??
+            `Minimal ${validation.minLength} karakter`;
         } else if (validation.maxLength && str.length > validation.maxLength) {
           errors[field.key] =
-            validation.customMessage ?? `Maksimal ${validation.maxLength} karakter`;
-        } else if (validation.pattern && !new RegExp(validation.pattern).test(str)) {
+            validation.customMessage ??
+            `Maksimal ${validation.maxLength} karakter`;
+        } else if (
+          validation.pattern &&
+          !new RegExp(validation.pattern).test(str)
+        ) {
           errors[field.key] =
             validation.customMessage ?? `Format ${field.label} tidak valid`;
         }
@@ -173,7 +204,7 @@ export default function CustomFormGuestSection({
             {...inputProps}
             placeholder="Isi di sini"
             type="email"
-            required
+            required={requireGuestIdentity || field.required}
           />
         );
 
@@ -188,6 +219,7 @@ export default function CustomFormGuestSection({
         );
 
       case "province_id":
+      case "origin_province_id":
         return (
           <Select
             key={fieldKey}
@@ -200,7 +232,28 @@ export default function CustomFormGuestSection({
               })) ?? []
             }
             searchable
+            onChange={(value) => {
+              form.setFieldValue(field.key, value ?? "");
+              const origin = field.key === "origin_province_id";
+              (origin ? setOriginProvince : setProvince)(value ?? "");
+              form.setFieldValue(origin ? "origin_city_id" : "city_id", "");
+            }}
           />
+        );
+
+      case "city_id":
+      case "origin_city_id":
+        return (
+          <FormLocationInput
+            key={fieldKey}
+            {...inputProps}
+            kind="city"
+            province={field.key === "city_id" ? province : originProvince}
+          />
+        );
+      case "country":
+        return (
+          <FormLocationInput key={fieldKey} {...inputProps} kind="country" />
         );
 
       case "whatsapp":
@@ -212,7 +265,13 @@ export default function CustomFormGuestSection({
             type="tel"
             inputMode="numeric"
             onKeyDown={(e) => {
-              const allowed = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"];
+              const allowed = [
+                "Backspace",
+                "Delete",
+                "ArrowLeft",
+                "ArrowRight",
+                "Tab",
+              ];
               if (!/[0-9]/.test(e.key) && !allowed.includes(e.key)) {
                 e.preventDefault();
               }
@@ -231,7 +290,8 @@ export default function CustomFormGuestSection({
         );
 
       case "education_history": {
-        const entries = (form.getValues().education_history as EducationEntry[]) ?? [];
+        const entries =
+          (form.getValues().education_history as EducationEntry[]) ?? [];
         const educationError = form.errors["education_history"];
         return (
           <Stack key={fieldKey} gap="xs">
@@ -259,7 +319,9 @@ export default function CustomFormGuestSection({
                     color="red"
                     variant="subtle"
                     size="md"
-                    onClick={() => form.removeListItem("education_history", index)}
+                    onClick={() =>
+                      form.removeListItem("education_history", index)
+                    }
                   >
                     ×
                   </ActionIcon>
@@ -268,17 +330,26 @@ export default function CustomFormGuestSection({
                   {...form.getInputProps(`education_history.${index}.degree`)}
                   key={form.key(`education_history.${index}.degree`)}
                   onChange={(value) => {
-                    form.setFieldValue(`education_history.${index}.degree`, value);
-                    if (value === "high_school") form.setFieldValue(`education_history.${index}.faculty`, "");
+                    form.setFieldValue(
+                      `education_history.${index}.degree`,
+                      value,
+                    );
+                    if (value === "high_school")
+                      form.setFieldValue(
+                        `education_history.${index}.faculty`,
+                        "",
+                      );
                   }}
                   label="Jenjang"
                   data={DEGREE_OPTIONS}
                   radius="md"
                 />
-                {form.getInputProps(`education_history.${index}.degree`).defaultValue ===
-                "high_school" ? (
+                {form.getInputProps(`education_history.${index}.degree`)
+                  .defaultValue === "high_school" ? (
                   <TextInput
-                    {...form.getInputProps(`education_history.${index}.institution`)}
+                    {...form.getInputProps(
+                      `education_history.${index}.institution`,
+                    )}
                     key={form.key(`education_history.${index}.institution`)}
                     label="Nama Sekolah"
                     placeholder="Nama sekolah"
@@ -287,7 +358,9 @@ export default function CustomFormGuestSection({
                   />
                 ) : (
                   <UniversityNameSelect
-                    {...form.getInputProps(`education_history.${index}.institution`)}
+                    {...form.getInputProps(
+                      `education_history.${index}.institution`,
+                    )}
                     key={form.key(`education_history.${index}.institution`)}
                     label="Institusi"
                     placeholder="Cari atau ketik nama institusi"
@@ -296,11 +369,13 @@ export default function CustomFormGuestSection({
                   />
                 )}
                 {!(
-                  form.getInputProps(`education_history.${index}.degree`).defaultValue ===
-                  "high_school"
+                  form.getInputProps(`education_history.${index}.degree`)
+                    .defaultValue === "high_school"
                 ) && (
                   <TextInput
-                    {...form.getInputProps(`education_history.${index}.faculty`)}
+                    {...form.getInputProps(
+                      `education_history.${index}.faculty`,
+                    )}
                     key={form.key(`education_history.${index}.faculty`)}
                     label="Fakultas"
                     placeholder="Fakultas"
@@ -317,7 +392,9 @@ export default function CustomFormGuestSection({
                   radius="md"
                 />
                 <NumberInput
-                  {...form.getInputProps(`education_history.${index}.intake_year`)}
+                  {...form.getInputProps(
+                    `education_history.${index}.intake_year`,
+                  )}
                   key={form.key(`education_history.${index}.intake_year`)}
                   label="Tahun Masuk"
                   placeholder="Tahun masuk"
@@ -370,7 +447,8 @@ export default function CustomFormGuestSection({
                 key={form.key("current_education.degree")}
                 onChange={(value) => {
                   form.setFieldValue("current_education.degree", value);
-                  if (value === "high_school") form.setFieldValue("current_education.faculty", "");
+                  if (value === "high_school")
+                    form.setFieldValue("current_education.faculty", "");
                 }}
                 label="Jenjang"
                 data={DEGREE_OPTIONS}
@@ -431,7 +509,9 @@ export default function CustomFormGuestSection({
       }
 
       default:
-        return <TextInput key={fieldKey} {...inputProps} placeholder="Isi di sini" />;
+        return (
+          <TextInput key={fieldKey} {...inputProps} placeholder="Isi di sini" />
+        );
     }
   };
 
@@ -441,12 +521,16 @@ export default function CustomFormGuestSection({
     profileFields.forEach((field) => {
       processed[field.key] =
         field.key === "birth_date" && values[field.key]
-          ? toISODateString(values[field.key] as Parameters<typeof toISODateString>[0])
+          ? toISODateString(
+              values[field.key] as Parameters<typeof toISODateString>[0],
+            )
           : values[field.key];
     });
 
     if (processed.education_history !== undefined) {
-      processed.education_history = normalizeEducationHistory(processed.education_history);
+      processed.education_history = normalizeEducationHistory(
+        processed.education_history,
+      );
     }
     if (processed.current_education !== undefined) {
       const entry = educationEntrySchema.parse(processed.current_education);
@@ -454,8 +538,10 @@ export default function CustomFormGuestSection({
     }
 
     // Carry name/email even when not part of the schema fields
-    if (!hasNameField) processed["name"] = values["name"];
-    if (!hasEmailField) processed["email"] = values["email"];
+    if (requireGuestIdentity && !hasNameField)
+      processed["name"] = values["name"];
+    if (requireGuestIdentity && !hasEmailField)
+      processed["email"] = values["email"];
 
     return processed;
   };
@@ -476,7 +562,7 @@ export default function CustomFormGuestSection({
         <Stack gap="xl">
           <Title order={4}>Data Diri</Title>
 
-          {!hasNameField && (
+          {requireGuestIdentity && !hasNameField && (
             <TextInput
               {...form.getInputProps("name")}
               key={form.key("name")}
@@ -486,7 +572,7 @@ export default function CustomFormGuestSection({
             />
           )}
 
-          {!hasEmailField && (
+          {requireGuestIdentity && !hasEmailField && (
             <TextInput
               {...form.getInputProps("email")}
               key={form.key("email")}

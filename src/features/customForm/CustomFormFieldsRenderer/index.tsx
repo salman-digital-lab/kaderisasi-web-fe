@@ -23,6 +23,8 @@ import { IconAlertCircle } from "@tabler/icons-react";
 import { CustomFormSection } from "@/types/api/customForm";
 import { validateCustomFormFields } from "./validation";
 import classes from "./index.module.css";
+import { FormFileInput } from "../FormFileInput";
+import { useFormUploads } from "../FormUploadContext";
 
 // Helper function to render text with newlines
 const renderTextWithNewlines = (text: string) => {
@@ -61,6 +63,7 @@ export default function CustomFormFieldsRenderer({
   isLastSection,
   formRef,
 }: CustomFormFieldsRendererProps) {
+  const uploads = useFormUploads();
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [pendingValues, setPendingValues] = useState<Record<
     string,
@@ -79,7 +82,7 @@ export default function CustomFormFieldsRenderer({
           (field.options?.length ?? 0) > 0
             ? (field.defaultValue ?? [])
             : (field.defaultValue ?? false);
-      } else if (field.type === "multiselect") {
+      } else if (field.type === "multiselect" || field.type === "file") {
         initialValues[field.key] = field.defaultValue ?? [];
       } else {
         initialValues[field.key] = field.defaultValue ?? "";
@@ -120,6 +123,15 @@ export default function CustomFormFieldsRenderer({
     };
 
     switch (field.type) {
+      case "file":
+        return (
+          <FormFileInput
+            field={field}
+            value={form.getValues()[field.key]}
+            onChange={(ids) => form.setFieldValue(field.key, ids)}
+            error={form.errors[field.key]}
+          />
+        );
       case "text":
         return (
           <TextInput
@@ -284,6 +296,7 @@ export default function CustomFormFieldsRenderer({
   };
 
   const handleSubmit = (values: Record<string, any>) => {
+    if (uploads?.pending) return;
     // If it's the last section, show confirmation modal
     if (isLastSection) {
       setPendingValues(values);

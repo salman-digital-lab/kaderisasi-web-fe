@@ -27,6 +27,7 @@ import { FetcherError } from "@/functions/common/fetcher";
 import { useRouter } from "next/navigation";
 import { useFormRoute } from "../use-form-route";
 import { customSections } from "../form-routing";
+import { FormUploadProvider, useFormUploads } from "../FormUploadContext";
 
 type CustomFormContentProps = {
   customForm: CustomForm;
@@ -79,7 +80,21 @@ const paperProps = {
   p: { base: "md", sm: "xl" } as const,
 };
 
-export default function CustomFormContent({
+export default function CustomFormContent(
+  props: CustomFormContentProps,
+): React.ReactElement {
+  return (
+    <FormUploadProvider
+      formId={props.customForm.id}
+      schemaHash={props.customForm.schema_hash}
+      guest={props.isGuest}
+    >
+      <CustomFormContentBody {...props} />
+    </FormUploadProvider>
+  );
+}
+
+function CustomFormContentBody({
   customForm,
   profileData,
   provinceData,
@@ -90,6 +105,10 @@ export default function CustomFormContent({
   activitySlug,
   resetOnMount = false,
 }: CustomFormContentProps) {
+  const uploads = useFormUploads();
+  const hasFiles = customForm.form_schema.fields.some((section) =>
+    section.fields.some((field) => field.type === "file"),
+  );
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -168,6 +187,9 @@ export default function CustomFormContent({
         data: {
           guest_data: guestData,
           questionnaire_answer: questionnaireAnswer,
+          ...(hasFiles
+            ? { session_token: await uploads?.ensureSession() }
+            : {}),
         },
       });
       return !!resp;
@@ -183,6 +205,7 @@ export default function CustomFormContent({
   };
 
   const finishAndRedirect = async (formData: Record<string, unknown>) => {
+    if (uploads?.pending) return;
     try {
       setLoading(true);
       if (isGuest) {
@@ -192,6 +215,9 @@ export default function CustomFormContent({
           feature_type: featureType,
           feature_id: featureId,
           custom_form_data: formData,
+          ...(hasFiles
+            ? { session_token: await uploads?.ensureSession() }
+            : {}),
         });
         if (!response.success) {
           showNotif(response.message, true);
@@ -375,7 +401,7 @@ export default function CustomFormContent({
             type="button"
             variant="default"
             onClick={flow.back}
-            disabled={loading}
+            disabled={loading || !!uploads?.pending}
             style={{ flex: "0 1 auto", minWidth: "100px" }}
           >
             Kembali
@@ -385,6 +411,7 @@ export default function CustomFormContent({
           type="button"
           loading={loading}
           onClick={() => formRef.current?.requestSubmit()}
+          disabled={!!uploads?.pending}
           style={{ flex: "1 1 auto", minWidth: "120px" }}
         >
           {isLastStep ? "Kirim" : "Lanjutkan"}

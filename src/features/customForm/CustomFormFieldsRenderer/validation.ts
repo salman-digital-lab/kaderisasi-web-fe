@@ -25,7 +25,8 @@ export function validateCustomFormFields(
       const validType =
         field.type === "number"
           ? typeof value === "number" && Number.isFinite(value)
-          : field.type === "multiselect" ||
+          : field.type === "file" ||
+              field.type === "multiselect" ||
               (field.type === "checkbox" && !!field.options?.length)
             ? Array.isArray(value) &&
               value.every((item) => typeof item === "string")
@@ -33,6 +34,12 @@ export function validateCustomFormFields(
               ? typeof value === "boolean"
               : typeof value === "string";
       if (!validType) errors[field.key] = `Format ${field.label} tidak valid.`;
+      if (
+        field.type === "file" &&
+        Array.isArray(value) &&
+        value.length > (field.file?.maxFiles ?? 1)
+      )
+        errors[field.key] = `Maksimal ${field.file?.maxFiles ?? 1} berkas.`;
       if (field.options?.length) {
         const allowed = field.options
           .filter((option) => !option.disabled)
