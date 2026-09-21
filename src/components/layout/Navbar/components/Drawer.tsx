@@ -226,6 +226,19 @@ export default function NavDrawer({
                   onClick={closeDrawer}
                 />
               ))}
+              <Divider my="xs" />
+              <Text c="dimmed" fw={600} px="sm" mt="xs">
+                Tentang
+              </Text>
+              <MenuItem
+                item={{
+                  label: "Kalender BMKA",
+                  href: "/tentang/kalender-bmka",
+                  icon: IconCalendarEvent,
+                }}
+                isActive={pathname === "/tentang/kalender-bmka"}
+                onClick={closeDrawer}
+              />
             </Stack>
           </Box>
         </ScrollArea>

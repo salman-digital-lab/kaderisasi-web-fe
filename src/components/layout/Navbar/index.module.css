@@ -33,7 +33,8 @@
 .account:hover {
   background: var(--surface-subtle);
 }
-.link[aria-current="page"] {
+.link[aria-current="page"],
+.link[data-active] {
   background: var(--mantine-primary-color-light);
   color: var(--mantine-primary-color-light-color);
   font-weight: 700;

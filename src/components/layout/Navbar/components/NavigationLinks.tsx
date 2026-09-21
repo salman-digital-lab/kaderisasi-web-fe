@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactElement } from "react";
+import { Menu, UnstyledButton } from "@mantine/core";
+import { IconChevronDown } from "@tabler/icons-react";
 import classes from "../index.module.css";
 
 const LINKS = [
@@ -33,6 +35,28 @@ export function NavigationItems({
           {label}
         </Link>
       ))}
+      <Menu position="bottom-start" width={210}>
+        <Menu.Target>
+          <UnstyledButton
+            className={classes.link}
+            data-active={pathname.startsWith("/tentang/") || undefined}
+          >
+            Tentang{" "}
+            <IconChevronDown size={14} style={{ marginLeft: 6 }} aria-hidden />
+          </UnstyledButton>
+        </Menu.Target>
+        <Menu.Dropdown>
+          <Menu.Item
+            component={Link}
+            href="/tentang/kalender-bmka"
+            aria-current={
+              pathname === "/tentang/kalender-bmka" ? "page" : undefined
+            }
+          >
+            Kalender BMKA
+          </Menu.Item>
+        </Menu.Dropdown>
+      </Menu>
     </nav>
   );
 }
