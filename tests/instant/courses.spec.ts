@@ -145,8 +145,44 @@ test("Kelas empty, retry, and guest return states remain usable", async ({
   await expect(page.getByRole("article")).toHaveCount(12);
   await context.clearCookies();
   await page.goto("/kelas?search=video&page=2");
+  await expect(page).toHaveURL(/\/kelas\?search=video&page=2$/);
+  await expect(
+    page.getByRole("heading", { name: "Kelas di Kaderisasi Salman" }),
+  ).toBeVisible();
+  await expect(
+    page.getByText(
+      "Silahkan masuk ke akun anda terlebih dahulu untuk melihat daftar kelas",
+    ),
+  ).toBeVisible();
+  await expect(page.getByRole("article")).toHaveCount(0);
+  await expect(page.getByRole("search")).toHaveCount(0);
+  const login = page
+    .locator("main")
+    .getByRole("link", { name: "Masuk", exact: true });
+  await expect(login).toHaveAttribute(
+    "href",
+    "/login?redirect=%2Fkelas%3Fsearch%3Dvideo%26page%3D2",
+  );
+  await login.click();
   await expect(page).toHaveURL(
     /\/login\?redirect=%2Fkelas%3Fsearch%3Dvideo%26page%3D2$/,
   );
-  await expect(page.getByRole("article")).toHaveCount(0);
+});
+
+test("Kelas guest prompt follows Ruang Curhat", async ({ page }, testInfo) => {
+  for (const route of ["/consultation", "/kelas"]) {
+    await page.goto(route);
+    await expect(
+      page.locator("main").getByRole("link", { name: "Masuk", exact: true }),
+    ).toBeVisible();
+    await page.screenshot({
+      path: testInfo.outputPath(`${route.slice(1)}-guest.png`),
+      fullPage: true,
+    });
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= window.innerWidth,
+      ),
+    ).toBe(true);
+  }
 });

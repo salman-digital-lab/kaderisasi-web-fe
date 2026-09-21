@@ -1,10 +1,20 @@
-import { Center, Group, SimpleGrid, Stack, Text, Title } from "@mantine/core";
+import {
+  Card,
+  Center,
+  Container,
+  Group,
+  SimpleGrid,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
 import { redirect } from "next/navigation";
 import type { ReactElement } from "react";
 import LinkButton from "@/components/common/LinkButton";
 import CatalogueSearch from "@/components/common/Catalogue/CatalogueSearch";
 import CataloguePagination from "@/components/common/Catalogue/CataloguePagination";
 import { readCourseData } from "@/services/course";
+import { getToken } from "@/functions/auth/getToken";
 import { courseListHref } from "@/features/courses/paths";
 import type { CoursePage } from "@/types/api/course";
 import CourseCard from "./CourseCard";
@@ -21,15 +31,32 @@ export default async function CourseList({
     typeof params.page === "string" && /^[1-9]\d*$/.test(params.page)
       ? Math.min(Number(params.page), 1000000)
       : 1;
+  const returnTo = courseListHref(search, page);
+  if (!(await getToken())) {
+    return (
+      <Container size="sm" px={0}>
+        <Card padding="xl" radius="md" withBorder mt="xl">
+          <Text ta="center" c="dimmed" fw="bold" size="lg">
+            Silahkan masuk ke akun anda terlebih dahulu untuk melihat daftar
+            kelas
+          </Text>
+          <LinkButton
+            href={`/login?redirect=${encodeURIComponent(returnTo)}`}
+            fullWidth
+            mt="md"
+          >
+            Masuk
+          </LinkButton>
+        </Card>
+      </Container>
+    );
+  }
   const query = new URLSearchParams({
     search,
     page: String(page),
     per_page: "12",
   });
-  const courses = await readCourseData<CoursePage>(
-    `?${query}`,
-    courseListHref(search, page),
-  );
+  const courses = await readCourseData<CoursePage>(`?${query}`, returnTo);
   const totalPages = Math.max(1, courses.meta.last_page);
   if (page > totalPages) redirect(courseListHref(search, totalPages));
 
