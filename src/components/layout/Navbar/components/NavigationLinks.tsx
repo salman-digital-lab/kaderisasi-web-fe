@@ -35,7 +35,7 @@ export function NavigationItems({
           {label}
         </Link>
       ))}
-      <Menu position="bottom-start" width={210}>
+      <Menu position="bottom-start" width={250}>
         <Menu.Target>
           <UnstyledButton
             className={classes.link}
@@ -46,6 +46,13 @@ export function NavigationItems({
           </UnstyledButton>
         </Menu.Target>
         <Menu.Dropdown>
+          <Menu.Item
+            component={Link}
+            href="/tentang/bmka"
+            aria-current={pathname === "/tentang/bmka" ? "page" : undefined}
+          >
+            BMKA &amp; Alur Kaderisasi
+          </Menu.Item>
           <Menu.Item
             component={Link}
             href="/tentang/kalender-bmka"

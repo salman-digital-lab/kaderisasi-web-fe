@@ -62,6 +62,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Static pages - public routes only
   const staticPages: MetadataRoute.Sitemap = [
     {
+      url: `${BASE_URL}/tentang/bmka`,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
       url: `${BASE_URL}/tentang/kalender-bmka`,
       changeFrequency: "daily",
       priority: 0.8,

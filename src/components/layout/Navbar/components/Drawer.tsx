@@ -232,6 +232,15 @@ export default function NavDrawer({
               </Text>
               <MenuItem
                 item={{
+                  label: "BMKA & Alur Kaderisasi",
+                  href: "/tentang/bmka",
+                  icon: IconBuildingCommunity,
+                }}
+                isActive={pathname === "/tentang/bmka"}
+                onClick={closeDrawer}
+              />
+              <MenuItem
+                item={{
                   label: "Kalender BMKA",
                   href: "/tentang/kalender-bmka",
                   icon: IconCalendarEvent,
