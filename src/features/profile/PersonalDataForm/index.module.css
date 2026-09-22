@@ -45,7 +45,10 @@
   align-items: center;
   gap: var(--mantine-spacing-md);
   padding: var(--mantine-spacing-sm) var(--form-inset);
-  padding-bottom: max(var(--mantine-spacing-sm), env(safe-area-inset-bottom));
+  padding-bottom: max(
+    var(--mantine-spacing-sm),
+    env(safe-area-inset-bottom, 0px)
+  );
   margin: var(--mantine-spacing-lg) calc(-1 * var(--form-inset))
     calc(-1 * var(--form-inset));
   border-top: 1px solid var(--surface-border);

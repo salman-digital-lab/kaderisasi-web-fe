@@ -284,6 +284,8 @@ export default function PersonalDataForm({
                 key={form.key("whatsapp")}
                 label="Nomor WhatsApp aktif"
                 type="tel"
+                enterKeyHint="next"
+                inputMode="tel"
                 autoComplete="tel"
                 description="Gunakan kode negara, misalnya 6281234567890."
               />

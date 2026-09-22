@@ -5,6 +5,7 @@ import type { ReactElement, ReactNode } from "react";
 import logo from "@/assets/bmka_logo_color.png";
 import LinkButton from "@/components/common/LinkButton";
 import classes from "./AuthLayout.module.css";
+import BrowserChrome from "./BrowserChrome";
 
 type AuthLayoutProps = {
   title: string;
@@ -21,6 +22,7 @@ export default function AuthLayout({
 }: AuthLayoutProps): ReactElement {
   return (
     <main id="main-content" tabIndex={-1} className={classes.main}>
+      <BrowserChrome surface="subtle" />
       <Container size={480} className={classes.container}>
         <Link
           href="/"

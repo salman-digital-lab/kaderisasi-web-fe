@@ -27,6 +27,8 @@ export default function CatalogueSearch({
       <TextInput
         key={search}
         name="search"
+        inputMode="search"
+        enterKeyHint="search"
         aria-label={searchLabel}
         placeholder={searchLabel}
         defaultValue={search}

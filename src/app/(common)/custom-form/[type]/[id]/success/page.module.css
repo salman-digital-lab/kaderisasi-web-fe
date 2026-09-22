@@ -26,9 +26,10 @@
   color: var(--mantine-color-blue-6);
   text-decoration: underline;
 }
-
-.richTextContent a:hover {
-  color: var(--mantine-color-blue-7);
+@media (hover: hover) and (pointer: fine) {
+  .richTextContent a:hover {
+    color: var(--mantine-color-blue-7);
+  }
 }
 
 .richTextContent strong {
@@ -78,4 +79,3 @@
 .richTextContent h6:first-child {
   margin-top: 0;
 }
-

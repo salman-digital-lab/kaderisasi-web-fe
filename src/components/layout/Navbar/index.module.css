@@ -1,5 +1,8 @@
 .header {
-  height: 4.5rem;
+  height: calc(4.5rem + env(safe-area-inset-top, 0px));
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
   border-bottom: 1px solid var(--surface-border);
   background: var(--mantine-color-body);
 }
@@ -29,10 +32,13 @@
   font-weight: 500;
   font-size: var(--mantine-font-size-md);
 }
-.link:hover,
-.account:hover {
-  background: var(--surface-subtle);
+@media (hover: hover) and (pointer: fine) {
+  .link:hover,
+  .account:hover {
+    background: var(--surface-subtle);
+  }
 }
+
 .link[aria-current="page"],
 .link[data-active] {
   background: var(--mantine-primary-color-light);
@@ -52,4 +58,46 @@
   .navigation {
     display: none;
   }
+}
+
+/* Keep the close and account controls reachable while the menu scrolls. */
+.drawerContent {
+  overflow: hidden;
+}
+.drawerBody {
+  padding: 0;
+}
+.drawerShell {
+  height: 100dvh;
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+.drawerHeader {
+  padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+  flex-shrink: 0;
+  padding-top: calc(var(--mantine-spacing-sm) + env(safe-area-inset-top, 0px));
+}
+.drawerFooter {
+  padding: var(--mantine-spacing-md);
+  flex-shrink: 0;
+  padding-bottom: calc(
+    var(--mantine-spacing-md) + env(safe-area-inset-bottom, 0px)
+  );
+}
+.drawerScroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.link:active,
+.account:active {
+  background: var(--surface-subtle);
+}
+.brand,
+.link,
+.account {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }

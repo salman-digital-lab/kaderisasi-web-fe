@@ -6,6 +6,7 @@ import "./globals.css";
 
 import { ColorSchemeScript, mantineHtmlProps } from "@mantine/core";
 import Script from "next/script";
+import type { Viewport } from "next";
 import { Suspense } from "react";
 import ScrollToTop from "@/components/common/ScrollToTop";
 import AppProvider from "@/components/providers/AppProvider";
@@ -13,6 +14,16 @@ import { inter } from "@/lib/fonts";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_APP_URL || "https://kaderisasi.salmanitb.com";
+
+// Keep pinch zoom available; the input baseline prevents focus zoom.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  interactiveWidget: "resizes-content",
+  themeColor: "#ffffff",
+  colorScheme: "light",
+};
 
 export const metadata = {
   metadataBase: new URL(BASE_URL),

@@ -49,6 +49,9 @@ export default function LoginForm({ redirect }: { redirect?: string }) {
           key={form.key("email")}
           label="Email"
           type="email"
+          enterKeyHint="next"
+          autoCorrect="off"
+          autoCapitalize="none"
           autoComplete="email"
           placeholder="Email Anda"
           required
@@ -58,6 +61,7 @@ export default function LoginForm({ redirect }: { redirect?: string }) {
           key={form.key("password")}
           label="Password"
           autoComplete="current-password"
+          enterKeyHint="done"
           visibilityToggleButtonProps={{
             "aria-label": "Tampilkan atau sembunyikan password",
           }}

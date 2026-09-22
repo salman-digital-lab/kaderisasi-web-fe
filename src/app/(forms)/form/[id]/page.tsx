@@ -1,3 +1,5 @@
+import BrowserChrome from "@/components/layout/BrowserChrome";
+import classes from "@/components/layout/SiteLayout.module.css";
 import type { Metadata } from "next";
 import type { ReactElement } from "react";
 import { notFound, redirect } from "next/navigation";
@@ -26,7 +28,8 @@ export default async function Page({ params }: Props): Promise<ReactElement> {
       redirect(`/login?redirect=${encodeURIComponent(`/form/${id}`)}`);
   }
   return (
-    <main id="main-content">
+    <main id="main-content" className={classes.standalone}>
+      <BrowserChrome />
       <PageContainer size="sm">
         <StandaloneForm
           form={form}

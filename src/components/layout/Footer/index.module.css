@@ -1,7 +1,11 @@
 .footer {
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
   margin-top: var(--mantine-spacing-xl);
   padding-top: var(--mantine-spacing-md);
-  padding-bottom: var(--mantine-spacing-md);
+  padding-bottom: calc(
+    var(--mantine-spacing-md) + env(safe-area-inset-bottom, 0px)
+  );
   background-color: light-dark(
     var(--mantine-color-gray-0),
     var(--mantine-color-dark-6)
@@ -12,7 +16,9 @@
   @media (max-width: $mantine-breakpoint-sm) {
     margin-top: var(--mantine-spacing-lg);
     padding-top: var(--mantine-spacing-sm);
-    padding-bottom: var(--mantine-spacing-sm);
+    padding-bottom: calc(
+      var(--mantine-spacing-sm) + env(safe-area-inset-bottom, 0px)
+    );
   }
 }
 

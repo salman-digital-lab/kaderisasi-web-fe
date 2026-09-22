@@ -4,7 +4,6 @@ import {
   Group,
   Divider,
   Drawer,
-  ScrollArea,
   rem,
   Avatar,
   Text,
@@ -127,13 +126,12 @@ export default function NavDrawer({
       hiddenFrom="md"
       zIndex={1000000}
       withCloseButton={false}
-      scrollAreaComponent={ScrollArea.Autosize}
+      classNames={{ content: classes.drawerContent, body: classes.drawerBody }}
     >
-      <Stack h="100dvh" gap={0}>
+      <Stack className={classes.drawerShell} gap={0}>
         {/* Header */}
         <Box
-          px="md"
-          py="sm"
+          className={classes.drawerHeader}
           style={{
             borderBottom: "1px solid var(--mantine-color-gray-2)",
           }}
@@ -182,7 +180,7 @@ export default function NavDrawer({
         </Box>
 
         {/* Scrollable Content */}
-        <ScrollArea style={{ flex: 1 }}>
+        <nav className={classes.drawerScroll} aria-label="Navigasi menu">
           {/* User Menu Section - Only for logged in users */}
           {session.session && (
             <>
@@ -250,12 +248,11 @@ export default function NavDrawer({
               />
             </Stack>
           </Box>
-        </ScrollArea>
+        </nav>
 
         {/* Footer */}
         <Box
-          px="md"
-          py="md"
+          className={classes.drawerFooter}
           style={{
             borderTop: "1px solid var(--mantine-color-gray-2)",
           }}

@@ -41,6 +41,9 @@ export default function ForgotForm() {
           key={form.key("email")}
           label="Email"
           type="email"
+          enterKeyHint="done"
+          autoCorrect="off"
+          autoCapitalize="none"
           autoComplete="email"
           placeholder="Email Anda"
           required

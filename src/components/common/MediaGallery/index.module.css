@@ -10,12 +10,18 @@
   display: block;
   width: 100%;
 }
-.thumbnail:hover {
-  border-color: var(--mantine-primary-color-filled);
+@media (hover: hover) and (pointer: fine) {
+  .thumbnail:hover {
+    border-color: var(--mantine-primary-color-filled);
+  }
 }
-.thumbnail:hover .caption {
-  color: var(--mantine-primary-color-filled);
+
+@media (hover: hover) and (pointer: fine) {
+  .thumbnail:hover .caption {
+    color: var(--mantine-primary-color-filled);
+  }
 }
+
 .thumbnailVisual {
   display: block;
   position: relative;

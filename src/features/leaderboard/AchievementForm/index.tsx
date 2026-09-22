@@ -107,8 +107,10 @@ export default function AchievementForm({
           placeholder="Cth: 6281234567890"
           required
           type="tel"
+          enterKeyHint="next"
+          autoComplete="tel"
           pattern="[0-9]*"
-          inputMode="numeric"
+          inputMode="tel"
           onKeyDown={(e) => {
             if (
               !/[0-9]/.test(e.key) &&

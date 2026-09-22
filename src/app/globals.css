@@ -11,7 +11,10 @@
 }
 
 html {
-  scroll-padding-top: 1.5rem;
+  /* Remove browser tap flashes; controls below supply press feedback. */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: calc(1.5rem + env(safe-area-inset-top, 0px));
 }
 body {
   margin: 0;
@@ -27,8 +30,8 @@ body {
 
 .skipLink {
   position: fixed;
-  top: 0.75rem;
-  left: 1rem;
+  top: calc(0.75rem + env(safe-area-inset-top, 0px));
+  left: calc(1rem + env(safe-area-inset-left, 0px));
   z-index: 1000001;
   padding: 0.75rem 1rem;
   border-radius: var(--mantine-radius-md);
@@ -54,4 +57,56 @@ body {
 :root[data-mantine-color-scheme="light"] {
   --mantine-color-dimmed: var(--mantine-color-gray-7);
   --mantine-color-placeholder: var(--mantine-color-gray-7);
+}
+
+/* Manipulation retains pinch zoom and scrolling while avoiding delayed taps. */
+:where(button, a, [role="button"]) {
+  touch-action: manipulation;
+}
+
+/* Content links and prose remain selectable and keep their long-press menus. */
+:where(
+  button,
+  [role="button"],
+  [role="tab"],
+  .mantine-Chip-label,
+  .mantine-Button-root
+) {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Opacity supplements native/custom controls without replacing Mantine transforms. */
+:where(button, a, [role="button"], .mantine-Chip-label) {
+  transition: opacity 120ms ease-out;
+}
+:where(button, a, [role="button"], .mantine-Chip-label):not(:disabled):not(
+    [disabled]
+  ):not([data-disabled]):not([aria-disabled="true"]):not(
+    [data-loading]
+  ):active {
+  opacity: 0.78;
+}
+
+/* Include inner password and pills inputs, which do not inherit Input's font. */
+@media (any-pointer: coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  textarea,
+  select {
+    font-size: max(16px, var(--input-fz, 1rem)) !important;
+  }
+}
+
+/* Portals are outside the page shell and need their own safe-area boundaries. */
+.mantine-Notifications-root[data-position="top-center"] {
+  top: calc(var(--mantine-spacing-md) + env(safe-area-inset-top, 0px));
+  width: calc(
+    100% - 2 * var(--mantine-spacing-md) - env(safe-area-inset-left, 0px) -
+      env(safe-area-inset-right, 0px)
+  );
+  left: calc(
+    (100% + env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)) /
+      2
+  );
 }

@@ -365,6 +365,10 @@ export function CredentialsStep({
             key={form.key("email")}
             name="email"
             type="email"
+            enterKeyHint="next"
+            autoCorrect="off"
+            autoCapitalize="none"
+            autoComplete="email"
             label="Email"
             placeholder="nama@email.com"
             size="md"
@@ -481,6 +485,9 @@ export function ContactStep({ form }: StepFormProps) {
           placeholder="08xxxxxxxxxx"
           description="Gunakan kode negara di depan nomor, misalnya 62812xxxxxxx."
           type="tel"
+          enterKeyHint="next"
+          inputMode="tel"
+          autoComplete="tel"
           size="md"
           radius="md"
           required

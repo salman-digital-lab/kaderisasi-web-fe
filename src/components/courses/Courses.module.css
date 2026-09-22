@@ -38,7 +38,12 @@
   text-decoration: none;
   overflow-wrap: anywhere;
 }
-.lessonLink:hover,
+@media (hover: hover) and (pointer: fine) {
+  .lessonLink:hover {
+    background: var(--mantine-color-blue-light);
+  }
+}
+
 .lessonLink[aria-current="page"] {
   background: var(--mantine-color-blue-light);
 }
@@ -56,4 +61,10 @@
   .sidebar {
     position: static;
   }
+}
+
+.lessonLink {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }

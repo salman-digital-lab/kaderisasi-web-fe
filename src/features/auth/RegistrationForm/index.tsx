@@ -70,6 +70,9 @@ export default function RegistrationForm({ redirect }: { redirect?: string }) {
           key={form.key("email")}
           label="Email"
           type="email"
+          enterKeyHint="next"
+          autoCorrect="off"
+          autoCapitalize="none"
           autoComplete="email"
           placeholder="Email Anda"
           required
@@ -80,6 +83,7 @@ export default function RegistrationForm({ redirect }: { redirect?: string }) {
           key={form.key("password")}
           label="Password"
           autoComplete="new-password"
+          enterKeyHint="next"
           visibilityToggleButtonProps={{
             "aria-label": "Tampilkan atau sembunyikan password",
           }}
@@ -93,6 +97,7 @@ export default function RegistrationForm({ redirect }: { redirect?: string }) {
           key={form.key("confirmPassword")}
           label="Konfirmasi Password"
           autoComplete="new-password"
+          enterKeyHint="done"
           visibilityToggleButtonProps={{
             "aria-label": "Tampilkan atau sembunyikan konfirmasi password",
           }}

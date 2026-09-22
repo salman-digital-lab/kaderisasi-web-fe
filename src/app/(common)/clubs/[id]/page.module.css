@@ -50,9 +50,11 @@
   font-size: var(--mantine-font-size-sm);
   font-weight: 600;
 }
-.sectionLink:hover {
-  background: var(--surface-subtle);
-  color: var(--mantine-primary-color-filled);
+@media (hover: hover) and (pointer: fine) {
+  .sectionLink:hover {
+    background: var(--surface-subtle);
+    color: var(--mantine-primary-color-filled);
+  }
 }
 
 .overview {
@@ -185,4 +187,10 @@
   .registrationFacts dt svg {
     margin-top: rem(2px);
   }
+}
+
+.sectionLink {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }

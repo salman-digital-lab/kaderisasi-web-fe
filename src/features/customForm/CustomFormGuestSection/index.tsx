@@ -204,6 +204,10 @@ export default function CustomFormGuestSection({
             {...inputProps}
             placeholder="Isi di sini"
             type="email"
+            enterKeyHint="next"
+            autoComplete="email"
+            autoCorrect="off"
+            autoCapitalize="none"
             required={requireGuestIdentity || field.required}
           />
         );
@@ -263,7 +267,9 @@ export default function CustomFormGuestSection({
             {...inputProps}
             placeholder="Isi di sini"
             type="tel"
-            inputMode="numeric"
+            enterKeyHint="next"
+            autoComplete="tel"
+            inputMode="tel"
             onKeyDown={(e) => {
               const allowed = [
                 "Backspace",
@@ -579,6 +585,10 @@ export default function CustomFormGuestSection({
               label="Email"
               placeholder="Isi di sini"
               type="email"
+              enterKeyHint="next"
+              autoComplete="email"
+              autoCorrect="off"
+              autoCapitalize="none"
               required
             />
           )}

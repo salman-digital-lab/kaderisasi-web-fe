@@ -88,12 +88,12 @@ export default function NotificationBell(): ReactElement {
       trapFocus
       returnFocus
     >
-      <Popover.Target>
-        <Indicator
-          label={unread > 99 ? "99+" : unread}
-          disabled={unread === 0}
-          size={18}
-        >
+      <Indicator
+        label={unread > 99 ? "99+" : unread}
+        disabled={unread === 0}
+        size={18}
+      >
+        <Popover.Target>
           <ActionIcon
             variant="subtle"
             size="lg"
@@ -103,8 +103,8 @@ export default function NotificationBell(): ReactElement {
           >
             <IconBell size={22} />
           </ActionIcon>
-        </Indicator>
-      </Popover.Target>
+        </Popover.Target>
+      </Indicator>
       <Popover.Dropdown>
         <Stack gap="sm">
           <Text fw={600}>Notifikasi</Text>

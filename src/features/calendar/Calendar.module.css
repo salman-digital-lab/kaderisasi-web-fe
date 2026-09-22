@@ -65,9 +65,12 @@
   font-size: var(--mantine-font-size-sm);
   overflow-wrap: anywhere;
 }
-.event:hover {
-  background: var(--mantine-primary-color-light-hover);
+@media (hover: hover) and (pointer: fine) {
+  .event:hover {
+    background: var(--mantine-primary-color-light-hover);
+  }
 }
+
 .event:focus-visible {
   outline: 2px solid var(--mantine-primary-color-filled);
   outline-offset: 2px;
@@ -132,9 +135,12 @@
   background: var(--mantine-color-body);
   color: var(--mantine-color-text);
 }
-.agenda .event:hover {
-  background: var(--surface-subtle);
+@media (hover: hover) and (pointer: fine) {
+  .agenda .event:hover {
+    background: var(--surface-subtle);
+  }
 }
+
 .state {
   justify-content: center;
   text-align: center;

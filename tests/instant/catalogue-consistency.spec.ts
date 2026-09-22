@@ -97,7 +97,7 @@ test("activity and club detail pages align their header and actions", async ({
     comparisons.push({
       back: await controlStyle(back),
       header: await heading.evaluate((element) => {
-        const card = element.closest(".mantine-Card-root")!;
+        const card = element.closest("header")!;
         const style = getComputedStyle(card);
         const headingStyle = getComputedStyle(element);
         return {
@@ -113,7 +113,9 @@ test("activity and club detail pages align their header and actions", async ({
         main.getByRole("complementary").getByRole("link"),
       ),
       description: await main
-        .getByRole("region", { name: /^(Deskripsi Kegiatan|Tentang Klub)$/ })
+        .getByRole("region", {
+          name: /^(Deskripsi kegiatan|Tentang kegiatan|Tentang klub)$/i,
+        })
         .locator("p")
         .first()
         .evaluate((element) => {

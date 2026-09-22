@@ -262,6 +262,8 @@ export default function StatusCheckContent({
         {/* Search */}
         <TextInput
           aria-label="Cari kegiatan atau status"
+          inputMode="search"
+          enterKeyHint="search"
           placeholder="Cari berdasarkan nama kegiatan atau status..."
           leftSection={<IconSearch size={16} />}
           value={searchQuery}

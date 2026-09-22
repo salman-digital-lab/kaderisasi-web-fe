@@ -147,6 +147,10 @@ export default function GuestForm({ slug, formSchemas }: GuestFormProps) {
           label="Email"
           placeholder="email@contoh.com"
           type="email"
+          enterKeyHint="next"
+          autoComplete="email"
+          autoCorrect="off"
+          autoCapitalize="none"
           required
         />
         <TextInput
@@ -156,7 +160,9 @@ export default function GuestForm({ slug, formSchemas }: GuestFormProps) {
           description="Cth: 6281234567890"
           placeholder="6281234567890"
           type="tel"
-          inputMode="numeric"
+          enterKeyHint="next"
+          autoComplete="tel"
+          inputMode="tel"
         />
 
         {formSchemas.length > 0 && (

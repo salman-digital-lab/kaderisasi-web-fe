@@ -417,7 +417,7 @@ export default function MediaCarousel({ media, clubName }: MediaCarouselProps) {
             <Carousel.Slide key={index}>
               <Box
                 style={{
-                  height: "60vh",
+                  height: "60svh",
                   minHeight: "400px",
                   maxHeight: "600px",
                   overflow: "hidden",

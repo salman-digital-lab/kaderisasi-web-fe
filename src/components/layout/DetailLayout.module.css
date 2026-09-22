@@ -9,9 +9,12 @@
   text-decoration: none;
   border-radius: var(--mantine-radius-sm);
 }
-.backLink:hover {
-  text-decoration: underline;
+@media (hover: hover) and (pointer: fine) {
+  .backLink:hover {
+    text-decoration: underline;
+  }
 }
+
 .header {
   display: grid;
   grid-template-columns: minmax(0, 2fr) minmax(16rem, 1fr);
@@ -62,4 +65,10 @@
   .header {
     grid-template-columns: minmax(0, 1fr);
   }
+}
+
+.backLink {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }

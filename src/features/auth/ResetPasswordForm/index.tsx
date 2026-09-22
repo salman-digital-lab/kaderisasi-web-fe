@@ -52,6 +52,7 @@ function Component() {
           key={form.key("password")}
           label="Password"
           autoComplete="new-password"
+          enterKeyHint="next"
           visibilityToggleButtonProps={{
             "aria-label": "Tampilkan atau sembunyikan password",
           }}
@@ -65,6 +66,7 @@ function Component() {
           key={form.key("confirmPassword")}
           label="Konfirmasi Password"
           autoComplete="new-password"
+          enterKeyHint="done"
           visibilityToggleButtonProps={{
             "aria-label": "Tampilkan atau sembunyikan konfirmasi password",
           }}

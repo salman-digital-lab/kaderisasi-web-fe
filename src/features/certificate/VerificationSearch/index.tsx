@@ -32,7 +32,9 @@ export default function VerificationSearch({
     <form noValidate onSubmit={handleSubmit}>
       <Stack gap="md">
         <TextInput
-          autoCapitalize="characters"
+          autoCapitalize="none"
+          autoCorrect="off"
+          enterKeyHint="search"
           autoComplete="off"
           description="Kode tercantum pada sertifikat atau tautan resmi."
           error={error}

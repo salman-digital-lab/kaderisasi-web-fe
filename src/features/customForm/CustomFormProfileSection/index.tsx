@@ -414,8 +414,10 @@ export default function CustomFormProfileSection({
             {...commonProps}
             placeholder="Isi di sini"
             type="tel"
+            enterKeyHint="next"
+            autoComplete="tel"
             pattern="[0-9]*"
-            inputMode="numeric"
+            inputMode="tel"
             onKeyDown={(e) => {
               if (
                 !/[0-9]/.test(e.key) &&

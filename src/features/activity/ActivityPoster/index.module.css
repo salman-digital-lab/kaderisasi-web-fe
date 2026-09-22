@@ -8,10 +8,13 @@
   display: block;
   width: 100%;
 }
-.poster:hover,
-.thumbnail:hover {
-  border-color: var(--mantine-primary-color-filled);
+@media (hover: hover) and (pointer: fine) {
+  .poster:hover,
+  .thumbnail:hover {
+    border-color: var(--mantine-primary-color-filled);
+  }
 }
+
 .posterVisual {
   display: block;
   aspect-ratio: 4 / 5;

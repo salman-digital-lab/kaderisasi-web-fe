@@ -1,3 +1,5 @@
+import BrowserChrome from "@/components/layout/BrowserChrome";
+import classes from "@/components/layout/SiteLayout.module.css";
 import { getCountries, getProvinces } from "@/services/profile.cache";
 import { getProfile } from "@/services/profile";
 import { verifySession } from "@/functions/server/session";
@@ -18,7 +20,8 @@ export const metadata = {
 
 export default function Page(): ReactElement {
   return (
-    <main id="main-content" tabIndex={-1}>
+    <main id="main-content" tabIndex={-1} className={classes.standalone}>
+      <BrowserChrome />
       <PageContainer size="md">
         <Suspense fallback={<FormSkeleton />}>
           <OnboardingContent />

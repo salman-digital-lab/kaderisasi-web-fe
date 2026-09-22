@@ -22,3 +22,16 @@
   height: auto;
   padding-block: 0.5rem;
 }
+
+/* The modal itself owns scrolling; the document keeps normal pull-to-refresh. */
+.modalContent,
+.modalContent :global(.mantine-ScrollArea-viewport) {
+  overscroll-behavior: contain;
+}
+/* Full-screen dialogs ignore offsets, so protect their content explicitly. */
+.modalContent[data-full-screen] {
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}

@@ -38,6 +38,19 @@ const theme = createTheme({
     },
   },
   components: {
+    Modal: {
+      classNames: { content: classes.modalContent },
+      defaultProps: {
+        removeScrollProps: { allowPinchZoom: true },
+        yOffset:
+          "max(5dvh, env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px))",
+        xOffset:
+          "max(5vw, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px))",
+      },
+    },
+    Drawer: {
+      defaultProps: { removeScrollProps: { allowPinchZoom: true } },
+    },
     Pagination: {
       defaultProps: {
         size: 44,

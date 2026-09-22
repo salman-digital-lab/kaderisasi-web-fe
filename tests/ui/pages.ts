@@ -149,7 +149,7 @@ export const UI_PAGES = [
   {
     name: "independent-success",
     path: "/custom-form/independent/1/success",
-    heading: "Formulir Berhasil Dikirim!",
+    heading: "Formulir Pendaftaran Kegiatan",
     session: "ui-preview",
   },
   {
