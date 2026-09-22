@@ -61,6 +61,16 @@ test.describe("touch interaction", () => {
     await page.emulateMedia({ reducedMotion: "reduce" });
   });
 
+  test("Mantine primary button keeps its own press treatment", async ({ page }) => {
+    await page.goto("/login");
+    const button = page.getByRole("button", { name: "Masuk", exact: true });
+    await button.hover();
+    await page.mouse.down();
+    await expect(button).toHaveCSS("opacity", "1");
+    await page.mouse.move(0, 0);
+    await page.mouse.up();
+  });
+
   test("inputs stay readable and retain useful keyboards", async ({ page }) => {
     for (const route of [
       "/login",
@@ -146,11 +156,14 @@ test.describe("touch interaction", () => {
     await link.hover();
     await expect(link).toHaveCSS("text-decoration-line", "none");
     await expect(link).toHaveCSS("touch-action", "manipulation");
+    const idleBackground = await link.evaluate(
+      (element) => getComputedStyle(element).backgroundColor,
+    );
     await page.mouse.down();
-    await expect(link).toHaveCSS("opacity", "0.78");
+    await expect(link).not.toHaveCSS("background-color", idleBackground);
     await page.mouse.move(0, 0);
     await page.mouse.up();
-    await expect(link).toHaveCSS("opacity", "1");
+    await expect(link).toHaveCSS("background-color", idleBackground);
     await page.goto("/privacy-policy");
     await expect(page.locator("main p").first()).not.toHaveCSS(
       "user-select",

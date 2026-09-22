@@ -75,6 +75,9 @@
   outline: 2px solid var(--mantine-primary-color-filled);
   outline-offset: 2px;
 }
+.event:active {
+  background: var(--mantine-primary-color-light-hover);
+}
 
 .agenda {
   border-top: 1px solid var(--surface-border);
@@ -139,6 +142,9 @@
   .agenda .event:hover {
     background: var(--surface-subtle);
   }
+}
+.agenda .event:active {
+  background: var(--surface-subtle);
 }
 
 .state {

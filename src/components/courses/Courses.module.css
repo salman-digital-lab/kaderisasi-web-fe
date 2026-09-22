@@ -47,6 +47,9 @@
 .lessonLink[aria-current="page"] {
   background: var(--mantine-color-blue-light);
 }
+.lessonLink:active {
+  background: var(--mantine-color-blue-light);
+}
 .lessonLink:focus-visible {
   outline: 2px solid var(--mantine-primary-color-filled);
   outline-offset: 2px;

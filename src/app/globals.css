@@ -77,18 +77,6 @@ body {
   -webkit-touch-callout: none;
 }
 
-/* Opacity supplements native/custom controls without replacing Mantine transforms. */
-:where(button, a, [role="button"], .mantine-Chip-label) {
-  transition: opacity 120ms ease-out;
-}
-:where(button, a, [role="button"], .mantine-Chip-label):not(:disabled):not(
-    [disabled]
-  ):not([data-disabled]):not([aria-disabled="true"]):not(
-    [data-loading]
-  ):active {
-  opacity: 0.78;
-}
-
 /* Include inner password and pills inputs, which do not inherit Input's font. */
 @media (any-pointer: coarse) {
   input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),

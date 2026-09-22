@@ -56,6 +56,10 @@
     color: var(--mantine-primary-color-filled);
   }
 }
+.sectionLink:active {
+  background: var(--surface-subtle);
+  color: var(--mantine-primary-color-filled);
+}
 
 .overview {
   display: grid;

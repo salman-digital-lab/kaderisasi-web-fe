@@ -21,6 +21,12 @@
     color: var(--mantine-primary-color-filled);
   }
 }
+.thumbnail:active {
+  border-color: var(--mantine-primary-color-filled);
+}
+.thumbnail:active .caption {
+  color: var(--mantine-primary-color-filled);
+}
 
 .thumbnailVisual {
   display: block;
