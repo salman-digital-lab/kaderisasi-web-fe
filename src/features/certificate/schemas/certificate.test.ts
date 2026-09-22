@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   certificateCodeInputSchema,
+  certificateDataSchema,
   certificateLifecycleSchema,
   certificateVerificationSchema,
   publicCertificateDataSchema,
@@ -95,6 +96,33 @@ describe("certificate boundary schemas", () => {
     };
 
     expect(publicCertificateDataSchema.safeParse(payload).success).toBe(true);
+    const score = {
+      revision: 2,
+      published_at: "2026-09-22T00:00:00Z",
+      note: "Published note",
+      rubric: { groups: [], grades: [], note: "" },
+      result: { criteria: [], total: 0, grade: null, complete: true },
+    };
+    const scored = {
+      ...payload,
+      participant: { ...payload.participant, scoring_result: score },
+    };
+    expect(
+      certificateDataSchema.parse(scored).participant.scoring_result?.result
+        .total,
+    ).toBe(0);
+    expect(
+      certificateDataSchema.safeParse({
+        ...scored,
+        participant: {
+          ...scored.participant,
+          scoring_result: {
+            ...score,
+            result: { ...score.result, complete: false },
+          },
+        },
+      }).success,
+    ).toBe(false);
     expect(
       publicCertificateDataSchema.safeParse({
         ...payload,

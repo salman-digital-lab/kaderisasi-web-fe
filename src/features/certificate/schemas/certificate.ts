@@ -8,6 +8,45 @@ import type {
 const nullableTextSchema = z.string().nullable();
 const optionalPositiveIdSchema = z.number().int().positive().optional();
 
+const certificateScoringSchema = z.object({
+  revision: z.number().int().positive(),
+  published_at: z.string().min(1),
+  note: z.string(),
+  rubric: z.object({
+    note: z.string(),
+    grades: z.array(
+      z.object({ label: z.string(), minimum: z.number().finite() }),
+    ),
+    groups: z.array(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        criteria: z.array(
+          z.object({
+            id: z.string(),
+            name: z.string(),
+            maximum: z.number().positive().finite(),
+            weight: z.number().positive().finite(),
+          }),
+        ),
+      }),
+    ),
+  }),
+  result: z.object({
+    complete: z.literal(true),
+    total: z.number().finite(),
+    grade: z.string().nullable(),
+    criteria: z.array(
+      z.object({
+        criterion_id: z.string(),
+        score: z.number().finite(),
+        normalized: z.number().finite(),
+        grade: z.string().nullable(),
+      }),
+    ),
+  }),
+});
+
 export const certificateCodeInputSchema = z
   .string()
   .trim()
@@ -99,6 +138,7 @@ const certificateRenderBaseSchema = z.object({
     template_data: certificateTemplateDataSchema,
   }),
   participant: z.object({
+    scoring_result: certificateScoringSchema.optional(),
     registration_id: optionalPositiveIdSchema,
     user_id: z.number().int().positive().nullable().optional(),
     name: z.string().min(1),

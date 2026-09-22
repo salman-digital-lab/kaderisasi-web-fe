@@ -17,6 +17,7 @@ import {
   getCertificateAccess,
   getCertificateByCode,
   getCertificateLifecycle,
+  getOwnedCertificateForDownload,
 } from "@/services/certificate";
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
@@ -83,9 +84,10 @@ export default async function CertificatePage(props: {
   if (!parsedCode.success) notFound();
 
   try {
+    const tokenPromise = getToken();
     const [certificateData, access] = await Promise.all([
       getCertificateByCode(parsedCode.data),
-      getToken().then((token) =>
+      tokenPromise.then((token) =>
         getCertificateAccess(token ?? null, parsedCode.data),
       ),
     ]);
@@ -99,12 +101,20 @@ export default async function CertificatePage(props: {
     const appUrl = normalizeCertificateAppUrl(process.env.NEXT_PUBLIC_APP_URL);
     if (!appUrl) return <CertificateConfigurationError />;
 
+    const token = await tokenPromise;
+    const ownerScore =
+      access === "owner" && token
+        ? (await getOwnedCertificateForDownload(token, parsedCode.data))
+            .participant.scoring_result
+        : undefined;
+
     return (
       <CertificateView
         appUrl={appUrl}
         data={certificateData}
         imageBaseUrl={process.env.NEXT_PUBLIC_IMAGE_BASE_URL ?? ""}
         access={access}
+        ownerScore={ownerScore}
       />
     );
   } catch (error) {

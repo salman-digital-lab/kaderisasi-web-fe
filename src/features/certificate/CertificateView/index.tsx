@@ -4,6 +4,7 @@ import PageContainer from "@/components/layout/PageContainer";
 
 import type { CertificateDownloadAccess } from "@/services/certificate";
 import type { PublicCertificateData } from "@/types/model/certificate";
+import type { PublishedScoringResult } from "@/types/api/scoring";
 import {
   Alert,
   Badge,
@@ -11,6 +12,7 @@ import {
   Group,
   Paper,
   Stack,
+  Tabs,
   Text,
   Title,
 } from "@mantine/core";
@@ -26,6 +28,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import CertificateCanvas from "../CertificateCanvas";
+import ActivityScoringResult from "@/features/activity/ActivityScoringResult";
 import {
   formatCertificateTimestamp,
   getCertificatePath,
@@ -39,6 +42,7 @@ type CertificateViewProps = {
   imageBaseUrl: string;
   appUrl: string;
   access: CertificateDownloadAccess;
+  ownerScore?: PublishedScoringResult;
 };
 
 export default function CertificateView({
@@ -46,6 +50,7 @@ export default function CertificateView({
   imageBaseUrl,
   appUrl,
   access,
+  ownerScore,
 }: CertificateViewProps): React.ReactElement {
   const router = useRouter();
   const downloadRef = useRef(false);
@@ -60,6 +65,14 @@ export default function CertificateView({
   const loginPath = `/login?redirect=${encodeURIComponent(path)}`;
   const revoked = data.state === "issued_revoked" || revokedDuringDownload;
   const issuedAt = formatCertificateTimestamp(data.certificate.issued_at);
+  const score = access === "owner" ? ownerScore : undefined;
+  const artwork = (
+    <CertificateCanvas
+      data={data}
+      imageBaseUrl={imageBaseUrl}
+      verificationUrl={verificationUrl}
+    />
+  );
 
   async function copyLink(): Promise<void> {
     try {
@@ -163,7 +176,7 @@ export default function CertificateView({
           href={access === "signed_out" ? "/" : "/profile?tab=activity"}
           variant="subtle"
           leftSection={<IconArrowLeft aria-hidden size={18} />}
-          style={{ alignSelf: "flex-start" }}
+          style={{ alignSelf: "flex-start", minHeight: 44 }}
         >
           Kembali
         </Button>
@@ -199,11 +212,6 @@ export default function CertificateView({
             {data.certificate.revoked_reason}
           </Alert>
         )}
-        <CertificateCanvas
-          data={data}
-          imageBaseUrl={imageBaseUrl}
-          verificationUrl={verificationUrl}
-        />
         <div className={classes.actions}>
           {!revoked && access === "owner" && (
             <Button
@@ -212,7 +220,7 @@ export default function CertificateView({
               loading={Boolean(stage)}
               leftSection={<IconDownload aria-hidden size={18} />}
             >
-              {stage || "Unduh PDF"}
+              Unduh PDF
             </Button>
           )}
           {!revoked && access === "signed_out" && (
@@ -242,6 +250,14 @@ export default function CertificateView({
             Periksa keaslian sertifikat
           </Text>
         </div>
+        {access === "owner" && (
+          <Text size="sm">
+            {score
+              ? "PDF berisi 2 halaman: sertifikat dan hasil penilaian. Nilai disimpan saat sertifikat diterbitkan."
+              : "PDF berisi 1 halaman. Sertifikat ini diterbitkan tanpa hasil penilaian."}
+            {score && " Tautan yang dibagikan tidak menampilkan nilai Anda."}
+          </Text>
+        )}
         {access === "not_owner" && (
           <Text c="dimmed" size="sm">
             Sertifikat dapat dilihat dan dibagikan. Unduhan tersedia untuk
@@ -250,19 +266,63 @@ export default function CertificateView({
         )}
         {access === "unavailable" && (
           <Alert title="Akses unduhan belum dapat diperiksa" color="blue">
-            <Button variant="subtle" onClick={() => router.refresh()}>
+            <Button
+              variant="subtle"
+              onClick={() => router.refresh()}
+              className={classes.actionButton}
+            >
               Coba lagi
             </Button>
           </Alert>
         )}
         {downloadError && (
-          <Alert color="red" title="Unduhan belum berhasil">
-            {downloadError}
+          <Alert color="red" title="Unduhan belum berhasil" role="alert">
+            <Stack gap="sm">
+              <Text size="sm">{downloadError}</Text>
+              {!revoked && access === "owner" && (
+                <Button
+                  variant="default"
+                  onClick={download}
+                  loading={Boolean(stage)}
+                  className={classes.actionButton}
+                  style={{ alignSelf: "flex-start" }}
+                >
+                  Coba unduh lagi
+                </Button>
+              )}
+            </Stack>
           </Alert>
         )}
-        <Text role="status" aria-live="polite" size="sm" c="dimmed">
+        <Text
+          role="status"
+          aria-live="polite"
+          size="sm"
+          c="dimmed"
+          className={classes.progress}
+        >
           {stage}
         </Text>
+        {score ? (
+          <Tabs
+            defaultValue="certificate"
+            classNames={{ tab: classes.pageTab }}
+          >
+            <Tabs.List aria-label="Halaman sertifikat">
+              <Tabs.Tab value="certificate">1. Sertifikat</Tabs.Tab>
+              <Tabs.Tab value="scores">2. Hasil penilaian</Tabs.Tab>
+            </Tabs.List>
+            <Tabs.Panel value="certificate" pt="md">
+              {artwork}
+            </Tabs.Panel>
+            <Tabs.Panel value="scores" pt="md">
+              <div data-certificate-score-details>
+                <ActivityScoringResult score={score} />
+              </div>
+            </Tabs.Panel>
+          </Tabs>
+        ) : (
+          artwork
+        )}
       </Stack>
     </PageContainer>
   );

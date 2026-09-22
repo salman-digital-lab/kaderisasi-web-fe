@@ -1,3 +1,5 @@
+import type { PublishedScoringResult } from "@/types/api/scoring";
+
 export type CertificateElement = {
   id: string;
   type: "static-text" | "variable-text" | "image" | "qr-code" | "signature";
@@ -69,6 +71,7 @@ export type CertificateData = {
     id?: number;
   };
   participant: {
+    scoring_result?: PublishedScoringResult;
     name: string;
     activity_name: string;
     activity_date: string;
