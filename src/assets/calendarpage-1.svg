@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="376" height="356" viewBox="0 0 376 356" fill="none">
+  <title>Kalender kegiatan bersama</title>
+  <desc>Kalender dengan tanggal kegiatan yang ditandai dan catatan agenda dalam warna biru dan jingga.</desc>
+  <defs>
+    <filter id="calendar-frame-shadow" x="68" y="20" width="308" height="324" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="7" stdDeviation="5" flood-color="#25223C" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+  <g filter="url(#calendar-frame-shadow)">
+    <path d="M94 172C94 99 153 40 226 40S358 99 358 172V308H94V172Z" fill="#8DBCDD" stroke="#F7F5F5" stroke-width="10"/>
+  </g>
+  <!-- Calendar sheet and binding use the same flat surfaces as the learning illustration. -->
+  <rect x="34" y="84" width="266" height="224" rx="12" fill="#29475D"/>
+  <rect x="27" y="76" width="266" height="224" rx="12" fill="#F8FAFC" stroke="#29475D" stroke-width="2"/>
+  <path d="M28 88C28 82 33 77 39 77H281C287 77 292 82 292 88V126H28V88Z" fill="#FF7B40"/>
+  <path d="M28 126H292" stroke="#29475D" stroke-width="2"/>
+  <rect x="75" y="61" width="12" height="35" rx="6" fill="#29475D"/>
+  <rect x="233" y="61" width="12" height="35" rx="6" fill="#29475D"/>
+  <path d="M77 65V82M235 65V82" stroke="#587386" stroke-width="3" stroke-linecap="round"/>
+  <path d="M131 102H188" stroke="#FFF" stroke-width="6" stroke-linecap="round"/>
+  <g fill="#8DBCDD">
+    <rect x="47" y="142" width="20" height="5" rx="2.5"/>
+    <rect x="81" y="142" width="20" height="5" rx="2.5"/>
+    <rect x="115" y="142" width="20" height="5" rx="2.5"/>
+    <rect x="149" y="142" width="20" height="5" rx="2.5"/>
+    <rect x="183" y="142" width="20" height="5" rx="2.5"/>
+    <rect x="217" y="142" width="20" height="5" rx="2.5"/>
+    <rect x="251" y="142" width="20" height="5" rx="2.5"/>
+  </g>
+  <g stroke="#DFE7EC" stroke-width="1.5">
+    <path d="M42 157H278M42 194H278M42 231H278M42 268H278"/>
+    <path d="M74 157V281M108 157V281M142 157V281M176 157V281M210 157V281M244 157V281"/>
+  </g>
+  <g fill="#29475D">
+    <circle cx="57" cy="175" r="3"/><circle cx="91" cy="175" r="3"/>
+    <circle cx="125" cy="175" r="3"/><circle cx="159" cy="175" r="3"/>
+    <circle cx="193" cy="175" r="3"/><circle cx="227" cy="175" r="3"/><circle cx="261" cy="175" r="3"/>
+    <circle cx="57" cy="212" r="3"/><circle cx="91" cy="212" r="3"/>
+    <circle cx="125" cy="212" r="3"/><circle cx="159" cy="212" r="3"/>
+    <circle cx="193" cy="212" r="3"/><circle cx="227" cy="212" r="3"/><circle cx="261" cy="212" r="3"/>
+    <circle cx="57" cy="249" r="3"/><circle cx="91" cy="249" r="3"/>
+    <circle cx="125" cy="249" r="3"/><circle cx="159" cy="249" r="3"/>
+  </g>
+  <rect x="112" y="161" width="27" height="28" rx="6" fill="#FF7B40"/>
+  <path d="M119 175L123 179L132 169" stroke="#FFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="45" y="201" width="91" height="23" rx="5" fill="#8DBCDD"/>
+  <path d="M54 212H125" stroke="#29475D" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="159" cy="249" r="12" stroke="#FF7B40" stroke-width="2.5"/>
+  <!-- An agenda note reinforces that events can span several dates. -->
+  <g transform="rotate(8 274 267)">
+    <rect x="212" y="210" width="123" height="108" rx="8" fill="#29475D"/>
+    <rect x="207" y="204" width="123" height="108" rx="8" fill="#FFF" stroke="#29475D" stroke-width="2"/>
+    <rect x="245" y="196" width="46" height="16" rx="5" fill="#FF7B40"/>
+    <g stroke-linecap="round" stroke-linejoin="round">
+      <path d="M220 235L224 239L231 230" stroke="#FF7B40" stroke-width="3"/>
+      <path d="M242 234H312" stroke="#29475D" stroke-width="3"/>
+      <path d="M242 244H285" stroke="#C8D3DD" stroke-width="3"/>
+      <circle cx="225" cy="263" r="5" stroke="#8DBCDD" stroke-width="2"/>
+      <path d="M242 260H304M242 270H291" stroke="#C8D3DD" stroke-width="3"/>
+      <circle cx="225" cy="290" r="5" stroke="#8DBCDD" stroke-width="2"/>
+      <path d="M242 287H309M242 297H276" stroke="#C8D3DD" stroke-width="3"/>
+    </g>
+  </g>
+</svg>

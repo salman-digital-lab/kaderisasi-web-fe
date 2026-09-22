@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
 import PageHero from "@/components/layout/PageHero";
 import { Text } from "@mantine/core";
-import illustration from "@/assets/activitiespage-1.svg";
+import illustration from "@/assets/calendarpage-1.svg";
 import PageContainer from "@/components/layout/PageContainer";
 import Calendar from "@/features/calendar/Calendar";
 

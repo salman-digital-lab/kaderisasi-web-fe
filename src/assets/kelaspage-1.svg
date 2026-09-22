@@ -1,8 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="376" height="356" viewBox="0 0 376 356" fill="none">
   <title>Belajar dengan video dan bahan bacaan</title>
   <desc>Layar video, buku terbuka, dan catatan belajar dalam warna biru Kaderisasi Salman.</desc>
-  <path d="M94 172C94 99.1 153.1 40 226 40S358 99.1 358 172V308H94V172Z" fill="#8DBCDD" stroke="#F7F5F5" stroke-width="10"/>
-  <path d="M28 318H356" stroke="#C8D3DD" stroke-width="2" stroke-linecap="round"/>
+  <defs>
+    <filter id="kelas-frame-shadow" x="68" y="20" width="308" height="324" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="7" stdDeviation="5" flood-color="#25223C" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+  <g filter="url(#kelas-frame-shadow)">
+    <path d="M94 172C94 99.1 153.1 40 226 40S358 99.1 358 172V308H94V172Z" fill="#8DBCDD" stroke="#F7F5F5" stroke-width="10"/>
+  </g>
   <rect x="28" y="82" width="272" height="190" rx="12" fill="#29475D"/>
   <rect x="37" y="91" width="254" height="167" rx="6" fill="#F8FAFC"/>
   <path d="M37 116H291" stroke="#DEE7EE" stroke-width="2"/>
