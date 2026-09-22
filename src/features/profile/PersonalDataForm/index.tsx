@@ -1,4 +1,6 @@
 "use client";
+
+import "@mantine/dates/styles.css";
 import {
   Button,
   Fieldset,

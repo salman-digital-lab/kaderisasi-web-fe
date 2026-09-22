@@ -5,7 +5,6 @@ import {
   Divider,
   Drawer,
   rem,
-  Avatar,
   Text,
   Stack,
   Button,
@@ -30,6 +29,7 @@ import Link from "next/link";
 import classes from "../index.module.css";
 import { usePathname } from "next/navigation";
 import { getAuthRedirect } from "@/features/auth/redirect";
+import ProfilePictureNav from "@/features/profile/ProfilePictureNav";
 
 import logout from "../../../../functions/server/logout";
 
@@ -138,14 +138,9 @@ export default function NavDrawer({
         >
           {session.session ? (
             <Group gap="sm" wrap="nowrap">
-              <Avatar
-                radius="xl"
+              <ProfilePictureNav
                 size={40}
-                src={
-                  session.profilePicture && session.profilePicture !== ""
-                    ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${session.profilePicture}`
-                    : undefined
-                }
+                src={session.profilePicture}
               />
               <Box style={{ flex: 1, minWidth: 0 }}>
                 <Text fw={600} lineClamp={1}>

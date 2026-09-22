@@ -1,5 +1,7 @@
 "use client";
 
+import "@mantine/dates/styles.css";
+
 import { useState } from "react";
 import {
   Button,

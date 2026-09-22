@@ -1,5 +1,7 @@
 "use client";
 
+import "@mantine/dates/styles.css";
+
 import { useState } from "react";
 import { Button, Select, Textarea, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";

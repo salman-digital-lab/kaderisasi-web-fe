@@ -1,5 +1,7 @@
 "use client";
 
+import "@mantine/carousel/styles.css";
+
 import {
   Paper,
   Group,

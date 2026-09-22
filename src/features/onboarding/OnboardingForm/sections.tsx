@@ -1,5 +1,7 @@
 "use client";
 
+import "@mantine/dates/styles.css";
+
 import Image from "next/image";
 import {
   ActionIcon,

@@ -1,5 +1,7 @@
 "use client";
 
+import "@mantine/dates/styles.css";
+
 import { normalizeEducationHistory } from "@/utils/profile-history";
 import {
   educationEntrySchema,
