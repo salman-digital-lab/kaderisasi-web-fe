@@ -57,6 +57,9 @@ export default function Home(): ReactElement {
 
         <Group mt="lg">
           <LinkButton href="/activity">Daftar Kegiatan Sekarang</LinkButton>
+          <LinkButton href="/tentang/bmka" variant="outline">
+            BMKA &amp; Alur Kaderisasi
+          </LinkButton>
         </Group>
       </PageHero>
 

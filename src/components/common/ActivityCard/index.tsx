@@ -9,6 +9,7 @@ import CatalogueCard, {
 import CatalogueImage from "@/components/common/Catalogue/CatalogueImage";
 import { USER_LEVEL_RENDER } from "@/constants/render/activity";
 import type { USER_LEVEL_ENUM } from "@/types/constants/profile";
+import LevelInfo from "./LevelInfo";
 
 type ActivityCardProps = {
   activityName: string;
@@ -54,6 +55,7 @@ export default function ActivityCard({
       </CatalogueCardSection>
       <CatalogueCardSection label="Jenjang Minimum">
         <Badge variant="light">{USER_LEVEL_RENDER[minimumLevel]}</Badge>
+        <LevelInfo level={minimumLevel} />
       </CatalogueCardSection>
     </CatalogueCard>
   );
