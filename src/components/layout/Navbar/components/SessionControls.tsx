@@ -4,11 +4,18 @@ import { verifySession } from "@/functions/server/session";
 import AuthLinks from "./AuthLinks";
 import ClientNavbar from "./ClientNavbar";
 import AccountMenu from "./AccountMenu";
+import { createHash } from "node:crypto";
+import NotificationBell from "@/features/notifications/NotificationBell";
 
 export default async function SessionControls(): Promise<ReactElement> {
   const sessionData = await verifySession();
   return (
     <>
+      {sessionData.session && (
+        <NotificationBell
+          key={createHash("sha256").update(sessionData.session).digest("hex")}
+        />
+      )}
       <Group visibleFrom="md" gap="sm" wrap="nowrap">
         {sessionData.session ? (
           <AccountMenu
