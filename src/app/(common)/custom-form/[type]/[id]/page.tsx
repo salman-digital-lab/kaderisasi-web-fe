@@ -1,19 +1,13 @@
 import PageContainer from "@/components/layout/PageContainer";
 import { verifySession } from "@/functions/server/session";
-import { getProfile } from "@/services/profile";
-import { getProvinces, getCountries } from "@/services/profile.cache";
-import { getCustomFormByFeature } from "@/services/customForm";
+import { loadRegistrationForm } from "@/features/customForm/load-registration-form";
 import { getActivity } from "@/services/activity.cache";
 import { getClub } from "@/services/club";
 import { getRegistrationStatus } from "@/services/clubRegistration";
-import {} from "@mantine/core";
 import { redirect } from "next/navigation";
 import ErrorWrapper from "@/components/layout/Error";
 import { FetcherError } from "@/functions/common/fetcher";
 import CustomFormContent from "@/features/customForm/CustomFormContent";
-import type { PublicUser, Member } from "@/types/model/members";
-import type { Province } from "@/types/model/province";
-import type { Country } from "@/types/model/country";
 import { ACTIVITY_TYPE_ENUM } from "@/types/constants/activity";
 import { isClubRegistrationOpen } from "@/features/clubs/registration-state";
 
@@ -25,15 +19,6 @@ export default async function Page(props: {
   if (params.type === "independent") redirect(`/form/${params.id}`);
   const searchParams = await props.searchParams;
   const { type, id } = params;
-
-  let profileData:
-    | {
-        userData: PublicUser;
-        profile: Member;
-      }
-    | undefined;
-  let provinceData: Province[] | undefined;
-  let countryData: Country[] | undefined;
 
   const sessionData = await verifySession();
 
@@ -137,23 +122,18 @@ export default async function Page(props: {
   }
 
   try {
-    // Fetch custom form
-    const customForm = await getCustomFormByFeature({
-      feature_type: featureType,
-      feature_id: type === "independent" ? undefined : Number(id),
-    });
+    const { customForm, profileData, provinceData, countryData } =
+      await loadRegistrationForm(
+        {
+          feature_type: featureType,
+          feature_id: type === "independent" ? undefined : Number(id),
+        },
+        sessionData.session || "",
+        isGuest,
+      );
 
     if (!customForm) {
       return <ErrorWrapper message="Custom form not found" />;
-    }
-
-    // Fetch profile and provinces data (skip for guests)
-    [provinceData, countryData] = await Promise.all([
-      getProvinces(),
-      getCountries(),
-    ]);
-    if (!isGuest) {
-      profileData = await getProfile(sessionData.session || "");
     }
 
     return (

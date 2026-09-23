@@ -270,21 +270,6 @@ function CustomFormContentBody({
       </Alert>
     );
 
-  if (!isLoaded) {
-    return (
-      <Stack gap="md">
-        <Paper {...paperProps}>
-          <Title order={1} size="h2" mb="xs">
-            {customForm.form_name}
-          </Title>
-          <Text size="md" c="dimmed">
-            Memuat formulir...
-          </Text>
-        </Paper>
-      </Stack>
-    );
-  }
-
   return (
     <Stack gap="md">
       {flow.notice && <Alert title="Draf formulir">{flow.notice}</Alert>}
@@ -312,7 +297,7 @@ function CustomFormContentBody({
             {customForm.form_description}
           </Text>
         )}
-        {hasCustomSections && (
+        {isLoaded && hasCustomSections && (
           <>
             <Text size="md" c="dimmed" hiddenFrom="sm" mt="md">
               Langkah {currentStep + 1}:{" "}
@@ -349,74 +334,82 @@ function CustomFormContentBody({
         )}
       </Paper>
 
-      {/* Form card */}
-      <Paper {...paperProps}>
-        {isProfileStep ? (
-          isGuest ? (
-            <CustomFormGuestSection
-              formRef={formRef}
-              profileFields={profileFields}
-              provinceData={provinceData}
-              onSubmit={handleProfileSubmit}
-              loading={loading}
-              isSingleSection={!hasCustomSections}
-              initialData={customFormData}
-            />
-          ) : (
-            <CustomFormProfileSection
-              formRef={formRef}
-              profileFields={profileFields}
-              profileData={savedProfileData}
-              onProfileSaved={(profile) => {
-                setSavedProfileData((previous) =>
-                  previous ? { ...previous, profile } : previous,
-                );
-              }}
-              provinceData={provinceData}
-              countryData={countryData}
-              onSubmit={handleProfileSubmit}
-              onLoadingChange={setLoading}
-              loading={loading}
-              isSingleSection={!hasCustomSections}
-            />
-          )
-        ) : currentSection ? (
-          <CustomFormFieldsRenderer
-            key={currentSection.id}
-            formRef={formRef}
-            section={currentSection}
-            formData={customFormData}
-            onSubmit={handleSectionSubmit}
-            onChange={flow.updateAnswers}
-            loading={loading}
-            isLastSection={isLastStep}
-          />
-        ) : null}
-      </Paper>
+      {!isLoaded ? (
+        <Text size="md" c="dimmed" role="status">
+          Memuat formulir...
+        </Text>
+      ) : (
+        <>
+          {/* Form card */}
+          <Paper {...paperProps}>
+            {isProfileStep ? (
+              isGuest ? (
+                <CustomFormGuestSection
+                  formRef={formRef}
+                  profileFields={profileFields}
+                  provinceData={provinceData}
+                  onSubmit={handleProfileSubmit}
+                  loading={loading}
+                  isSingleSection={!hasCustomSections}
+                  initialData={customFormData}
+                />
+              ) : (
+                <CustomFormProfileSection
+                  formRef={formRef}
+                  profileFields={profileFields}
+                  profileData={savedProfileData}
+                  onProfileSaved={(profile) => {
+                    setSavedProfileData((previous) =>
+                      previous ? { ...previous, profile } : previous,
+                    );
+                  }}
+                  provinceData={provinceData}
+                  countryData={countryData}
+                  onSubmit={handleProfileSubmit}
+                  onLoadingChange={setLoading}
+                  loading={loading}
+                  isSingleSection={!hasCustomSections}
+                />
+              )
+            ) : currentSection ? (
+              <CustomFormFieldsRenderer
+                key={currentSection.id}
+                formRef={formRef}
+                section={currentSection}
+                formData={customFormData}
+                onSubmit={handleSectionSubmit}
+                onChange={flow.updateAnswers}
+                loading={loading}
+                isLastSection={isLastStep}
+              />
+            ) : null}
+          </Paper>
 
-      {/* Navigation buttons */}
-      <Group justify={currentStep === 0 ? "flex-end" : "space-between"}>
-        {currentStep > 0 && (
-          <Button
-            type="button"
-            variant="default"
-            onClick={flow.back}
-            disabled={loading || !!uploads?.pending}
-            style={{ flex: "0 1 auto", minWidth: "100px" }}
-          >
-            Kembali
-          </Button>
-        )}
-        <Button
-          type="button"
-          loading={loading}
-          onClick={() => formRef.current?.requestSubmit()}
-          disabled={!!uploads?.pending}
-          style={{ flex: "1 1 auto", minWidth: "120px" }}
-        >
-          {isLastStep ? "Kirim" : "Lanjutkan"}
-        </Button>
-      </Group>
+          {/* Navigation buttons */}
+          <Group justify={currentStep === 0 ? "flex-end" : "space-between"}>
+            {currentStep > 0 && (
+              <Button
+                type="button"
+                variant="default"
+                onClick={flow.back}
+                disabled={loading || !!uploads?.pending}
+                style={{ flex: "0 1 auto", minWidth: "100px" }}
+              >
+                Kembali
+              </Button>
+            )}
+            <Button
+              type="button"
+              loading={loading}
+              onClick={() => formRef.current?.requestSubmit()}
+              disabled={!!uploads?.pending}
+              style={{ flex: "1 1 auto", minWidth: "120px" }}
+            >
+              {isLastStep ? "Kirim" : "Lanjutkan"}
+            </Button>
+          </Group>
+        </>
+      )}
     </Stack>
   );
 }
