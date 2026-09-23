@@ -28,6 +28,7 @@ import { useRouter } from "next/navigation";
 import { useFormRoute } from "../use-form-route";
 import { customSections } from "../form-routing";
 import { FormUploadProvider, useFormUploads } from "../FormUploadContext";
+import classes from "./index.module.css";
 
 type CustomFormContentProps = {
   customForm: CustomForm;
@@ -271,8 +272,7 @@ function CustomFormContentBody({
     );
 
   return (
-    <Stack gap="md">
-      {flow.notice && <Alert title="Draf formulir">{flow.notice}</Alert>}
+    <Stack gap="md" className={classes.page}>
       {backUrl && (
         <Button
           component={Link}
@@ -292,12 +292,12 @@ function CustomFormContentBody({
         <Title order={1} size="h2" mb="xs">
           {customForm.form_name}
         </Title>
-        {currentStep === 0 && customForm.form_description && (
+        {customForm.form_description && (
           <Text size="md" style={{ whiteSpace: "pre-wrap" }}>
             {customForm.form_description}
           </Text>
         )}
-        {isLoaded && hasCustomSections && (
+        {hasCustomSections && (
           <>
             <Text size="md" c="dimmed" hiddenFrom="sm" mt="md">
               Langkah {currentStep + 1}:{" "}
@@ -334,14 +334,19 @@ function CustomFormContentBody({
         )}
       </Paper>
 
-      {!isLoaded ? (
-        <Text size="md" c="dimmed" role="status">
-          Memuat formulir...
-        </Text>
-      ) : (
-        <>
+      <Stack gap="md" className={classes.fields} aria-busy={!isLoaded}>
+        {!isLoaded && (
+          <Text size="md" c="dimmed" role="status" className={classes.loading}>
+            Memuat formulir...
+          </Text>
+        )}
+        <Stack
+          gap="md"
+          inert={!isLoaded}
+          style={!isLoaded ? { visibility: "hidden" } : undefined}
+        >
           {/* Form card */}
-          <Paper {...paperProps}>
+          <Paper {...paperProps} key={isLoaded ? flow.currentId : "recovering"}>
             {isProfileStep ? (
               isGuest ? (
                 <CustomFormGuestSection
@@ -402,14 +407,15 @@ function CustomFormContentBody({
               type="button"
               loading={loading}
               onClick={() => formRef.current?.requestSubmit()}
-              disabled={!!uploads?.pending}
+              disabled={!isLoaded || !!uploads?.pending}
               style={{ flex: "1 1 auto", minWidth: "120px" }}
             >
               {isLastStep ? "Kirim" : "Lanjutkan"}
             </Button>
           </Group>
-        </>
-      )}
+        </Stack>
+      </Stack>
+      {flow.notice && <Alert title="Draf formulir">{flow.notice}</Alert>}
     </Stack>
   );
 }

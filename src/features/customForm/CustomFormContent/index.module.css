@@ -1,0 +1,17 @@
+.page {
+  /* Keep the footer below the first viewport throughout streaming and recovery. */
+  min-height: 100svh;
+}
+
+.fields {
+  position: relative;
+}
+
+.loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--mantine-color-body);
+  z-index: 1;
+}

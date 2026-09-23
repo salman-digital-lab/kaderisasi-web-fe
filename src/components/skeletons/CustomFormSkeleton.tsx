@@ -13,7 +13,7 @@ const paperProps = {
 export function CustomFormSkeleton() {
   return (
     <PageContainer size="md">
-      <Stack gap="md">
+      <Stack gap="md" mih="100svh">
         {/* Back button */}
         <Skeleton height={44} width={160} radius="md" />
 

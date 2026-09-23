@@ -34,6 +34,13 @@ const api = createServer(async (request, response) => {
       }),
     );
   }
+  // Exercise the streamed form skeleton before the schema reaches the page.
+  if (
+    url.pathname === "/v2/custom-forms/by-feature" &&
+    url.searchParams.get("feature_id") === "991"
+  ) {
+    await new Promise((resolve) => setTimeout(resolve, 700));
+  }
   let data = uiFixture(url, request.headers.authorization);
   if (data !== undefined) {
     return response.end(JSON.stringify({ message: "TEST_DATA", data }));
