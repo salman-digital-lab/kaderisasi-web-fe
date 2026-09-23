@@ -34,3 +34,23 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+## Mantine core styles
+
+The root layout imports `src/app/mantine.css` instead of the full core stylesheet.
+The generated list includes styles for components used in `src`, their internal
+dependencies, and components used by Mantine extensions (dates, carousel, modals,
+and notifications). It preserves the installed Mantine package's cascade order.
+
+After adding a Mantine component or upgrading Mantine, run `npm run styles:mantine`
+and check the affected pages and interactive states. `npm run lint` includes
+`check:mantine-css` to detect an outdated list. The generator follows named
+imports in the installed ESM packages and fails if their layout cannot be
+resolved; review it when upgrading Mantine. Keep dates and carousel styles with
+their consuming components, and application overrides after the core imports.
+
+Individual styles in Mantine 9.6.2 use px, while its full bundle uses scalable
+rem values. `scripts/postcss-mantine-rem.cjs` applies Mantine's autoRem conversion
+only to individual core styles, preserving text zoom and `--mantine-scale`
+without converting application or extension CSS. The lint check also tests this
+boundary.

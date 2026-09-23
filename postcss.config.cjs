@@ -1,5 +1,6 @@
 module.exports = {
   plugins: {
+    [`${process.cwd()}/scripts/postcss-mantine-rem.cjs`]: {},
     "postcss-preset-mantine": {},
     "postcss-simple-vars": {
       variables: {
