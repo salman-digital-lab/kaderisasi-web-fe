@@ -153,7 +153,7 @@ export default function Calendar(): ReactElement {
         </Alert>
       ) : (
         <>
-          {!events.length && (
+          {view === "agenda" && !events.length && (
             <Text c="dimmed" className={classes.state}>
               Belum ada acara pada periode ini.
             </Text>
