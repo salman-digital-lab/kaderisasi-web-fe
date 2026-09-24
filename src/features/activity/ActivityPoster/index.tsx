@@ -99,12 +99,19 @@ export default function ActivityPoster({
   return (
     <Stack gap="sm">
       {failedPosters.includes(selected) ? (
-        <Paper withBorder radius="md" p="lg" id="active-activity-poster">
-          <Text size="sm" fw={600}>
-            Poster belum dapat dimuat.
-          </Text>
-          <Text size="sm" c="dimmed" mt="xs">
-            Informasi kegiatan dan pendaftaran tetap tersedia di bawah.
+        <Paper withBorder radius="md" className={classes.poster}>
+          <div className={classes.posterVisual} id="active-activity-poster">
+            <Stack gap="xs" className={classes.posterError}>
+              <Text size="sm" fw={600}>
+                Poster belum dapat dimuat.
+              </Text>
+              <Text size="sm" c="dimmed">
+                Informasi kegiatan dan pendaftaran tetap tersedia di bawah.
+              </Text>
+            </Stack>
+          </div>
+          <Text component="div" size="sm" className={classes.caption}>
+            Poster tidak tersedia
           </Text>
         </Paper>
       ) : (

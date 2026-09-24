@@ -67,6 +67,15 @@ export function uiFixture(url, authorization) {
     authorization === "Bearer ui-preview" ||
     authorization === "Bearer ui-empty";
   if (path === "/v2/profiles" && signedIn) return profile;
+  if (path === "/v2/activities/cls-poster")
+    return {
+      ...activity,
+      slug: "cls-poster",
+      additional_config: {
+        ...activity.additional_config,
+        images: ["cls-poster.webp"],
+      },
+    };
   if (path === "/v2/activities/kegiatan-uji-1") return activity;
   if (path === "/v2/profiles/activities")
     return authorization === "Bearer ui-empty" ? [] : [registration];

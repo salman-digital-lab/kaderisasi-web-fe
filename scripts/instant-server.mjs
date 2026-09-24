@@ -17,6 +17,13 @@ const api = createServer(async (request, response) => {
   );
   response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS");
   if (request.method === "OPTIONS") return response.end();
+  if (process.env.CLS_BROWSER_TEST === "1") {
+    await new Promise((resolve) => setTimeout(resolve, 800));
+  }
+  if (url.pathname === "/v2/activities/cls-missing") {
+    response.statusCode = 404;
+    return response.end(JSON.stringify({ message: "ACTIVITY_NOT_FOUND" }));
+  }
   if (await handleProfileFixture(request, response, url)) return;
   if (handleCourseFixture(request, response, url)) return;
   if (
