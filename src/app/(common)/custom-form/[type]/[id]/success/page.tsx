@@ -1,23 +1,22 @@
+import type { ReactElement } from "react";
 import PageContainer from "@/components/layout/PageContainer";
 import { verifySession } from "@/functions/server/session";
-import { getCustomFormByFeature } from "@/services/customForm";
+import { getCustomFormSuccessInfo } from "@/services/customForm";
 import { Paper, Title, Text, Stack, Alert } from "@mantine/core";
 import { redirect } from "next/navigation";
 import ErrorWrapper from "@/components/layout/Error";
 import styles from "./page.module.css";
 import LinkButton from "@/components/common/LinkButton";
 import { getRegistrationStatus } from "@/services/clubRegistration";
-import type { CustomForm } from "@/types/api/customForm";
+import type { CustomFormSuccessInfo } from "@/types/api/customForm";
 import type { ClubRegistration } from "@/types/model/clubRegistration";
 
 export default async function SuccessPage(props: {
   params: Promise<{ type: string; id: string }>;
-}) {
+}): Promise<ReactElement> {
   const params = await props.params;
   const { type, id } = params;
   if (type === "independent") redirect(`/form/${id}`);
-
-  const { session } = await verifySession();
 
   // Validate type
   if (!["activity", "club", "independent"].includes(type)) {
@@ -33,7 +32,7 @@ export default async function SuccessPage(props: {
 
   const featureType = featureTypeMap[type as keyof typeof featureTypeMap];
 
-  let clubCustomForm: CustomForm | undefined;
+  let clubCustomForm: CustomFormSuccessInfo | undefined;
   let clubRegistrationStatus: ClubRegistration["status"] | undefined;
 
   if (type === "club") {
@@ -43,9 +42,15 @@ export default async function SuccessPage(props: {
       redirect("/clubs");
     }
 
+    const { session } = await verifySession();
     if (!session) {
       redirect(`/clubs/${id}`);
     }
+
+    const formInfo = getCustomFormSuccessInfo({
+      feature_type: "club_registration",
+      feature_id: clubId,
+    }).catch(() => undefined);
 
     try {
       const status = await getRegistrationStatus(clubId, session);
@@ -60,21 +65,14 @@ export default async function SuccessPage(props: {
       redirect(`/clubs/${id}`);
     }
 
-    try {
-      clubCustomForm = await getCustomFormByFeature({
-        feature_type: "club_registration",
-        feature_id: clubId,
-      });
-    } catch {
-      clubCustomForm = undefined;
-    }
+    clubCustomForm = await formInfo;
   }
 
   try {
     const customForm =
       type === "club"
         ? clubCustomForm
-        : await getCustomFormByFeature({
+        : await getCustomFormSuccessInfo({
             feature_type: featureType,
             feature_id: type === "independent" ? undefined : Number(id),
           });

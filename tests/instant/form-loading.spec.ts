@@ -65,3 +65,33 @@ test("club forms retain guest and already-registered redirects", async ({
     page.getByRole("button", { name: "Lanjutkan", exact: true }),
   ).toBeVisible();
 });
+
+test("success page renders compact instructions for guest activities and member clubs", async ({
+  page,
+  context,
+  baseURL,
+}) => {
+  await page.goto("/custom-form/activity/1/success");
+  await expect(
+    page.getByRole("heading", { name: "Pendaftaran Berhasil!" }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Pantau status pendaftaran melalui halaman Kegiatan Saya."),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Lihat Daftar Kegiatan" }),
+  ).toHaveAttribute("href", "/activity");
+  await context.addCookies([
+    { name: "session", value: "ui-preview", url: baseURL! },
+  ]);
+  await page.goto("/custom-form/club/2/success");
+  await expect(
+    page.getByRole("heading", { name: "Pendaftaran Berhasil!" }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Pantau status pendaftaran melalui halaman Kegiatan Saya."),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Kembali ke Detail Klub" }),
+  ).toHaveAttribute("href", "/clubs/2");
+});

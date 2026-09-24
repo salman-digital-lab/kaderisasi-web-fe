@@ -1,6 +1,7 @@
 import fetcher from "../functions/common/fetcher";
 import { getApiConfig } from "../config/apiConfig";
-import {
+import type {
+  CustomFormSuccessInfo,
   GetCustomFormByFeatureReq,
   GetCustomFormByFeatureResp,
   PostCustomFormRegistrationReq,
@@ -54,3 +55,21 @@ export const registerWithCustomForm = async (
 
   return response;
 };
+
+export async function getCustomFormSuccessInfo(
+  props: GetCustomFormByFeatureReq,
+): Promise<CustomFormSuccessInfo> {
+  const { beApi } = getApiConfig();
+  const params = new URLSearchParams({
+    feature_type: props.feature_type,
+    view: "success",
+  });
+  if (props.feature_id !== undefined) {
+    params.set("feature_id", String(props.feature_id));
+  }
+  const response = await fetcher<{ data: CustomFormSuccessInfo }>(
+    `${beApi}/custom-forms/by-feature?${params}`,
+    { cache: "no-store" },
+  );
+  return response.data;
+}

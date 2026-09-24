@@ -88,3 +88,8 @@ export interface PostCustomFormRegistrationResp {
   message: string;
   data: any;
 }
+
+export interface CustomFormSuccessInfo {
+  id: number;
+  post_submission_info?: string | null;
+}

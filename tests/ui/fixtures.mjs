@@ -111,6 +111,15 @@ export function uiFixture(url, authorization) {
     };
   if (path === "/v2/clubs/2/registration-status")
     return { isRegistered: true, registration: { id: 2, status: "PENDING" } };
+  if (
+    path === "/v2/custom-forms/by-feature" &&
+    url.searchParams.get("view") === "success"
+  )
+    return {
+      id: 1,
+      post_submission_info:
+        "<p>Pantau status pendaftaran melalui halaman Kegiatan Saya.</p>",
+    };
   if (path === "/v2/custom-forms/by-feature")
     return {
       id: 1,
