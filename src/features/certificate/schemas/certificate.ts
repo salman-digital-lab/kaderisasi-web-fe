@@ -6,6 +6,19 @@ import type {
 } from "@/types/model/certificate";
 
 const nullableTextSchema = z.string().nullable();
+const certificateSettingsSchema = z.object({
+  version: z.literal(1),
+  institution: z.string(),
+  role: z.string(),
+  event_date: z.string(),
+  hijri_date: z.string(),
+  delivery_mode: z.string(),
+  venue: z.string(),
+  organizer: z.string(),
+  document_place: z.string(),
+  document_date: z.string(),
+  include_scores: z.boolean(),
+});
 const optionalPositiveIdSchema = z.number().int().positive().optional();
 
 const certificateScoringSchema = z.object({
@@ -95,6 +108,7 @@ export const certificateElementSchema = z.object({
 
 export const certificateTemplateDataSchema = z.object({
   backgroundUrl: nullableTextSchema,
+  scoreSheetLayout: z.literal("salman-v1").optional(),
   elements: z.array(certificateElementSchema).max(500),
   canvasWidth: z.number().positive().finite().max(10000),
   canvasHeight: z.number().positive().finite().max(10000),
@@ -130,6 +144,7 @@ const certificateRenderBaseSchema = z.object({
     id: optionalPositiveIdSchema,
     name: z.string().min(1),
     activity_start: nullableTextSchema,
+    certificate_settings: certificateSettingsSchema.optional(),
   }),
   template: z.object({
     id: optionalPositiveIdSchema,
@@ -139,6 +154,7 @@ const certificateRenderBaseSchema = z.object({
   }),
   participant: z.object({
     scoring_result: certificateScoringSchema.optional(),
+    certificate_group: z.string().nullable().optional(),
     registration_id: optionalPositiveIdSchema,
     user_id: z.number().int().positive().nullable().optional(),
     name: z.string().min(1),

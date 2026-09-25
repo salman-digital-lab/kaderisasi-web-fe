@@ -1,4 +1,5 @@
 import type { jsPDF } from "jspdf";
+import { salmanScoreOverflow } from "../SalmanScoreSheet";
 import {
   fitScoreSheet,
   SCORE_SHEET_WIDTH,
@@ -19,6 +20,17 @@ export interface GenerateCertificatePdfOptions {
 
 export function getRasterScale(width: number, height: number): number {
   return Math.min(2, Math.sqrt(8_000_000 / (width * height)));
+}
+
+export function certificatePdfErrorMessage(error: unknown): string | null {
+  if (!(error instanceof Error)) return null;
+  if (error.message.startsWith("CERTIFICATE_TEXT_OVERFLOW:")) {
+    return `Bagian sertifikat melebihi halaman: ${error.message.slice("CERTIFICATE_TEXT_OVERFLOW:".length)}.`;
+  }
+  if (error.message.startsWith("CERTIFICATE_SCORE_OVERFLOW:")) {
+    return `Daftar nilai melebihi halaman kedua: ${error.message.slice("CERTIFICATE_SCORE_OVERFLOW:".length)}.`;
+  }
+  return null;
 }
 
 export function getPdfPageSize(
@@ -132,6 +144,22 @@ async function renderCertificatePage(
       ...Array.from(source.querySelectorAll("img")).map(waitForImage),
       ...backgrounds.map(waitForImage),
     ]);
+    if (template.scoreSheetLayout === "salman-v1") {
+      const clipped = Array.from(
+        source.querySelectorAll<HTMLElement>("[data-certificate-text-element]"),
+      ).filter((node) => {
+        const content = node.firstElementChild;
+        return Boolean(
+          content &&
+          (content.scrollHeight > content.clientHeight + 1 ||
+            content.scrollWidth > content.clientWidth + 1),
+        );
+      });
+      if (clipped.length)
+        throw new Error(
+          `CERTIFICATE_TEXT_OVERFLOW:${clipped.map((node) => node.dataset.certificateElementId).join(",")}`,
+        );
+    }
     prepareFittedImages(source);
     fitScoreSheet(source);
     const [{ default: html2canvas }, { default: JsPDF }] = await imports;
@@ -203,6 +231,15 @@ async function renderCertificatePage(
 export async function createCertificatePdf(
   options: GenerateCertificatePdfOptions,
 ): Promise<jsPDF> {
+  if (
+    options.template.scoreSheetLayout === "salman-v1" &&
+    options.scoreSourceElement
+  ) {
+    await document.fonts.ready;
+    const overflow = salmanScoreOverflow(options.scoreSourceElement);
+    if (overflow.length)
+      throw new Error(`CERTIFICATE_SCORE_OVERFLOW:${overflow.join(",")}`);
+  }
   const pdf = await renderCertificatePage(options);
   if (options.scoreSourceElement) {
     await renderCertificatePage(

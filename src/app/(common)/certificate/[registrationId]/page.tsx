@@ -102,10 +102,9 @@ export default async function CertificatePage(props: {
     if (!appUrl) return <CertificateConfigurationError />;
 
     const token = await tokenPromise;
-    const ownerScore =
+    const ownerCertificate =
       access === "owner" && token
-        ? (await getOwnedCertificateForDownload(token, parsedCode.data))
-            .participant.scoring_result
+        ? await getOwnedCertificateForDownload(token, parsedCode.data)
         : undefined;
 
     return (
@@ -114,7 +113,8 @@ export default async function CertificatePage(props: {
         data={certificateData}
         imageBaseUrl={process.env.NEXT_PUBLIC_IMAGE_BASE_URL ?? ""}
         access={access}
-        ownerScore={ownerScore}
+        ownerScore={ownerCertificate?.participant.scoring_result}
+        ownerGroup={ownerCertificate?.participant.certificate_group}
       />
     );
   } catch (error) {

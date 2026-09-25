@@ -4,6 +4,7 @@ import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
 import CertificateCanvas from "../CertificateCanvas";
 import { CertificateScoreSheet } from "../CertificateScoreSheet";
+import { SalmanScoreSheet } from "../SalmanScoreSheet";
 import {
   getCertificateFilename,
   resolveOwnerCertificateText,
@@ -34,11 +35,20 @@ export async function saveOwnerCertificatePdf(
             imageBaseUrl,
             verificationUrl,
           }),
-          createElement(CertificateScoreSheet, {
-            ref: scoreRef,
-            participant: data.participant,
-            certificateCode: data.certificate.certificate_code,
-          }),
+          data.template.template_data.scoreSheetLayout === "salman-v1"
+            ? data.activity.certificate_settings?.include_scores
+              ? createElement(SalmanScoreSheet, {
+                  ref: scoreRef,
+                  participant: data.participant,
+                  certificateCode: data.certificate.certificate_code,
+                  approval: data.certificate.approval,
+                })
+              : null
+            : createElement(CertificateScoreSheet, {
+                ref: scoreRef,
+                participant: data.participant,
+                certificateCode: data.certificate.certificate_code,
+              }),
         ),
       ),
     );

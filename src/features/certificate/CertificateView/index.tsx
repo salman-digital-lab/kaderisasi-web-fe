@@ -29,6 +29,7 @@ import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import CertificateCanvas from "../CertificateCanvas";
 import ActivityScoringResult from "@/features/activity/ActivityScoringResult";
+import { SalmanScoreSheet } from "../SalmanScoreSheet";
 import {
   formatCertificateTimestamp,
   getCertificatePath,
@@ -43,6 +44,7 @@ type CertificateViewProps = {
   appUrl: string;
   access: CertificateDownloadAccess;
   ownerScore?: PublishedScoringResult;
+  ownerGroup?: string | null;
 };
 
 export default function CertificateView({
@@ -51,6 +53,7 @@ export default function CertificateView({
   appUrl,
   access,
   ownerScore,
+  ownerGroup,
 }: CertificateViewProps): React.ReactElement {
   const router = useRouter();
   const downloadRef = useRef(false);
@@ -65,7 +68,12 @@ export default function CertificateView({
   const loginPath = `/login?redirect=${encodeURIComponent(path)}`;
   const revoked = data.state === "issued_revoked" || revokedDuringDownload;
   const issuedAt = formatCertificateTimestamp(data.certificate.issued_at);
-  const score = access === "owner" ? ownerScore : undefined;
+  const score =
+    access === "owner" &&
+    (data.template.template_data.scoreSheetLayout !== "salman-v1" ||
+      data.activity.certificate_settings?.include_scores)
+      ? ownerScore
+      : undefined;
   const artwork = (
     <CertificateCanvas
       data={data}
@@ -157,10 +165,13 @@ export default function CertificateView({
         message: "PDF sertifikat berhasil dibuat.",
       });
     } catch (error) {
+      const { certificatePdfErrorMessage } =
+        await import("../utils/certificatePdf");
       const knownMessage =
-        error instanceof Error && /^(Sertifikat|Unduhan) /.test(error.message)
+        certificatePdfErrorMessage(error) ??
+        (error instanceof Error && /^(Sertifikat|Unduhan) /.test(error.message)
           ? error.message
-          : "PDF tidak dapat dibuat. Periksa gambar dan koneksi, lalu coba lagi.";
+          : "PDF tidak dapat dibuat. Periksa gambar dan koneksi, lalu coba lagi.");
       setDownloadError(knownMessage);
     } finally {
       downloadRef.current = false;
@@ -316,7 +327,21 @@ export default function CertificateView({
             </Tabs.Panel>
             <Tabs.Panel value="scores" pt="md">
               <div data-certificate-score-details>
-                <ActivityScoringResult score={score} />
+                {data.template.template_data.scoreSheetLayout ===
+                "salman-v1" ? (
+                  <SalmanScoreSheet
+                    participant={{
+                      ...data.participant,
+                      scoring_result: score,
+                      certificate_group: ownerGroup,
+                    }}
+                    certificateCode={code}
+                    approval={data.certificate.approval}
+                    revoked={revoked}
+                  />
+                ) : (
+                  <ActivityScoringResult score={score} />
+                )}
               </div>
             </Tabs.Panel>
           </Tabs>

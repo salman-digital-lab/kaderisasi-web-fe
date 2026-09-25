@@ -31,9 +31,24 @@ export type CertificateElement = {
 
 export type CertificateTemplateData = {
   backgroundUrl: string | null;
+  scoreSheetLayout?: "salman-v1";
   elements: CertificateElement[];
   canvasWidth: number;
   canvasHeight: number;
+};
+
+export type CertificateSettings = {
+  version: 1;
+  institution: string;
+  role: string;
+  event_date: string;
+  hijri_date: string;
+  delivery_mode: string;
+  venue: string;
+  organizer: string;
+  document_place: string;
+  document_date: string;
+  include_scores: boolean;
 };
 
 export type CertificateApproval = {
@@ -63,6 +78,7 @@ export type CertificateData = {
     name: string;
     activity_start: string | null;
     id?: number;
+    certificate_settings?: CertificateSettings;
   };
   template: {
     name: string;
@@ -72,6 +88,7 @@ export type CertificateData = {
   };
   participant: {
     scoring_result?: PublishedScoringResult;
+    certificate_group?: string | null;
     name: string;
     activity_name: string;
     activity_date: string;
@@ -87,7 +104,7 @@ export type CertificateData = {
 /** Safe DTO permitted to cross the public React Server Component boundary. */
 export type PublicCertificateData = {
   state: "issued_active" | "issued_revoked";
-  activity: Pick<CertificateData["activity"], "name" | "activity_start">;
+  activity: Pick<CertificateData["activity"], "name" | "activity_start" | "certificate_settings">;
   template: Pick<
     CertificateData["template"],
     "name" | "background_image" | "template_data"
