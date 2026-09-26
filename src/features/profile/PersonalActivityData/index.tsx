@@ -8,45 +8,34 @@ import {
   Title,
   TextInput,
   Select,
-  Pagination,
-  Group,
 } from "@mantine/core";
 import { IconSearch, IconPlus } from "@tabler/icons-react";
-import { useState } from "react";
 import type { ReactElement } from "react";
 import Link from "next/link";
 import ActivityPersonalCard from "@/components/common/ActivityPersonalCard";
-import type { Activity, Registrant } from "@/types/model/activity";
+import { useProfileHistory } from "../use-profile-history";
+import { HistoryFeedback, HistoryPagination } from "../HistoryFeedback";
 import { ACTIVITY_REGISTRANT_STATUS_ENUM } from "@/types/constants/activity";
 import classes from "../profile.module.css";
 
 export default function PersonalActivityData({
-  activities,
+  active,
 }: {
-  activities: ({ activity: Activity } & Registrant)[];
+  active: boolean;
 }): ReactElement {
-  const [page, setPage] = useState(1);
-  const [query, setQuery] = useState("");
-  const [status, setStatus] = useState("all");
-  const filtered = activities.filter(
-    (item) =>
-      (status === "all" || item.status === status) &&
-      [item.activity.name, item.activity.description, item.status].some(
-        (value) =>
-          value
-            ?.toLocaleLowerCase("id")
-            .includes(query.trim().toLocaleLowerCase("id")),
-      ),
-  );
-  const pages = Math.ceil(filtered.length / 6);
-  const currentPage = Math.max(1, Math.min(page, pages));
-  function clear(): void {
-    setQuery("");
-    setStatus("all");
-    setPage(1);
-  }
+  const history = useProfileHistory("activities", active);
+  const {
+    data,
+    search: query,
+    status,
+    setSearch: setQuery,
+    setStatus,
+    setPage,
+    clear,
+  } = history;
+  const activities = data?.items ?? [];
   return (
-    <Stack gap="lg">
+    <Stack gap="lg" aria-busy={history.pending}>
       <div className={classes.sectionHeader}>
         <div>
           <Title order={2} size="h3">
@@ -65,7 +54,8 @@ export default function PersonalActivityData({
           Cari kegiatan
         </Button>
       </div>
-      {activities.length ? (
+      <HistoryFeedback {...history} />
+      {data && data.summary.total > 0 ? (
         <>
           <div className={classes.toolbar}>
             <TextInput
@@ -98,30 +88,26 @@ export default function PersonalActivityData({
             />
           </div>
           <Text c="dimmed" role="status">
-            {filtered.length} kegiatan sesuai dari {activities.length}{" "}
+            {data.meta.total} kegiatan sesuai dari {data.summary.total}{" "}
             pendaftaran
           </Text>
           <Stack gap="md">
-            {filtered
-              .slice((currentPage - 1) * 6, currentPage * 6)
-              .map((item) => (
-                <ActivityPersonalCard
-                  key={item.id}
-                  activityName={item.activity.name}
-                  slug={item.activity.slug}
-                  registrationStatus={item.status}
-                  imageUrl={item.activity.additional_config?.images?.[0]}
-                  visibleAt={item.visible_at}
-                  registrationId={item.id}
-                  hasCertificate={
-                    !!item.activity.additional_config?.certificate_template_id
-                  }
-                  certificateCode={item.certificate_code}
-                  certificateState={item.certificate_state}
-                />
-              ))}
+            {activities.map((item) => (
+              <ActivityPersonalCard
+                key={item.id}
+                activityName={item.activity_name}
+                slug={item.activity_slug}
+                registrationStatus={item.status}
+                imageUrl={item.image_url ?? undefined}
+                visibleAt={item.visible_at ?? undefined}
+                registrationId={item.id}
+                hasCertificate={item.has_certificate}
+                certificateCode={item.certificate_code}
+                certificateState={item.certificate_state}
+              />
+            ))}
           </Stack>
-          {!filtered.length && (
+          {!activities.length && !history.pending && (
             <Paper withBorder className={classes.empty}>
               <Text fw={600}>Tidak ada kegiatan yang sesuai</Text>
               <Button mt="sm" variant="light" onClick={clear}>
@@ -129,27 +115,22 @@ export default function PersonalActivityData({
               </Button>
             </Paper>
           )}
-          {pages > 1 && (
-            <Group justify="center">
-              <Pagination
-                classNames={{ control: classes.paginationControl }}
-                aria-label="Halaman kegiatan saya"
-                total={pages}
-                value={currentPage}
-                onChange={setPage}
-                getItemProps={(value) => ({ "aria-label": `Halaman ${value}` })}
-              />
-            </Group>
-          )}
+          <HistoryPagination
+            total={data.meta.last_page}
+            page={history.page}
+            pending={history.pending}
+            onChange={setPage}
+            label="Halaman kegiatan saya"
+          />
         </>
-      ) : (
+      ) : data && !history.pending && !history.error ? (
         <Paper withBorder className={classes.empty}>
           <Text fw={600}>Belum ada kegiatan</Text>
           <Text c="dimmed" mt="xs">
             Kegiatan yang Anda daftarkan akan muncul di sini.
           </Text>
         </Paper>
-      )}
+      ) : null}
     </Stack>
   );
 }

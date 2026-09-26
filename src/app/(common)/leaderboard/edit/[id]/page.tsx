@@ -3,7 +3,8 @@ import { Paper, Title, Text } from "@mantine/core";
 import EditAchievementForm from "@/features/leaderboard/EditAchievementForm";
 import { verifySession } from "@/functions/server/session";
 import { redirect } from "next/navigation";
-import { getMyAchievements } from "@/services/leaderboard";
+import { getMyAchievement } from "@/services/leaderboard";
+import { FetcherError } from "@/functions/common/fetcher";
 
 export const metadata = {
   title: "Edit Prestasi",
@@ -19,10 +20,15 @@ export default async function Page({
 
   if (!sessionData.session) redirect("/api/logout");
 
-  const achievements = await getMyAchievements(sessionData.session);
-  const achievement = achievements.find(
-    (achievement) => achievement.id === parseInt(param.id),
-  );
+  const achievement = await getMyAchievement(
+    sessionData.session,
+    param.id,
+  ).catch((error: unknown) => {
+    if (error instanceof FetcherError && error.status === 404) return undefined;
+    if (error instanceof FetcherError && error.status === 401)
+      redirect("/api/logout");
+    throw error;
+  });
 
   if (!achievement) redirect("/leaderboard");
 

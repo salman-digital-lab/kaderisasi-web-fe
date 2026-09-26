@@ -90,27 +90,13 @@ export function ProfileTab({ sections, token }: ProfileTabProps): ReactElement {
           </Stack>
         </Tabs.Panel>
         <Tabs.Panel value="activity" pt="lg" tabIndex={0}>
-          {sections.activities.data ? (
-            <PersonalActivityData activities={sections.activities.data} />
-          ) : (
-            <ProfileSectionError message={sections.activities.error} />
-          )}
+          <PersonalActivityData active={activeTab === "activity"} />
         </Tabs.Panel>
         <Tabs.Panel value="ruangcurhat" pt="lg" tabIndex={0}>
-          {sections.consultations.data ? (
-            <RuangCurhatList data={sections.consultations.data} />
-          ) : (
-            <ProfileSectionError message={sections.consultations.error} />
-          )}
+          <RuangCurhatList active={activeTab === "ruangcurhat"} />
         </Tabs.Panel>
         <Tabs.Panel value="achievements" pt="lg" tabIndex={0}>
-          {sections.achievements.data ? (
-            <PersonalAchievementData
-              achievements={sections.achievements.data}
-            />
-          ) : (
-            <ProfileSectionError message={sections.achievements.error} />
-          )}
+          <PersonalAchievementData active={activeTab === "achievements"} />
         </Tabs.Panel>
       </Tabs>
     </Stack>

@@ -1,397 +1,182 @@
 "use client";
 
-import PageHeader from "@/components/layout/PageHeader";
-import PageContainer from "@/components/layout/PageContainer";
-
 import {
+  Alert,
+  Button,
+  Pagination,
   Paper,
+  Select,
   Stack,
   Text,
-  Grid,
-  Box,
-  ThemeIcon,
   TextInput,
-  Card,
-  Group,
-  Button,
-  Center,
-  Pagination,
-  Badge,
+  Title,
 } from "@mantine/core";
-import {
-  IconSearch,
-  IconActivity,
-  IconCheck,
-  IconX,
-  IconClock,
-  IconExternalLink,
-  IconCertificate,
-} from "@tabler/icons-react";
-import { useState, useMemo, useEffect } from "react";
+import { IconSearch } from "@tabler/icons-react";
+import { useRef } from "react";
+import type { ReactElement } from "react";
 import Link from "next/link";
-import { Activity, Registrant } from "@/types/model/activity";
+import PageContainer from "@/components/layout/PageContainer";
 import { ACTIVITY_REGISTRANT_STATUS_ENUM } from "@/types/constants/activity";
-import { getCertificateCta } from "@/features/certificate/utils/certificateData";
+import StatusHeader from "../StatusHeader";
+import StatusRegistrationCard from "../StatusRegistrationCard";
+import { statusLabel } from "../status-utils";
+import { useProfileHistory } from "@/features/profile/use-profile-history";
+import StatusSkeleton from "../StatusSkeleton";
+import classes from "../status.module.css";
 
-type StatusCheckContentProps = {
-  activities: ({ activity: Activity } & Registrant)[];
-};
+const STATUS_OPTIONS = [
+  { value: "all", label: "Semua status" },
+  ...Object.values(ACTIVITY_REGISTRANT_STATUS_ENUM).map((value) => ({
+    value,
+    label: statusLabel(value),
+  })),
+];
 
-// Format date to readable string
-const formatDate = (dateString: string): string => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString("id-ID", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-};
+export default function StatusCheckContent(): ReactElement {
+  const history = useProfileHistory("activities", true, 6, "name");
+  const {
+    data,
+    page,
+    search: query,
+    status,
+    setPage,
+    setSearch: setQuery,
+    setStatus,
+  } = history;
+  const resultsHeading = useRef<HTMLHeadingElement>(null);
+  const searchInput = useRef<HTMLInputElement>(null);
+  const filtered = data?.items ?? [];
+  const pages = data?.meta.last_page ?? 1;
+  const currentPage = page;
+  const hasFilters = query.length > 0 || status !== "all";
 
-// Get status color
-const getStatusColor = (status: string): string => {
-  switch (status) {
-    case ACTIVITY_REGISTRANT_STATUS_ENUM.DITERIMA:
-    case ACTIVITY_REGISTRANT_STATUS_ENUM.LULUS_KEGIATAN:
-      return "green";
-    case ACTIVITY_REGISTRANT_STATUS_ENUM.TIDAK_DITERIMA:
-    case ACTIVITY_REGISTRANT_STATUS_ENUM.TIDAK_LULUS:
-      return "red";
-    case ACTIVITY_REGISTRANT_STATUS_ENUM.TERDAFTAR:
-      return "blue";
-    case ACTIVITY_REGISTRANT_STATUS_ENUM.BELUM_DIUMUMKAN:
-      return "orange";
-    default:
-      return "gray";
+  function clearFilters(): void {
+    history.clear();
+    searchInput.current?.focus();
   }
-};
 
-// Get status icon
-const getStatusIcon = (status: string) => {
-  switch (status) {
-    case ACTIVITY_REGISTRANT_STATUS_ENUM.DITERIMA:
-    case ACTIVITY_REGISTRANT_STATUS_ENUM.LULUS_KEGIATAN:
-      return <IconCheck size={16} />;
-    case ACTIVITY_REGISTRANT_STATUS_ENUM.TIDAK_DITERIMA:
-    case ACTIVITY_REGISTRANT_STATUS_ENUM.TIDAK_LULUS:
-      return <IconX size={16} />;
-    case ACTIVITY_REGISTRANT_STATUS_ENUM.BELUM_DIUMUMKAN:
-      return <IconClock size={16} />;
-    default:
-      return <IconActivity size={16} />;
-  }
-};
-
-export default function StatusCheckContent({
-  activities,
-}: StatusCheckContentProps) {
-  const [page, setPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState("");
-
-  // Calculate statistics
-  const stats = useMemo(() => {
-    const totalActivities = activities.length;
-
-    const acceptedCount = activities.filter(
-      (a) =>
-        a.status === ACTIVITY_REGISTRANT_STATUS_ENUM.DITERIMA ||
-        a.status === ACTIVITY_REGISTRANT_STATUS_ENUM.LULUS_KEGIATAN,
-    ).length;
-
-    const rejectedCount = activities.filter(
-      (a) =>
-        a.status === ACTIVITY_REGISTRANT_STATUS_ENUM.TIDAK_DITERIMA ||
-        a.status === ACTIVITY_REGISTRANT_STATUS_ENUM.TIDAK_LULUS,
-    ).length;
-
-    const pendingCount = activities.filter(
-      (a) =>
-        a.status === ACTIVITY_REGISTRANT_STATUS_ENUM.TERDAFTAR ||
-        a.status === ACTIVITY_REGISTRANT_STATUS_ENUM.BELUM_DIUMUMKAN,
-    ).length;
-
-    return {
-      totalActivities,
-      acceptedCount,
-      rejectedCount,
-      pendingCount,
-    };
-  }, [activities]);
-
-  // Filter activities by search query
-  const filteredActivities = useMemo(() => {
-    return activities.filter((activity) => {
-      const searchLower = searchQuery.toLowerCase();
-      return (
-        activity.activity.name.toLowerCase().includes(searchLower) ||
-        activity.status.toLowerCase().includes(searchLower)
-      );
-    });
-  }, [activities, searchQuery]);
-
-  // Pagination logic
-  const itemsPerPage = 10;
-  const totalPages = Math.ceil(filteredActivities.length / itemsPerPage);
-  const paginatedActivities = filteredActivities.slice(
-    (page - 1) * itemsPerPage,
-    page * itemsPerPage,
-  );
-
-  // Reset page when search changes
-  useEffect(() => {
-    setPage(1);
-  }, [searchQuery]);
-
-  // Empty state - rendered after all hooks are called
-  if (activities.length === 0) {
-    return (
-      <PageContainer size="lg">
-        <PageHeader
-          title="Cek Status Kegiatan"
-          description="Lihat status pendaftaran Anda di berbagai kegiatan"
-        />
-        <Paper radius="md" withBorder p={{ base: "lg", sm: "xl" }}>
-          <Stack align="center" justify="center" mih={300} gap="lg">
-            <ThemeIcon size={80} radius="xl" variant="light" color="gray">
-              <IconActivity size={40} />
-            </ThemeIcon>
-            <Stack align="center" gap="xs">
-              <Text size="xl" fw={600} c="dimmed">
-                Belum Ada Kegiatan Terdaftar
-              </Text>
-              <Text size="md" c="dimmed" ta="center" maw={300}>
-                Anda belum terdaftar di kegiatan manapun. Jelajahi kegiatan yang
-                tersedia untuk memulai.
-              </Text>
-            </Stack>
-            <Button
-              component={Link}
-              href="/activity"
-              leftSection={<IconExternalLink size={16} />}
-              size="md"
-            >
-              Jelajahi Kegiatan
-            </Button>
-          </Stack>
-        </Paper>
-      </PageContainer>
-    );
+  function changePage(value: number): void {
+    setPage(value);
+    resultsHeading.current?.focus();
+    resultsHeading.current?.scrollIntoView({ block: "start" });
   }
 
   return (
-    <PageContainer size="lg">
-      <Stack gap="xl">
-        <PageHeader
-          title="Cek Status Kegiatan"
-          description="Lihat status pendaftaran Anda di berbagai kegiatan"
-        />
-
-        {/* Statistics Cards */}
-        <Grid>
-          <Grid.Col span={{ base: 6, sm: 3 }}>
-            <Card withBorder p="md" radius="md">
-              <Group gap="xs">
-                <ThemeIcon size="md" variant="light" color="blue">
-                  <IconActivity size={16} />
-                </ThemeIcon>
-                <Box>
-                  <Text size="md" c="dimmed">
-                    Total
-                  </Text>
-                  <Text size="lg" fw={600}>
-                    {stats.totalActivities}
-                  </Text>
-                </Box>
-              </Group>
-            </Card>
-          </Grid.Col>
-          <Grid.Col span={{ base: 6, sm: 3 }}>
-            <Card withBorder p="md" radius="md">
-              <Group gap="xs">
-                <ThemeIcon size="md" variant="light" color="green">
-                  <IconCheck size={16} />
-                </ThemeIcon>
-                <Box>
-                  <Text size="md" c="dimmed">
-                    Diterima
-                  </Text>
-                  <Text size="lg" fw={600}>
-                    {stats.acceptedCount}
-                  </Text>
-                </Box>
-              </Group>
-            </Card>
-          </Grid.Col>
-          <Grid.Col span={{ base: 6, sm: 3 }}>
-            <Card withBorder p="md" radius="md">
-              <Group gap="xs">
-                <ThemeIcon size="md" variant="light" color="orange">
-                  <IconClock size={16} />
-                </ThemeIcon>
-                <Box>
-                  <Text size="md" c="dimmed">
-                    Menunggu
-                  </Text>
-                  <Text size="lg" fw={600}>
-                    {stats.pendingCount}
-                  </Text>
-                </Box>
-              </Group>
-            </Card>
-          </Grid.Col>
-          <Grid.Col span={{ base: 6, sm: 3 }}>
-            <Card withBorder p="md" radius="md">
-              <Group gap="xs">
-                <ThemeIcon size="md" variant="light" color="red">
-                  <IconX size={16} />
-                </ThemeIcon>
-                <Box>
-                  <Text size="md" c="dimmed">
-                    Ditolak
-                  </Text>
-                  <Text size="lg" fw={600}>
-                    {stats.rejectedCount}
-                  </Text>
-                </Box>
-              </Group>
-            </Card>
-          </Grid.Col>
-        </Grid>
-
-        {/* Search */}
-        <TextInput
-          aria-label="Cari kegiatan atau status"
-          inputMode="search"
-          enterKeyHint="search"
-          placeholder="Cari berdasarkan nama kegiatan atau status..."
-          leftSection={<IconSearch size={16} />}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-
-        {/* Results Count */}
-        {filteredActivities.length !== activities.length && (
-          <Text size="md" c="dimmed">
-            Menampilkan {filteredActivities.length} dari {activities.length}{" "}
-            kegiatan
+    <PageContainer size="lg" className={classes.page}>
+      <StatusHeader />
+      {!data && history.pending && <StatusSkeleton />}
+      {history.error && (
+        <Alert color="red" title="Status kegiatan belum dapat dimuat" mb="md">
+          <Text>Silakan coba lagi untuk memuat pendaftaran Anda.</Text>
+          <Button mt="sm" onClick={history.retry}>
+            Coba lagi
+          </Button>
+        </Alert>
+      )}
+      {data?.summary.total === 0 ? (
+        <Paper withBorder className={classes.empty}>
+          <Title order={2} size="h3">
+            Belum ada kegiatan terdaftar
+          </Title>
+          <Text c="dimmed">
+            Kegiatan yang Anda daftarkan akan muncul di sini.
           </Text>
-        )}
-
-        {/* Activities List */}
-        <Stack gap="md">
-          {paginatedActivities.map((activity) => {
-            const certificateCta = getCertificateCta({
-              certificateCode: activity.certificate_code,
-              certificateState: activity.certificate_state,
-              hasTemplate: Boolean(
-                activity.activity.additional_config?.certificate_template_id,
-              ),
-              isPassed:
-                activity.status ===
-                ACTIVITY_REGISTRANT_STATUS_ENUM.LULUS_KEGIATAN,
-              registrationId: activity.id,
-            });
-
-            return (
-              <Card key={activity.activity_id} withBorder p="md" radius="md">
-                <Stack gap="sm">
-                  <Group justify="space-between" align="flex-start" wrap="wrap">
-                    <Box
-                      style={{ flex: 1, minWidth: 0, overflowWrap: "anywhere" }}
-                    >
-                      <Text fw={600} size="md">
-                        {activity.activity.name}
-                      </Text>
-                    </Box>
-                    <Button
-                      component={Link}
-                      href={`/activity/${activity.activity.slug}`}
-                      rightSection={<IconExternalLink aria-hidden size={14} />}
-                      size="sm"
-                      variant="light"
-                    >
-                      Detail
-                    </Button>
-                  </Group>
-                  <Group gap="xs" align="center">
-                    <Badge
-                      size="md"
-                      variant="light"
-                      color={getStatusColor(activity.status)}
-                      leftSection={getStatusIcon(activity.status)}
-                    >
-                      {activity.status}
-                    </Badge>
-                  </Group>
-                  {activity.status ===
-                    ACTIVITY_REGISTRANT_STATUS_ENUM.BELUM_DIUMUMKAN &&
-                    activity.visible_at && (
-                      <Group gap={6} align="center">
-                        <ThemeIcon
-                          size="md"
-                          variant="transparent"
-                          color="orange"
-                        >
-                          <IconClock size={14} />
-                        </ThemeIcon>
-                        <Text size="md" c="orange.7" fw={500}>
-                          Estimasi pengumuman: {formatDate(activity.visible_at)}
-                        </Text>
-                      </Group>
-                    )}
-                  {certificateCta && (
-                    <Button
-                      color={certificateCta.color}
-                      component={Link}
-                      href={certificateCta.href}
-                      leftSection={<IconCertificate aria-hidden size={14} />}
-                      size="sm"
-                      variant="light"
-                    >
-                      {certificateCta.label}
-                    </Button>
-                  )}
-                </Stack>
-              </Card>
-            );
-          })}
-        </Stack>
-
-        {/* No Results */}
-        {filteredActivities.length === 0 && activities.length > 0 && (
-          <Box ta="center" py="xl">
-            <ThemeIcon
-              size={60}
-              radius="xl"
-              variant="light"
-              color="gray"
-              mb="md"
-            >
-              <IconSearch size={30} />
-            </ThemeIcon>
-            <Text size="lg" c="dimmed" mb="xs">
-              Tidak ada kegiatan yang ditemukan
-            </Text>
-            <Text size="md" c="dimmed">
-              Coba ubah kata kunci pencarian
-            </Text>
-          </Box>
-        )}
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <Center>
-            <Pagination
-              total={totalPages}
-              onChange={setPage}
-              value={page}
-              siblings={1}
-              size="md"
+          <Button component={Link} href="/activity">
+            Cari kegiatan
+          </Button>
+        </Paper>
+      ) : data ? (
+        <Stack gap="lg" aria-busy={history.pending}>
+          <div className={classes.toolbar}>
+            <TextInput
+              ref={searchInput}
+              label="Cari kegiatan"
+              placeholder="Nama kegiatan"
+              inputMode="search"
+              enterKeyHint="search"
+              leftSection={<IconSearch size={18} aria-hidden />}
+              value={query}
+              onChange={(event) => {
+                setQuery(event.currentTarget.value);
+              }}
             />
-          </Center>
-        )}
-      </Stack>
+            <Select
+              label="Status kegiatan"
+              value={status}
+              data={STATUS_OPTIONS}
+              allowDeselect={false}
+              onChange={(value) => {
+                setStatus(value ?? "all");
+              }}
+            />
+          </div>
+          <div className={classes.resultsHeader}>
+            <div role="status">
+              <Title
+                order={2}
+                size="h4"
+                tabIndex={-1}
+                ref={resultsHeading}
+                className={classes.resultsHeading}
+              >
+                {hasFilters
+                  ? `${data.meta.total} dari ${data.summary.total}`
+                  : data.summary.total}{" "}
+                pendaftaran
+              </Title>
+              <Text c="dimmed" size="sm">
+                {history.pending
+                  ? "Memuat status kegiatan..."
+                  : "Pendaftaran terbaru"}
+              </Text>
+            </div>
+            {hasFilters && (
+              <Button variant="subtle" onClick={clearFilters}>
+                Hapus filter
+              </Button>
+            )}
+          </div>
+          {filtered.length > 0 ? (
+            <Stack gap="md">
+              {filtered.map((registration) => (
+                <StatusRegistrationCard
+                  key={registration.id}
+                  registration={registration}
+                />
+              ))}
+            </Stack>
+          ) : (
+            <Paper withBorder className={classes.empty}>
+              <Title order={3} size="h4">
+                Tidak ada kegiatan yang sesuai
+              </Title>
+              <Text c="dimmed">
+                Coba kata kunci lain atau hapus filter untuk melihat semua
+                pendaftaran.
+              </Text>
+            </Paper>
+          )}
+          {pages > 1 && (
+            <nav aria-label="Halaman pendaftaran kegiatan">
+              <Pagination
+                total={pages}
+                value={currentPage}
+                disabled={history.pending}
+                onChange={changePage}
+                layout="responsive"
+                classNames={{
+                  control: classes.paginationControl,
+                  label: classes.paginationLabel,
+                }}
+                formatLabel={({ page: activePage, totalPages }) =>
+                  `Halaman ${activePage} dari ${totalPages}`
+                }
+                getItemProps={(value) => ({ "aria-label": `Halaman ${value}` })}
+              />
+            </nav>
+          )}
+        </Stack>
+      ) : null}
     </PageContainer>
   );
 }

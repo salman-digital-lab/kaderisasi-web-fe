@@ -45,7 +45,11 @@ for (const route of routes) {
     baseURL,
   }, testInfo) => {
     await context.addCookies([
-      { name: "session", value: "ui-preview", url: baseURL! },
+      {
+        name: "session",
+        value: route.name === "status" ? "profile-status-cls" : "ui-preview",
+        url: baseURL!,
+      },
     ]);
     await page.addInitScript(() => {
       const shifts: Shift[] = [];

@@ -1,4 +1,5 @@
 import { activity } from "./fixtures.mjs";
+import { statusRegistrations } from "./status-fixtures.mjs";
 
 // Isolated in-memory accounts for profile browser tests; no shared services or storage.
 const accounts = new Map();
@@ -72,7 +73,10 @@ export async function handleProfileFixture(request, response, url) {
   const path = url.pathname;
   if (path === "/v2/certificates/code/CERT-UI/access")
     return send(response, { can_download: true, reason: "owner" });
-  if (path === "/v2/certificates/code/CERT-UI")
+  if (
+    path === "/v2/certificates/code/CERT-UI" ||
+    path === "/v2/certificates/code/CERT-UI/download"
+  )
     return send(response, {
       state: "issued_active",
       activity: {
@@ -127,6 +131,101 @@ export async function handleProfileFixture(request, response, url) {
     return send(response, { data: [{ id: 1, name: "Institut Uji" }] });
   const token = request.headers.authorization?.replace("Bearer ", "") ?? "";
   if (!token.startsWith("profile-")) return false;
+  if (path === "/v2/achievements/1001")
+    return send(response, {
+      id: 1001,
+      user_id: 1,
+      name: "Older achievement",
+      description: "Older than the first hundred records",
+      achievement_date: "2025-01-01",
+      type: 0,
+      score: 0,
+      proof: "fixture-proof.pdf",
+      status: 0,
+      remark: "",
+    });
+  const historySection = path.match(
+    /^\/v2\/profiles\/history\/(activities|consultations|achievements)$/,
+  )?.[1];
+  if (historySection) {
+    const legacyPath = {
+      activities: "/v2/profiles/activities",
+      consultations: "/v2/ruang-curhat",
+      achievements: "/v2/achievements",
+    }[historySection];
+    let envelope;
+    const captured = {
+      statusCode: 200,
+      end(body) {
+        envelope = JSON.parse(body);
+      },
+    };
+    await handleProfileFixture(request, captured, new URL(legacyPath, url));
+    if (captured.statusCode !== 200)
+      return send(response, null, captured.statusCode, envelope.message);
+    let rows =
+      historySection === "achievements" ? envelope.data.data : envelope.data;
+    if (historySection === "activities")
+      rows = rows
+        .map(({ activity: item, ...row }) => ({
+          ...row,
+          activity_name: item.name,
+          activity_slug: item.slug,
+          image_url: item.additional_config?.images?.[0] ?? null,
+          has_certificate: Boolean(
+            item.additional_config?.certificate_template_id,
+          ),
+          visible_at: row.visible_at ?? null,
+          created_at: row.created_at ?? null,
+        }))
+        .sort(
+          (a, b) =>
+            (Date.parse(b.created_at) || 0) - (Date.parse(a.created_at) || 0) ||
+            b.id - a.id,
+        );
+    const summary = { total: rows.length };
+    if (historySection === "achievements")
+      summary.points = rows.reduce((sum, row) => sum + row.score, 0);
+    if (historySection === "activities")
+      for (const [key, statuses] of Object.entries({
+        accepted: ["DITERIMA", "LULUS KEGIATAN"],
+        rejected: ["TIDAK DITERIMA", "TIDAK LULUS"],
+        pending: ["TERDAFTAR", "BELUM DIUMUMKAN"],
+      }))
+        summary[key] = rows.filter((row) =>
+          statuses.includes(row.status),
+        ).length;
+    const search = (url.searchParams.get("search") ?? "").trim().toLowerCase();
+    const status = url.searchParams.get("status");
+    rows = rows.filter(
+      (row) =>
+        (!status || status === "all" || String(row.status) === status) &&
+        (!search ||
+          [
+            row.activity_name,
+            row.name,
+            row.problem_category,
+            row.problem_description,
+            row.handling_technic,
+            row.owner_name,
+          ].some((value) => value?.toLowerCase().includes(search))),
+    );
+    const page = Math.max(1, Number(url.searchParams.get("page")) || 1);
+    const perPage = Math.min(
+      100,
+      Math.max(1, Number(url.searchParams.get("per_page")) || 6),
+    );
+    return send(response, {
+      items: rows.slice((page - 1) * perPage, page * perPage),
+      meta: {
+        total: rows.length,
+        current_page: page,
+        per_page: perPage,
+        last_page: Math.max(1, Math.ceil(rows.length / perPage)),
+      },
+      summary,
+    });
+  }
   const state = account(token);
   if (token.includes("expired"))
     return send(response, null, 401, "Unauthorized");
@@ -180,6 +279,11 @@ export async function handleProfileFixture(request, response, url) {
     return send(response, { picture: "" });
   }
   if (path === "/v2/profiles/activities") {
+    if (token.startsWith("profile-status-")) {
+      if (token.includes("slow"))
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+      return send(response, token.includes("empty") ? [] : statusRegistrations);
+    }
     const statuses = [
       "TERDAFTAR",
       "DITERIMA",

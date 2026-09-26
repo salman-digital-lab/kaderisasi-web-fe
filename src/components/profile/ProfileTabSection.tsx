@@ -3,10 +3,7 @@ import { redirect } from "next/navigation";
 import { getProfile } from "@/services/profile";
 import { getProvinces, getCountries } from "@/services/profile.cache";
 import { verifySession } from "@/functions/server/session";
-import { getActivitiesRegistration } from "@/services/activity";
 import { ProfileTab } from "@/features/profile/ProfileTab";
-import { getRuangCurhat } from "@/services/ruangcurhat";
-import { getMyAchievements } from "@/services/leaderboard";
 import { FetcherError } from "@/functions/common/fetcher";
 import type { ProfileSection } from "@/features/profile/types";
 
@@ -30,20 +27,10 @@ async function loadSection<T>(
 export default async function ProfileTabSection(): Promise<ReactElement> {
   const { session } = await verifySession();
   if (!session) redirect("/login");
-  const [
-    profile,
-    provinces,
-    countries,
-    activities,
-    consultations,
-    achievements,
-  ] = await Promise.all([
+  const [profile, provinces, countries] = await Promise.all([
     loadSection(getProfile(session), "Data diri"),
     loadSection(getProvinces(), "Daftar provinsi"),
     loadSection(getCountries(), "Daftar negara"),
-    loadSection(getActivitiesRegistration(session), "Kegiatan"),
-    loadSection(getRuangCurhat(session), "Sesi Ruang Curhat"),
-    loadSection(getMyAchievements(session), "Prestasi"),
   ]);
   return (
     <ProfileTab
@@ -51,9 +38,6 @@ export default async function ProfileTabSection(): Promise<ReactElement> {
         profile,
         provinces,
         countries,
-        activities,
-        consultations,
-        achievements,
       }}
       token={session}
     />

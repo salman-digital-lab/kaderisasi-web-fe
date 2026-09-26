@@ -9,37 +9,30 @@ import {
   Title,
 } from "@mantine/core";
 import { IconPlus, IconSearch } from "@tabler/icons-react";
-import { useState } from "react";
 import type { ReactElement } from "react";
 import Link from "next/link";
-import type { RuangCurhatData } from "@/types/model/ruangcurhat";
+import { useProfileHistory } from "../use-profile-history";
+import { HistoryFeedback, HistoryPagination } from "../HistoryFeedback";
 import { PROBLEM_STATUS_RENDER } from "@/constants/render/ruangcurhat";
 import RuangCurhatCard from "@/components/common/RuangCurhatCard";
 import classes from "../profile.module.css";
 
 export default function RuangCurhatList({
-  data,
+  active,
 }: {
-  data: RuangCurhatData[];
+  active: boolean;
 }): ReactElement {
-  const [query, setQuery] = useState("");
-  const [status, setStatus] = useState("all");
-  const filtered = data.filter(
-    (item) =>
-      (status === "all" || String(item.status) === status) &&
-      [
-        item.problem_category,
-        item.problem_description,
-        item.handling_technic,
-        item.owner_name,
-      ].some((value) =>
-        value
-          ?.toLocaleLowerCase("id")
-          .includes(query.trim().toLocaleLowerCase("id")),
-      ),
-  );
+  const history = useProfileHistory("consultations", active);
+  const {
+    data,
+    search: query,
+    status,
+    setSearch: setQuery,
+    setStatus,
+  } = history;
+  const filtered = data?.items ?? [];
   return (
-    <Stack gap="lg">
+    <Stack gap="lg" aria-busy={history.pending}>
       <div className={classes.sectionHeader}>
         <div>
           <Title order={2} size="h3">
@@ -58,7 +51,8 @@ export default function RuangCurhatList({
           Ajukan sesi baru
         </Button>
       </div>
-      {data.length ? (
+      <HistoryFeedback {...history} />
+      {data && data.summary.total > 0 ? (
         <>
           <div className={classes.toolbar}>
             <TextInput
@@ -82,37 +76,37 @@ export default function RuangCurhatList({
             />
           </div>
           <Text c="dimmed" role="status">
-            Menampilkan {filtered.length} dari {data.length} sesi
+            Menampilkan {data.meta.total} dari {data.summary.total} sesi
           </Text>
           <Stack gap="md">
             {filtered.map((item) => (
               <RuangCurhatCard key={item.id} data={item} />
             ))}
           </Stack>
-          {!filtered.length && (
+          {!filtered.length && !history.pending && (
             <Paper withBorder className={classes.empty}>
               <Text fw={600}>Tidak ada sesi yang sesuai</Text>
-              <Button
-                variant="light"
-                mt="sm"
-                onClick={() => {
-                  setQuery("");
-                  setStatus("all");
-                }}
-              >
+              <Button variant="light" mt="sm" onClick={history.clear}>
                 Hapus pencarian
               </Button>
             </Paper>
           )}
+          <HistoryPagination
+            total={data.meta.last_page}
+            page={history.page}
+            pending={history.pending}
+            onChange={history.setPage}
+            label="Halaman sesi Ruang Curhat"
+          />
         </>
-      ) : (
+      ) : data && !history.pending && !history.error ? (
         <Paper withBorder className={classes.empty}>
           <Text fw={600}>Belum ada sesi Ruang Curhat</Text>
           <Text c="dimmed" mt="xs">
             Riwayat sesi akan muncul setelah Anda mengajukan konseling.
           </Text>
         </Paper>
-      )}
+      ) : null}
     </Stack>
   );
 }

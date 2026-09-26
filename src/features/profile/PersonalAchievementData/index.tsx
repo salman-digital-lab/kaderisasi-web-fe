@@ -21,7 +21,9 @@ import {
 import { useState } from "react";
 import type { ReactElement } from "react";
 import Link from "next/link";
-import type { Achievement } from "@/types/model/achievement";
+import type { AchievementHistoryItem } from "@/types/api/profile-history";
+import { useProfileHistory } from "../use-profile-history";
+import { HistoryFeedback, HistoryPagination } from "../HistoryFeedback";
 import { ACHIEVEMENT_STATUS_ENUM as Status } from "@/types/constants/achievement";
 import {
   ACHIEVEMENT_STATUS_RENDER,
@@ -34,7 +36,7 @@ import classes from "../profile.module.css";
 function AchievementDetails({
   achievement,
 }: {
-  achievement: Achievement;
+  achievement: AchievementHistoryItem;
 }): ReactElement {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -102,29 +104,30 @@ function AchievementDetails({
   );
 }
 export default function PersonalAchievementData({
-  achievements,
+  active,
 }: {
-  achievements: Achievement[];
+  active: boolean;
 }): ReactElement {
-  const [query, setQuery] = useState("");
-  const [status, setStatus] = useState("all");
-  const totalScore = achievements.reduce((sum, item) => sum + item.score, 0);
-  const filtered = achievements.filter(
-    (item) =>
-      (status === "all" || String(item.status) === status) &&
-      item.name
-        .toLocaleLowerCase("id")
-        .includes(query.trim().toLocaleLowerCase("id")),
-  );
+  const history = useProfileHistory("achievements", active);
+  const {
+    data,
+    search: query,
+    status,
+    setSearch: setQuery,
+    setStatus,
+  } = history;
+  const filtered = data?.items ?? [];
   return (
-    <Stack gap="lg">
+    <Stack gap="lg" aria-busy={history.pending}>
       <div className={classes.sectionHeader}>
         <div>
           <Title order={2} size="h3">
             Prestasi saya
           </Title>
           <Text c="dimmed" mt={4}>
-            {achievements.length} prestasi · {totalScore} total poin
+            {data
+              ? `${data.summary.total} prestasi · ${data.summary.points} total poin`
+              : "Riwayat prestasi dan poin Anda."}
           </Text>
         </div>
         <Button
@@ -136,7 +139,8 @@ export default function PersonalAchievementData({
           Tambah prestasi
         </Button>
       </div>
-      {achievements.length ? (
+      <HistoryFeedback {...history} />
+      {data && data.summary.total > 0 ? (
         <>
           <div className={classes.toolbar}>
             <TextInput
@@ -160,7 +164,7 @@ export default function PersonalAchievementData({
             />
           </div>
           <Text c="dimmed" role="status">
-            Menampilkan {filtered.length} dari {achievements.length} prestasi
+            Menampilkan {data.meta.total} dari {data.summary.total} prestasi
           </Text>
           <Accordion variant="separated" radius="md">
             {filtered.map((item) => (
@@ -194,30 +198,30 @@ export default function PersonalAchievementData({
               </Accordion.Item>
             ))}
           </Accordion>
-          {!filtered.length && (
+          {!filtered.length && !history.pending && (
             <Paper withBorder className={classes.empty}>
               <Text fw={600}>Tidak ada prestasi yang sesuai</Text>
-              <Button
-                variant="light"
-                mt="sm"
-                onClick={() => {
-                  setQuery("");
-                  setStatus("all");
-                }}
-              >
+              <Button variant="light" mt="sm" onClick={history.clear}>
                 Hapus pencarian
               </Button>
             </Paper>
           )}
+          <HistoryPagination
+            total={data.meta.last_page}
+            page={history.page}
+            pending={history.pending}
+            onChange={history.setPage}
+            label="Halaman prestasi saya"
+          />
         </>
-      ) : (
+      ) : data && !history.pending && !history.error ? (
         <Paper withBorder className={classes.empty}>
           <Text fw={600}>Belum ada prestasi</Text>
           <Text c="dimmed" mt="xs">
             Tambahkan prestasi beserta buktinya untuk ditinjau.
           </Text>
         </Paper>
-      )}
+      ) : null}
     </Stack>
   );
 }

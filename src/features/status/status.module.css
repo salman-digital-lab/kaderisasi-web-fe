@@ -1,0 +1,87 @@
+.page {
+  min-width: 0;
+}
+.toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--mantine-spacing-md);
+  align-items: end;
+}
+.resultsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--mantine-spacing-xs);
+}
+.resultsHeading {
+  scroll-margin-top: var(--mantine-spacing-lg);
+}
+.paginationControl,
+.paginationLabel {
+  font-size: var(--mantine-font-size-md);
+}
+.paginationLabel {
+  flex: 1;
+  min-width: 0;
+  height: auto;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+.card {
+  min-width: 0;
+}
+.activityTitle {
+  font-size: var(--mantine-font-size-lg);
+  line-height: 1.45;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.badge {
+  max-width: 100%;
+  height: auto;
+  min-height: 1.75rem;
+  font-size: var(--mantine-font-size-sm);
+  padding-block: 0.25rem;
+  align-self: flex-start;
+}
+.badge :global(.mantine-Badge-label) {
+  white-space: normal;
+  overflow: visible;
+}
+.announcement {
+  padding: var(--mantine-spacing-sm);
+  border-radius: var(--mantine-radius-sm);
+  background: var(--surface-subtle);
+  overflow-wrap: anywhere;
+}
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mantine-spacing-sm);
+  margin-top: var(--mantine-spacing-xs);
+}
+.certificateAction {
+  color: light-dark(
+    color-mix(in srgb, var(--button-color) 80%, black),
+    var(--button-color)
+  );
+}
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--mantine-spacing-md);
+  padding: var(--mantine-spacing-xl) var(--mantine-spacing-md);
+  text-align: center;
+}
+@media (min-width: 48em) {
+  .toolbar {
+    grid-template-columns: minmax(0, 1fr) 15rem;
+  }
+  .actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}

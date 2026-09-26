@@ -1,6 +1,8 @@
 import fetcher from "@/functions/common/fetcher";
 import { getApiConfig } from "@/config/apiConfig";
-import {
+import type { Achievement } from "@/types/model/achievement";
+import type { APIResponse } from "@/types/helper";
+import type {
   GetMonthlyLeaderboardResp,
   GetLifetimeLeaderboardResp,
   SubmitAchievementReq,
@@ -130,4 +132,16 @@ export const getMyAchievements = async (
   );
 
   return response.data.data;
+};
+
+export const getMyAchievement = async (
+  token: string,
+  id: string,
+): Promise<Achievement | undefined> => {
+  if (!/^[1-9]\d*$/.test(id) || Number(id) > 2147483647) return undefined;
+  const response = await fetcher<APIResponse<Achievement>>(
+    `${getApiConfig().beApi}/achievements/${id}`,
+    { headers: { Authorization: `Bearer ${token}` }, cache: "no-store" },
+  );
+  return response.data;
 };

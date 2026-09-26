@@ -741,7 +741,7 @@ test("comparison screenshots, 200 percent text zoom and 44 pixel actions", async
   }
 });
 
-test("a new profile-service failure during retry preserves the mounted draft", async ({
+test("history retries do not refetch identity or discard the mounted draft", async ({
   page,
   context,
 }) => {
@@ -754,14 +754,11 @@ test("a new profile-service failure during retry preserves the mounted draft", a
   await page.getByRole("button", { name: "Coba lagi" }).click();
   await expect(page.getByRole("article")).toHaveCount(6);
   await tab(page, "Data Diri");
-  await expect(page.getByRole("main").getByRole("alert")).toContainText(
-    "Data diri belum dapat dimuat",
-  );
+  await expect(page.getByRole("main").getByRole("alert")).toHaveCount(0);
   await expect(page.getByLabel("Nama panggilan", { exact: true })).toHaveValue(
     "Draf tetap tersedia",
   );
-  await page.getByRole("button", { name: "Coba lagi" }).click();
-  await expect(page.getByRole("main").getByRole("alert")).toHaveCount(0);
+
   await expect(page.getByLabel("Nama panggilan", { exact: true })).toHaveValue(
     "Draf tetap tersedia",
   );

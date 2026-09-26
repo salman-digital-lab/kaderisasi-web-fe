@@ -2,7 +2,7 @@
 import { Badge, Button, Group, Paper, Stack, Text, Title } from "@mantine/core";
 import { useId, useState } from "react";
 import type { ReactElement } from "react";
-import type { RuangCurhatData } from "@/types/model/ruangcurhat";
+import type { ConsultationHistoryItem } from "@/types/api/profile-history";
 import { PROBLEM_OWNER_ENUM } from "@/types/constants/ruangcurhat";
 import {
   PROBLEM_STATUS_RENDER,
@@ -13,7 +13,7 @@ import classes from "@/features/profile/profile.module.css";
 export default function RuangCurhatCard({
   data,
 }: {
-  data: RuangCurhatData;
+  data: ConsultationHistoryItem;
 }): ReactElement {
   const [expanded, setExpanded] = useState(false);
   const descriptionId = useId();
