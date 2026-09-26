@@ -9,6 +9,7 @@ import { forwardRef, type CSSProperties, type ReactNode } from "react";
 import QRCode from "react-qr-code";
 import { resolvePublicCertificateText } from "../utils/certificateData";
 import classes from "./index.module.css";
+import { FittedCertificateName } from "../FittedCertificateName";
 
 type CertificateCanvasProps = {
   data: PublicCertificateData;
@@ -86,7 +87,14 @@ function CertificateElementRenderer({
     if (isText) {
       return (
         <div style={textStyle}>
-          {resolvePublicCertificateText(element, data)}
+          {element.variable === "{{name}}" ? (
+            <FittedCertificateName
+              text={resolvePublicCertificateText(element, data)}
+              fontSize={element.fontSize ?? 16}
+            />
+          ) : (
+            resolvePublicCertificateText(element, data)
+          )}
         </div>
       );
     }

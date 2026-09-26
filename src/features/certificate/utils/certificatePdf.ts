@@ -1,4 +1,5 @@
 import type { jsPDF } from "jspdf";
+import { fitCertificateNames } from "./fit-certificate-names";
 import { salmanScoreOverflow } from "../SalmanScoreSheet";
 import {
   fitScoreSheet,
@@ -122,7 +123,10 @@ async function renderCertificatePage(
         (item) => item.id === node.dataset.certificateElementId,
       );
       if (element && node.firstElementChild)
-        node.firstElementChild.textContent = resolveText(element);
+        (
+          node.querySelector("[data-certificate-name-content]") ??
+          node.firstElementChild
+        ).textContent = resolveText(element);
     });
   document.body.appendChild(source);
   let raster: HTMLCanvasElement | undefined;
@@ -144,15 +148,17 @@ async function renderCertificatePage(
       ...Array.from(source.querySelectorAll("img")).map(waitForImage),
       ...backgrounds.map(waitForImage),
     ]);
+    fitCertificateNames(source);
     if (template.scoreSheetLayout === "salman-v1") {
       const clipped = Array.from(
         source.querySelectorAll<HTMLElement>("[data-certificate-text-element]"),
       ).filter((node) => {
         const content = node.firstElementChild;
         return Boolean(
-          content &&
-          (content.scrollHeight > content.clientHeight + 1 ||
-            content.scrollWidth > content.clientWidth + 1),
+          node.querySelector('[data-certificate-name-overflow="true"]') ||
+          (content &&
+            (content.scrollHeight > content.clientHeight + 1 ||
+              content.scrollWidth > content.clientWidth + 1)),
         );
       });
       if (clipped.length)
