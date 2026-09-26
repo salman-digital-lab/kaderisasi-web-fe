@@ -1,7 +1,7 @@
 import PageContainer from "@/components/layout/PageContainer";
 import { verifySession } from "@/functions/server/session";
 import { loadRegistrationForm } from "@/features/customForm/load-registration-form";
-import { getActivity } from "@/services/activity.cache";
+import { getActivityDetail } from "@/services/activity.cache";
 import { getClub } from "@/services/club";
 import { getRegistrationStatus } from "@/services/clubRegistration";
 import { redirect } from "next/navigation";
@@ -112,7 +112,7 @@ export default async function Page(props: {
     featureType === "activity_registration" &&
     activitySlug
   ) {
-    const activityData = await getActivity({ slug: activitySlug }).catch(
+    const activityData = await getActivityDetail({ slug: activitySlug }).catch(
       () => null,
     );
     isGuest =

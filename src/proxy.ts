@@ -1,27 +1,17 @@
-import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { SESSION_COOKIE_NAME } from "@/constants";
 import { getAuthRedirect } from "@/features/auth/redirect";
 
-const protectedRoutes = ["/profile"];
-const publicRoutes = ["/login", "/register", "/signup", "/"];
-
-export default async function proxy(req: NextRequest) {
+export default function proxy(req: NextRequest): NextResponse {
   const path = req.nextUrl.pathname;
-  const isProtectedRoute = protectedRoutes.includes(path);
-  const isPublicRoute = publicRoutes.includes(path);
+  const cookie = req.cookies.get(SESSION_COOKIE_NAME)?.value;
 
-  const cookie = (await cookies()).get("session")?.value;
-
-  if (isProtectedRoute && !cookie) {
+  if (path === "/profile" && !cookie) {
     return NextResponse.redirect(new URL("/login", req.nextUrl));
   }
 
-  if (
-    isPublicRoute &&
-    cookie &&
-    (req.nextUrl.pathname.startsWith("/login") ||
-      req.nextUrl.pathname.startsWith("/register"))
-  ) {
+  if (cookie && (path === "/login" || path === "/register")) {
     return NextResponse.redirect(
       new URL(
         getAuthRedirect(req.nextUrl.searchParams.get("redirect")),
@@ -34,5 +24,5 @@ export default async function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"],
+  matcher: ["/profile", "/login", "/register"],
 };

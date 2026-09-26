@@ -1,9 +1,9 @@
 import { Alert, Group, Skeleton, Stack } from "@mantine/core";
+import type { ReactElement } from "react";
 import { getCustomFormByFeature } from "@/services/customForm";
 import { verifySession } from "@/functions/server/session";
 import { FetcherError } from "@/functions/common/fetcher";
 import ClubRegistrationButton from "@/components/common/ClubRegistrationButton";
-import type { CustomForm } from "@/types/api/customForm";
 
 type ClubRegistrationActionProps = {
   clubId: number;
@@ -12,7 +12,7 @@ type ClubRegistrationActionProps = {
 };
 
 type CustomFormResult = {
-  customForm?: CustomForm;
+  hasActiveForm: boolean;
   customFormError: boolean;
 };
 
@@ -21,7 +21,7 @@ async function getRegistrationForm(
   isRegistrationOpen: boolean,
 ): Promise<CustomFormResult> {
   if (!isRegistrationOpen) {
-    return { customFormError: false };
+    return { hasActiveForm: false, customFormError: false };
   }
 
   try {
@@ -29,9 +29,13 @@ async function getRegistrationForm(
       feature_type: "club_registration",
       feature_id: clubId,
     });
-    return { customForm, customFormError: false };
+    return {
+      hasActiveForm: Boolean(customForm?.is_active),
+      customFormError: false,
+    };
   } catch (error: unknown) {
     return {
+      hasActiveForm: false,
       customFormError: !(error instanceof FetcherError && error.status === 404),
     };
   }
@@ -41,11 +45,11 @@ export async function ClubRegistrationAction({
   clubId,
   clubName,
   isRegistrationOpen,
-}: ClubRegistrationActionProps) {
-  const [sessionData, formResult] = await Promise.all([
-    verifySession(),
-    getRegistrationForm(clubId, isRegistrationOpen),
-  ]);
+}: ClubRegistrationActionProps): Promise<ReactElement> {
+  const sessionData = await verifySession();
+  const formResult: CustomFormResult = sessionData.session
+    ? await getRegistrationForm(clubId, isRegistrationOpen)
+    : { hasActiveForm: false, customFormError: false };
 
   return (
     <ClubRegistrationButton
@@ -53,13 +57,13 @@ export async function ClubRegistrationAction({
       clubName={clubName}
       isAuthenticated={Boolean(sessionData.session)}
       isRegistrationOpen={isRegistrationOpen}
-      customForm={formResult.customForm}
+      hasActiveForm={formResult.hasActiveForm}
       customFormError={formResult.customFormError}
     />
   );
 }
 
-export function ClubRegistrationActionFallback() {
+export function ClubRegistrationActionFallback(): ReactElement {
   return (
     <Alert color="gray" title="Memuat pilihan pendaftaran" aria-live="polite">
       <Stack gap="sm">

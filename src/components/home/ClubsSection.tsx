@@ -6,11 +6,15 @@ import {
   Text,
   Title,
 } from "@mantine/core";
+import { connection } from "next/server";
 import ClubCard from "@/components/common/ClubCard";
 import LinkButton from "@/components/common/LinkButton";
-import { getClubs } from "@/services/club";
+import { getClubs } from "@/services/club.cache";
 
 export async function ClubsSection() {
+  // Registration deadlines use the current request time, even with cached data.
+  await connection();
+
   let clubs: Awaited<ReturnType<typeof getClubs>>["data"];
 
   try {

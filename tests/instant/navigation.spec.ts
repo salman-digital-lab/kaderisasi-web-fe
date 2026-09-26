@@ -140,7 +140,7 @@ test("consultation still requires login to register", async ({ page }) => {
     .getByRole("link", { name: "Masuk", exact: true });
   await expect(login).toHaveAttribute(
     "href",
-    "/login?redirect=http://localhost:3000/consultation",
+    "/login?redirect=%2Fconsultation",
   );
   await expect(page.getByRole("textbox")).toHaveCount(0);
 });

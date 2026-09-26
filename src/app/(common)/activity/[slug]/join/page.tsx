@@ -12,7 +12,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { verifySession } from "@/functions/server/session";
-import { getActivity } from "@/services/activity.cache";
+import { getActivityDetail } from "@/services/activity.cache";
 import ErrorWrapper from "@/components/layout/Error";
 import { ACTIVITY_TYPE_ENUM } from "@/types/constants/activity";
 
@@ -25,7 +25,7 @@ export default async function Page(props: {
   let activity;
 
   try {
-    activity = await getActivity({ slug: params.slug });
+    activity = await getActivityDetail({ slug: params.slug });
   } catch {
     return <ErrorWrapper message="Kegiatan tidak ditemukan" />;
   }

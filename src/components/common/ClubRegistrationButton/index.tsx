@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import type { ReactElement } from "react";
 import Link from "next/link";
 import {
   Alert,
@@ -24,7 +25,6 @@ import {
   checkClubRegistrationStatus,
 } from "@/functions/server/clubRegistration";
 import { getRegistrationPresentation } from "@/features/clubs/registration-state";
-import type { CustomForm } from "@/types/api/customForm";
 import type { ClubRegistrationStatus } from "@/types/model/clubRegistration";
 
 type StatusCheckState = "loading" | "loaded" | "error" | "unauthenticated";
@@ -34,7 +34,7 @@ interface ClubRegistrationButtonProps {
   clubName: string;
   isAuthenticated: boolean;
   isRegistrationOpen: boolean;
-  customForm?: CustomForm;
+  hasActiveForm: boolean;
   customFormError?: boolean;
 }
 
@@ -43,9 +43,9 @@ export default function ClubRegistrationButton({
   clubName,
   isAuthenticated,
   isRegistrationOpen,
-  customForm,
+  hasActiveForm,
   customFormError = false,
-}: ClubRegistrationButtonProps) {
+}: ClubRegistrationButtonProps): ReactElement {
   const [registrationStatus, setRegistrationStatus] =
     useState<ClubRegistrationStatus | null>(null);
   const [checkState, setCheckState] = useState<StatusCheckState>(
@@ -269,7 +269,7 @@ export default function ClubRegistrationButton({
     );
   }
 
-  if (!customForm?.is_active) {
+  if (!hasActiveForm) {
     return (
       <Alert color="yellow" title="Form pendaftaran belum tersedia">
         Pendaftaran belum dapat dilakukan. Silakan coba kembali nanti.
