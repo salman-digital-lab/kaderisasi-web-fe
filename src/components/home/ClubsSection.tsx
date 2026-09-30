@@ -9,16 +9,16 @@ import {
 import { connection } from "next/server";
 import ClubCard from "@/components/common/ClubCard";
 import LinkButton from "@/components/common/LinkButton";
-import { getClubs } from "@/services/club.cache";
+import { getHomepageClubs } from "@/services/homepage-clubs";
 
 export async function ClubsSection() {
-  // Registration deadlines use the current request time, even with cached data.
+  // Select clubs and evaluate registration deadlines for each request.
   await connection();
 
-  let clubs: Awaited<ReturnType<typeof getClubs>>["data"];
+  let clubs: Awaited<ReturnType<typeof getHomepageClubs>>;
 
   try {
-    ({ data: clubs } = await getClubs({ per_page: "4" }));
+    clubs = await getHomepageClubs();
   } catch {
     return (
       <Container size="lg" py="var(--page-space)">
