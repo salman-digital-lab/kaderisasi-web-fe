@@ -1,18 +1,10 @@
 "use client";
 
-import {
-  Button,
-  Paper,
-  Stack,
-  Text,
-  Title,
-  TextInput,
-  Select,
-} from "@mantine/core";
-import { IconSearch, IconPlus } from "@tabler/icons-react";
+import { Button, Paper, Stack, Text, TextInput, Select } from "@mantine/core";
+import { IconSearch } from "@tabler/icons-react";
 import type { ReactElement } from "react";
-import Link from "next/link";
-import ActivityPersonalCard from "@/components/common/ActivityPersonalCard";
+import ActivityHistoryCard from "../ActivityHistoryCard";
+import HistoryPanelHeader from "../HistoryPanelHeader";
 import { useProfileHistory } from "../use-profile-history";
 import { HistoryFeedback, HistoryPagination } from "../HistoryFeedback";
 import { ACTIVITY_REGISTRANT_STATUS_ENUM } from "@/types/constants/activity";
@@ -36,24 +28,15 @@ export default function PersonalActivityData({
   const activities = data?.items ?? [];
   return (
     <Stack gap="lg" aria-busy={history.pending}>
-      <div className={classes.sectionHeader}>
-        <div>
-          <Title order={2} size="h3">
-            Kegiatan saya
-          </Title>
-          <Text c="dimmed" mt={4}>
-            Pendaftaran, hasil seleksi, dan sertifikat kegiatan Anda.
-          </Text>
-        </div>
-        <Button
-          component={Link}
-          href="/activity"
-          variant="light"
-          leftSection={<IconPlus size={16} aria-hidden />}
-        >
-          Cari kegiatan
-        </Button>
-      </div>
+      <HistoryPanelHeader
+        title="Kegiatan saya"
+        summary={
+          data
+            ? `${data.summary.total} pendaftaran · ${data.summary.accepted} diterima`
+            : "Pendaftaran, hasil seleksi, dan sertifikat kegiatan Anda."
+        }
+        action={{ href: "/activity", label: "Cari kegiatan" }}
+      />
       <HistoryFeedback {...history} />
       {data && data.summary.total > 0 ? (
         <>
@@ -88,12 +71,11 @@ export default function PersonalActivityData({
             />
           </div>
           <Text c="dimmed" role="status">
-            {data.meta.total} kegiatan sesuai dari {data.summary.total}{" "}
-            pendaftaran
+            Menampilkan {data.meta.total} dari {data.summary.total} kegiatan
           </Text>
           <Stack gap="md">
             {activities.map((item) => (
-              <ActivityPersonalCard
+              <ActivityHistoryCard
                 key={item.id}
                 activityName={item.activity_name}
                 slug={item.activity_slug}

@@ -58,7 +58,8 @@ export type ProfileHistories = {
   consultations: HistoryPage<ConsultationHistoryItem, { total: number }>;
   achievements: HistoryPage<
     AchievementHistoryItem,
-    { total: number; points: number }
+    /** `points` sums approved achievements only; `pending` awaits review. */
+    { total: number; points: number; pending: number }
   >;
 };
 export type HistorySection = keyof ProfileHistories;

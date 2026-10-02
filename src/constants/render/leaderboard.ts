@@ -4,7 +4,7 @@ import {
 } from "@/types/constants/achievement";
 
 export const ACHIEVEMENT_STATUS_RENDER = {
-  [ACHIEVEMENT_STATUS_ENUM.PENDING]: "Menunggu Persetujuan",
+  [ACHIEVEMENT_STATUS_ENUM.PENDING]: "Menunggu persetujuan",
   [ACHIEVEMENT_STATUS_ENUM.APPROVED]: "Disetujui",
   [ACHIEVEMENT_STATUS_ENUM.REJECTED]: "Ditolak",
 };

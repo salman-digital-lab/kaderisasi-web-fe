@@ -184,8 +184,13 @@ export async function handleProfileFixture(request, response, url) {
             b.id - a.id,
         );
     const summary = { total: rows.length };
-    if (historySection === "achievements")
-      summary.points = rows.reduce((sum, row) => sum + row.score, 0);
+    // Mirrors web-be: only approved (1) achievements earn points.
+    if (historySection === "achievements") {
+      summary.points = rows
+        .filter((row) => row.status === 1)
+        .reduce((sum, row) => sum + row.score, 0);
+      summary.pending = rows.filter((row) => row.status === 0).length;
+    }
     if (historySection === "activities")
       for (const [key, statuses] of Object.entries({
         accepted: ["DITERIMA", "LULUS KEGIATAN"],

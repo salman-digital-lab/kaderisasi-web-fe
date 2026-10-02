@@ -165,7 +165,7 @@ export default function HistoryFields({
               <Group gap="xs">
                 <ActionIcon
                   variant="subtle"
-                  aria-label={`Edit ${label} ${index + 1}`}
+                  aria-label={`Ubah ${label} ${index + 1}`}
                   disabled={editing !== null || invalidEditors.length > 0}
                   onClick={() => {
                     const entry = form.getValues()[kind][index];

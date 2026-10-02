@@ -1,12 +1,19 @@
 "use client";
 
-import { Avatar, Button, FileButton, Stack, Text } from "@mantine/core";
-import { IconPencil } from "@tabler/icons-react";
+import {
+  ActionIcon,
+  Avatar,
+  FileButton,
+  Text,
+  VisuallyHidden,
+} from "@mantine/core";
+import { IconCamera } from "@tabler/icons-react";
 import { useId, useRef, useState } from "react";
 import type { ReactElement } from "react";
 import { postProfilePicture } from "@/services/profile";
 import updateProfilePictureCookie from "@/functions/server/updateProfilePictureCookie";
 import { validateProfilePicture } from "../picture-validation";
+import classes from "../profile.module.css";
 
 interface ProfilePictureProps {
   src?: string;
@@ -55,46 +62,50 @@ export function ProfilePicture({
   }
   const picture = uploadedPicture ?? src;
   return (
-    <Stack align="center" gap={4} maw={180}>
-      <Avatar
-        size={size}
-        radius={radius}
-        alt="Foto profil"
-        src={
-          picture
-            ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${picture}`
-            : undefined
-        }
-      />
-      <FileButton
-        onChange={upload}
-        accept="image/png,image/jpeg"
-        resetRef={resetRef}
-      >
-        {(props) => (
-          <Button
-            {...props}
-            variant="subtle"
-            px="xs"
-            loading={loading}
-            aria-describedby={hintId}
-            leftSection={<IconPencil size={16} aria-hidden />}
-          >
-            Ubah foto
-          </Button>
-        )}
-      </FileButton>
-      <Text id={hintId} size="xs" c="dimmed" ta="center">
-        JPG / PNG, maks. 2 MB
-      </Text>
+    <div className={classes.picture}>
+      <div className={classes.avatarWrap}>
+        <Avatar
+          size={size}
+          radius={radius}
+          alt="Foto profil"
+          src={
+            picture
+              ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${picture}`
+              : undefined
+          }
+        />
+        <FileButton
+          onChange={upload}
+          accept="image/png,image/jpeg"
+          resetRef={resetRef}
+        >
+          {(props) => (
+            <ActionIcon
+              {...props}
+              variant="default"
+              radius="xl"
+              size="lg"
+              loading={loading}
+              aria-label="Ubah foto"
+              aria-describedby={hintId}
+              className={classes.avatarEdit}
+            >
+              <IconCamera size={18} aria-hidden />
+            </ActionIcon>
+          )}
+        </FileButton>
+      </div>
+      <VisuallyHidden id={hintId}>
+        Format JPG atau PNG, maksimal 2 MB.
+      </VisuallyHidden>
       {error && (
-        <Text role="alert" size="sm" c="red" ta="center">
+        <Text role="alert" size="sm" c="red" maw={220}>
           {error}
         </Text>
       )}
-      <Text role="status" size="sm" ta="center">
+      <Text role="status" size="sm" maw={220}>
         {loading ? "Mengunggah foto..." : message}
       </Text>
-    </Stack>
+    </div>
   );
 }

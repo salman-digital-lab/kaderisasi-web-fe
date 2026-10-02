@@ -122,7 +122,7 @@ test("activity search and exact status filters reset pagination and preserve act
   await page.getByRole("combobox", { name: "Status pendaftaran" }).click();
   await page.getByRole("option", { name: "Terdaftar", exact: true }).click();
   await expect(page.getByRole("article")).toHaveCount(3);
-  await expect(page.getByRole("link", { name: /Edit formulir/ })).toHaveCount(
+  await expect(page.getByRole("link", { name: /Ubah formulir/ })).toHaveCount(
     3,
   );
   await page.getByLabel("Cari kegiatan", { exact: true }).fill("tidak-ada");
@@ -136,27 +136,26 @@ test("activity search and exact status filters reset pagination and preserve act
     .click();
   await expect(page.getByText(/Diumumkan:/)).toBeVisible();
 });
-test("consultation filters preserve every status and descriptions expand", async ({
+test("consultation filters preserve every status and details expand", async ({
   page,
   context,
 }) => {
   await signIn(context);
   await page.goto("/profile?tab=ruangcurhat");
   await expect(page.getByRole("article")).toHaveCount(5);
-  const expand = page
-    .getByRole("button", { name: "Baca selengkapnya" })
-    .first();
-  await expand.click();
+  const first = page.getByRole("article").first();
+  await first.getByRole("button", { name: "Lihat rincian" }).click();
   await expect(
-    page.getByRole("button", { name: "Ringkas deskripsi" }),
+    first.getByRole("button", { name: "Sembunyikan rincian" }),
   ).toHaveAttribute("aria-expanded", "true");
-  await page.getByRole("button", { name: "Ringkas deskripsi" }).click();
+  await expect(first.getByText("Deskripsi", { exact: true })).toBeVisible();
+  await first.getByRole("button", { name: "Sembunyikan rincian" }).click();
   await expect(
-    page.getByRole("button", { name: "Baca selengkapnya" }).first(),
+    first.getByRole("button", { name: "Lihat rincian" }),
   ).toHaveAttribute("aria-expanded", "false");
   await page.getByRole("combobox", { name: "Status sesi" }).click();
   await page
-    .getByRole("option", { name: "Belum Ditangani", exact: true })
+    .getByRole("option", { name: "Belum ditangani", exact: true })
     .click();
   await expect(page.getByRole("article")).toHaveCount(1);
   await page.getByLabel("Cari sesi Ruang Curhat").fill("tidak-ada");
@@ -173,32 +172,38 @@ test("achievement details preserve scoring and status-specific actions", async (
 }) => {
   await signIn(context);
   await page.goto("/profile?tab=achievements");
-  await expect(page.getByText("3 prestasi · 60 total poin")).toBeVisible();
-  await page.getByRole("button", { name: /Lomba karya mahasiswa/ }).click();
+  // Only approved achievements earn points; pending ones are counted separately.
   await expect(
-    page.getByRole("link", { name: "Edit prestasi", exact: true }),
+    page.getByText("3 prestasi · 20 poin disetujui · 1 menunggu persetujuan"),
+  ).toBeVisible();
+  const card = (name: string) =>
+    page.getByRole("article").filter({ hasText: name });
+  await expect(
+    card("Lomba karya mahasiswa").getByRole("link", {
+      name: "Ubah prestasi",
+      exact: true,
+    }),
   ).toHaveAttribute("href", "/leaderboard/edit/1");
-  await page.getByRole("button", { name: /Kontribusi komunitas/ }).click();
   await expect(
-    page.getByRole("link", { name: "Edit prestasi", exact: true }),
+    card("Kontribusi komunitas").getByRole("link", { name: "Ubah prestasi" }),
   ).toHaveCount(0);
-  await page.getByRole("button", { name: /Riset terapan/ }).click();
-  await expect(page.getByText("Lengkapi dokumen pendukung.")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Unduh bukti" })).toBeVisible();
+  await expect(
+    card("Riset terapan").getByText("Lengkapi dokumen pendukung."),
+  ).toBeVisible();
+  await card("Riset terapan")
+    .getByRole("button", { name: "Lihat rincian" })
+    .click();
+  await expect(
+    card("Riset terapan").getByRole("button", { name: "Unduh bukti" }),
+  ).toBeVisible();
   await page.getByRole("combobox", { name: "Status prestasi" }).click();
   await page.getByRole("option", { name: "Disetujui", exact: true }).click();
-  await expect(
-    page.getByRole("button", { name: /Kontribusi komunitas/ }),
-  ).toBeVisible();
-  await expect(page.getByRole("button", { name: /Riset terapan/ })).toHaveCount(
-    0,
-  );
+  await expect(card("Kontribusi komunitas")).toBeVisible();
+  await expect(card("Riset terapan")).toHaveCount(0);
   await page.getByLabel("Cari prestasi", { exact: true }).fill("tidak-ada");
   await expect(page.getByText("Tidak ada prestasi yang sesuai")).toBeVisible();
   await page.getByRole("button", { name: "Hapus pencarian" }).click();
-  await expect(
-    page.getByRole("button", { name: /Riset terapan/ }),
-  ).toBeVisible();
+  await expect(card("Riset terapan")).toBeVisible();
 });
 test("profile save, failed save, discard and dates keep the correct baseline", async ({
   page,
@@ -554,7 +559,11 @@ test("proof downloads report HTTP failure and can be retried", async ({
         headers: { "Access-Control-Allow-Origin": "*" },
       });
   });
-  await page.getByRole("button", { name: /Lomba karya mahasiswa/ }).click();
+  await page
+    .getByRole("article")
+    .filter({ hasText: "Lomba karya mahasiswa" })
+    .getByRole("button", { name: "Lihat rincian" })
+    .click();
   await page.getByRole("button", { name: "Unduh bukti" }).click();
   await expect(page.getByRole("main").getByRole("alert")).toContainText(
     "Bukti belum dapat diunduh",
@@ -600,7 +609,7 @@ test("profile action destinations open their existing pages", async ({
   );
   await page.goto("/profile?tab=activity");
   await page
-    .getByRole("link", { name: /Edit formulir/ })
+    .getByRole("link", { name: /Ubah formulir/ })
     .first()
     .click();
   await expect(page.getByLabel("Motivasi mengikuti kegiatan")).toBeVisible();
@@ -622,13 +631,23 @@ test("profile action destinations open their existing pages", async ({
     "Kirim Prestasi Anda",
   );
   await page.goto("/profile?tab=achievements");
-  await page.getByRole("button", { name: /Lomba karya mahasiswa/ }).click();
-  await page.getByRole("link", { name: "Edit prestasi", exact: true }).click();
+  await page
+    .getByRole("article")
+    .filter({ hasText: "Lomba karya mahasiswa" })
+    .getByRole("link", { name: "Ubah prestasi", exact: true })
+    .click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
     "Edit Prestasi",
   );
+  // Logging out lives in the account menu (desktop) or the menu drawer (mobile).
   await page.goto("/profile");
-  await page.getByRole("button", { name: "Keluar", exact: true }).click();
+  if ((page.viewportSize()?.width ?? 0) >= 992) {
+    await page.getByRole("button", { name: "Menu akun" }).click();
+    await page.getByRole("menuitem", { name: "Keluar" }).click();
+  } else {
+    await page.getByRole("button", { name: "Buka menu", exact: true }).click();
+    await page.getByRole("button", { name: "Keluar", exact: true }).click();
+  }
   await expect(page).not.toHaveURL(/\/profile/);
   expect(
     (await context.cookies()).find((cookie) => cookie.name === "session"),
@@ -765,40 +784,76 @@ test("history retries do not refetch identity or discard the mounted draft", asy
 });
 
 for (const degree of ["SMA/SMK", "D3 (Diploma)"]) {
-  test(`education saves and reloads ${degree} with a typed institution`, async ({ page, context }, testInfo) => {
+  test(`education saves and reloads ${degree} with a typed institution`, async ({
+    page,
+    context,
+  }, testInfo) => {
     await signIn(context);
     await page.goto("/profile");
-    await page.getByRole("button", { name: "Edit pendidikan 1", exact: true }).click();
+    await page
+      .getByRole("button", { name: "Ubah pendidikan 1", exact: true })
+      .click();
     await page.getByRole("combobox", { name: "Jenjang", exact: true }).click();
     await page.getByRole("option", { name: degree, exact: true }).click();
     if (degree === "SMA/SMK") {
       await expect(page.getByLabel("Fakultas", { exact: true })).toHaveCount(0);
-      await page.getByRole("textbox", { name: "Nama Sekolah", exact: true }).fill("Sekolah Peserta");
+      await page
+        .getByRole("textbox", { name: "Nama Sekolah", exact: true })
+        .fill("Sekolah Peserta");
     } else {
-      await page.getByRole("combobox", { name: "Institusi", exact: true }).fill("Sekolah Peserta");
-      await page.getByRole("option", { name: "Sekolah Peserta", exact: true }).click();
+      await page
+        .getByRole("combobox", { name: "Institusi", exact: true })
+        .fill("Sekolah Peserta");
+      await page
+        .getByRole("option", { name: "Sekolah Peserta", exact: true })
+        .click();
       await page.getByLabel("Fakultas", { exact: true }).fill("");
     }
     await page.getByRole("button", { name: "Selesai", exact: true }).click();
-    await page.getByRole("button", { name: "Simpan perubahan", exact: true }).click();
+    await page
+      .getByRole("button", { name: "Simpan perubahan", exact: true })
+      .click();
     await expect(page.getByText("Perubahan berhasil disimpan.")).toBeVisible();
     await page.reload();
-    await page.getByRole("button", { name: "Edit pendidikan 1", exact: true }).click();
-    await expect(page.getByRole("combobox", { name: "Jenjang", exact: true })).toHaveValue(degree);
-    await expect(page.getByRole(degree === "SMA/SMK" ? "textbox" : "combobox", { name: degree === "SMA/SMK" ? "Nama Sekolah" : "Institusi", exact: true })).toHaveValue("Sekolah Peserta");
+    await page
+      .getByRole("button", { name: "Ubah pendidikan 1", exact: true })
+      .click();
+    await expect(
+      page.getByRole("combobox", { name: "Jenjang", exact: true }),
+    ).toHaveValue(degree);
+    await expect(
+      page.getByRole(degree === "SMA/SMK" ? "textbox" : "combobox", {
+        name: degree === "SMA/SMK" ? "Nama Sekolah" : "Institusi",
+        exact: true,
+      }),
+    ).toHaveValue("Sekolah Peserta");
     if (degree === "SMA/SMK") {
       await expect(page.getByLabel("Fakultas", { exact: true })).toHaveCount(0);
-      await page.getByRole("combobox", { name: "Jenjang", exact: true }).click();
+      await page
+        .getByRole("combobox", { name: "Jenjang", exact: true })
+        .click();
       await page.getByRole("option", { name: "S1", exact: true }).click();
       await expect(page.getByLabel("Fakultas", { exact: true })).toBeVisible();
-      await expect(page.getByRole("combobox", { name: "Institusi", exact: true })).toHaveValue("Sekolah Peserta");
-      await page.getByRole("combobox", { name: "Jenjang", exact: true }).click();
+      await expect(
+        page.getByRole("combobox", { name: "Institusi", exact: true }),
+      ).toHaveValue("Sekolah Peserta");
+      await page
+        .getByRole("combobox", { name: "Jenjang", exact: true })
+        .click();
       await page.getByRole("option", { name: "SMA/SMK", exact: true }).click();
-      await expect(page.getByRole("textbox", { name: "Nama Sekolah", exact: true })).toHaveValue("Sekolah Peserta");
-      await page.getByRole("textbox", { name: "Nama Sekolah", exact: true }).scrollIntoViewIfNeeded();
+      await expect(
+        page.getByRole("textbox", { name: "Nama Sekolah", exact: true }),
+      ).toHaveValue("Sekolah Peserta");
+      await page
+        .getByRole("textbox", { name: "Nama Sekolah", exact: true })
+        .scrollIntoViewIfNeeded();
       await page.screenshot({ path: testInfo.outputPath("school-fields.png") });
     }
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth + 1,
+      ),
+    ).toBe(true);
   });
 }
 
@@ -809,7 +864,7 @@ test("education and focus edits save only through the main save action", async (
   await signIn(context);
   await page.goto("/profile");
   await page
-    .getByRole("button", { name: "Edit pendidikan 1", exact: true })
+    .getByRole("button", { name: "Ubah pendidikan 1", exact: true })
     .click();
   await page.getByRole("combobox", { name: "Jenjang", exact: true }).click();
   await page.getByRole("option", { name: "S2", exact: true }).click();

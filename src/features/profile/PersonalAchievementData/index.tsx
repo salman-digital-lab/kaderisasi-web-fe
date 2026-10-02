@@ -1,23 +1,14 @@
 "use client";
 import {
-  Accordion,
   Alert,
-  Badge,
   Button,
-  Group,
   Paper,
   Select,
   Stack,
   Text,
   TextInput,
-  Title,
 } from "@mantine/core";
-import {
-  IconDownload,
-  IconEdit,
-  IconPlus,
-  IconSearch,
-} from "@tabler/icons-react";
+import { IconDownload, IconEdit, IconSearch } from "@tabler/icons-react";
 import { useState } from "react";
 import type { ReactElement } from "react";
 import Link from "next/link";
@@ -31,6 +22,8 @@ import {
   ACHIEVEMENT_TYPE_RENDER,
 } from "@/constants/render/leaderboard";
 import { handleDownloadFile } from "@/functions/common/handler";
+import HistoryCard from "../HistoryCard";
+import HistoryPanelHeader from "../HistoryPanelHeader";
 import classes from "../profile.module.css";
 
 function AchievementDetails({
@@ -65,11 +58,6 @@ function AchievementDetails({
           year: "numeric",
         })}
       </Text>
-      {achievement.status === Status.REJECTED && (
-        <Alert title="Alasan penolakan" color="red">
-          {achievement.remark || "Alasan belum tersedia."}
-        </Alert>
-      )}
       {error && (
         <Text role="alert" c="red">
           {error}
@@ -87,17 +75,6 @@ function AchievementDetails({
           </Button>
         ) : (
           <Text c="dimmed">Bukti belum tersedia.</Text>
-        )}
-        {(achievement.status === Status.PENDING ||
-          achievement.status === Status.REJECTED) && (
-          <Button
-            component={Link}
-            href={`/leaderboard/edit/${achievement.id}`}
-            variant="outline"
-            leftSection={<IconEdit size={16} aria-hidden />}
-          >
-            Edit prestasi
-          </Button>
         )}
       </div>
     </Stack>
@@ -117,28 +94,22 @@ export default function PersonalAchievementData({
     setStatus,
   } = history;
   const filtered = data?.items ?? [];
+  const summary = data
+    ? [
+        `${data.summary.total} prestasi`,
+        `${data.summary.points} poin disetujui`,
+        ...(data.summary.pending
+          ? [`${data.summary.pending} menunggu persetujuan`]
+          : []),
+      ].join(" · ")
+    : "Riwayat prestasi dan poin Anda.";
   return (
     <Stack gap="lg" aria-busy={history.pending}>
-      <div className={classes.sectionHeader}>
-        <div>
-          <Title order={2} size="h3">
-            Prestasi saya
-          </Title>
-          <Text c="dimmed" mt={4}>
-            {data
-              ? `${data.summary.total} prestasi · ${data.summary.points} total poin`
-              : "Riwayat prestasi dan poin Anda."}
-          </Text>
-        </div>
-        <Button
-          component={Link}
-          href="/leaderboard/submit"
-          variant="light"
-          leftSection={<IconPlus size={16} aria-hidden />}
-        >
-          Tambah prestasi
-        </Button>
-      </div>
+      <HistoryPanelHeader
+        title="Prestasi saya"
+        summary={summary}
+        action={{ href: "/leaderboard/submit", label: "Tambah prestasi" }}
+      />
       <HistoryFeedback {...history} />
       {data && data.summary.total > 0 ? (
         <>
@@ -166,38 +137,47 @@ export default function PersonalAchievementData({
           <Text c="dimmed" role="status">
             Menampilkan {data.meta.total} dari {data.summary.total} prestasi
           </Text>
-          <Accordion variant="separated" radius="md">
+          <Stack gap="md">
             {filtered.map((item) => (
-              <Accordion.Item key={item.id} value={String(item.id)}>
-                <Accordion.Control>
-                  <Stack gap="xs">
-                    <Text fw={600} size="lg" className={classes.description}>
-                      {item.name}
-                    </Text>
-                    <Group gap="sm">
-                      <Text size="sm" c="dimmed">
-                        {ACHIEVEMENT_TYPE_RENDER[item.type]}
-                      </Text>
-                      <Badge
-                        tt="none"
-                        variant="light"
-                        color={ACHIEVEMENT_STATUS_COLOR[item.status]}
-                        className={classes.badge}
-                      >
-                        {ACHIEVEMENT_STATUS_RENDER[item.status]}
-                      </Badge>
-                      <Text size="sm" fw={600}>
-                        {item.score} poin
-                      </Text>
-                    </Group>
-                  </Stack>
-                </Accordion.Control>
-                <Accordion.Panel>
-                  <AchievementDetails achievement={item} />
-                </Accordion.Panel>
-              </Accordion.Item>
+              <HistoryCard
+                key={item.id}
+                title={item.name}
+                status={{
+                  label: ACHIEVEMENT_STATUS_RENDER[item.status],
+                  color: ACHIEVEMENT_STATUS_COLOR[item.status],
+                }}
+                meta={[
+                  ACHIEVEMENT_TYPE_RENDER[item.type],
+                  item.status === Status.APPROVED
+                    ? `${item.score} poin`
+                    : item.status === Status.REJECTED
+                      ? "Tidak menambah poin"
+                      : `${item.score} poin jika disetujui`,
+                ]}
+                notice={
+                  item.status === Status.REJECTED && (
+                    <Alert color="red" title="Alasan penolakan" role="note">
+                      {item.remark || "Alasan belum tersedia."}
+                    </Alert>
+                  )
+                }
+                actions={
+                  (item.status === Status.PENDING ||
+                    item.status === Status.REJECTED) && (
+                    <Button
+                      component={Link}
+                      href={`/leaderboard/edit/${item.id}`}
+                      variant="outline"
+                      leftSection={<IconEdit size={16} aria-hidden />}
+                    >
+                      Ubah prestasi
+                    </Button>
+                  )
+                }
+                details={<AchievementDetails achievement={item} />}
+              />
             ))}
-          </Accordion>
+          </Stack>
           {!filtered.length && !history.pending && (
             <Paper withBorder className={classes.empty}>
               <Text fw={600}>Tidak ada prestasi yang sesuai</Text>

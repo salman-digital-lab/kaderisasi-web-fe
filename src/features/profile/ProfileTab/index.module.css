@@ -2,27 +2,23 @@
   width: 100%;
   min-width: 0;
 }
+/* One row of underline tabs; wraps only when the labels cannot fit (e.g. 200% text). */
 .tab :global(.mantine-Tabs-list) {
-  display: flex;
   flex-wrap: wrap;
-  gap: 0.25rem;
-  padding: 0.25rem;
-  border: 1px solid var(--surface-border);
-  border-radius: var(--mantine-radius-md);
-  background: var(--mantine-color-body);
 }
 .tab :global(.mantine-Tabs-tab) {
-  flex: 1 1 auto;
   min-height: 2.75rem;
-  padding: 0.625rem 0.75rem;
+  padding: 0.625rem 1rem;
+  font-size: var(--mantine-font-size-md);
   font-weight: 500;
-  border-radius: var(--mantine-radius-sm);
+  white-space: nowrap;
 }
 .tab :global(.mantine-Tabs-tab[data-active]) {
   font-weight: 700;
 }
 @media (max-width: $mantine-breakpoint-sm) {
   .tab :global(.mantine-Tabs-tab) {
-    flex-basis: calc(50% - 0.25rem);
+    padding-inline: 0.625rem;
+    font-size: var(--mantine-font-size-sm);
   }
 }

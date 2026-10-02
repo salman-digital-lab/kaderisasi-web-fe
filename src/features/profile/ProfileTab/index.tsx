@@ -45,7 +45,6 @@ export function ProfileTab({ sections, token }: ProfileTabProps): ReactElement {
         />
       )}
       <Tabs
-        variant="pills"
         color="blue.8"
         value={activeTab}
         onChange={changeTab}
@@ -54,6 +53,7 @@ export function ProfileTab({ sections, token }: ProfileTabProps): ReactElement {
         className={classes.tab}
       >
         <Tabs.List
+          grow
           aria-label="Bagian profil"
           onKeyDownCapture={(event) => {
             if (event.key !== "Home" && event.key !== "End") return;

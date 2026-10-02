@@ -770,7 +770,7 @@ export function ProfileStep({
                     onCancel={() => onCancelEducation(index)}
                     onSave={onSaveEducation}
                     onDelete={() => onDeleteEducation(index)}
-                    editLabel={`Edit riwayat pendidikan ${index + 1}`}
+                    editLabel={`Ubah riwayat pendidikan ${index + 1}`}
                     cancelLabel={`Batal edit riwayat pendidikan ${index + 1}`}
                     saveLabel={`Simpan riwayat pendidikan ${index + 1}`}
                     deleteLabel={`Hapus riwayat pendidikan ${index + 1}`}
@@ -908,7 +908,7 @@ export function ProfileStep({
                     onCancel={() => onCancelWork(index)}
                     onSave={onSaveWork}
                     onDelete={() => onDeleteWork(index)}
-                    editLabel={`Edit riwayat pekerjaan ${index + 1}`}
+                    editLabel={`Ubah riwayat pekerjaan ${index + 1}`}
                     cancelLabel={`Batal edit riwayat pekerjaan ${index + 1}`}
                     saveLabel={`Simpan riwayat pekerjaan ${index + 1}`}
                     deleteLabel={`Hapus riwayat pekerjaan ${index + 1}`}

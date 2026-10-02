@@ -1,14 +1,13 @@
 "use client";
 import Link from "next/link";
-import { Badge, Box, Button, Paper, Stack, Text, Title } from "@mantine/core";
+import { Button } from "@mantine/core";
 import { IconAward, IconCalendarEvent } from "@tabler/icons-react";
 import type { ReactElement } from "react";
 import CatalogueImage from "@/components/common/Catalogue/CatalogueImage";
 import { ACTIVITY_REGISTRANT_STATUS_ENUM as Status } from "@/types/constants/activity";
 import { getCertificateCta } from "@/features/certificate/utils/certificateData";
 import type { CertificateLifecycleState } from "@/types/model/certificate";
-import classes from "./index.module.css";
-import shared from "@/features/profile/profile.module.css";
+import HistoryCard from "./HistoryCard";
 
 type ActivityCardProps = {
   activityName: string;
@@ -28,7 +27,7 @@ function statusColor(status: string): string {
     return "red";
   return status === Status.BELUM_DIUMUMKAN ? "orange" : "blue";
 }
-export default function ActivityPersonalCard({
+export default function ActivityHistoryCard({
   activityName,
   registrationStatus,
   slug,
@@ -46,14 +45,27 @@ export default function ActivityPersonalCard({
     isPassed: registrationStatus === Status.LULUS_KEGIATAN,
     registrationId,
   });
+  const announcement =
+    registrationStatus === Status.BELUM_DIUMUMKAN && visibleAt
+      ? `Diumumkan: ${new Date(visibleAt).toLocaleString("id-ID", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        })}`
+      : undefined;
   return (
-    <Paper
-      component="article"
-      withBorder
-      p={{ base: "md", sm: "lg" }}
-      className={classes.row}
-    >
-      <div className={classes.thumbnail}>
+    <HistoryCard
+      title={activityName}
+      status={{
+        label:
+          registrationStatus.charAt(0) +
+          registrationStatus.slice(1).toLowerCase(),
+        color: statusColor(registrationStatus),
+      }}
+      meta={announcement ? [announcement] : []}
+      media={
         <CatalogueImage
           src={
             imageUrl
@@ -64,35 +76,9 @@ export default function ActivityPersonalCard({
           variant="poster"
           fallback={<IconCalendarEvent size={28} stroke={1.5} aria-hidden />}
         />
-      </div>
-      <Stack gap="xs" className={classes.details}>
-        <Title order={3} size="h4">
-          {activityName}
-        </Title>
-        <Box>
-          <Badge
-            variant="light"
-            tt="none"
-            color={statusColor(registrationStatus)}
-            className={shared.badge}
-          >
-            {registrationStatus.charAt(0) +
-              registrationStatus.slice(1).toLowerCase()}
-          </Badge>
-        </Box>
-        {registrationStatus === Status.BELUM_DIUMUMKAN && visibleAt && (
-          <Text c="dimmed" size="sm">
-            Diumumkan:{" "}
-            {new Date(visibleAt).toLocaleString("id-ID", {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </Text>
-        )}
-        <div className={shared.actions}>
+      }
+      actions={
+        <>
           <Button
             component={Link}
             href={`/profile/activity/${slug}`}
@@ -106,9 +92,9 @@ export default function ActivityPersonalCard({
               component={Link}
               href={`/profile/activity/${slug}?edit=form`}
               variant="outline"
-              aria-label={`Edit formulir ${activityName}`}
+              aria-label={`Ubah formulir ${activityName}`}
             >
-              Edit formulir
+              Ubah formulir
             </Button>
           )}
           {certificate && (
@@ -122,8 +108,8 @@ export default function ActivityPersonalCard({
               {certificate.label}
             </Button>
           )}
-        </div>
-      </Stack>
-    </Paper>
+        </>
+      }
+    />
   );
 }

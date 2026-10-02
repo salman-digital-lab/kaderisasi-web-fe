@@ -1,6 +1,5 @@
 export { ActivityCardSkeleton, ActivityGridSkeleton } from "./ActivityCardSkeleton";
 export { ClubCardSkeleton, ClubGridSkeleton } from "./ClubCardSkeleton";
-export { ProfileCardSkeleton } from "./ProfileCardSkeleton";
 export { LeaderboardSkeleton, LeaderboardItemSkeleton } from "./LeaderboardSkeleton";
 export { FormSkeleton, FormFieldSkeleton } from "./FormSkeleton";
 export {

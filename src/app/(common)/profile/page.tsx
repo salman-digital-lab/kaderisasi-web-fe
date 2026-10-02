@@ -13,10 +13,7 @@ export default function Page() {
   return (
     <>
       <PageContainer className={classes.page}>
-        <PageHeader
-          title="Profil Saya"
-          description="Kelola data diri, kegiatan, sesi Ruang Curhat, dan prestasi Anda."
-        />
+        <PageHeader title="Profil Saya" />
 
         <Suspense fallback={<ProfileTabContentSkeleton />}>
           <ProfileTabSection />

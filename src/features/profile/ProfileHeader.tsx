@@ -1,6 +1,5 @@
-import { Badge, Box, Group, Paper, Stack, Text, Title } from "@mantine/core";
+import { Badge, Group, Paper, Stack, Title } from "@mantine/core";
 import type { ReactElement } from "react";
-import LogoutAction from "@/components/common/LogoutAction";
 import { USER_LEVEL_RENDER } from "@/constants/render/activity";
 import { USER_LEVEL_ENUM } from "@/types/constants/profile";
 import { ProfilePicture } from "./ProfilePicture";
@@ -28,27 +27,30 @@ export default function ProfileHeader({
         <Title order={2} size="h3">
           {savedName ?? profile.name}
         </Title>
-        <Group gap="sm">
+        <dl className={classes.identityFacts}>
           {userData.member_id && (
-            <Text c="dimmed">ID Anggota: {userData.member_id}</Text>
+            <div>
+              <dt>ID Anggota</dt>
+              <dd>{userData.member_id}</dd>
+            </div>
           )}
-          <Text fw={600}>
-            {USER_LEVEL_RENDER[profile.level ?? USER_LEVEL_ENUM.JAMAAH]}
-          </Text>
-        </Group>
+          <div>
+            <dt>Jenjang</dt>
+            <dd>
+              {USER_LEVEL_RENDER[profile.level ?? USER_LEVEL_ENUM.JAMAAH]}
+            </dd>
+          </div>
+        </dl>
         {!!profile.badges?.length && (
           <Group gap="xs" aria-label="Lencana anggota">
             {profile.badges.map((badge) => (
-              <Badge key={badge} variant="light" tt="none">
+              <Badge key={badge} variant="light" size="md" tt="none">
                 {badge}
               </Badge>
             ))}
           </Group>
         )}
       </Stack>
-      <Box className={classes.logout}>
-        <LogoutAction />
-      </Box>
     </Paper>
   );
 }
