@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Build year for static copyright text; the footer updates it on the client.
+  env: { BUILD_YEAR: String(new Date().getFullYear()) },
   cacheComponents: true,
   partialPrefetching: true,
   images: {

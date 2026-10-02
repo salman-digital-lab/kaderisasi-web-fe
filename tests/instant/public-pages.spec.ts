@@ -63,7 +63,9 @@ for (const session of ["guest", "expired"] as const) {
         await expect(page.locator(`section#${section}`)).toBeVisible();
       }
       await expect(
-        page.getByRole("link", { name: "digilab@salmanitb.com", exact: true }),
+        page
+          .getByRole("main")
+          .getByRole("link", { name: "digilab@salmanitb.com", exact: true }),
       ).toHaveAttribute("href", "mailto:digilab@salmanitb.com");
       await expect(
         page.getByRole("link", { name: "Kelola koneksi Akun Google" }),
