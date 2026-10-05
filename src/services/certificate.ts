@@ -206,16 +206,18 @@ export async function downloadCertificate(
 }
 
 export type CertificateDownloadAccess =
-  | "owner"
-  | "not_owner"
-  | "revoked"
-  | "signed_out"
-  | "unavailable";
-export async function getCertificateAccess(
+  "owner" | "not_owner" | "revoked" | "signed_out" | "unavailable";
+export type CertificateAccessDetails = {
+  access: CertificateDownloadAccess;
+  /** Replacement certificate for the owner of a withdrawn certificate. */
+  currentCode?: string;
+};
+
+export async function getCertificateAccessDetails(
   token: string | null,
   code: string,
-): Promise<CertificateDownloadAccess> {
-  if (!token) return "signed_out";
+): Promise<CertificateAccessDetails> {
+  if (!token) return { access: "signed_out" };
   try {
     const data = await fetchCertificateData(
       `/code/${encodeURIComponent(code)}/access`,
@@ -232,12 +234,29 @@ export async function getCertificateAccess(
       "can_download" in data &&
       data.can_download === (data.reason === "owner") &&
       ["owner", "not_owner", "revoked"].includes(String(data.reason))
-    )
-      return data.reason as "owner" | "not_owner" | "revoked";
-    return "unavailable";
+    ) {
+      const currentCode =
+        "current_code" in data &&
+        typeof data.current_code === "string" &&
+        /^[A-Z0-9-]{1,96}$/.test(data.current_code)
+          ? data.current_code
+          : undefined;
+      return {
+        access: data.reason as "owner" | "not_owner" | "revoked",
+        ...(currentCode ? { currentCode } : {}),
+      };
+    }
+    return { access: "unavailable" };
   } catch (error) {
     if (error instanceof FetcherError && error.status === 401)
-      return "signed_out";
-    return "unavailable";
+      return { access: "signed_out" };
+    return { access: "unavailable" };
   }
+}
+
+export async function getCertificateAccess(
+  token: string | null,
+  code: string,
+): Promise<CertificateDownloadAccess> {
+  return (await getCertificateAccessDetails(token, code)).access;
 }

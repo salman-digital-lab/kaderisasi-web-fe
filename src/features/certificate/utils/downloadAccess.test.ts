@@ -14,7 +14,10 @@ vi.mock("@/functions/common/fetcher", async () => {
   }
   return { default: vi.fn(), FetcherError };
 });
-import { getCertificateAccess } from "@/services/certificate";
+import {
+  getCertificateAccess,
+  getCertificateAccessDetails,
+} from "@/services/certificate";
 import fetcher, { FetcherError } from "@/functions/common/fetcher";
 
 describe("certificate download access states", () => {
@@ -53,6 +56,23 @@ describe("certificate download access states", () => {
       expect(await getCertificateAccess("token", "CERT-1")).toBe("unavailable");
     },
   );
+  it("links the owner of a withdrawn certificate to its replacement", async () => {
+    vi.mocked(fetcher).mockResolvedValue({
+      data: { reason: "revoked", can_download: false, current_code: "CERT-2" },
+    });
+    expect(await getCertificateAccessDetails("token", "CERT-1")).toEqual({
+      access: "revoked",
+      currentCode: "CERT-2",
+    });
+  });
+  it("ignores a malformed replacement code", async () => {
+    vi.mocked(fetcher).mockResolvedValue({
+      data: { reason: "revoked", can_download: false, current_code: "../x" },
+    });
+    expect(await getCertificateAccessDetails("token", "CERT-1")).toEqual({
+      access: "revoked",
+    });
+  });
   it("does not grant controls for an invalid response", async () => {
     vi.mocked(fetcher).mockResolvedValue({ data: { reason: "unexpected" } });
     expect(await getCertificateAccess("token", "CERT-1")).toBe("unavailable");

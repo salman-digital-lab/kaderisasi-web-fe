@@ -43,6 +43,7 @@ type CertificateViewProps = {
   imageBaseUrl: string;
   appUrl: string;
   access: CertificateDownloadAccess;
+  currentCode?: string;
   ownerScore?: PublishedScoringResult;
   ownerGroup?: string | null;
 };
@@ -52,6 +53,7 @@ export default function CertificateView({
   imageBaseUrl,
   appUrl,
   access,
+  currentCode,
   ownerScore,
   ownerGroup,
 }: CertificateViewProps): React.ReactElement {
@@ -219,8 +221,23 @@ export default function CertificateView({
             title="Sertifikat telah dicabut"
             icon={<IconAlertTriangle aria-hidden size={20} />}
           >
-            Sertifikat ini tidak lagi valid dan tidak dapat diunduh.{" "}
-            {data.certificate.revoked_reason}
+            <Stack gap="sm">
+              <Text size="sm">
+                Sertifikat ini tidak lagi valid dan tidak dapat diunduh.{" "}
+                {data.certificate.revoked_reason}
+              </Text>
+              {currentCode && currentCode !== code && (
+                <Button
+                  component={Link}
+                  href={getCertificatePath(currentCode)}
+                  variant="default"
+                  className={classes.actionButton}
+                  style={{ alignSelf: "flex-start" }}
+                >
+                  Lihat sertifikat terbaru
+                </Button>
+              )}
+            </Stack>
           </Alert>
         )}
         <div className={classes.actions}>

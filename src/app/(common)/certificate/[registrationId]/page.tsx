@@ -14,7 +14,7 @@ import {
 import { getToken } from "@/functions/auth/getToken";
 import { FetcherError } from "@/functions/common/fetcher";
 import {
-  getCertificateAccess,
+  getCertificateAccessDetails,
   getCertificateByCode,
   getCertificateLifecycle,
   getOwnedCertificateForDownload,
@@ -85,10 +85,10 @@ export default async function CertificatePage(props: {
 
   try {
     const tokenPromise = getToken();
-    const [certificateData, access] = await Promise.all([
+    const [certificateData, { access, currentCode }] = await Promise.all([
       getCertificateByCode(parsedCode.data),
       tokenPromise.then((token) =>
-        getCertificateAccess(token ?? null, parsedCode.data),
+        getCertificateAccessDetails(token ?? null, parsedCode.data),
       ),
     ]);
 
@@ -113,6 +113,7 @@ export default async function CertificatePage(props: {
         data={certificateData}
         imageBaseUrl={process.env.NEXT_PUBLIC_IMAGE_BASE_URL ?? ""}
         access={access}
+        currentCode={currentCode}
         ownerScore={ownerCertificate?.participant.scoring_result}
         ownerGroup={ownerCertificate?.participant.certificate_group}
       />
