@@ -30,6 +30,7 @@ const nextConfig = {
     ],
   },
   experimental: {
+    agentUpgrade: "latest",
     exposeTestingApiInProductionBuild: process.env.NEXT_INSTANT_TEST === "1",
     optimizePackageImports: [
       "@mantine/core",

@@ -907,7 +907,10 @@ export default function CustomFormProfileSection({
 
   return (
     <>
-      <form ref={formRef} onSubmit={form.onSubmit(handleFormSubmit)}>
+      <form
+        ref={formRef}
+        onSubmit={(event) => form.onSubmit(handleFormSubmit)(event)}
+      >
         <Stack gap="xl">
           <Title order={4}>Data Diri</Title>
 
