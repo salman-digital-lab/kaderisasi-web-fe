@@ -22,14 +22,14 @@ Add the exact authorized redirect URI:
 The callback belongs to the frontend, not port 3333 or the admin API. This is a
 server authorization-code flow; no browser SDK or popup origin is required.
 
-Configure the selected environment's **frontend** file, `docs/.env.<mode>.web-fe`:
+Configure the selected environment's **frontend** file, `env/<mode>/web-fe-<mode>-env`:
 
 ```dotenv
 GOOGLE_CLIENT_ID=<web-client-id>.apps.googleusercontent.com
 GOOGLE_REDIRECT_URI=http://localhost:3000/api/auth/google/callback
 ```
 
-Configure the matching **backend** file, `docs/.env.<mode>.be`:
+Configure the matching **backend** file, `env/<mode>/web-be-<mode>-env`:
 
 ```dotenv
 GOOGLE_CLIENT_ID=<same-web-client-id>.apps.googleusercontent.com
@@ -117,7 +117,7 @@ node ace test unit
 node scripts/test-google-auth.mjs
 ```
 
-The database runner reads only `docs/.env.test.be`, creates an isolated schema
+The database runner reads only `env/test/web-be-test-env`, creates an isolated schema
 from the three relevant tables in the Go sqlc snapshot, sets an explicit search
 path with no public fallback, and removes the owned schema afterward. It does
 not run migrations, touch shared application rows, or create storage objects.
