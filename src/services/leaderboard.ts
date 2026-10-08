@@ -4,7 +4,6 @@ import type { Achievement } from "@/types/model/achievement";
 import type { APIResponse } from "@/types/helper";
 import type {
   GetMonthlyLeaderboardResp,
-  GetLifetimeLeaderboardResp,
   SubmitAchievementReq,
   SubmitAchievementResp,
   GetMyAchievementsResp,
@@ -24,23 +23,6 @@ export const getMonthlyLeaderboard = async (
 
   const response = await fetcher<GetMonthlyLeaderboardResp>(
     beApi + `/achievements/monthly?${params.toString()}`,
-  );
-
-  return response;
-};
-
-export const getLifetimeLeaderboard = async (
-  page: number = 1,
-  perPage: number = 10,
-) => {
-  const { beApi } = getApiConfig();
-  const params = new URLSearchParams({
-    page: page.toString(),
-    per_page: perPage.toString(),
-  });
-
-  const response = await fetcher<GetLifetimeLeaderboardResp>(
-    beApi + `/achievements/lifetime?${params.toString()}`,
   );
 
   return response;
@@ -89,25 +71,6 @@ export const editAchievement = async (
     },
     body: formData,
   });
-};
-
-export const getMyLifetimeRank = async (token: string) => {
-  const { beApi } = getApiConfig();
-  const response = await fetcher<{
-    message: string;
-    data: {
-      rank: number | null;
-      score: number;
-      message?: string;
-    };
-  }>(beApi + `/achievements/my-rank`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    cache: "no-store",
-  });
-
-  return response;
 };
 
 export const getMyAchievements = async (

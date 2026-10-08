@@ -1,10 +1,7 @@
 import PageHero from "@/components/layout/PageHero";
 import illustration from "@/assets/leaderboardpage-1.svg";
-import { Suspense } from "react";
 import { Text } from "@mantine/core";
-import { verifySession } from "@/functions/server/session";
-import LeaderboardContent from "@/components/leaderboard/LeaderboardContent";
-import { LeaderboardSkeleton } from "@/components/skeletons";
+import MonthlyLeaderboard from "@/features/leaderboard/MonthlyLeaderboard";
 
 export const metadata = {
   title: "Leaderboard",
@@ -12,9 +9,7 @@ export const metadata = {
     "Leaderboard Aktivis Salman - Himpunan prestasi akademik, kompetisi, dan organisasi aktivis. Lihat 10 besar aktivis berprestasi dan submit prestasimu!",
 };
 
-export default async function LeaderboardPage() {
-  const sessionData = await verifySession();
-
+export default function LeaderboardPage() {
   return (
     <>
       {/* Hero Section - Static content, renders immediately */}
@@ -31,20 +26,14 @@ export default async function LeaderboardPage() {
           <>
             Leaderboard merupakan website tempat menghimpun prestasi aktivis
             Salman. Pengguna dengan skoring tertinggi akan tampil dalam 10 besar
-            sepanjang masa. Ayo submit prestasi akademik, kompetisi, dan
+            setiap bulan. Ayo submit prestasi akademik, kompetisi, dan
             organisasi mu disini!
           </>
         }
         illustration={illustration}
       ></PageHero>
 
-      {/* Leaderboard Content - Streamed with Suspense */}
-      <Suspense fallback={<LeaderboardSkeleton />}>
-        <LeaderboardContent
-          userSession={sessionData.session}
-          userName={sessionData.name}
-        />
-      </Suspense>
+      <MonthlyLeaderboard />
     </>
   );
 }

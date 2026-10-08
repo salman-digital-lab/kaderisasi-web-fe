@@ -34,12 +34,3 @@ export interface MonthlyLeaderboard {
   updated_at: string;
   user: PublicUser & { profile: Omit<Member, "publicUser"> };
 }
-
-export interface LifetimeLeaderboard {
-  id: number;
-  user_id: number;
-  score: number;
-  created_at: string;
-  updated_at: string;
-  user: PublicUser & { profile: Omit<Member, "publicUser"> };
-}

@@ -21,9 +21,6 @@ export const CACHE_TAGS = {
   /** Monthly leaderboard */
   LEADERBOARD_MONTHLY: "leaderboard-monthly",
 
-  /** Lifetime leaderboard */
-  LEADERBOARD_LIFETIME: "leaderboard-lifetime",
-
   /** Province reference data */
   PROVINCES: "provinces",
 

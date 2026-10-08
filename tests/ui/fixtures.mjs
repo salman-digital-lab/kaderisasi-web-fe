@@ -83,8 +83,7 @@ export function uiFixture(url, authorization) {
   if (path === "/v2/activities/kegiatan-uji-1/registration")
     return registration;
   if (path === "/v2/achievements") return { data: [achievement] };
-  if (path === "/v2/achievements/my-rank") return { rank: 1, score: 100 };
-  if (path === "/v2/achievements/lifetime")
+  if (path === "/v2/achievements/monthly")
     return {
       data: [{ id: 1, score: 100, user: { profile: profile.profile } }],
     };

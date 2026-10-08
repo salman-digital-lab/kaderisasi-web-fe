@@ -4,7 +4,6 @@ import { cacheLife, cacheTag } from "next/cache";
 import { CACHE_TAGS } from "@/constants/cache";
 import {
   getMonthlyLeaderboard as _getMonthlyLeaderboard,
-  getLifetimeLeaderboard as _getLifetimeLeaderboard,
 } from "./leaderboard";
 
 /**
@@ -20,17 +19,4 @@ export async function getMonthlyLeaderboard(
   cacheLife("minutes");
   cacheTag(CACHE_TAGS.LEADERBOARD_MONTHLY);
   return _getMonthlyLeaderboard(page, perPage, month);
-}
-
-/**
- * Cached wrapper for getLifetimeLeaderboard.
- * Leaderboard data refreshes every few minutes.
- */
-export async function getLifetimeLeaderboard(
-  page: number = 1,
-  perPage: number = 10,
-) {
-  cacheLife("minutes");
-  cacheTag(CACHE_TAGS.LEADERBOARD_LIFETIME);
-  return _getLifetimeLeaderboard(page, perPage);
 }
