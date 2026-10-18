@@ -192,11 +192,23 @@ export function resolvePublicCertificateText(
     case "role":
       return data.activity.certificate_settings?.role ?? "";
     case "event_details":
-      return [data.activity.certificate_settings?.delivery_mode, data.activity.certificate_settings?.event_date, data.activity.certificate_settings?.hijri_date, data.activity.certificate_settings?.venue].filter(Boolean).join("\n");
+      return [
+        data.activity.certificate_settings?.delivery_mode,
+        data.activity.certificate_settings?.event_date,
+        data.activity.certificate_settings?.hijri_date,
+        data.activity.certificate_settings?.venue,
+      ]
+        .filter(Boolean)
+        .join("\n");
     case "organizer":
       return data.activity.certificate_settings?.organizer ?? "";
     case "document_place_date":
-      return [data.activity.certificate_settings?.document_place, data.activity.certificate_settings?.document_date].filter(Boolean).join(", ");
+      return [
+        data.activity.certificate_settings?.document_place,
+        data.activity.certificate_settings?.document_date,
+      ]
+        .filter(Boolean)
+        .join(", ");
     case "name":
       return data.participant.name;
     case "activity_name":
@@ -210,7 +222,9 @@ export function resolvePublicCertificateText(
       return data.participant.activity_date;
     case "certificate_id":
     case "certificate_code":
-      return element.id === "salman-code" ? `Nomor: ${data.certificate.certificate_code}` : data.certificate.certificate_code;
+      return element.id === "salman-code"
+        ? `Nomor: ${data.certificate.certificate_code}`
+        : data.certificate.certificate_code;
     default:
       return "";
   }
@@ -229,11 +243,23 @@ export function resolveOwnerCertificateText(
     case "role":
       return data.activity.certificate_settings?.role ?? "";
     case "event_details":
-      return [data.activity.certificate_settings?.delivery_mode, data.activity.certificate_settings?.event_date, data.activity.certificate_settings?.hijri_date, data.activity.certificate_settings?.venue].filter(Boolean).join("\n");
+      return [
+        data.activity.certificate_settings?.delivery_mode,
+        data.activity.certificate_settings?.event_date,
+        data.activity.certificate_settings?.hijri_date,
+        data.activity.certificate_settings?.venue,
+      ]
+        .filter(Boolean)
+        .join("\n");
     case "organizer":
       return data.activity.certificate_settings?.organizer ?? "";
     case "document_place_date":
-      return [data.activity.certificate_settings?.document_place, data.activity.certificate_settings?.document_date].filter(Boolean).join(", ");
+      return [
+        data.activity.certificate_settings?.document_place,
+        data.activity.certificate_settings?.document_date,
+      ]
+        .filter(Boolean)
+        .join(", ");
     case "approval":
       return formatCertificateApproval(data.certificate.approval);
     case "name":
@@ -257,7 +283,9 @@ export function resolveOwnerCertificateText(
       return data.participant.user_id ? String(data.participant.user_id) : "";
     case "certificate_id":
     case "certificate_code":
-      return element.id === "salman-code" ? `Nomor: ${data.certificate.certificate_code}` : data.certificate.certificate_code;
+      return element.id === "salman-code"
+        ? `Nomor: ${data.certificate.certificate_code}`
+        : data.certificate.certificate_code;
     default:
       return "";
   }
