@@ -45,7 +45,6 @@ type CertificateViewProps = {
   access: CertificateDownloadAccess;
   currentCode?: string;
   ownerScore?: PublishedScoringResult;
-  ownerGroup?: string | null;
 };
 
 export default function CertificateView({
@@ -55,7 +54,6 @@ export default function CertificateView({
   access,
   currentCode,
   ownerScore,
-  ownerGroup,
 }: CertificateViewProps): React.ReactElement {
   const router = useRouter();
   const downloadRef = useRef(false);
@@ -350,7 +348,6 @@ export default function CertificateView({
                     participant={{
                       ...data.participant,
                       scoring_result: score,
-                      certificate_group: ownerGroup,
                     }}
                     certificateCode={code}
                     approval={data.certificate.approval}

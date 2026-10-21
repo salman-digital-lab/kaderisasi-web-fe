@@ -155,7 +155,6 @@ const certificateRenderBaseSchema = z.object({
   }),
   participant: z.object({
     scoring_result: certificateScoringSchema.optional(),
-    certificate_group: z.string().nullable().optional(),
     registration_id: optionalPositiveIdSchema,
     user_id: z.number().int().positive().nullable().optional(),
     name: z.string().min(1),

@@ -115,7 +115,6 @@ export default async function CertificatePage(props: {
         access={access}
         currentCode={currentCode}
         ownerScore={ownerCertificate?.participant.scoring_result}
-        ownerGroup={ownerCertificate?.participant.certificate_group}
       />
     );
   } catch (error) {

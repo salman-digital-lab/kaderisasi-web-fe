@@ -90,7 +90,6 @@ export type CertificateData = {
   };
   participant: {
     scoring_result?: PublishedScoringResult;
-    certificate_group?: string | null;
     name: string;
     activity_name: string;
     activity_date: string;
