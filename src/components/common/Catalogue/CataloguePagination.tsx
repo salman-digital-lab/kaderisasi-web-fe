@@ -50,6 +50,7 @@ export default function CataloguePagination({
         <Group
           gap={4}
           visibleFrom="sm"
+          role="group"
           aria-label={`Halaman ${page} dari ${totalPages}`}
         >
           {items.map((item, index) =>

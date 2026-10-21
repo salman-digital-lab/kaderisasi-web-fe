@@ -42,7 +42,7 @@ export default function ProfileHeader({
           </div>
         </dl>
         {!!profile.badges?.length && (
-          <Group gap="xs" aria-label="Lencana anggota">
+          <Group gap="xs" role="group" aria-label="Lencana anggota">
             {profile.badges.map((badge) => (
               <Badge key={badge} variant="light" size="md" tt="none">
                 {badge}

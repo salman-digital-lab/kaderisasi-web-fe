@@ -4,7 +4,12 @@ import classes from "./status.module.css";
 
 export default function StatusSkeleton(): ReactElement {
   return (
-    <Stack gap="lg" aria-busy="true" aria-label="Memuat pendaftaran">
+    <Stack
+      gap="lg"
+      role="status"
+      aria-busy="true"
+      aria-label="Memuat pendaftaran"
+    >
       <div className={classes.toolbar} aria-hidden="true">
         {[0, 1].map((item) => (
           <Stack gap={6} key={item}>
@@ -13,7 +18,7 @@ export default function StatusSkeleton(): ReactElement {
           </Stack>
         ))}
       </div>
-      <Text role="status">Memuat status kegiatan...</Text>
+      <Text>Memuat status kegiatan...</Text>
       {[0, 1, 2].map((item) => (
         <Paper
           key={item}

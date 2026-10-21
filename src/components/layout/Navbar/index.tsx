@@ -24,7 +24,9 @@ export default function Navbar(): ReactElement {
             <NavigationLinks />
           </Suspense>
           <Suspense
-            fallback={<Loader size="sm" aria-label="Memuat menu akun" />}
+            fallback={
+              <Loader size="sm" role="status" aria-label="Memuat menu akun" />
+            }
           >
             <SessionControls />
           </Suspense>

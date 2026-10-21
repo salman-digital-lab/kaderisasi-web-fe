@@ -36,7 +36,11 @@ function GalleryImage({
   return (
     <span className={classes.imageFrame}>
       {state === "loading" ? (
-        <Skeleton className={classes.imageLoading} aria-label="Memuat gambar" />
+        <Skeleton
+          className={classes.imageLoading}
+          role="status"
+          aria-label="Memuat gambar"
+        />
       ) : null}
       {state === "error" ? (
         <Text component="span" className={classes.imageError}>
