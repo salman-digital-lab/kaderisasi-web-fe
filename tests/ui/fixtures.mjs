@@ -50,6 +50,23 @@ const registration = {
   created_at: date,
   updated_at: date,
 };
+// Unpublished: the public detail answers 404 (scripts/instant-server.mjs), but
+// the member's history and registration endpoints still return it.
+const archivedActivity = {
+  ...activity,
+  id: 2,
+  name: "Kegiatan Arsip Angkatan Lalu",
+  slug: "kegiatan-arsip",
+  is_published: 0,
+};
+const archivedRegistration = {
+  ...registration,
+  id: 2,
+  activity_id: 2,
+  registration_id: 2,
+  activity: archivedActivity,
+  status: "LULUS KEGIATAN",
+};
 const achievement = {
   id: 1,
   name: "Kompetisi Inovasi Mahasiswa",
@@ -65,7 +82,8 @@ export function uiFixture(url, authorization) {
   const path = url.pathname;
   const signedIn =
     authorization === "Bearer ui-preview" ||
-    authorization === "Bearer ui-empty";
+    authorization === "Bearer ui-empty" ||
+    authorization === "Bearer ui-archive";
   if (path === "/v2/profiles" && signedIn) return profile;
   if (path === "/v2/activities/cls-poster")
     return {
@@ -77,11 +95,15 @@ export function uiFixture(url, authorization) {
       },
     };
   if (path === "/v2/activities/kegiatan-uji-1") return activity;
-  if (path === "/v2/profiles/activities")
+  if (path === "/v2/profiles/activities") {
+    if (authorization === "Bearer ui-archive") return [archivedRegistration];
     return authorization === "Bearer ui-empty" ? [] : [registration];
+  }
   if (path === "/v2/profiles/activities/kegiatan-uji-1") return registration;
   if (path === "/v2/activities/kegiatan-uji-1/registration")
     return registration;
+  if (path === "/v2/activities/kegiatan-arsip/registration")
+    return archivedRegistration;
   if (path === "/v2/achievements") return { data: [achievement] };
   if (path === "/v2/achievements/monthly")
     return {

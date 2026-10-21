@@ -25,8 +25,11 @@ import {
   USER_LEVEL_RENDER,
 } from "@/constants/render/activity";
 import { verifySession } from "@/functions/server/session";
-import { getActivity } from "@/services/activity.cache";
-import { getActivityRegistrationData } from "@/services/activity";
+import { getActivityDetail } from "@/services/activity.cache";
+import {
+  getActivitiesRegistration,
+  getActivityRegistrationData,
+} from "@/services/activity";
 import ErrorWrapper from "@/components/layout/Error";
 import { ACTIVITY_REGISTRANT_STATUS_ENUM } from "@/types/constants/activity";
 import type { Activity } from "@/types/model/activity";
@@ -43,12 +46,26 @@ export async function generateMetadata(props: {
   params: Promise<{ slug: string }>;
 }) {
   const param = await props.params;
-  const activity = await getActivity(param);
+  // Unpublished activities answer 404 publicly; members can still open their
+  // registration, so fall back to a generic title instead of failing.
+  const activity = await getActivityDetail(param).catch(() => null);
 
   return {
-    title: `Pendaftaran - ${activity?.name || " Kegiatan"}`,
-    description: `Detail pendaftaran kegiatan ${activity?.name}`,
+    title: `Pendaftaran - ${activity?.name || "Kegiatan"}`,
+    description: activity
+      ? `Detail pendaftaran kegiatan ${activity.name}`
+      : "Detail pendaftaran kegiatan",
   };
+}
+
+/** The activity as embedded in the member's own registration history. */
+async function getRegisteredActivity(token: string, slug: string) {
+  try {
+    const registrations = await getActivitiesRegistration(token);
+    return registrations.find((item) => item.activity?.slug === slug)?.activity;
+  } catch {
+    return undefined;
+  }
 }
 
 export default async function Page(props: {
@@ -63,7 +80,8 @@ export default async function Page(props: {
     redirect("/api/logout");
   }
 
-  let activity: Activity | undefined;
+  let activity: Activity | null | undefined;
+  let isPublic = false;
   let registrationData:
     | {
         id: number;
@@ -83,41 +101,53 @@ export default async function Page(props: {
     | undefined;
 
   try {
-    activity = await getActivity(params);
-    registrationData = await getActivityRegistrationData(sessionData.session, {
-      slug: params.slug,
-    });
+    [activity, registrationData] = await Promise.all([
+      getActivityDetail(params),
+      getActivityRegistrationData(sessionData.session, { slug: params.slug }),
+    ]);
   } catch (error: unknown) {
     if (typeof error === "string") {
       return <ErrorWrapper message={error} />;
     }
-  }
-
-  if (!activity) {
-    return <ErrorWrapper message="Activity not found" />;
+    if (error instanceof FetcherError && error.status === 404) {
+      return <ErrorWrapper message="Pendaftaran kegiatan tidak ditemukan." />;
+    }
+    return (
+      <ErrorWrapper message="Data pendaftaran belum dapat dimuat. Silakan coba kembali." />
+    );
   }
 
   if (!registrationData) {
-    return <ErrorWrapper message="Registration not found" />;
+    return <ErrorWrapper message="Pendaftaran kegiatan tidak ditemukan." />;
+  }
+
+  if (activity) {
+    isPublic = true;
+  } else {
+    // The public endpoint hides unpublished activities, but the member's
+    // registration history still carries them.
+    activity = await getRegisteredActivity(sessionData.session, params.slug);
   }
 
   let customForm: CustomForm | undefined;
-  try {
-    customForm = await getCustomFormByFeature({
-      feature_type: "activity_registration",
-      feature_id: activity.id,
-    });
-  } catch (error: unknown) {
-    if (!(error instanceof FetcherError && error.status === 404))
-      return (
-        <ErrorWrapper message="Formulir belum dapat dimuat. Silakan coba kembali." />
-      );
+  if (isPublic && activity) {
+    try {
+      customForm = await getCustomFormByFeature({
+        feature_type: "activity_registration",
+        feature_id: activity.id,
+      });
+    } catch (error: unknown) {
+      if (!(error instanceof FetcherError && error.status === 404))
+        return (
+          <ErrorWrapper message="Formulir belum dapat dimuat. Silakan coba kembali." />
+        );
+    }
   }
 
   const certificateCta = getCertificateCta({
     certificateCode: registrationData.certificate_code,
     certificateState: registrationData.certificate_state,
-    hasTemplate: Boolean(activity.additional_config?.certificate_template_id),
+    hasTemplate: Boolean(activity?.additional_config?.certificate_template_id),
     isPassed:
       registrationData.status ===
       ACTIVITY_REGISTRANT_STATUS_ENUM.LULUS_KEGIATAN,
@@ -175,22 +205,29 @@ export default async function Page(props: {
             <Group justify="space-between" align="flex-start">
               <div>
                 <Title order={1} size="h2" mb="xs">
-                  {activity.name}
+                  {activity?.name || "Kegiatan"}
                 </Title>
-                <Group gap={7}>
-                  <Badge variant="light">
-                    {activity ? USER_LEVEL_RENDER[activity.minimum_level] : ""}
-                  </Badge>
-                  <Badge variant="light">
-                    {activity
-                      ? ACTIVITY_CATEGORY_RENDER[activity.activity_category]
-                      : ""}
-                  </Badge>
-                </Group>
+                {activity && (
+                  <Group gap={7}>
+                    <Badge variant="light">
+                      {USER_LEVEL_RENDER[activity.minimum_level]}
+                    </Badge>
+                    <Badge variant="light">
+                      {ACTIVITY_CATEGORY_RENDER[activity.activity_category]}
+                    </Badge>
+                  </Group>
+                )}
               </div>
             </Group>
 
-            {activity.activity_start && (
+            {!isPublic && (
+              <Text size="sm" c="dimmed">
+                Kegiatan ini sudah tidak ditampilkan untuk umum. Data
+                pendaftaranmu tetap tersimpan di bawah ini.
+              </Text>
+            )}
+
+            {activity?.activity_start && (
               <Group
                 gap="md"
                 p="md"

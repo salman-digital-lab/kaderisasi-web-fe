@@ -20,7 +20,11 @@ const api = createServer(async (request, response) => {
   if (process.env.CLS_BROWSER_TEST === "1") {
     await new Promise((resolve) => setTimeout(resolve, 800));
   }
-  if (url.pathname === "/v2/activities/cls-missing") {
+  if (
+    ["/v2/activities/cls-missing", "/v2/activities/kegiatan-arsip"].includes(
+      url.pathname,
+    )
+  ) {
     response.statusCode = 404;
     return response.end(JSON.stringify({ message: "ACTIVITY_NOT_FOUND" }));
   }
