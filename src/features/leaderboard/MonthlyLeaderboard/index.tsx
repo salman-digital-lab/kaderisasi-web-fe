@@ -17,6 +17,7 @@ import {
 } from "@mantine/core";
 
 import dayjs from "dayjs";
+import "dayjs/locale/id";
 import styles from "./style.module.css";
 import { USER_LEVEL_RENDER } from "@/constants/render/activity";
 import { USER_LEVEL_ENUM } from "@/types/constants/profile";
