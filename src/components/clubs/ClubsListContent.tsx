@@ -1,5 +1,6 @@
 import { Center, SimpleGrid, Stack, Text } from "@mantine/core";
 import { redirect } from "next/navigation";
+import { io } from "next/cache";
 import ClubCard from "@/components/common/ClubCard";
 import { getClubs } from "@/services/club.cache";
 import ClubPagination from "./ClubPagination";
@@ -31,6 +32,9 @@ export async function ClubsListContent({
     return <ClubsListError />;
   }
 
+  // Registration deadlines are evaluated per request, outside the prerender.
+  await io();
+  const now = new Date();
   const { data: clubs, meta } = result;
   const totalPages = Math.max(meta.last_page || 1, 1);
 
@@ -72,6 +76,7 @@ export async function ClubsListContent({
             end_period={club.end_period}
             is_registration_open={Boolean(club.is_registration_open)}
             registration_end_date={club.registration_end_date}
+            now={now}
           />
         ))}
       </SimpleGrid>

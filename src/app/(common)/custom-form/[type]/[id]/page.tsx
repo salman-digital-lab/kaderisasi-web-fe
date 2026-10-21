@@ -68,6 +68,7 @@ export default async function Page(props: {
       !isClubRegistrationOpen({
         isRegistrationOpen: Boolean(club.is_registration_open),
         registrationEndDate: club.registration_end_date,
+        now: new Date(),
       })
     ) {
       redirect(`/clubs/${id}`);

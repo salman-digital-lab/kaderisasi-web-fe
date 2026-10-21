@@ -14,6 +14,7 @@ import { getHomepageClubs } from "@/services/homepage-clubs";
 export async function ClubsSection() {
   // Select clubs and evaluate registration deadlines for each request.
   await connection();
+  const now = new Date();
 
   let clubs: Awaited<ReturnType<typeof getHomepageClubs>>;
 
@@ -68,6 +69,7 @@ export async function ClubsSection() {
                 end_period={club.end_period}
                 is_registration_open={Boolean(club.is_registration_open)}
                 registration_end_date={club.registration_end_date}
+                now={now}
               />
             ))}
           </SimpleGrid>

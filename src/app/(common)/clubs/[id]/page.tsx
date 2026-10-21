@@ -83,6 +83,7 @@ export default async function ClubDetailPage({
   const registrationOpen = isClubRegistrationOpen({
     isRegistrationOpen: Boolean(club.is_registration_open),
     registrationEndDate: club.registration_end_date,
+    now: new Date(),
   });
   const logoUrl = club.logo
     ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${club.logo}`
@@ -367,9 +368,9 @@ export default async function ClubDetailPage({
                 ? "Pilih gambar untuk melihat ukuran penuh."
                 : "Video dari klub."}
             </Text>
-              <MediaGallery
+            <MediaGallery
               items={club.media.items}
-                subjectName={club.name}
+              subjectName={club.name}
               imageBaseUrl={process.env.NEXT_PUBLIC_IMAGE_BASE_URL || ""}
             />
           </Paper>

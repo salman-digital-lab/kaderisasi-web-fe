@@ -31,14 +31,18 @@ function normalizeDateKey(value: string): string | null {
   return dateKey;
 }
 
+/**
+ * Callers pass `now` read at request time (after `io()`, `connection()` or a
+ * request-time API); reading the clock here would break prerendering.
+ */
 export function isClubRegistrationOpen({
   isRegistrationOpen,
   registrationEndDate,
-  now = new Date(),
+  now,
 }: {
   isRegistrationOpen: boolean;
   registrationEndDate?: string | null;
-  now?: Date;
+  now: Date;
 }): boolean {
   if (!isRegistrationOpen) return false;
   if (!registrationEndDate) return true;

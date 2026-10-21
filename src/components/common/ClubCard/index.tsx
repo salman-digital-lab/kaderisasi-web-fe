@@ -24,6 +24,8 @@ type ClubCardProps = {
   end_period: string | null;
   is_registration_open?: boolean;
   registration_end_date?: string | null;
+  /** Request-time clock for evaluating the registration deadline. */
+  now: Date;
 };
 
 const CLUB_TYPE_COLORS: Record<ClubType, string> = {
@@ -42,10 +44,12 @@ export default function ClubCard({
   end_period,
   is_registration_open = false,
   registration_end_date,
+  now,
 }: ClubCardProps): ReactElement {
   const registrationOpen = isClubRegistrationOpen({
     isRegistrationOpen: is_registration_open,
     registrationEndDate: registration_end_date,
+    now,
   });
   const logoUrl = logo
     ? `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${logo}`
