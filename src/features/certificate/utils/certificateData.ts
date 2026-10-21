@@ -177,6 +177,16 @@ function normalizeVariable(variable: string | undefined): string {
   return variable?.replace(/\{\{|\}\}/g, "").trim() ?? "";
 }
 
+/**
+ * Caption printed under the QR code: the unique code moves there once the
+ * activity number takes its place under the logo.
+ */
+export function getCertificateQrCaption(data: PublicCertificateData): string {
+  return data.activity.certificate_settings?.certificate_activity_number
+    ? data.certificate.certificate_code
+    : "";
+}
+
 export function resolvePublicCertificateText(
   element: CertificateElement,
   data: PublicCertificateData,
@@ -220,10 +230,14 @@ export function resolvePublicCertificateText(
     case "activity_date":
     case "date":
       return data.participant.activity_date;
+    case "certificate_activity_number":
+      return (
+        data.activity.certificate_settings?.certificate_activity_number ?? ""
+      );
     case "certificate_id":
     case "certificate_code":
       return element.id === "salman-code"
-        ? `Nomor: ${data.certificate.certificate_code}`
+        ? `Nomor: ${data.activity.certificate_settings?.certificate_activity_number || data.certificate.certificate_code}`
         : data.certificate.certificate_code;
     default:
       return "";
@@ -281,10 +295,14 @@ export function resolveOwnerCertificateText(
         : "";
     case "user_id":
       return data.participant.user_id ? String(data.participant.user_id) : "";
+    case "certificate_activity_number":
+      return (
+        data.activity.certificate_settings?.certificate_activity_number ?? ""
+      );
     case "certificate_id":
     case "certificate_code":
       return element.id === "salman-code"
-        ? `Nomor: ${data.certificate.certificate_code}`
+        ? `Nomor: ${data.activity.certificate_settings?.certificate_activity_number || data.certificate.certificate_code}`
         : data.certificate.certificate_code;
     default:
       return "";

@@ -48,6 +48,8 @@ export type CertificateSettings = {
   organizer: string;
   document_place: string;
   document_date: string;
+  /** e.g. 1719/S.4/YPM-5000/IV-1448; absent on certificates issued before it existed. */
+  certificate_activity_number?: string;
   include_scores: boolean;
 };
 
@@ -104,7 +106,10 @@ export type CertificateData = {
 /** Safe DTO permitted to cross the public React Server Component boundary. */
 export type PublicCertificateData = {
   state: "issued_active" | "issued_revoked";
-  activity: Pick<CertificateData["activity"], "name" | "activity_start" | "certificate_settings">;
+  activity: Pick<
+    CertificateData["activity"],
+    "name" | "activity_start" | "certificate_settings"
+  >;
   template: Pick<
     CertificateData["template"],
     "name" | "background_image" | "template_data"

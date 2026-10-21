@@ -17,6 +17,7 @@ const certificateSettingsSchema = z.object({
   organizer: z.string(),
   document_place: z.string(),
   document_date: z.string(),
+  certificate_activity_number: z.string().optional(),
   include_scores: z.boolean(),
 });
 const optionalPositiveIdSchema = z.number().int().positive().optional();

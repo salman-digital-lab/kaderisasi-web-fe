@@ -7,6 +7,7 @@ import type {
 import {
   formatCertificateApproval,
   getCertificateFilename,
+  getCertificateQrCaption,
   formatCertificateTimestamp,
   getCertificateCta,
   getCertificateLifecycleDestination,
@@ -258,5 +259,63 @@ describe("certificate data privacy and rendering", () => {
       title: "Sertifikat Latihan Kepemimpinan",
       url: "https://kaderisasi.example/certificate/CERT-2026-ABC",
     });
+  });
+});
+
+describe("certificate activity number", () => {
+  const top = {
+    id: "salman-code",
+    type: "variable-text",
+    variable: "{{certificate_code}}",
+    x: 0,
+    y: 0,
+    width: 100,
+    height: 30,
+  } as CertificateElement;
+  const settings = {
+    version: 1 as const,
+    institution: "YPM Salman ITB",
+    role: "PESERTA",
+    event_date: "",
+    hijri_date: "",
+    delivery_mode: "",
+    venue: "",
+    organizer: "Salman",
+    document_place: "Bandung",
+    document_date: "1 Juli 2026",
+    include_scores: false,
+  };
+
+  it("shows the activity number under the logo and the unique code under the QR", () => {
+    const data: CertificateData = {
+      ...renderData,
+      activity: {
+        ...renderData.activity,
+        certificate_settings: {
+          ...settings,
+          certificate_activity_number: "1719/S.4/YPM-5000/IV-1448",
+        },
+      },
+    };
+    expect(resolveOwnerCertificateText(top, data)).toBe(
+      "Nomor: 1719/S.4/YPM-5000/IV-1448",
+    );
+    const publicData = toPublicCertificateData(data);
+    expect(resolvePublicCertificateText(top, publicData)).toBe(
+      "Nomor: 1719/S.4/YPM-5000/IV-1448",
+    );
+    expect(getCertificateQrCaption(publicData)).toBe("CERT-2026-ABC");
+  });
+
+  it("keeps the unique code under the logo for certificates without one", () => {
+    const data: CertificateData = {
+      ...renderData,
+      activity: { ...renderData.activity, certificate_settings: settings },
+    };
+    const publicData = toPublicCertificateData(data);
+    expect(resolvePublicCertificateText(top, publicData)).toBe(
+      "Nomor: CERT-2026-ABC",
+    );
+    expect(getCertificateQrCaption(publicData)).toBe("");
   });
 });

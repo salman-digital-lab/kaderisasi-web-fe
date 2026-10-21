@@ -7,7 +7,10 @@ import type {
 import { useElementSize } from "@mantine/hooks";
 import { forwardRef, type CSSProperties, type ReactNode } from "react";
 import QRCode from "react-qr-code";
-import { resolvePublicCertificateText } from "../utils/certificateData";
+import {
+  getCertificateQrCaption,
+  resolvePublicCertificateText,
+} from "../utils/certificateData";
 import classes from "./index.module.css";
 import { FittedCertificateName } from "../FittedCertificateName";
 
@@ -140,27 +143,50 @@ function CertificateElementRenderer({
     return null;
   }
 
+  const qrCaption =
+    element.type === "qr-code" ? getCertificateQrCaption(data) : "";
+
   return (
-    <div
-      data-certificate-element-id={element.id}
-      data-certificate-text-element={isText ? "true" : undefined}
-      style={{
-        borderRadius: element.borderRadius ?? 0,
-        boxSizing: "border-box",
-        height: element.height,
-        left: element.x,
-        opacity: (element.opacity ?? 100) / 100,
-        overflow: "hidden",
-        padding: 4,
-        position: "absolute",
-        top: element.y,
-        transform: `rotate(${element.rotation ?? 0}deg)`,
-        transformOrigin: "center center",
-        width: element.width,
-      }}
-    >
-      {renderContent()}
-    </div>
+    <>
+      <div
+        data-certificate-element-id={element.id}
+        data-certificate-text-element={isText ? "true" : undefined}
+        style={{
+          borderRadius: element.borderRadius ?? 0,
+          boxSizing: "border-box",
+          height: element.height,
+          left: element.x,
+          opacity: (element.opacity ?? 100) / 100,
+          overflow: "hidden",
+          padding: 4,
+          position: "absolute",
+          top: element.y,
+          transform: `rotate(${element.rotation ?? 0}deg)`,
+          transformOrigin: "center center",
+          width: element.width,
+        }}
+      >
+        {renderContent()}
+      </div>
+      {qrCaption ? (
+        <div
+          data-certificate-qr-caption
+          style={{
+            color: "#1f2937",
+            fontFamily: "Arial",
+            fontSize: 9,
+            left: element.x + 4,
+            lineHeight: 1.2,
+            opacity: (element.opacity ?? 100) / 100,
+            position: "absolute",
+            top: element.y + element.height,
+            whiteSpace: "nowrap",
+          }}
+        >
+          {qrCaption}
+        </div>
+      ) : null}
+    </>
   );
 }
 
