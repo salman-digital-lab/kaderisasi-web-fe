@@ -1,0 +1,14 @@
+{
+  "$schema": "https://schema.railpack.com",
+  "provider": "node",
+  "packages": {
+    "node": "24"
+  },
+  "deploy": {
+    "startCommand": "npm run start",
+    "variables": {
+      "NODE_ENV": "production",
+      "MALLOC_ARENA_MAX": "2"
+    }
+  }
+}
