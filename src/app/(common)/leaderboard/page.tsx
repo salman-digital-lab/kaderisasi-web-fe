@@ -1,6 +1,7 @@
 import PageHero from "@/components/layout/PageHero";
 import illustration from "@/assets/leaderboardpage-1.svg";
-import { Text } from "@mantine/core";
+import { Suspense } from "react";
+import { Container, Group, Loader, Text } from "@mantine/core";
 import MonthlyLeaderboard from "@/features/leaderboard/MonthlyLeaderboard";
 
 export const metadata = {
@@ -33,7 +34,17 @@ export default function LeaderboardPage() {
         illustration={illustration}
       ></PageHero>
 
-      <MonthlyLeaderboard />
+      <Suspense
+        fallback={
+          <Container size="md" py="xl">
+            <Group justify="center" py="xl">
+              <Loader />
+            </Group>
+          </Container>
+        }
+      >
+        <MonthlyLeaderboard />
+      </Suspense>
     </>
   );
 }

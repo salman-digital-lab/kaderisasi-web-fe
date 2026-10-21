@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
+import { io } from "next/cache";
 import { getMonthlyLeaderboard } from "@/services/leaderboard";
 import { IconUser } from "@tabler/icons-react";
 import {
@@ -22,6 +23,9 @@ import { USER_LEVEL_ENUM } from "@/types/constants/profile";
 import { MonthlyLeaderboard } from "@/types/model/achievement";
 
 const MonthlyLeaderboardList = () => {
+  // The month list depends on the current time, so keep it out of the
+  // prerendered shell.
+  use(io());
   const [leaderboard, setLeaderboard] = useState<MonthlyLeaderboard[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -66,6 +70,7 @@ const MonthlyLeaderboardList = () => {
       <Group justify="space-between" mb="lg">
         <Title order={2}>Leaderboard Bulanan</Title>
         <Select
+          aria-label="Pilih bulan"
           value={selectedMonth}
           onChange={(value) => {
             if (value) {
