@@ -13,6 +13,7 @@ export const formErrorMessage = (code: string): string =>
     FORM_SCHEMA_CHANGED:
       "Formulir telah berubah. Muat ulang halaman sebelum melanjutkan.",
     FORM_CLOSED: "Penerimaan respons telah ditutup.",
+    FORBIDDEN: "Permintaan ditolak. Muat ulang halaman lalu coba lagi.",
     INVALID_FORM_SESSION: "Sesi pengisian berakhir. Muat ulang halaman.",
     LOGIN_REQUIRED: "Silakan masuk untuk mengisi formulir.",
     INVALID_FILE_SIZE: "Ukuran berkas melebihi batas yang diizinkan.",

@@ -1,5 +1,6 @@
 import { getToken } from "@/functions/auth/getToken";
 import { getApiConfig } from "@/config/apiConfig";
+import { isSameOriginRequest } from "@/lib/sameOrigin";
 
 const privateHeaders = { "Cache-Control": "private, no-store" };
 type Context = { params: Promise<{ path?: string[] }> };
@@ -23,10 +24,7 @@ async function proxy(request: Request, context: Context): Promise<Response> {
       { status: 401, headers: privateHeaders },
     );
   const url = new URL(request.url);
-  if (
-    request.method === "PUT" &&
-    request.headers.get("origin") !== url.origin
-  ) {
+  if (request.method === "PUT" && !isSameOriginRequest(request)) {
     return Response.json(
       { message: "UNTRUSTED_ORIGIN" },
       { status: 403, headers: privateHeaders },

@@ -1,5 +1,6 @@
 import { verifySession } from "@/functions/server/session";
 import { serverApiConfig } from "@/config/apiConfig";
+import { isSameOriginRequest } from "@/lib/sameOrigin";
 
 type Context = { params: Promise<{ id: string; action: string[] }> };
 async function proxyFormRequest(
@@ -19,8 +20,7 @@ async function proxyFormRequest(
     action.some((part) => !/^[\w-]+$/.test(part))
   )
     return Response.json({ message: "NOT_FOUND" }, { status: 404 });
-  const origin = request.headers.get("origin");
-  if (origin && origin !== new URL(request.url).origin)
+  if (!isSameOriginRequest(request))
     return Response.json({ message: "FORBIDDEN" }, { status: 403 });
   const { session } = await verifySession();
   const headers = new Headers();
