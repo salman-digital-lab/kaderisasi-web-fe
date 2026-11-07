@@ -30,6 +30,7 @@ import { profileFormValues, profileFormRequest } from "../form-values";
 import type { ProfileFormValues } from "../form-values";
 import HistoryFields from "../HistoryFields";
 import CitySelect from "../CitySelect";
+import EmailChange from "../EmailChange";
 import ProfileSectionError from "../ProfileSectionError";
 import {
   PROFILE_FORM_SECTIONS,
@@ -273,17 +274,16 @@ export default function PersonalDataForm({
                     label="Nomor identitas"
                     inputMode="numeric"
                   />
-                  <div>
-                    <Text fw={600} size="sm">
-                      Email akun
-                    </Text>
-                    <Text className={classes.readOnly}>
-                      {profileData.userData.email || "Belum tersedia"}
-                    </Text>
-                    <Text c="dimmed" size="sm">
-                      Email akun tidak dapat diubah di sini.
-                    </Text>
-                  </div>
+                  {profileData.userData.email ? (
+                    <EmailChange currentEmail={profileData.userData.email} />
+                  ) : (
+                    <div>
+                      <Text fw={600} size="sm">
+                        Email akun
+                      </Text>
+                      <Text className={classes.readOnly}>Belum tersedia</Text>
+                    </div>
+                  )}
                 </div>
               </Section>
               <Section

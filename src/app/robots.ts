@@ -28,6 +28,7 @@ export default function robots(): MetadataRoute.Robots {
           "/custom-form/",
           "/form/",
           "/reset",
+          "/confirm-email",
         ],
       },
     ],
