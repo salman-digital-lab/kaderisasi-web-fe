@@ -36,7 +36,7 @@ import { educationEntrySchema, historyValidationErrors, isBlankEducation } from 
 import { selectCurrentEducation } from "@/features/customForm/education-history";
 
 const DEGREE_OPTIONS = [
-  { value: "high_school", label: "SMA/SMK" },
+  { value: "high_school", label: "SMP/SMA/SMK" },
   { value: "diploma", label: "D3 (Diploma)" },
   { value: "bachelor", label: "S1 (Sarjana)" },
   { value: "master", label: "S2 (Magister)" },
@@ -44,7 +44,7 @@ const DEGREE_OPTIONS = [
 ];
 
 const DEGREE_LABEL: Record<string, string> = {
-  high_school: "SMA/SMK",
+  high_school: "SMP/SMA/SMK",
   diploma: "D3",
   bachelor: "S1",
   master: "S2",

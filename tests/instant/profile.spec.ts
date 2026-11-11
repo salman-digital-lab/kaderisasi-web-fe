@@ -783,7 +783,7 @@ test("history retries do not refetch identity or discard the mounted draft", asy
   );
 });
 
-for (const degree of ["SMA/SMK", "D3 (Diploma)"]) {
+for (const degree of ["SMP/SMA/SMK", "D3 (Diploma)"]) {
   test(`education saves and reloads ${degree} with a typed institution`, async ({
     page,
     context,
@@ -795,7 +795,7 @@ for (const degree of ["SMA/SMK", "D3 (Diploma)"]) {
       .click();
     await page.getByRole("combobox", { name: "Jenjang", exact: true }).click();
     await page.getByRole("option", { name: degree, exact: true }).click();
-    if (degree === "SMA/SMK") {
+    if (degree === "SMP/SMA/SMK") {
       await expect(page.getByLabel("Fakultas", { exact: true })).toHaveCount(0);
       await page
         .getByRole("textbox", { name: "Nama Sekolah", exact: true })
@@ -822,12 +822,12 @@ for (const degree of ["SMA/SMK", "D3 (Diploma)"]) {
       page.getByRole("combobox", { name: "Jenjang", exact: true }),
     ).toHaveValue(degree);
     await expect(
-      page.getByRole(degree === "SMA/SMK" ? "textbox" : "combobox", {
-        name: degree === "SMA/SMK" ? "Nama Sekolah" : "Institusi",
+      page.getByRole(degree === "SMP/SMA/SMK" ? "textbox" : "combobox", {
+        name: degree === "SMP/SMA/SMK" ? "Nama Sekolah" : "Institusi",
         exact: true,
       }),
     ).toHaveValue("Sekolah Peserta");
-    if (degree === "SMA/SMK") {
+    if (degree === "SMP/SMA/SMK") {
       await expect(page.getByLabel("Fakultas", { exact: true })).toHaveCount(0);
       await page
         .getByRole("combobox", { name: "Jenjang", exact: true })
@@ -840,7 +840,9 @@ for (const degree of ["SMA/SMK", "D3 (Diploma)"]) {
       await page
         .getByRole("combobox", { name: "Jenjang", exact: true })
         .click();
-      await page.getByRole("option", { name: "SMA/SMK", exact: true }).click();
+      await page
+        .getByRole("option", { name: "SMP/SMA/SMK", exact: true })
+        .click();
       await expect(
         page.getByRole("textbox", { name: "Nama Sekolah", exact: true }),
       ).toHaveValue("Sekolah Peserta");

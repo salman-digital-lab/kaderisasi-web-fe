@@ -162,7 +162,7 @@ export const kaderisasiParticipationOptions = [
 ] as const;
 
 export const degreeOptions = [
-  { value: "high_school", label: "SMA/SMK" },
+  { value: "high_school", label: "SMP/SMA/SMK" },
   { value: "diploma", label: "D3 (Diploma)" },
   { value: "bachelor", label: "S1 (Sarjana)" },
   { value: "master", label: "S2 (Magister)" },
