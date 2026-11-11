@@ -6,6 +6,7 @@ import { normalizeEducationHistory } from "@/utils/profile-history";
 import {
   educationEntrySchema,
   historyValidationErrors,
+  isBlankEducation,
 } from "@/features/profile/history-schema";
 
 import { useState, type RefObject } from "react";
@@ -123,7 +124,10 @@ export default function CustomFormGuestSection({
       const currentResult = educationEntrySchema.safeParse(
         values.current_education,
       );
-      if (values.current_education && !currentResult.success) {
+      if (
+        !isBlankEducation(values.current_education) &&
+        !currentResult.success
+      ) {
         currentResult.error.issues.forEach((issue) => {
           errors[`current_education.${issue.path.join(".")}`] = issue.message;
         });
@@ -541,8 +545,11 @@ export default function CustomFormGuestSection({
       );
     }
     if (processed.current_education !== undefined) {
-      const entry = educationEntrySchema.parse(processed.current_education);
-      processed.current_education = entry.institution ? entry : undefined;
+      processed.current_education = isBlankEducation(
+        processed.current_education,
+      )
+        ? undefined
+        : educationEntrySchema.parse(processed.current_education);
     }
 
     // Carry name/email even when not part of the schema fields

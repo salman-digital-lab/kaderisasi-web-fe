@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { profileHistorySchema } from "./history-schema";
+import { isBlankEducation, profileHistorySchema } from "./history-schema";
 import { onboardingFormBaseSchema } from "@/features/onboarding/schema";
 import { normalizeEducationHistory, normalizeWorkHistory } from "@/utils/profile-history";
 import { selectCurrentEducation } from "@/features/customForm/education-history";
@@ -33,8 +33,27 @@ describe("profile histories across forms", () => {
     expect(profileHistorySchema.parse({ name: "Name" })).toEqual({});
     expect(profileHistorySchema.parse({ education_history: [], work_history: [] }))
       .toEqual({ education_history: [], work_history: [] });
-    expect(profileHistorySchema.parse({ education_history: [{ major: "Physics", intake_year: null }] }))
-      .toEqual({ education_history: [{ institution: "", faculty: "", major: "Physics", intake_year: undefined }] });
+  });
+
+  it("rejects an education entry without an institution", () => {
+    for (const entry of [
+      { major: "Physics", intake_year: null },
+      { degree: "bachelor", institution: "", faculty: "FMIPA", major: "Physics" },
+      { degree: "bachelor", institution: "   " },
+    ]) {
+      const result = profileHistorySchema.safeParse({ education_history: [entry] });
+      expect(result.success).toBe(false);
+      expect(result.error?.issues[0]?.path).toEqual(["education_history", 0, "institution"]);
+    }
+    expect(profileHistorySchema.parse({ education_history: [{ institution: " ITB ", intake_year: null }] }))
+      .toEqual({ education_history: [{ institution: "ITB", faculty: "", major: "", intake_year: undefined }] });
+  });
+
+  it("tells an untouched optional entry apart from an incomplete one", () => {
+    expect(isBlankEducation(undefined)).toBe(true);
+    expect(isBlankEducation({ degree: "bachelor", institution: " ", intake_year: 2026 })).toBe(true);
+    expect(isBlankEducation({ institution: "", major: "Physics" })).toBe(false);
+    expect(isBlankEducation({ institution: "ITB" })).toBe(false);
   });
 
   it("normalizes empty optional years and rejects incomplete jobs or invalid ranges", () => {

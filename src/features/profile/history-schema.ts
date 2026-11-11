@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { normalizeEducationHistory } from "@/utils/profile-history";
 
 const optionalYear = z.preprocess(
   (value) => value === "" || value === null ? undefined : value,
@@ -13,11 +14,17 @@ export const educationEntrySchema = z.object({
     (value) => value === "" || value === null ? undefined : value,
     z.enum(["high_school", "diploma", "bachelor", "master", "doctoral"]).optional(),
   ),
-  institution: z.string().trim().default(""),
+  institution: z.string().trim().min(1, "Institusi wajib diisi"),
   faculty: z.string().trim().default(""),
   major: z.string().trim().default(""),
   intake_year: optionalYear,
 });
+
+/** True when an optional education entry was left untouched (no text typed). */
+export function isBlankEducation(value: unknown): boolean {
+  const entry = normalizeEducationHistory([value])[0];
+  return !entry || !(entry.institution || entry.faculty || entry.major);
+}
 
 export const workEntrySchema = z.object({
   job_title: z.string().trim().min(1, "Posisi/jabatan wajib diisi"),

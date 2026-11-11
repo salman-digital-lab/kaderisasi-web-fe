@@ -32,7 +32,7 @@ import { toISODateString } from "@/utils/dateUtils";
 import UniversityNameSelect from "@/components/common/UniversityNameSelect";
 import { getCitiesByProvince } from "@/services/profile";
 import { normalizeEducationHistory } from "@/utils/profile-history";
-import { educationEntrySchema, historyValidationErrors } from "@/features/profile/history-schema";
+import { educationEntrySchema, historyValidationErrors, isBlankEducation } from "@/features/profile/history-schema";
 import { selectCurrentEducation } from "@/features/customForm/education-history";
 
 const DEGREE_OPTIONS = [
@@ -148,9 +148,19 @@ export default function CustomFormProfileSection({
 
   const handleConfirmEdit = () => {
     if (editingIndex === null) return;
-    if (form.validate().hasErrors) return;
-    const edited = form.getValues().current_education as EducationEntry;
-    form.replaceListItem("education_history", editingIndex, { ...edited });
+    // Check only the entry being edited: the stored copy of it may be the
+    // very thing that is invalid until this edit replaces it.
+    const edited = educationEntrySchema.safeParse(form.getValues().current_education);
+    if (!edited.success) {
+      edited.error.issues.forEach((issue) =>
+        form.setFieldError(`current_education.${issue.path.join(".")}`, issue.message),
+      );
+      return;
+    }
+    Object.keys(form.errors)
+      .filter((key) => key === "current_education" || key.startsWith("current_education.") || key.startsWith(`education_history.${editingIndex}.`))
+      .forEach((key) => form.clearFieldError(key));
+    form.replaceListItem("education_history", editingIndex, { ...edited.data });
     setEditingIndex(null);
   };
 
@@ -231,7 +241,7 @@ export default function CustomFormProfileSection({
         (field) => field.key === "education_history" || field.key === "current_education",
       ) ? historyValidationErrors({ education_history: values.education_history }) : {};
       const currentResult = educationEntrySchema.safeParse(values.current_education);
-      if (values.current_education && !currentResult.success) {
+      if (!isBlankEducation(values.current_education) && !currentResult.success) {
         currentResult.error.issues.forEach((issue) => {
           errors[`current_education.${issue.path.join(".")}`] = issue.message;
         });
@@ -281,6 +291,17 @@ export default function CustomFormProfileSection({
           }
         }
       });
+
+      // Without the history list on screen, point at the picker so an entry
+      // that lacks its institution can be found and fixed with the pencil.
+      if (
+        !errors.current_education &&
+        !profileFields.some((field) => field.key === "education_history") &&
+        Object.keys(errors).some((key) => /^education_history\.\d+\.institution$/.test(key))
+      ) {
+        errors.current_education =
+          "Lengkapi institusi pada riwayat pendidikan (ikon pensil) sebelum mengirim.";
+      }
 
       return errors;
     },
@@ -872,7 +893,7 @@ export default function CustomFormProfileSection({
         const selectedEntry = values.current_education as EducationEntry | undefined;
         profileUpdateData.education_history = selectCurrentEducation(
           normalizeEducationHistory(values.education_history),
-          selectedEntry ? educationEntrySchema.parse(selectedEntry) : undefined,
+          selectedEntry && !isBlankEducation(selectedEntry) ? educationEntrySchema.parse(selectedEntry) : undefined,
           ceSelectedKeyRef.current,
           editingIndex !== null,
         );
