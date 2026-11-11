@@ -13,6 +13,7 @@ import { IconPencil, IconTrash, IconPlus } from "@tabler/icons-react";
 import type { UseFormReturnType } from "@mantine/form";
 import { useState } from "react";
 import type { ReactElement } from "react";
+import { switchesInstitutionKind } from "@/utils/profile-history";
 import UniversityNameSelect from "@/components/common/UniversityNameSelect";
 import type { EducationEntry, WorkEntry } from "@/types/model/members";
 import type { ProfileFormValues } from "./form-values";
@@ -200,6 +201,8 @@ export default function HistoryFields({
                       {...form.getInputProps(`${kind}.${index}.degree`)}
                       key={form.key(`${kind}.${index}.degree`)}
                       onChange={(value) => {
+                        if (switchesInstitutionKind(form.getInputProps(`${kind}.${index}.degree`), value))
+                          form.setFieldValue(`${kind}.${index}.institution`, "");
                         form.setFieldValue(`${kind}.${index}.degree`, value);
                         if (value === "high_school") form.setFieldValue(`${kind}.${index}.faculty`, "");
                       }}
@@ -219,7 +222,7 @@ export default function HistoryFields({
                         {...form.getInputProps(`${kind}.${index}.institution`)}
                         key={form.key(`${kind}.${index}.institution`)}
                         label="Institusi"
-                        placeholder="Cari atau ketik nama institusi"
+                        placeholder="Cari dan pilih institusi"
                       />
                     )}
                     {!(

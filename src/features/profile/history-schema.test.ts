@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { isBlankEducation, profileHistorySchema } from "./history-schema";
 import { onboardingFormBaseSchema } from "@/features/onboarding/schema";
-import { normalizeEducationHistory, normalizeWorkHistory } from "@/utils/profile-history";
+import { normalizeEducationHistory, normalizeWorkHistory, switchesInstitutionKind } from "@/utils/profile-history";
 import { selectCurrentEducation } from "@/features/customForm/education-history";
 
 describe("profile histories across forms", () => {
@@ -79,5 +79,13 @@ describe("profile histories across forms", () => {
     expect(selectCurrentEducation(history, stale, "9")).toEqual(history);
     expect(selectCurrentEducation(history, undefined, null)).toEqual(history);
     expect(selectCurrentEducation(history, stale, "new")).toEqual([...history, stale]);
+  });
+
+  it("drops the institution only when the degree moves between school and campus", () => {
+    expect(switchesInstitutionKind({ defaultValue: "high_school" }, "bachelor")).toBe(true);
+    expect(switchesInstitutionKind({ value: "master" }, "high_school")).toBe(true);
+    expect(switchesInstitutionKind({ value: "bachelor" }, "master")).toBe(false);
+    expect(switchesInstitutionKind({ defaultValue: undefined }, "diploma")).toBe(false);
+    expect(switchesInstitutionKind({ value: "high_school" }, "high_school")).toBe(false);
   });
 });

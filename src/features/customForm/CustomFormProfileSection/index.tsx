@@ -31,7 +31,7 @@ import showNotif from "@/functions/common/notification";
 import { toISODateString } from "@/utils/dateUtils";
 import UniversityNameSelect from "@/components/common/UniversityNameSelect";
 import { getCitiesByProvince } from "@/services/profile";
-import { normalizeEducationHistory } from "@/utils/profile-history";
+import { normalizeEducationHistory, switchesInstitutionKind } from "@/utils/profile-history";
 import { educationEntrySchema, historyValidationErrors, isBlankEducation } from "@/features/profile/history-schema";
 import { selectCurrentEducation } from "@/features/customForm/education-history";
 
@@ -505,6 +505,8 @@ export default function CustomFormProfileSection({
                   {...form.getInputProps(`education_history.${index}.degree`)}
                   key={form.key(`education_history.${index}.degree`)}
                   onChange={(value) => {
+                    if (switchesInstitutionKind(form.getInputProps(`education_history.${index}.degree`), value))
+                      form.setFieldValue(`education_history.${index}.institution`, "");
                     form.setFieldValue(`education_history.${index}.degree`, value);
                     if (value === "high_school") form.setFieldValue(`education_history.${index}.faculty`, "");
                   }}
@@ -527,7 +529,7 @@ export default function CustomFormProfileSection({
                     {...form.getInputProps(`education_history.${index}.institution`)}
                     key={form.key(`education_history.${index}.institution`)}
                     label="Institusi"
-                    placeholder="Cari atau ketik nama institusi"
+                    placeholder="Cari dan pilih institusi"
                     mt="xs"
                     radius="md"
                   />
@@ -666,6 +668,8 @@ export default function CustomFormProfileSection({
                               {...form.getInputProps("current_education.degree")}
                               key={form.key("current_education.degree")}
                               onChange={(value) => {
+                                if (switchesInstitutionKind(form.getInputProps("current_education.degree"), value))
+                                  form.setFieldValue("current_education.institution", "");
                                 form.setFieldValue("current_education.degree", value);
                                 if (value === "high_school") form.setFieldValue("current_education.faculty", "");
                               }}
@@ -687,7 +691,7 @@ export default function CustomFormProfileSection({
                                 {...form.getInputProps("current_education.institution")}
                                 key={form.key("current_education.institution")}
                                 label="Institusi"
-                                placeholder="Cari atau ketik nama institusi"
+                                placeholder="Cari dan pilih institusi"
                                 radius="md"
                               />
                             )}
@@ -776,6 +780,8 @@ export default function CustomFormProfileSection({
                   {...form.getInputProps("current_education.degree")}
                   key={form.key("current_education.degree")}
                   onChange={(value) => {
+                    if (switchesInstitutionKind(form.getInputProps("current_education.degree"), value))
+                      form.setFieldValue("current_education.institution", "");
                     form.setFieldValue("current_education.degree", value);
                     if (value === "high_school") form.setFieldValue("current_education.faculty", "");
                   }}
@@ -798,7 +804,7 @@ export default function CustomFormProfileSection({
                     {...form.getInputProps("current_education.institution")}
                     key={form.key("current_education.institution")}
                     label="Institusi"
-                    placeholder="Cari atau ketik nama institusi"
+                    placeholder="Cari dan pilih institusi"
                     mt="xs"
                     radius="md"
                   />

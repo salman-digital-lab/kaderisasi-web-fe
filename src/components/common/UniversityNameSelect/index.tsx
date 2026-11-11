@@ -10,7 +10,9 @@ type UniversityNameSelectProps = Omit<SelectProps, "data" | "onSearchChange">;
 
 /**
  * Searchable university select that stores the university NAME as the value
- * (unlike UniversitySelect which stores the ID).
+ * (unlike UniversitySelect which stores the ID). Only names from the
+ * universities list can be picked; a name the profile already holds stays
+ * selectable so older entries still display.
  * Compatible with Mantine useForm in both controlled and uncontrolled mode.
  */
 export default function UniversityNameSelect({
@@ -70,25 +72,19 @@ export default function UniversityNameSelect({
     fetchUniversities(value);
   }, 300);
 
-  const institutionName = searchValue.trim();
-  const institutionOptions =
-    institutionName && !options.some((option) => option.value === institutionName)
-      ? [{ label: institutionName, value: institutionName }, ...options]
-      : options;
-
   return (
     <Select
       {...props}
       value={value}
       defaultValue={defaultValue}
-      data={institutionOptions}
+      data={options}
       searchable
       searchValue={searchValue}
       onSearchChange={(value) => {
         setSearchValue(value);
         debouncedFetch(value);
       }}
-      nothingFoundMessage="Ketik nama sekolah atau perguruan tinggi"
+      nothingFoundMessage="Institusi tidak ditemukan. Pilih dari daftar yang tersedia."
       allowDeselect={false}
     />
   );

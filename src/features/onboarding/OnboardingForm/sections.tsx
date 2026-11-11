@@ -41,6 +41,7 @@ import {
 
 import { GENDER_OPTION } from "@/constants/form/profile";
 import { USER_LEVEL_RENDER } from "@/constants/render/activity";
+import { switchesInstitutionKind } from "@/utils/profile-history";
 import UniversityNameSelect from "@/components/common/UniversityNameSelect";
 import logo from "@/assets/bmka_logo_color.png";
 import type { Country } from "@/types/model/country";
@@ -784,6 +785,8 @@ export function ProfileStep({
                       )}
                       key={form.key(`educationHistory.${index}.degree`)}
                       onChange={(value) => {
+                        if (switchesInstitutionKind(form.getInputProps(`educationHistory.${index}.degree`), value))
+                          form.setFieldValue(`educationHistory.${index}.institution`, "");
                         form.setFieldValue(`educationHistory.${index}.degree`, value);
                         if (value === "high_school") form.setFieldValue(`educationHistory.${index}.faculty`, "");
                       }}
@@ -825,7 +828,7 @@ export function ProfileStep({
                         key={form.key(`educationHistory.${index}.institution`)}
                         name={`educationHistory.${index}.institution`}
                         label="Institusi"
-                        placeholder="Cari atau ketik nama institusi"
+                        placeholder="Cari dan pilih institusi"
                         size="md"
                         radius="md"
                       />

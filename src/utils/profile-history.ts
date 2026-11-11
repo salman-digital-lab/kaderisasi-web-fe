@@ -61,3 +61,16 @@ export function normalizeWorkHistory(value: unknown): WorkEntry[] {
     end_year: normalizeYearValue(entry.end_year),
   }));
 }
+
+/**
+ * Schools are typed freely while campuses are picked from the universities
+ * list, so an institution name must not carry over when the degree moves
+ * between the two. Takes the degree field's input props and the new degree.
+ */
+export function switchesInstitutionKind(
+  degreeInput: { value?: unknown; defaultValue?: unknown },
+  next: unknown,
+): boolean {
+  const previous = degreeInput.value ?? degreeInput.defaultValue;
+  return (previous === "high_school") !== (next === "high_school");
+}
