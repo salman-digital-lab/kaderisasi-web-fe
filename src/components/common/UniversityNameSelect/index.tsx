@@ -36,13 +36,11 @@ export default function UniversityNameSelect({
   const fetchUniversities = async (search?: string) => {
     try {
       const data = await getUniversities(search);
-      const fetched = data.map((u: University) => ({ label: u.name, value: u.name }));
-      // Keep current value in list even if not in results
-      if (currentValue && !fetched.some((o) => o.value === currentValue)) {
-        setOptions([{ label: currentValue, value: currentValue }, ...fetched]);
-      } else {
-        setOptions(fetched);
-      }
+      // The list can hold two universities with one name, and Select throws on
+      // a repeated value. The current value stays listed even if not in results.
+      const names = new Set<string>(currentValue ? [currentValue] : []);
+      for (const university of data as University[]) names.add(university.name);
+      setOptions([...names].map((name) => ({ label: name, value: name })));
     } catch {
       // ignore
     }
