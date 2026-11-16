@@ -24,14 +24,34 @@ function imports(path) {
     .filter((node) => !node.importClause?.isTypeOnly);
 }
 
+// A barrel names its exports either as `import {a}; export {a}` or `export {a} from`.
+function reexports(path) {
+  const source = ts.createSourceFile(
+    path,
+    readFileSync(path, "utf8"),
+    ts.ScriptTarget.Latest,
+    true,
+  );
+  return source.statements.filter(
+    (node) =>
+      ts.isExportDeclaration(node) &&
+      node.moduleSpecifier &&
+      !node.isTypeOnly &&
+      node.exportClause &&
+      ts.isNamedExports(node.exportClause),
+  );
+}
+
 function visitPackage(name, bindings) {
   // Resolve named imports instead of following the barrel into every component.
   if (!indexes.has(name)) {
     const index = join(root, "node_modules", name, "esm/index.mjs");
     const exports = new Map();
-    for (const node of imports(index)) {
-      const names = node.importClause?.namedBindings;
-      if (names && ts.isNamedImports(names)) {
+    for (const node of [...imports(index), ...reexports(index)]) {
+      const names = ts.isExportDeclaration(node)
+        ? node.exportClause
+        : node.importClause?.namedBindings;
+      if (names && (ts.isNamedImports(names) || ts.isNamedExports(names))) {
         for (const specifier of names.elements) {
           exports.set(
             specifier.name.text,
