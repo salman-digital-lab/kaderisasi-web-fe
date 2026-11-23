@@ -21,7 +21,7 @@ import "dayjs/locale/id";
 import styles from "./style.module.css";
 import { USER_LEVEL_RENDER } from "@/constants/render/activity";
 import { USER_LEVEL_ENUM } from "@/types/constants/profile";
-import { MonthlyLeaderboard } from "@/types/model/achievement";
+import { type MonthlyLeaderboard } from "@/types/model/achievement";
 
 const MonthlyLeaderboardList = () => {
   // The month list depends on the current time, so keep it out of the
@@ -47,7 +47,7 @@ const MonthlyLeaderboardList = () => {
   };
 
   useEffect(() => {
-    fetchLeaderboard(selectedMonth);
+    void fetchLeaderboard(selectedMonth);
   }, [selectedMonth]);
 
   const monthOptions = Array.from({ length: 12 }, (_, i) => {

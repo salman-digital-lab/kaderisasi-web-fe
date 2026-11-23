@@ -2,7 +2,7 @@
 
 import showNotif from "@/functions/common/notification";
 import { postGuestActivity } from "@/services/activity";
-import { Questionnaire } from "@/types/model/activity";
+import { type Questionnaire } from "@/types/model/activity";
 import {
   Button,
   Divider,
@@ -14,7 +14,7 @@ import {
   TextInput,
   Title,
 } from "@mantine/core";
-import { useForm, UseFormReturnType } from "@mantine/form";
+import { useForm, type UseFormReturnType } from "@mantine/form";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

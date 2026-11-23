@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Select, SelectProps } from "@mantine/core";
+import { Select, type SelectProps } from "@mantine/core";
 import { useDebouncedCallback } from "@mantine/hooks";
 import { getUniversities } from "@/services/profile";
-import { University } from "@/types/model/university";
+import { type University } from "@/types/model/university";
 
 type UniversitySelectProps = Omit<SelectProps, "data" | "onSearchChange"> & {
   onChange?: (value: string | null) => void;
@@ -35,11 +35,11 @@ export default function UniversitySelect({
   };
 
   useEffect(() => {
-    fetchUniversities(showedValue);
+    void fetchUniversities(showedValue);
   }, [showedValue]);
 
   const debouncedFetch = useDebouncedCallback((value: string) => {
-    fetchUniversities(value);
+    void fetchUniversities(value);
   }, 300);
 
   const handleSearch = (value: string) => {

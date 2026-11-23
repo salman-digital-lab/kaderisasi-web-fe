@@ -11,7 +11,7 @@ import { postRuangCurhat } from "@/services/ruangcurhat";
 import showNotif from "@/functions/common/notification";
 import { PROBLEM_OWNER_OPTIONS } from "@/constants/form/ruangcurhat";
 import { PROBLEM_OWNER_ENUM } from "@/types/constants/ruangcurhat";
-import { GENDER } from "@/types/constants/profile";
+import { type GENDER } from "@/types/constants/profile";
 import classes from "./index.module.css";
 import editProfile from "@/functions/server/editProfile";
 import { GENDER_OPTION } from "@/constants/form/profile";

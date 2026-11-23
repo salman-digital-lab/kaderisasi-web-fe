@@ -15,6 +15,36 @@ export default defineConfig([
     },
   },
   {
+    rules: {
+      eqeqeq: ["error", "always", { null: "ignore" }],
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+      ],
+    },
+  },
+  {
+    files: ["src/**"],
+    rules: { "no-console": ["error", { allow: ["warn", "error"] }] },
+  },
+  {
+    files: ["**/*.{ts,tsx}"],
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+    rules: {
+      "@typescript-eslint/consistent-type-imports": [
+        "error",
+        { prefer: "type-imports", fixStyle: "inline-type-imports" },
+      ],
+      "@typescript-eslint/no-floating-promises": "error",
+      "@typescript-eslint/switch-exhaustiveness-check": "error",
+    },
+  },
+  {
     // PostCSS loads its config and plugins as CommonJS.
     files: ["**/*.cjs"],
     rules: { "@typescript-eslint/no-require-imports": "off" },

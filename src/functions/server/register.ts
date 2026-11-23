@@ -1,6 +1,6 @@
 "use server";
 
-import { RegisterResp } from "../../types/api/auth";
+import { type RegisterResp } from "../../types/api/auth";
 import { serverApiConfig } from "../../config/apiConfig";
 import fetcher from "../common/fetcher";
 import { getErrorMessage } from "../../types/server-action";

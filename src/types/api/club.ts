@@ -1,4 +1,4 @@
-import { APIResponse, APIPagiResponse } from "../helper";
+import { type APIResponse, type APIPagiResponse } from "../helper";
 import type { Club, ClubDetail, ClubType } from "../model/club";
 
 export type GetClubsReq = {

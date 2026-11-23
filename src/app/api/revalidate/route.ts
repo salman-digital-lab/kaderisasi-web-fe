@@ -1,5 +1,5 @@
 import { revalidateTag } from "next/cache";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { verifySession } from "@/functions/server/session";
 import { CACHE_TAGS } from "@/constants/cache";
 

@@ -1,5 +1,5 @@
-import { APIResponse } from "../helper";
-import { Member, PublicUser, Token } from "../model/members";
+import { type APIResponse } from "../helper";
+import { type Member, type PublicUser, type Token } from "../model/members";
 
 export type LoginResp = APIResponse<{
   user: PublicUser;

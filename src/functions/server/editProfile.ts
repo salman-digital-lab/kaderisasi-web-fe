@@ -1,8 +1,11 @@
 "use server";
 
 import { putProfile } from "../../services/profile";
-import { PutProfileReq } from "../../types/api/user";
-import { ServerActionResult, getErrorMessage } from "../../types/server-action";
+import { type PutProfileReq } from "../../types/api/user";
+import {
+  type ServerActionResult,
+  getErrorMessage,
+} from "../../types/server-action";
 
 import { verifySession } from "./session";
 import { profileHistorySchema } from "@/features/profile/history-schema";
@@ -15,7 +18,10 @@ export default async function editProfile(
 ): Promise<ServerActionResult<Member>> {
   const history = profileHistorySchema.safeParse(data);
   if (!history.success) {
-    return { success: false, message: history.error.issues[0]?.message || "Riwayat tidak valid" };
+    return {
+      success: false,
+      message: history.error.issues[0]?.message || "Riwayat tidak valid",
+    };
   }
   const formData = {
     ...data,

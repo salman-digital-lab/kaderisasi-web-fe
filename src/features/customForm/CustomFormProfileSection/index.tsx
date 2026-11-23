@@ -20,9 +20,9 @@ import {
 import { IconPencil } from "@tabler/icons-react";
 import { useForm } from "@mantine/form";
 import { DateInput } from "@mantine/dates";
-import { CustomFormField } from "@/types/api/customForm";
-import { EducationEntry, Member, PublicUser } from "@/types/model/members";
-import { Province } from "@/types/model/province";
+import { type CustomFormField } from "@/types/api/customForm";
+import { type EducationEntry, type Member, type PublicUser } from "@/types/model/members";
+import { type Province } from "@/types/model/province";
 import type { City } from "@/types/model/city";
 import type { Country } from "@/types/model/country";
 import { GENDER_OPTION } from "@/constants/form/profile";
@@ -75,6 +75,10 @@ type CustomFormProfileSectionProps = {
   formRef?: RefObject<HTMLFormElement | null>;
 };
 
+function loadCities(provinceId: number, apply: (cities: City[]) => void) {
+  getCitiesByProvince(provinceId).then(apply, () => apply([]));
+}
+
 export default function CustomFormProfileSection({
   profileFields,
   profileData,
@@ -101,10 +105,10 @@ export default function CustomFormProfileSection({
 
   useEffect(() => {
     if (profileData?.profile.province_id) {
-      getCitiesByProvince(profileData.profile.province_id).then(setCurrentCities);
+      loadCities(profileData.profile.province_id, setCurrentCities);
     }
     if (profileData?.profile.origin_province_id) {
-      getCitiesByProvince(profileData.profile.origin_province_id).then(setOriginCities);
+      loadCities(profileData.profile.origin_province_id, setOriginCities);
     }
   }, [profileData]);
 
@@ -347,7 +351,7 @@ export default function CustomFormProfileSection({
               setCurrentCityId(null);
               setCurrentCities([]);
               if (val) {
-                getCitiesByProvince(Number(val)).then(setCurrentCities);
+                loadCities(Number(val), setCurrentCities);
               }
             }}
           />
@@ -386,7 +390,7 @@ export default function CustomFormProfileSection({
               setOriginCityId(null);
               setOriginCities([]);
               if (val) {
-                getCitiesByProvince(Number(val)).then(setOriginCities);
+                loadCities(Number(val), setOriginCities);
               }
             }}
           />

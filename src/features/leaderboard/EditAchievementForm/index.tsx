@@ -18,7 +18,7 @@ import showNotif from "@/functions/common/notification";
 import { ACHIEVEMENT_TYPE_OPTIONS } from "@/constants/form/achievement";
 import { editAchievement } from "@/services/leaderboard";
 import { DateInput } from "@mantine/dates";
-import { Achievement } from "@/types/model/achievement";
+import { type Achievement } from "@/types/model/achievement";
 import { IconAlertCircle } from "@tabler/icons-react";
 import { ACHIEVEMENT_STATUS_ENUM } from "@/types/constants/achievement";
 

@@ -17,7 +17,8 @@
     "test:instant": "playwright test",
     "typecheck": "tsc --noEmit",
     "styles:mantine": "node scripts/mantine-css.mjs --write",
-    "check:mantine-css": "node scripts/mantine-css.mjs && node --test scripts/postcss-mantine-rem.test.mjs"
+    "check:mantine-css": "node scripts/mantine-css.mjs && node --test scripts/postcss-mantine-rem.test.mjs",
+    "prepare": "git config core.hooksPath .githooks || true"
   },
   "dependencies": {
     "@mantine/carousel": "^9.8.1",

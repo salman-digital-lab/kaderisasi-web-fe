@@ -250,7 +250,7 @@ export default function NavDrawer({
               radius="md"
               fullWidth
               onClick={() => {
-                logout();
+                void logout();
                 closeDrawer();
               }}
             >

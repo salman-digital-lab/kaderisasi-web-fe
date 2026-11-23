@@ -1,9 +1,9 @@
 import fetcher from "../functions/common/fetcher";
 import { getApiConfig } from "../config/apiConfig";
 import {
-  GetRuangCurhatResp,
-  PostRuangCurhatReq,
-  PostRuangCurhatResp,
+  type GetRuangCurhatResp,
+  type PostRuangCurhatReq,
+  type PostRuangCurhatResp,
 } from "../types/api/ruangcurhat";
 
 export const getRuangCurhat = async (token: string) => {

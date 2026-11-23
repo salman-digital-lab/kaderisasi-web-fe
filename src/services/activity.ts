@@ -1,20 +1,20 @@
 import fetcher from "../functions/common/fetcher";
 import { getApiConfig } from "../config/apiConfig";
 import {
-  GetActivitiesRegistrationResp,
-  GetActivitiesReq,
-  GetActivitiesResp,
-  GetActivityRegistrationDataReq,
-  GetActivityRegistrationDataResp,
-  GetActivityRegistrationReq,
-  GetActivityRegistrationResp,
-  GetActivityReq,
-  GetActivityResp,
-  PostGuestActivityReq,
-  PostGuestActivityResp,
-  PutActivityReq,
-  PutActivityResp,
-  GetActivityCategoriesResp,
+  type GetActivitiesRegistrationResp,
+  type GetActivitiesReq,
+  type GetActivitiesResp,
+  type GetActivityRegistrationDataReq,
+  type GetActivityRegistrationDataResp,
+  type GetActivityRegistrationReq,
+  type GetActivityRegistrationResp,
+  type GetActivityReq,
+  type GetActivityResp,
+  type PostGuestActivityReq,
+  type PostGuestActivityResp,
+  type PutActivityReq,
+  type PutActivityResp,
+  type GetActivityCategoriesResp,
 } from "../types/api/activity";
 
 export const getActivityCategories = async () => {

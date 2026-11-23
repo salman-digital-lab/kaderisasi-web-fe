@@ -1,6 +1,6 @@
-import { APIPagiResponse, APIResponse } from "../helper";
-import { MonthlyLeaderboard } from "../model/achievement";
-import { Achievement } from "../model/achievement";
+import { type APIPagiResponse, type APIResponse } from "../helper";
+import { type MonthlyLeaderboard } from "../model/achievement";
+import { type Achievement } from "../model/achievement";
 
 export type GetMonthlyLeaderboardResp = APIPagiResponse<MonthlyLeaderboard>;
 

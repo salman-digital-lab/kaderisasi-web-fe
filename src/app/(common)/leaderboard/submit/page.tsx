@@ -2,7 +2,7 @@ import PageContainer from "@/components/layout/PageContainer";
 import { Paper, Title, Text } from "@mantine/core";
 import AchievementForm from "@/features/leaderboard/AchievementForm";
 import { verifySession } from "@/functions/server/session";
-import { Member, PublicUser } from "@/types/model/members";
+import { type Member, type PublicUser } from "@/types/model/members";
 import { getProfile } from "@/services/profile";
 import ErrorWrapper from "@/components/layout/Error";
 import { redirect } from "next/navigation";

@@ -3,7 +3,10 @@
 import { revalidateTag } from "next/cache";
 import { putActivity } from "../../services/activity";
 import { CACHE_TAGS } from "../../constants/cache";
-import { ServerActionResult, getErrorMessage } from "../../types/server-action";
+import {
+  type ServerActionResult,
+  getErrorMessage,
+} from "../../types/server-action";
 import { verifySession } from "./session";
 
 export default async function updateActivityCustomForm(

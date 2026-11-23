@@ -182,7 +182,7 @@ function YouTubePlayer({
         return "Video membutuhkan waktu terlalu lama untuk dimuat. Coba lagi atau buka di YouTube.";
       case "invalid_url":
         return "URL video YouTube tidak valid. Silakan periksa link video.";
-      default:
+      case "unknown":
         return "Terjadi kesalahan saat memuat video YouTube. Silakan coba lagi nanti.";
     }
   };
@@ -197,7 +197,7 @@ function YouTubePlayer({
         return "Video Terlalu Lama Dimuat";
       case "invalid_url":
         return "URL Video Tidak Valid";
-      default:
+      case "unknown":
         return "Video tidak dapat diputar";
     }
   };

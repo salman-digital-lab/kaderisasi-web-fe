@@ -2,11 +2,11 @@ import fetcher from "../functions/common/fetcher";
 import { getApiConfig } from "../config/apiConfig";
 import { cleanEmptyKeyFromObject } from "../functions/common/helper";
 import {
-  GetProfileResp,
-  GetProvincesResp,
-  GetUniversitiesResp,
-  PutProfileReq,
-  PutProfileResp,
+  type GetProfileResp,
+  type GetProvincesResp,
+  type GetUniversitiesResp,
+  type PutProfileReq,
+  type PutProfileResp,
 } from "../types/api/user";
 import type { City } from "../types/model/city";
 import type { Country } from "../types/model/country";
@@ -44,16 +44,21 @@ export const getUniversities = async (search?: string) => {
 
 export const getCountries = async (): Promise<Country[]> => {
   const { beAdminApi } = getApiConfig();
-  const response = await fetcher<APIResponse<Country[]>>(beAdminApi + "/countries", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
+  const response = await fetcher<APIResponse<Country[]>>(
+    beAdminApi + "/countries",
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
     },
-  });
+  );
   return response.data ?? [];
 };
 
-export const getCitiesByProvince = async (provinceId: number): Promise<City[]> => {
+export const getCitiesByProvince = async (
+  provinceId: number,
+): Promise<City[]> => {
   const { beAdminApi } = getApiConfig();
   const response = await fetcher<APIResponse<City[]>>(
     beAdminApi + "/provinces/" + provinceId + "/cities",

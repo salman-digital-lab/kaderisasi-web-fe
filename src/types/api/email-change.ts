@@ -1,4 +1,4 @@
-import { APIResponse } from "../helper";
+import { type APIResponse } from "../helper";
 
 export type EmailChangeStep = {
   /** "code": enter the code sent to the current email; "link": open the link sent to the new email. */

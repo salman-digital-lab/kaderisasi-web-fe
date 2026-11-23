@@ -22,7 +22,7 @@ import {
 import { DateInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { IconAlertCircle } from "@tabler/icons-react";
-import { CustomFormSection } from "@/types/api/customForm";
+import { type CustomFormSection } from "@/types/api/customForm";
 import { validateCustomFormFields } from "./validation";
 import classes from "./index.module.css";
 import { FormFileInput } from "../FormFileInput";
