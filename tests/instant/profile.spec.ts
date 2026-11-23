@@ -784,7 +784,9 @@ test("history retries do not refetch identity or discard the mounted draft", asy
 });
 
 for (const degree of ["SMP/SMA/SMK", "D3 (Diploma)"]) {
-  test(`education saves and reloads ${degree} with a typed institution`, async ({
+  const institution =
+    degree === "SMP/SMA/SMK" ? "Sekolah Peserta" : "Institut Uji";
+  test(`education saves and reloads ${degree} with its institution`, async ({
     page,
     context,
   }, testInfo) => {
@@ -803,9 +805,9 @@ for (const degree of ["SMP/SMA/SMK", "D3 (Diploma)"]) {
     } else {
       await page
         .getByRole("combobox", { name: "Institusi", exact: true })
-        .fill("Sekolah Peserta");
+        .click();
       await page
-        .getByRole("option", { name: "Sekolah Peserta", exact: true })
+        .getByRole("option", { name: institution, exact: true })
         .click();
       await page.getByLabel("Fakultas", { exact: true }).fill("");
     }
@@ -826,7 +828,7 @@ for (const degree of ["SMP/SMA/SMK", "D3 (Diploma)"]) {
         name: degree === "SMP/SMA/SMK" ? "Nama Sekolah" : "Institusi",
         exact: true,
       }),
-    ).toHaveValue("Sekolah Peserta");
+    ).toHaveValue(institution);
     if (degree === "SMP/SMA/SMK") {
       await expect(page.getByLabel("Fakultas", { exact: true })).toHaveCount(0);
       await page
@@ -834,9 +836,10 @@ for (const degree of ["SMP/SMA/SMK", "D3 (Diploma)"]) {
         .click();
       await page.getByRole("option", { name: "S1", exact: true }).click();
       await expect(page.getByLabel("Fakultas", { exact: true })).toBeVisible();
+      // A school name is free text and must not carry over to the campus picker.
       await expect(
         page.getByRole("combobox", { name: "Institusi", exact: true }),
-      ).toHaveValue("Sekolah Peserta");
+      ).toHaveValue("");
       await page
         .getByRole("combobox", { name: "Jenjang", exact: true })
         .click();
@@ -845,7 +848,7 @@ for (const degree of ["SMP/SMA/SMK", "D3 (Diploma)"]) {
         .click();
       await expect(
         page.getByRole("textbox", { name: "Nama Sekolah", exact: true }),
-      ).toHaveValue("Sekolah Peserta");
+      ).toHaveValue("");
       await page
         .getByRole("textbox", { name: "Nama Sekolah", exact: true })
         .scrollIntoViewIfNeeded();
