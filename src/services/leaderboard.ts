@@ -6,7 +6,6 @@ import type {
   GetMonthlyLeaderboardResp,
   SubmitAchievementReq,
   SubmitAchievementResp,
-  GetMyAchievementsResp,
 } from "@/types/api/leaderboard";
 
 export const getMonthlyLeaderboard = async (
@@ -71,30 +70,6 @@ export const editAchievement = async (
     },
     body: formData,
   });
-};
-
-export const getMyAchievements = async (
-  token: string,
-  page: number = 1,
-  perPage: number = 100,
-) => {
-  const { beApi } = getApiConfig();
-  const params = new URLSearchParams({
-    page: page.toString(),
-    per_page: perPage.toString(),
-  });
-
-  const response = await fetcher<GetMyAchievementsResp>(
-    beApi + `/achievements?${params.toString()}`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      cache: "no-store",
-    },
-  );
-
-  return response.data.data;
 };
 
 export const getMyAchievement = async (

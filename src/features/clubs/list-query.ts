@@ -58,4 +58,3 @@ export function buildClubsHref({
 }
 
 export { getPaginationItems } from "@/functions/common/pagination";
-export type { PaginationItem } from "@/functions/common/pagination";

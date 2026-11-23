@@ -48,5 +48,3 @@ export function ClubDetailSkeleton(): ReactElement {
     </PageContainer>
   );
 }
-
-export default ClubDetailSkeleton;

@@ -52,4 +52,3 @@ export function ActivityDetailSkeleton(): ReactElement {
     </PageContainer>
   );
 }
-export default ActivityDetailSkeleton;

@@ -1,24 +1,9 @@
 import fetcher from "../functions/common/fetcher";
 import { getApiConfig } from "../config/apiConfig";
 import {
-  type GetRuangCurhatResp,
   type PostRuangCurhatReq,
   type PostRuangCurhatResp,
 } from "../types/api/ruangcurhat";
-
-export const getRuangCurhat = async (token: string) => {
-  const { beApi } = getApiConfig();
-  const response = await fetcher<GetRuangCurhatResp>(beApi + "/ruang-curhat", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + token,
-    },
-    cache: "no-store",
-  });
-
-  return response.data;
-};
 
 export const postRuangCurhat = async (
   token: string,

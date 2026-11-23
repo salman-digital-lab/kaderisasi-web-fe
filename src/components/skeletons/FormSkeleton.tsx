@@ -33,5 +33,3 @@ export function FormSkeleton({ fields = 5 }: { fields?: number }) {
     </Paper>
   );
 }
-
-export default FormSkeleton;

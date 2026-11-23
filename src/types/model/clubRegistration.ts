@@ -25,10 +25,6 @@ export interface ClubRegistration {
   roles?: ClubRegistrationRole[];
 }
 
-export interface ClubRegistrationUpdateRequest {
-  additional_data?: Record<string, unknown>;
-}
-
 export interface ClubRegistrationStatus {
   isRegistered: boolean;
   registration: ClubRegistration | null;

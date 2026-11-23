@@ -188,23 +188,6 @@ export async function getOwnedCertificateForDownload(
   return parseResponse(certificateDataSchema, data);
 }
 
-/** Authenticated numeric compatibility endpoint; never call from a public page. */
-export async function downloadCertificate(
-  token: string,
-  registrationId: number,
-): Promise<CertificateData> {
-  const data = await fetchCertificateData(`/${registrationId}/download`, {
-    method: "POST",
-    headers: {
-      ...JSON_HEADERS,
-      Authorization: `Bearer ${token}`,
-    },
-    cache: "no-store",
-  });
-
-  return parseResponse(certificateDataSchema, data);
-}
-
 export type CertificateDownloadAccess =
   "owner" | "not_owner" | "revoked" | "signed_out" | "unavailable";
 export type CertificateAccessDetails = {

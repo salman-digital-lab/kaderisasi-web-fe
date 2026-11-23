@@ -59,22 +59,3 @@ export const KADERISASI_PROGRAMS = [
     to: USER_LEVEL_ENUM.KADER_LANJUT,
   },
 ] as const;
-
-export const BMKA_SOURCES = [
-  {
-    label: "Profil BMKA di Masjid Salman ITB",
-    href: "https://salmanitb.com/informasi/bidang/bidang-mahasiswa-kaderisasi-dan-alumni-bmka",
-  },
-  {
-    label: "Salman Spiritual Camp",
-    href: "https://kaderisasi.salmanitb.com/activity/salman-spiritual-camp-69",
-  },
-  {
-    label: "Latihan Mujtahid Dakwah",
-    href: "https://kaderisasi.salmanitb.com/activity/soulventure-lmd-237",
-  },
-  {
-    label: "Kaderisasi lanjut SPECTRA",
-    href: "https://kaderisasi.salmanitb.com/activity/pendaftaran-kapro-kaderisasi-lanjut-spectra",
-  },
-] as const;

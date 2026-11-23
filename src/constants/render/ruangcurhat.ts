@@ -1,10 +1,4 @@
-import { PROBLEM_OWNER_ENUM, PROBLEM_STATUS_ENUM } from "@/types/constants/ruangcurhat";
-
-
-export const PROBLEM_OWNER_RENDER = {
-  [PROBLEM_OWNER_ENUM.DIRI_SENDIRI]: "Diri Sendiri",
-  [PROBLEM_OWNER_ENUM.TEMAN]: "Teman",
-} as const;
+import { PROBLEM_STATUS_ENUM } from "@/types/constants/ruangcurhat";
 
 export const PROBLEM_STATUS_RENDER = {
   [PROBLEM_STATUS_ENUM.BELUM_DITANGANI]: "Belum ditangani",

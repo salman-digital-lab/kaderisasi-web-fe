@@ -1,6 +1,6 @@
 "use client";
 
-import { Skeleton, Stack, Group, Box, Card } from "@mantine/core";
+import { Skeleton, Stack, Group, Box } from "@mantine/core";
 
 export function ProfileTabListSkeleton() {
   return (
@@ -27,43 +27,6 @@ export function PersonalDataFormSkeleton() {
   );
 }
 
-export function ActivityListSkeleton({ count = 3 }: { count?: number }) {
-  return (
-    <Stack gap="md">
-      {Array.from({ length: count }).map((_, i) => (
-        <Card key={i} withBorder radius="md" p="md">
-          <Group justify="space-between">
-            <Stack gap="xs">
-              <Skeleton height={18} width={200} />
-              <Skeleton height={14} width={150} />
-            </Stack>
-            <Skeleton height={24} width={80} radius="xl" />
-          </Group>
-        </Card>
-      ))}
-    </Stack>
-  );
-}
-
-export function AchievementListSkeleton({ count = 3 }: { count?: number }) {
-  return (
-    <Stack gap="md">
-      {Array.from({ length: count }).map((_, i) => (
-        <Card key={i} withBorder radius="md" p="md">
-          <Group justify="space-between">
-            <Stack gap="xs">
-              <Skeleton height={18} width={180} />
-              <Skeleton height={14} width={120} />
-              <Skeleton height={14} width={100} />
-            </Stack>
-            <Skeleton height={36} width={60} radius="md" />
-          </Group>
-        </Card>
-      ))}
-    </Stack>
-  );
-}
-
 export function ProfileTabContentSkeleton() {
   return (
     <Stack gap="md">
@@ -72,5 +35,3 @@ export function ProfileTabContentSkeleton() {
     </Stack>
   );
 }
-
-export default ProfileTabContentSkeleton;

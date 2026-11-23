@@ -32,9 +32,3 @@ export const serverApiConfig = {
   beAdminApi:
     process.env.SERVER_BE_ADMIN_API || process.env.NEXT_PUBLIC_BE_ADMIN_API,
 };
-
-// For direct imports in client-only contexts
-export const clientApiConfig = {
-  beApi: process.env.NEXT_PUBLIC_BE_API,
-  beAdminApi: process.env.NEXT_PUBLIC_BE_ADMIN_API,
-};
