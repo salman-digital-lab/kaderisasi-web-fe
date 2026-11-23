@@ -124,7 +124,6 @@ function CertificateElementRenderer({
       if (!imageUrl) return null;
 
       return (
-        // eslint-disable-next-line @next/next/no-img-element
         <img
           alt=""
           crossOrigin="anonymous"
@@ -236,7 +235,6 @@ const CertificateCanvas = forwardRef<HTMLDivElement, CertificateCanvasProps>(
               }}
             >
               {backgroundImage ? (
-                // eslint-disable-next-line @next/next/no-img-element
                 <img
                   alt=""
                   crossOrigin="anonymous"

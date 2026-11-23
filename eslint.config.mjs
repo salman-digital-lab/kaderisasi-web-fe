@@ -14,6 +14,17 @@ export default defineConfig([
       "react-hooks/set-state-in-render": "off",
     },
   },
+  {
+    // PostCSS loads its config and plugins as CommonJS.
+    files: ["**/*.cjs"],
+    rules: { "@typescript-eslint/no-require-imports": "off" },
+  },
+  {
+    // html2canvas captures plain <img> elements; next/image would lazy-load
+    // and proxy the certificate artwork.
+    files: ["src/features/certificate/CertificateCanvas/**"],
+    rules: { "@next/next/no-img-element": "off" },
+  },
   globalIgnores([
     ".next/**",
     "out/**",

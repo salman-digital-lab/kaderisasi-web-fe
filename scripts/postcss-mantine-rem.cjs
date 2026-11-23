@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-require-imports -- PostCSS loads this CommonJS plugin directly.
 const preset = require("postcss-preset-mantine");
 
 // Individual core styles ship in px; the full bundle is compiled with autoRem.

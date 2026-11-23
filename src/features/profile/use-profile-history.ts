@@ -58,11 +58,13 @@ export function useProfileHistory<K extends HistorySection>(
         if (controller.signal.aborted)
           throw new DOMException("Aborted", "AbortError");
         if (response.status === 401) {
+          const login = new URLSearchParams({
+            redirect: window.location.pathname + window.location.search,
+          });
+          const logout = new URL("/api/logout", window.location.origin);
+          logout.searchParams.set("redirect", `/login?${login}`);
           // The logout route must clear HttpOnly cookies through a document request.
-          // eslint-disable-next-line @next/next/no-location-assign-relative-destination
-          window.location.assign(
-            `/api/logout?redirect=${encodeURIComponent(`/login?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`)}`,
-          );
+          window.location.assign(logout);
           throw new Error("Sesi berakhir. Silakan masuk kembali.");
         }
         if (!response.ok)

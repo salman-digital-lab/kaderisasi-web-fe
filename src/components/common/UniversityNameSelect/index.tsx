@@ -8,6 +8,24 @@ import type { University } from "@/types/model/university";
 
 type UniversityNameSelectProps = Omit<SelectProps, "data" | "onSearchChange">;
 
+type Option = { label: string; value: string };
+
+async function loadOptions(
+  search: string,
+  keep: string,
+): Promise<Option[] | null> {
+  try {
+    const data = await getUniversities(search);
+    // The list can hold two universities with one name, and Select throws on
+    // a repeated value. The kept value stays listed even if not in results.
+    const names = new Set<string>(keep ? [keep] : []);
+    for (const university of data as University[]) names.add(university.name);
+    return [...names].map((name) => ({ label: name, value: name }));
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Searchable university select that stores the university NAME as the value
  * (unlike UniversitySelect which stores the ID). Only names from the
@@ -28,28 +46,18 @@ export default function UniversityNameSelect({
         : "";
 
   // Seed options with current value so it shows immediately before fetch completes
-  const [options, setOptions] = useState<{ label: string; value: string }[]>(
+  const [options, setOptions] = useState<Option[]>(
     currentValue ? [{ label: currentValue, value: currentValue }] : [],
   );
   const [searchValue, setSearchValue] = useState(currentValue);
 
-  const fetchUniversities = async (search?: string) => {
-    try {
-      const data = await getUniversities(search);
-      // The list can hold two universities with one name, and Select throws on
-      // a repeated value. The current value stays listed even if not in results.
-      const names = new Set<string>(currentValue ? [currentValue] : []);
-      for (const university of data as University[]) names.add(university.name);
-      setOptions([...names].map((name) => ({ label: name, value: name })));
-    } catch {
-      // ignore
-    }
-  };
+  const [initialValue] = useState(currentValue);
 
   useEffect(() => {
-    fetchUniversities(currentValue);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    void loadOptions(initialValue, initialValue).then(
+      (loaded) => loaded && setOptions(loaded),
+    );
+  }, [initialValue]);
 
   useEffect(() => {
     if (!currentValue) {
@@ -66,8 +74,9 @@ export default function UniversityNameSelect({
     });
   }, [currentValue]);
 
-  const debouncedFetch = useDebouncedCallback((value: string) => {
-    fetchUniversities(value);
+  const debouncedFetch = useDebouncedCallback(async (search: string) => {
+    const loaded = await loadOptions(search, currentValue);
+    if (loaded) setOptions(loaded);
   }, 300);
 
   return (

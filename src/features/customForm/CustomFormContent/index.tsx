@@ -136,8 +136,7 @@ function CustomFormContentBody({
     const url = new URL(window.location.href);
     url.searchParams.delete("reset");
     router.replace(url.pathname + url.search, { scroll: false });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [resetOnMount, router]);
 
   const [loading, setLoading] = useState(false);
   const [savedProfileData, setSavedProfileData] = useState(profileData);

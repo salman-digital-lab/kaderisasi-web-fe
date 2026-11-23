@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useEffectEvent, useState } from "react";
 import type {
   CustomFormSchema,
   CustomFormSection,
@@ -80,7 +80,7 @@ export function useFormRoute(
   const [cleared, setCleared] = useState(false);
   const configurationError = validateFormRouting(schema)[0]?.message;
 
-  useEffect(() => {
+  const recover = useEffectEvent(() => {
     setState({
       answers: { ...defaults(sections), ...startingAnswers },
       currentId: firstId,
@@ -157,8 +157,11 @@ export function useFormRoute(
       setNotice("Draf tidak dapat dimuat. Anda tetap dapat mengisi formulir.");
     }
     setLoaded(true);
-    // The serialized schema identifies the recovery contract.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  });
+
+  // The serialized schema identifies the recovery contract.
+  useEffect(() => {
+    recover();
   }, [storageKey, fingerprint, reset, configurationError]);
 
   useEffect(() => {
