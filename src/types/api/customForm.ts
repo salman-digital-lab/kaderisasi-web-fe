@@ -15,7 +15,7 @@ export interface CustomFormField {
   description?: string;
   options?: CustomFormOption[];
   validation?: CustomFormValidation;
-  defaultValue?: any;
+  defaultValue?: unknown;
   hidden?: boolean;
   disabled?: boolean;
 }
@@ -80,12 +80,12 @@ export interface PostCustomFormRegistrationReq {
   feature_type:
     "activity_registration" | "club_registration" | "independent_form";
   feature_id?: number;
-  custom_form_data: Record<string, any>;
+  custom_form_data: Record<string, unknown>;
 }
 
 export interface PostCustomFormRegistrationResp {
   message: string;
-  data: any;
+  data: unknown;
 }
 
 export interface CustomFormSuccessInfo {

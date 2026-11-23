@@ -66,93 +66,94 @@ export default async function SuccessPage(props: {
     clubCustomForm = await formInfo;
   }
 
+  let customForm: CustomFormSuccessInfo | undefined;
   try {
-    const customForm =
+    customForm =
       type === "club"
         ? clubCustomForm
         : await getCustomFormSuccessInfo({
             feature_type: featureType,
             feature_id: type === "independent" ? undefined : Number(id),
           });
-
-    if (!customForm && type !== "club") {
-      return <ErrorWrapper message="Custom form not found" />;
-    }
-
-    let redirectUrl = "/";
-    let redirectLabel = "Kembali ke Beranda";
-
-    if (featureType === "activity_registration") {
-      redirectUrl = "/activity";
-      redirectLabel = "Lihat Daftar Kegiatan";
-    } else if (featureType === "club_registration") {
-      redirectUrl = `/clubs/${id}`;
-      redirectLabel = "Kembali ke Detail Klub";
-    }
-
-    return (
-      <PageContainer size="md">
-        <Paper
-          radius="md"
-          withBorder
-          p={{ base: "md", sm: "xl" }}
-          style={{ width: "100%", maxWidth: "100%" }}
-        >
-          <Stack gap="lg" align="center">
-            <Alert color="blue" variant="light" w="100%">
-              <Title order={1} size="h2" mb="xs">
-                {featureType === "independent_form"
-                  ? "Formulir Berhasil Dikirim!"
-                  : featureType === "club_registration" &&
-                      clubRegistrationStatus !== "PENDING"
-                    ? "Status Pendaftaran"
-                    : "Pendaftaran Berhasil!"}
-              </Title>
-              <Text size="md">
-                {featureType === "independent_form"
-                  ? "Terima kasih telah mengisi formulir."
-                  : featureType === "club_registration"
-                    ? clubRegistrationStatus === "APPROVED"
-                      ? "Pendaftaran Anda telah disetujui oleh pengelola klub."
-                      : clubRegistrationStatus === "REJECTED"
-                        ? "Pendaftaran Anda telah ditinjau tetapi belum dapat disetujui."
-                        : "Data pendaftaran Anda telah diterima dan sedang menunggu peninjauan pengelola klub."
-                    : "Terima kasih telah mendaftar. Data Anda telah kami terima."}
-              </Text>
-            </Alert>
-
-            {customForm?.post_submission_info && (
-              <Paper
-                w="100%"
-                p="md"
-                withBorder
-                style={{
-                  backgroundColor: "var(--surface-subtle)",
-                }}
-              >
-                <Title order={2} size="h4" mb="md">
-                  Informasi Penting
-                </Title>
-                <div
-                  className={styles.richTextContent}
-                  dangerouslySetInnerHTML={{
-                    __html: customForm.post_submission_info,
-                  }}
-                />
-              </Paper>
-            )}
-
-            <LinkButton href={redirectUrl} size="md" mt="md">
-              {redirectLabel}
-            </LinkButton>
-          </Stack>
-        </Paper>
-      </PageContainer>
-    );
   } catch (error: unknown) {
     if (typeof error === "string" && error === "Unauthorized")
       redirect("/api/logout");
     if (typeof error === "string") return <ErrorWrapper message={error} />;
     return <ErrorWrapper message="An error occurred" />;
   }
+
+  if (!customForm && type !== "club") {
+    return <ErrorWrapper message="Custom form not found" />;
+  }
+
+  let redirectUrl = "/";
+  let redirectLabel = "Kembali ke Beranda";
+
+  if (featureType === "activity_registration") {
+    redirectUrl = "/activity";
+    redirectLabel = "Lihat Daftar Kegiatan";
+  } else if (featureType === "club_registration") {
+    redirectUrl = `/clubs/${id}`;
+    redirectLabel = "Kembali ke Detail Klub";
+  }
+
+  return (
+    <PageContainer size="md">
+      <Paper
+        radius="md"
+        withBorder
+        p={{ base: "md", sm: "xl" }}
+        style={{ width: "100%", maxWidth: "100%" }}
+      >
+        <Stack gap="lg" align="center">
+          <Alert color="blue" variant="light" w="100%">
+            <Title order={1} size="h2" mb="xs">
+              {featureType === "independent_form"
+                ? "Formulir Berhasil Dikirim!"
+                : featureType === "club_registration" &&
+                    clubRegistrationStatus !== "PENDING"
+                  ? "Status Pendaftaran"
+                  : "Pendaftaran Berhasil!"}
+            </Title>
+            <Text size="md">
+              {featureType === "independent_form"
+                ? "Terima kasih telah mengisi formulir."
+                : featureType === "club_registration"
+                  ? clubRegistrationStatus === "APPROVED"
+                    ? "Pendaftaran Anda telah disetujui oleh pengelola klub."
+                    : clubRegistrationStatus === "REJECTED"
+                      ? "Pendaftaran Anda telah ditinjau tetapi belum dapat disetujui."
+                      : "Data pendaftaran Anda telah diterima dan sedang menunggu peninjauan pengelola klub."
+                  : "Terima kasih telah mendaftar. Data Anda telah kami terima."}
+            </Text>
+          </Alert>
+
+          {customForm?.post_submission_info && (
+            <Paper
+              w="100%"
+              p="md"
+              withBorder
+              style={{
+                backgroundColor: "var(--surface-subtle)",
+              }}
+            >
+              <Title order={2} size="h4" mb="md">
+                Informasi Penting
+              </Title>
+              <div
+                className={styles.richTextContent}
+                dangerouslySetInnerHTML={{
+                  __html: customForm.post_submission_info,
+                }}
+              />
+            </Paper>
+          )}
+
+          <LinkButton href={redirectUrl} size="md" mt="md">
+            {redirectLabel}
+          </LinkButton>
+        </Stack>
+      </Paper>
+    </PageContainer>
+  );
 }

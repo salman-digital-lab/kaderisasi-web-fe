@@ -59,6 +59,16 @@ const BLANK_EDUCATION: EducationEntry = {
   intake_year: new Date().getFullYear(),
 };
 
+const educationCopy = (entry: EducationEntry | undefined): EducationEntry => ({
+  ...(entry ?? BLANK_EDUCATION),
+});
+
+type ProfileValues = {
+  education_history: EducationEntry[];
+  current_education?: EducationEntry;
+  [key: string]: unknown;
+};
+
 type CustomFormProfileSectionProps = {
   profileFields: CustomFormField[];
   profileData?: {
@@ -67,7 +77,7 @@ type CustomFormProfileSectionProps = {
   };
   provinceData?: Province[];
   countryData?: Country[];
-  onSubmit: (data?: Record<string, any>) => void;
+  onSubmit: (data?: Record<string, unknown>) => void;
   onProfileSaved?: (profile: Member) => void;
   onLoadingChange?: (value: boolean) => void;
   loading?: boolean;
@@ -92,7 +102,7 @@ export default function CustomFormProfileSection({
   formRef,
 }: CustomFormProfileSectionProps) {
   const [confirmModalOpened, setConfirmModalOpened] = useState(false);
-  const [pendingValues, setPendingValues] = useState<Record<string, any> | null>(null);
+  const [pendingValues, setPendingValues] = useState<ProfileValues | null>(null);
 
   const [currentCities, setCurrentCities] = useState<City[]>([]);
   const [originCities, setOriginCities] = useState<City[]>([]);
@@ -137,7 +147,7 @@ export default function CustomFormProfileSection({
     } else {
       updateCeKey(val);
       // use localHistory so previously confirmed edits are preserved
-      form.setFieldValue("current_education", { ...form.getValues().education_history[Number(val)] });
+      form.setFieldValue("current_education", educationCopy(form.getValues().education_history[Number(val)]));
     }
   };
 
@@ -169,7 +179,7 @@ export default function CustomFormProfileSection({
   };
 
 
-  const initialValues: Record<string, any> = { education_history: history };
+  const initialValues: ProfileValues = { education_history: history };
 
   profileFields.forEach((field) => {
     const profile = profileData?.profile;
@@ -227,9 +237,7 @@ export default function CustomFormProfileSection({
         initialValues[field.key] = history;
         break;
       case "current_education":
-        initialValues[field.key] = history.length > 0
-          ? { ...history[history.length - 1] }
-          : { ...BLANK_EDUCATION };
+        initialValues[field.key] = educationCopy(history.at(-1));
         break;
       default:
         initialValues[field.key] = field.defaultValue || "";
@@ -255,7 +263,7 @@ export default function CustomFormProfileSection({
         if (field.key === "education_history") {
           isEmpty =
             !Array.isArray(values[field.key]) ||
-            (values[field.key] as any[]).length === 0;
+            (values[field.key] as unknown[]).length === 0;
         } else if (field.key === "current_education") {
           // If history exists, user must select something
           if (values.education_history.length > 0 && ceSelectedKeyRef.current === null) {
@@ -274,19 +282,21 @@ export default function CustomFormProfileSection({
 
         if (field.validation) {
           const val = values[field.key];
-          if (val && field.validation.minLength && val.length < field.validation.minLength) {
+          const length =
+            typeof val === "string" || Array.isArray(val) ? val.length : undefined;
+          if (val && length !== undefined && field.validation.minLength && length < field.validation.minLength) {
             errors[field.key] =
               field.validation.customMessage ||
               `Minimal ${field.validation.minLength} karakter`;
           }
-          if (val && field.validation.maxLength && val.length > field.validation.maxLength) {
+          if (val && length !== undefined && field.validation.maxLength && length > field.validation.maxLength) {
             errors[field.key] =
               field.validation.customMessage ||
               `Maksimal ${field.validation.maxLength} karakter`;
           }
           if (val && field.validation.pattern) {
             const regex = new RegExp(field.validation.pattern);
-            if (!regex.test(val)) {
+            if (!regex.test(String(val))) {
               errors[field.key] =
                 field.validation.customMessage ||
                 `Format ${field.label} tidak valid`;
@@ -731,7 +741,7 @@ export default function CustomFormProfileSection({
                                 color="gray"
                                 onClick={() => {
                                   // revert form to the original (unedited) local value
-                                  form.setFieldValue("current_education", { ...localHistory[i] });
+                                  form.setFieldValue("current_education", educationCopy(localHistory[i]));
                                   setEditingIndex(null);
                                 }}
                               >
@@ -852,7 +862,7 @@ export default function CustomFormProfileSection({
     }
   };
 
-  const handleFormSubmit = async (values: Record<string, any>) => {
+  const handleFormSubmit = async (values: ProfileValues) => {
     if (isSingleSection) {
       setPendingValues(values);
       setConfirmModalOpened(true);
@@ -861,7 +871,7 @@ export default function CustomFormProfileSection({
     await handleSubmit(values);
   };
 
-  const handleSubmit = async (values: Record<string, any>) => {
+  const handleSubmit = async (values: ProfileValues) => {
     onLoadingChange?.(true);
     try {
       let whatsappNumber = values.whatsapp;
@@ -872,7 +882,7 @@ export default function CustomFormProfileSection({
         }
       }
 
-      const profileUpdateData: Record<string, any> = {};
+      const profileUpdateData: Record<string, unknown> = {};
 
       profileFields.forEach((field) => {
         if (values[field.key] !== undefined) {
@@ -889,7 +899,10 @@ export default function CustomFormProfileSection({
             profileUpdateData[field.key] = whatsappNumber;
           } else if (field.key !== "email" && field.key !== "current_education") {
             if (field.key === "birth_date") {
-              profileUpdateData[field.key] = toISODateString(values[field.key]);
+              const birthDate = values[field.key];
+              profileUpdateData[field.key] = toISODateString(
+                typeof birthDate === "string" || birthDate instanceof Date ? birthDate : undefined,
+              );
             } else {
               profileUpdateData[field.key] = values[field.key];
             }
@@ -898,14 +911,16 @@ export default function CustomFormProfileSection({
       });
 
       const hasCeField = profileFields.some((f) => f.key === "current_education");
+      let savedHistory: EducationEntry[] = [];
       if (hasCeField) {
         const selectedEntry = values.current_education as EducationEntry | undefined;
-        profileUpdateData.education_history = selectCurrentEducation(
+        savedHistory = selectCurrentEducation(
           normalizeEducationHistory(values.education_history),
           selectedEntry && !isBlankEducation(selectedEntry) ? educationEntrySchema.parse(selectedEntry) : undefined,
           ceSelectedKeyRef.current,
           editingIndex !== null,
         );
+        profileUpdateData.education_history = savedHistory;
       }
 
       const response = await editProfile(profileUpdateData);
@@ -916,8 +931,8 @@ export default function CustomFormProfileSection({
       }
 
       if (hasCeField && values.current_education?.institution?.trim()) {
-        form.setFieldValue("education_history", profileUpdateData.education_history);
-        updateCeKey(String(profileUpdateData.education_history.length - 1));
+        form.setFieldValue("education_history", savedHistory);
+        updateCeKey(String(savedHistory.length - 1));
       }
       if (response.data) onProfileSaved?.(response.data);
       onSubmit(Object.fromEntries(profileFields.map((field) => [field.key, values[field.key]])));

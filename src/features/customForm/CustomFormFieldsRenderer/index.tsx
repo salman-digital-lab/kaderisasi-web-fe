@@ -22,13 +22,16 @@ import {
 import { DateInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { IconAlertCircle } from "@tabler/icons-react";
-import { type CustomFormSection } from "@/types/api/customForm";
+import {
+  type CustomFormField,
+  type CustomFormSection,
+} from "@/types/api/customForm";
 import { validateCustomFormFields } from "./validation";
 import classes from "./index.module.css";
 import { FormFileInput } from "../FormFileInput";
 import { useFormUploads } from "../FormUploadContext";
 
-const renderTextWithNewlines = (text: string) => {
+const renderTextWithNewlines = (text: string | undefined) => {
   if (!text) return text;
   const lines = text.split("\n");
   if (lines.length === 1) return text;
@@ -47,8 +50,8 @@ const renderTextWithNewlines = (text: string) => {
 
 type CustomFormFieldsRendererProps = {
   section: CustomFormSection;
-  formData: Record<string, any>;
-  onSubmit: (data: Record<string, any>) => void;
+  formData: Record<string, unknown>;
+  onSubmit: (data: Record<string, unknown>) => void;
   onChange?: (data: Record<string, unknown>) => void;
   loading?: boolean;
   isLastSection: boolean;
@@ -68,10 +71,10 @@ export default function CustomFormFieldsRenderer({
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [pendingValues, setPendingValues] = useState<Record<
     string,
-    any
+    unknown
   > | null>(null);
 
-  const initialValues: Record<string, any> = { ...formData };
+  const initialValues: Record<string, unknown> = { ...formData };
 
   section.fields.forEach((field) => {
     if (initialValues[field.key] === undefined) {
@@ -104,7 +107,7 @@ export default function CustomFormFieldsRenderer({
     },
   });
 
-  const renderField = (field: any) => {
+  const renderField = (field: CustomFormField) => {
     if (field.hidden) return null;
 
     const fieldKey = form.key(field.key);
@@ -172,7 +175,7 @@ export default function CustomFormFieldsRenderer({
             {...commonProps}
             placeholder="Pilih opsi"
             data={
-              field.options?.map((opt: any) => ({
+              field.options?.map((opt) => ({
                 label: opt.label,
                 value: opt.value?.toString() || opt.label,
                 disabled: opt.disabled,
@@ -189,7 +192,7 @@ export default function CustomFormFieldsRenderer({
             {...commonProps}
             placeholder="Pilih opsi"
             data={
-              field.options?.map((opt: any) => ({
+              field.options?.map((opt) => ({
                 label: opt.label,
                 value: opt.value?.toString() || opt.label,
                 disabled: opt.disabled,
@@ -209,7 +212,7 @@ export default function CustomFormFieldsRenderer({
               option: classes.multiSelectOption,
               inputField:
                 Array.isArray(form.values[field.key]) &&
-                form.values[field.key].length > 0
+                (form.values[field.key] as unknown[]).length > 0
                   ? classes.multiSelectInputHidden
                   : undefined,
             }}
@@ -220,7 +223,7 @@ export default function CustomFormFieldsRenderer({
         return (
           <Radio.Group key={fieldKey} {...commonProps}>
             <Stack gap="xs" mt="xs">
-              {field.options?.map((opt: any, idx: number) => (
+              {field.options?.map((opt, idx) => (
                 <Radio.Card
                   key={idx}
                   value={opt.value?.toString() || opt.label}
@@ -239,11 +242,11 @@ export default function CustomFormFieldsRenderer({
         );
 
       case "checkbox":
-        if (field.options?.length > 0) {
+        if ((field.options?.length ?? 0) > 0) {
           return (
             <Checkbox.Group key={fieldKey} {...commonProps}>
               <Stack gap="xs" mt="xs">
-                {field.options?.map((opt: any, idx: number) => (
+                {field.options?.map((opt, idx) => (
                   <Checkbox.Card
                     key={idx}
                     value={opt.value?.toString() || opt.label}
@@ -295,7 +298,7 @@ export default function CustomFormFieldsRenderer({
     }
   };
 
-  const handleSubmit = (values: Record<string, any>) => {
+  const handleSubmit = (values: Record<string, unknown>) => {
     if (uploads?.pending) return;
     if (isLastSection) {
       setPendingValues(values);

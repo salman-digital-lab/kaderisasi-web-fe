@@ -108,7 +108,7 @@ function EditBody({
 
   if (!currentSection) return null;
 
-  const handleSectionSubmit = async (data: Record<string, any>) => {
+  const handleSectionSubmit = async (data: Record<string, unknown>) => {
     if (uploads?.pending) return;
     const allFormData = flow.advance(data);
     if (!allFormData) return;

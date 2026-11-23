@@ -6,7 +6,7 @@ import { verifySession } from "@/functions/server/session";
 import PageContainer from "@/components/layout/PageContainer";
 import { FormSkeleton } from "@/components/skeletons";
 import { Suspense } from "react";
-import type { ReactElement } from "react";
+import type { ComponentProps, ReactElement } from "react";
 
 import OnboardingForm from "@/features/onboarding/OnboardingForm";
 import ErrorWrapper from "@/components/layout/Error";
@@ -32,6 +32,7 @@ export default function Page(): ReactElement {
 }
 
 async function OnboardingContent(): Promise<ReactElement> {
+  let form: ComponentProps<typeof OnboardingForm>;
   try {
     const sessionData = await verifySession();
     const [provinceData, countryData] = await Promise.all([
@@ -52,17 +53,10 @@ async function OnboardingContent(): Promise<ReactElement> {
         profileData = undefined;
       }
     }
-
-    return (
-      <>
-        <OnboardingForm
-          provinceData={provinceData}
-          countryData={countryData}
-          profileData={profileData}
-        />
-      </>
-    );
+    form = { provinceData, countryData, profileData };
   } catch {
     return <ErrorWrapper message="Data formulir tidak berhasil dimuat" />;
   }
+
+  return <OnboardingForm {...form} />;
 }

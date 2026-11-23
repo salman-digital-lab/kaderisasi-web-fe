@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 type StoredFormData = {
-  data: Record<string, any>;
+  data: Record<string, unknown>;
   currentStep: number;
   expiresAt: number;
 };
@@ -10,11 +10,12 @@ const EXPIRATION_TIME = 2 * 60 * 60 * 1000;
 
 export function useFormLocalStorage(
   storageKey: string,
-  initialData: Record<string, any> = {},
+  initialData: Record<string, unknown> = {},
   initialStep: number = 0,
   reset: boolean = false,
 ) {
-  const [formData, setFormData] = useState<Record<string, any>>(initialData);
+  const [formData, setFormData] =
+    useState<Record<string, unknown>>(initialData);
   const [currentStep, setCurrentStep] = useState<number>(initialStep);
   const [isLoaded, setIsLoaded] = useState(false);
 

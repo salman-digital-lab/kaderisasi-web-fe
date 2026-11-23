@@ -87,6 +87,12 @@ function YouTubePlayer({
   const maxRetries = 3;
   const loadTimeout = 15000;
 
+  const handleTimeout = () => {
+    setIsLoading(false);
+    setHasError(true);
+    setErrorType("timeout");
+  };
+
   useEffect(() => {
     if (!videoId) {
       setHasError(true);
@@ -135,12 +141,6 @@ function YouTubePlayer({
     } else {
       setErrorType("video");
     }
-  };
-
-  const handleTimeout = () => {
-    setIsLoading(false);
-    setHasError(true);
-    setErrorType("timeout");
   };
 
   const handleRetry = () => {

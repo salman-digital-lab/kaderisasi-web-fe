@@ -6,13 +6,8 @@ export default defineConfig([
   ...nextVitals,
   ...nextTs,
   {
-    rules: {
-      "@typescript-eslint/no-explicit-any": "off",
-      "react-hooks/error-boundaries": "off",
-      "react-hooks/immutability": "off",
-      "react-hooks/set-state-in-effect": "off",
-      "react-hooks/set-state-in-render": "off",
-    },
+    // Loading flags and browser-storage drafts are still set from effects.
+    rules: { "react-hooks/set-state-in-effect": "off" },
   },
   {
     rules: {
@@ -41,6 +36,10 @@ export default defineConfig([
         { prefer: "type-imports", fixStyle: "inline-type-imports" },
       ],
       "@typescript-eslint/no-floating-promises": "error",
+      "@typescript-eslint/no-misused-promises": [
+        "error",
+        { checksVoidReturn: { attributes: false } },
+      ],
       "@typescript-eslint/switch-exhaustiveness-check": "error",
     },
   },

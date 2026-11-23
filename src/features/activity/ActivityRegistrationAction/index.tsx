@@ -1,4 +1,4 @@
-import type { ReactElement } from "react";
+import type { ComponentProps, ReactElement } from "react";
 import { Alert, Anchor, Skeleton, Stack, VisuallyHidden } from "@mantine/core";
 import { IconAlertCircle } from "@tabler/icons-react";
 import LinkButton from "@/components/common/LinkButton";
@@ -17,17 +17,15 @@ export async function ActivityRegistrationAction({
   const { session } = await verifySession();
   if (!session) return <ActivityRegistrationStatus activity={activity} />;
 
+  let participant: ComponentProps<
+    typeof ActivityRegistrationStatus
+  >["participant"];
   try {
     const [profile, registration] = await Promise.all([
       getProfile(session),
       getActivityRegistration(session, { slug: activity.slug }),
     ]);
-    return (
-      <ActivityRegistrationStatus
-        activity={activity}
-        participant={{ level: profile?.profile?.level, registration }}
-      />
-    );
+    participant = { level: profile?.profile?.level, registration };
   } catch (error) {
     if (error instanceof FetcherError && error.status === 401) {
       return (
@@ -61,6 +59,10 @@ export async function ActivityRegistrationAction({
       </Stack>
     );
   }
+
+  return (
+    <ActivityRegistrationStatus activity={activity} participant={participant} />
+  );
 }
 
 export function ActivityRegistrationActionFallback(): ReactElement {

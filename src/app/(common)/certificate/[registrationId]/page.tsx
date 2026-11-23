@@ -1,3 +1,4 @@
+import type { ComponentProps } from "react";
 import CertificateConfigurationError from "@/features/certificate/CertificateConfigurationError";
 import CertificateLifecycleView from "@/features/certificate/CertificateLifecycleView";
 import CertificateUnavailableView, {
@@ -63,12 +64,9 @@ export default async function CertificatePage(props: {
     const registrationId = Number(certificateParam);
     if (!Number.isSafeInteger(registrationId)) notFound();
 
+    let summary: Awaited<ReturnType<typeof getCertificateLifecycle>>;
     try {
-      const summary = await getCertificateLifecycle(token, registrationId);
-      const canonicalPath = getCertificateLifecycleDestination(summary);
-      if (canonicalPath) redirect(canonicalPath);
-
-      return <CertificateLifecycleView summary={summary} />;
+      summary = await getCertificateLifecycle(token, registrationId);
     } catch (error) {
       if (error instanceof FetcherError) {
         if (error.status === 401) redirect(getLoginPath(legacyPath));
@@ -78,11 +76,17 @@ export default async function CertificatePage(props: {
       }
       throw error;
     }
+
+    const canonicalPath = getCertificateLifecycleDestination(summary);
+    if (canonicalPath) redirect(canonicalPath);
+
+    return <CertificateLifecycleView summary={summary} />;
   }
 
   const parsedCode = certificateCodeInputSchema.safeParse(certificateParam);
   if (!parsedCode.success) notFound();
 
+  let view: Omit<ComponentProps<typeof CertificateView>, "imageBaseUrl"> | null;
   try {
     const tokenPromise = getToken();
     const [certificateData, { access, currentCode }] = await Promise.all([
@@ -99,24 +103,22 @@ export default async function CertificatePage(props: {
     }
 
     const appUrl = normalizeCertificateAppUrl(process.env.NEXT_PUBLIC_APP_URL);
-    if (!appUrl) return <CertificateConfigurationError />;
-
-    const token = await tokenPromise;
-    const ownerCertificate =
-      access === "owner" && token
-        ? await getOwnedCertificateForDownload(token, parsedCode.data)
-        : undefined;
-
-    return (
-      <CertificateView
-        appUrl={appUrl}
-        data={certificateData}
-        imageBaseUrl={process.env.NEXT_PUBLIC_IMAGE_BASE_URL ?? ""}
-        access={access}
-        currentCode={currentCode}
-        ownerScore={ownerCertificate?.participant.scoring_result}
-      />
-    );
+    if (!appUrl) {
+      view = null;
+    } else {
+      const token = await tokenPromise;
+      const ownerCertificate =
+        access === "owner" && token
+          ? await getOwnedCertificateForDownload(token, parsedCode.data)
+          : undefined;
+      view = {
+        appUrl,
+        data: certificateData,
+        access,
+        currentCode,
+        ownerScore: ownerCertificate?.participant.scoring_result,
+      };
+    }
   } catch (error) {
     if (error instanceof FetcherError) {
       if (error.status === 404) notFound();
@@ -125,4 +127,13 @@ export default async function CertificatePage(props: {
     }
     throw error;
   }
+
+  if (!view) return <CertificateConfigurationError />;
+
+  return (
+    <CertificateView
+      {...view}
+      imageBaseUrl={process.env.NEXT_PUBLIC_IMAGE_BASE_URL ?? ""}
+    />
+  );
 }

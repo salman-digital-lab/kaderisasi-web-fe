@@ -11,7 +11,7 @@ import { verifySession } from "./session";
 
 export default async function updateActivityCustomForm(
   slug: string,
-  customFormData: Record<string, any>,
+  customFormData: Record<string, unknown>,
   sessionToken?: string,
 ): Promise<ServerActionResult> {
   const { session } = await verifySession();

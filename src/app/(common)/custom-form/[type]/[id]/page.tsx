@@ -120,35 +120,15 @@ export default async function Page(props: {
       !!activityData.additional_config?.allow_guest_registration;
   }
 
+  let form: Awaited<ReturnType<typeof loadRegistrationForm>>;
   try {
-    const { customForm, profileData, provinceData, countryData } =
-      await loadRegistrationForm(
-        {
-          feature_type: featureType,
-          feature_id: type === "independent" ? undefined : Number(id),
-        },
-        sessionData.session || "",
-        isGuest,
-      );
-
-    if (!customForm) {
-      return <ErrorWrapper message="Custom form not found" />;
-    }
-
-    return (
-      <PageContainer size="md">
-        <CustomFormContent
-          customForm={customForm}
-          profileData={profileData}
-          provinceData={provinceData}
-          countryData={countryData}
-          featureType={featureType}
-          featureId={type === "independent" ? undefined : Number(id)}
-          isGuest={isGuest}
-          activitySlug={activitySlug}
-          resetOnMount={searchParams.reset === "1"}
-        />
-      </PageContainer>
+    form = await loadRegistrationForm(
+      {
+        feature_type: featureType,
+        feature_id: type === "independent" ? undefined : Number(id),
+      },
+      sessionData.session || "",
+      isGuest,
     );
   } catch (error: unknown) {
     if (
@@ -171,4 +151,25 @@ export default async function Page(props: {
         : "An error occurred";
     return <ErrorWrapper message={message} />;
   }
+
+  const { customForm, profileData, provinceData, countryData } = form;
+  if (!customForm) {
+    return <ErrorWrapper message="Custom form not found" />;
+  }
+
+  return (
+    <PageContainer size="md">
+      <CustomFormContent
+        customForm={customForm}
+        profileData={profileData}
+        provinceData={provinceData}
+        countryData={countryData}
+        featureType={featureType}
+        featureId={type === "independent" ? undefined : Number(id)}
+        isGuest={isGuest}
+        activitySlug={activitySlug}
+        resetOnMount={searchParams.reset === "1"}
+      />
+    </PageContainer>
+  );
 }

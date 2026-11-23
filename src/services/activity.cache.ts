@@ -23,7 +23,16 @@ export async function getActivities(props: GetActivitiesReq) {
   try {
     return await _getActivities(props);
   } catch {
-    return { meta: {} as any, data: [] };
+    return {
+      meta: {
+        total: 0,
+        per_page: 0,
+        current_page: 1,
+        last_page: 0,
+        first_page: 1,
+      },
+      data: [],
+    };
   }
 }
 
