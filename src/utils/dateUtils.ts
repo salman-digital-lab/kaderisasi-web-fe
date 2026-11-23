@@ -1,9 +1,6 @@
 /**
  * Safely converts a Date object or date string to YYYY-MM-DD format.
  * Handles both Date objects and string values from Mantine DateInput.
- *
- * @param value - Date object, date string, or undefined/null
- * @returns ISO date string (YYYY-MM-DD) or undefined
  */
 export function toISODateString(
   value: Date | string | null | undefined,

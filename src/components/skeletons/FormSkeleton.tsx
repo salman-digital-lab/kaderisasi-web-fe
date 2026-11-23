@@ -21,16 +21,13 @@ export function FormSkeleton({ fields = 5 }: { fields?: number }) {
       aria-label="Memuat formulir"
     >
       <Stack gap="md">
-        {/* Form Title */}
         <Skeleton height={24} width="60%" mb="sm" />
         <Skeleton height={14} width="80%" mb="lg" />
 
-        {/* Form Fields */}
         {Array.from({ length: fields }).map((_, i) => (
           <FormFieldSkeleton key={i} />
         ))}
 
-        {/* Submit Button */}
         <Skeleton height={44} width="100%" radius="md" mt="md" />
       </Stack>
     </Paper>

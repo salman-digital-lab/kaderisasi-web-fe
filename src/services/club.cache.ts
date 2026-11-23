@@ -21,20 +21,12 @@ export async function getPublishedClubs(): Promise<Club[]> {
   return [firstPage, ...remainingPages].flatMap((page) => page.data);
 }
 
-/**
- * Cached wrapper for getClubs.
- * List refreshes every few minutes.
- */
 export async function getClubs(props: GetClubsReq) {
   cacheLife("minutes");
   cacheTag(CACHE_TAGS.CLUBS);
   return _getClubs(props);
 }
 
-/**
- * Cached wrapper for getClub.
- * Individual club data cached for minutes, tagged for targeted invalidation.
- */
 export async function getClub(props: GetClubReq) {
   cacheLife("minutes");
   cacheTag(CACHE_TAGS.CLUBS, CACHE_TAGS.CLUB(props.id));

@@ -39,7 +39,6 @@ type MediaCarouselProps = {
   clubName: string;
 };
 
-// YouTube error handling component
 function YouTubePlayer({
   videoUrl,
   clubName,
@@ -49,16 +48,13 @@ function YouTubePlayer({
   clubName: string;
   index: number;
 }) {
-  // Extract video ID from the full YouTube embed URL
   const extractVideoId = (url: string): string | null => {
     if (!url) return null;
 
-    // Handle direct video IDs
     if (/^[a-zA-Z0-9_-]{11}$/.test(url)) {
       return url;
     }
 
-    // Handle various YouTube URL formats
     const patterns = [
       /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/,
       /youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})/,
@@ -73,7 +69,6 @@ function YouTubePlayer({
       }
     }
 
-    // Fallback: try to extract from any string that might contain a video ID
     const fallbackMatch = url.match(/([a-zA-Z0-9_-]{11})/);
     return fallbackMatch?.[1] ?? null;
   };
@@ -90,9 +85,8 @@ function YouTubePlayer({
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const maxRetries = 3;
-  const loadTimeout = 15000; // 15 seconds timeout
+  const loadTimeout = 15000;
 
-  // Check if we have a valid video ID
   useEffect(() => {
     if (!videoId) {
       setHasError(true);
@@ -106,10 +100,8 @@ function YouTubePlayer({
     setRetryCount(0);
     setErrorType("unknown");
 
-    // Set initial timeout
     timeoutRef.current = setTimeout(handleTimeout, loadTimeout);
 
-    // Cleanup timeout on unmount or videoUrl change
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -123,7 +115,6 @@ function YouTubePlayer({
     setHasError(false);
     setErrorType("unknown");
 
-    // Clear timeout when video loads successfully
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
       timeoutRef.current = null;
@@ -134,13 +125,11 @@ function YouTubePlayer({
     setIsLoading(false);
     setHasError(true);
 
-    // Clear timeout when error occurs
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
       timeoutRef.current = null;
     }
 
-    // Try to determine error type based on retry count and other factors
     if (retryCount === 0) {
       setErrorType("network");
     } else {
@@ -161,7 +150,6 @@ function YouTubePlayer({
     setHasError(false);
     setIsLoading(true);
 
-    // Set timeout for this retry attempt
     timeoutRef.current = setTimeout(handleTimeout, loadTimeout);
 
     // Force iframe reload by changing the src
@@ -180,7 +168,6 @@ function YouTubePlayer({
     if (videoId) {
       window.open(`https://www.youtube.com/watch?v=${videoId}`, "_blank");
     } else {
-      // Fallback to original URL if no video ID extracted
       window.open(videoUrl, "_blank");
     }
   };
@@ -215,7 +202,6 @@ function YouTubePlayer({
     }
   };
 
-  // If no valid video ID, show invalid URL error
   if (!videoId) {
     return (
       <Box
@@ -463,7 +449,6 @@ export default function MediaCarousel({ media, clubName }: MediaCarouselProps) {
                   </Box>
                 )}
 
-                {/* Media Type Indicator */}
                 <Box
                   style={{
                     position: "absolute",
@@ -489,7 +474,6 @@ export default function MediaCarousel({ media, clubName }: MediaCarouselProps) {
                   {item.media_type === "video" ? "Video" : "Foto"}
                 </Box>
 
-                {/* Slide Counter */}
                 <Box
                   style={{
                     position: "absolute",

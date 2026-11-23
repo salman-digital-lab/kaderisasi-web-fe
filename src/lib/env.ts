@@ -1,9 +1,5 @@
 import { z } from "zod";
 
-/**
- * Server-side environment variables schema
- * These are only available on the server
- */
 const serverEnvSchema = z.object({
   SERVER_BE_API: z.url().optional(),
   SERVER_BE_ADMIN_API: z.url().optional(),
@@ -12,10 +8,6 @@ const serverEnvSchema = z.object({
     .default("development"),
 });
 
-/**
- * Client-side environment variables schema
- * These are exposed to the browser (NEXT_PUBLIC_*)
- */
 const clientEnvSchema = z.object({
   NEXT_PUBLIC_BE_API: z.url(),
   NEXT_PUBLIC_BE_ADMIN_API: z.url(),
@@ -68,6 +60,5 @@ export const clientEnv = () => {
   return parsed.data;
 };
 
-// Type exports for use throughout the app
 export type ServerEnv = ReturnType<typeof serverEnv>;
 export type ClientEnv = ReturnType<typeof clientEnv>;

@@ -1,6 +1,3 @@
-/**
- * Custom error class for fetch errors with status code and optional error code
- */
 export class FetcherError extends Error {
   constructor(
     message: string,

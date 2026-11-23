@@ -6,23 +6,21 @@ type StoredFormData = {
   expiresAt: number;
 };
 
-const EXPIRATION_TIME = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
+const EXPIRATION_TIME = 2 * 60 * 60 * 1000;
 
 export function useFormLocalStorage(
   storageKey: string,
   initialData: Record<string, any> = {},
   initialStep: number = 0,
-  reset: boolean = false
+  reset: boolean = false,
 ) {
   const [formData, setFormData] = useState<Record<string, any>>(initialData);
   const [currentStep, setCurrentStep] = useState<number>(initialStep);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Load data from localStorage on mount
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // If reset is requested, clear any saved progress and start fresh
     if (reset) {
       localStorage.removeItem(storageKey);
       setIsLoaded(true);
@@ -34,12 +32,10 @@ export function useFormLocalStorage(
       if (stored) {
         const parsed: StoredFormData = JSON.parse(stored);
 
-        // Check if data has expired
         if (Date.now() < parsed.expiresAt) {
           setFormData(parsed.data);
           setCurrentStep(parsed.currentStep);
         } else {
-          // Remove expired data
           localStorage.removeItem(storageKey);
         }
       }
@@ -51,7 +47,6 @@ export function useFormLocalStorage(
     }
   }, [storageKey, reset]);
 
-  // Save data to localStorage whenever it changes
   useEffect(() => {
     if (!isLoaded) return;
     if (typeof window === "undefined") return;
@@ -68,7 +63,6 @@ export function useFormLocalStorage(
     }
   }, [formData, currentStep, storageKey, isLoaded]);
 
-  // Clear localStorage and reset state to initial values
   const clearStorage = () => {
     if (typeof window === "undefined") return;
     try {

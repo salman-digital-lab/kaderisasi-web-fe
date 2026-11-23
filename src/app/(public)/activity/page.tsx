@@ -23,7 +23,6 @@ export default function Page({
 }: ActivityPageProps): ReactElement {
   return (
     <>
-      {/* Hero Section - Static content, renders immediately */}
       <PageHero
         title={
           <>

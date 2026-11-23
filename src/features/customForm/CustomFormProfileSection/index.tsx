@@ -165,7 +165,6 @@ export default function CustomFormProfileSection({
   };
 
 
-  // Build initial values from profile data
   const initialValues: Record<string, any> = { education_history: history };
 
   profileFields.forEach((field) => {

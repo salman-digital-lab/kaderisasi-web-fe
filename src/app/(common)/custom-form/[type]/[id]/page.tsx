@@ -22,12 +22,10 @@ export default async function Page(props: {
 
   const sessionData = await verifySession();
 
-  // Validate type
   if (!["activity", "club", "independent"].includes(type)) {
     return <ErrorWrapper message="Invalid form type" />;
   }
 
-  // Map type to feature_type for API
   const featureTypeMap = {
     activity: "activity_registration",
     club: "club_registration",

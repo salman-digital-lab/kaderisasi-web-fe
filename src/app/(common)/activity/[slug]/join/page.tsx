@@ -34,7 +34,6 @@ export default async function Page(props: {
     return <ErrorWrapper message="Kegiatan tidak ditemukan" />;
   }
 
-  // If user is already logged in, redirect directly to the custom form
   if (sessionData.session) {
     redirect(`/custom-form/activity/${activity.id}`);
   }

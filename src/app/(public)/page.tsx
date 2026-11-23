@@ -28,7 +28,6 @@ export const metadata: Metadata = {
 export default function Home(): ReactElement {
   return (
     <div>
-      {/* Hero Section - No data fetching, renders immediately */}
       <PageHero
         title={
           <>
@@ -63,7 +62,6 @@ export default function Home(): ReactElement {
         </Group>
       </PageHero>
 
-      {/* Statistics Section - Static content, no data fetching */}
       <Container size="lg" py="var(--page-space)">
         <Title ta="center" mt="sm" order={2} className={classes.sectionTitle}>
           Bersama Membangun Generasi Pemimpin Masa Depan
@@ -114,7 +112,6 @@ export default function Home(): ReactElement {
         </SimpleGrid>
       </Container>
 
-      {/* Activities Section - Streamed with Suspense */}
       <Suspense fallback={<ActivitiesSectionSkeleton />}>
         <ActivitiesSection />
       </Suspense>
@@ -123,7 +120,6 @@ export default function Home(): ReactElement {
         <ClubsSection />
       </Suspense>
 
-      {/* CTA Section - Static content, no data fetching */}
       <Container size="lg" py="var(--page-space)">
         <Stack
           mt="xl"

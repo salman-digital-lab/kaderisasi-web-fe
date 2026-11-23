@@ -14,14 +14,11 @@ export function CustomFormSkeleton() {
   return (
     <PageContainer size="md">
       <Stack gap="md" mih="100svh">
-        {/* Back button */}
         <Skeleton height={44} width={160} radius="md" />
 
-        {/* Header card: title + stepper */}
         <Paper {...paperProps}>
           <Skeleton height={28} width="50%" mb="xs" />
           <Skeleton height={14} width="80%" mb="lg" />
-          {/* Stepper */}
           <Group gap="xl" mt="lg">
             <Box style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <Skeleton height={32} width={32} radius="xl" />
@@ -41,12 +38,10 @@ export function CustomFormSkeleton() {
           </Group>
         </Paper>
 
-        {/* Form card */}
         <Paper {...paperProps}>
           <Stack gap="md">
             <Skeleton height={22} width="40%" />
             <Skeleton height={14} width="60%" />
-            {/* Fields */}
             {Array.from({ length: 4 }).map((_, i) => (
               <Box key={i}>
                 <Skeleton height={14} width={100} mb={6} />
@@ -56,7 +51,6 @@ export function CustomFormSkeleton() {
           </Stack>
         </Paper>
 
-        {/* Navigation buttons */}
         <Group justify="flex-end">
           <Skeleton height={44} width={120} radius="md" />
         </Group>

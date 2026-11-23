@@ -50,7 +50,6 @@ const MonthlyLeaderboardList = () => {
     fetchLeaderboard(selectedMonth);
   }, [selectedMonth]);
 
-  // Generate last 12 months options
   const monthOptions = Array.from({ length: 12 }, (_, i) => {
     const date = dayjs().subtract(i, "month");
     return {

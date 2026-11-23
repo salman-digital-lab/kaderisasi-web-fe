@@ -11,21 +11,12 @@ import type { GetActivitiesReq, GetActivityReq } from "@/types/api/activity";
 import { FetcherError } from "@/functions/common/fetcher";
 import type { Activity } from "@/types/model/activity";
 
-/**
- * Cached wrapper for getActivityCategories.
- * Categories rarely change — cached for hours.
- */
 export async function getActivityCategories() {
   cacheLife("hours");
   cacheTag(CACHE_TAGS.ACTIVITY_CATEGORIES);
   return _getActivityCategories();
 }
 
-/**
- * Cached wrapper for getActivities.
- * List refreshes every few minutes.
- * Props (page, per_page, etc.) automatically become part of the cache key.
- */
 export async function getActivities(props: GetActivitiesReq) {
   cacheLife("minutes");
   cacheTag(CACHE_TAGS.ACTIVITIES);
@@ -36,10 +27,6 @@ export async function getActivities(props: GetActivitiesReq) {
   }
 }
 
-/**
- * Cached wrapper for getActivity.
- * Individual activity data cached for minutes, tagged for targeted invalidation.
- */
 export async function getActivity(props: GetActivityReq) {
   cacheLife("minutes");
   cacheTag(CACHE_TAGS.ACTIVITIES, CACHE_TAGS.ACTIVITY(props.slug));

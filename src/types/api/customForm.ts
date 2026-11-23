@@ -64,7 +64,6 @@ export interface CustomForm {
   updated_at: string;
 }
 
-// API Request/Response types
 export interface GetCustomFormByFeatureReq {
   feature_type:
     "activity_registration" | "club_registration" | "independent_form";

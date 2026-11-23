@@ -28,7 +28,6 @@ import classes from "./index.module.css";
 import { FormFileInput } from "../FormFileInput";
 import { useFormUploads } from "../FormUploadContext";
 
-// Helper function to render text with newlines
 const renderTextWithNewlines = (text: string) => {
   if (!text) return text;
   const lines = text.split("\n");
@@ -72,7 +71,6 @@ export default function CustomFormFieldsRenderer({
     any
   > | null>(null);
 
-  // Build initial values - combine all sections data
   const initialValues: Record<string, any> = { ...formData };
 
   section.fields.forEach((field) => {
@@ -299,12 +297,10 @@ export default function CustomFormFieldsRenderer({
 
   const handleSubmit = (values: Record<string, any>) => {
     if (uploads?.pending) return;
-    // If it's the last section, show confirmation modal
     if (isLastSection) {
       setPendingValues(values);
       setConfirmModalOpen(true);
     } else {
-      // If not the last section, just proceed
       onSubmit(values);
     }
   };
@@ -356,7 +352,6 @@ export default function CustomFormFieldsRenderer({
         </Stack>
       </form>
 
-      {/* Confirmation Modal */}
       <Modal
         opened={confirmModalOpen}
         onClose={handleCancelSubmit}

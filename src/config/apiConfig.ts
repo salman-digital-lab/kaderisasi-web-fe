@@ -10,12 +10,10 @@ export const getApiConfig = () => {
   const isServer = typeof window === "undefined";
 
   return {
-    // Main API endpoint
     beApi: isServer
       ? process.env.SERVER_BE_API || process.env.NEXT_PUBLIC_BE_API
       : process.env.NEXT_PUBLIC_BE_API,
 
-    // Admin API endpoint
     beAdminApi: isServer
       ? process.env.SERVER_BE_ADMIN_API || process.env.NEXT_PUBLIC_BE_ADMIN_API
       : process.env.NEXT_PUBLIC_BE_ADMIN_API,

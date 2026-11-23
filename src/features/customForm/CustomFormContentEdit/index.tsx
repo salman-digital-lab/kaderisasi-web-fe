@@ -151,7 +151,6 @@ function EditBody({
 
   return (
     <Stack gap="md">
-      {/* Header card */}
       <Paper {...paperProps}>
         <Title order={3} mb="xs">
           Ubah Formulir: {customForm.form_name}
@@ -187,7 +186,6 @@ function EditBody({
         )}
       </Paper>
 
-      {/* Form card */}
       <Paper {...paperProps}>
         <CustomFormFieldsRenderer
           key={currentSection.id}
@@ -201,7 +199,6 @@ function EditBody({
         />
       </Paper>
 
-      {/* Navigation buttons */}
       <Group justify="space-between">
         <Button
           type="button"

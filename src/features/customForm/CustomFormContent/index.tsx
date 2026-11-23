@@ -287,7 +287,6 @@ function CustomFormContentBody({
         </Button>
       )}
 
-      {/* Header card: title, description, stepper */}
       <Paper {...paperProps}>
         <Title order={1} size="h2" mb="xs">
           {customForm.form_name}
@@ -345,7 +344,6 @@ function CustomFormContentBody({
           inert={!isLoaded}
           style={!isLoaded ? { visibility: "hidden" } : undefined}
         >
-          {/* Form card */}
           <Paper {...paperProps} key={isLoaded ? flow.currentId : "recovering"}>
             {isProfileStep ? (
               isGuest ? (
@@ -390,7 +388,6 @@ function CustomFormContentBody({
             ) : null}
           </Paper>
 
-          {/* Navigation buttons */}
           <Group justify={currentStep === 0 ? "flex-end" : "space-between"}>
             {currentStep > 0 && (
               <Button

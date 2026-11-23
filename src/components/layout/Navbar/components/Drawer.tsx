@@ -53,13 +53,11 @@ const navItems: NavItem[] = [
   { label: "Ruang Curhat", href: "/consultation", icon: IconMessageCircle },
 ];
 
-// User-specific menu items (only shown when logged in)
 const userMenuItems: NavItem[] = [
   { label: "Kegiatan Saya", href: "/status", icon: IconActivity },
   { label: "Profil Saya", href: "/profile", icon: IconUser },
 ];
 
-// Reusable menu item component
 function MenuItem({
   item,
   isActive,
@@ -129,7 +127,6 @@ export default function NavDrawer({
       classNames={{ content: classes.drawerContent, body: classes.drawerBody }}
     >
       <Stack className={classes.drawerShell} gap={0}>
-        {/* Header */}
         <Box
           className={classes.drawerHeader}
           style={{
@@ -138,10 +135,7 @@ export default function NavDrawer({
         >
           {session.session ? (
             <Group gap="sm" wrap="nowrap">
-              <ProfilePictureNav
-                size={40}
-                src={session.profilePicture}
-              />
+              <ProfilePictureNav size={40} src={session.profilePicture} />
               <Box style={{ flex: 1, minWidth: 0 }}>
                 <Text fw={600} lineClamp={1}>
                   {session.name}
@@ -174,9 +168,7 @@ export default function NavDrawer({
           )}
         </Box>
 
-        {/* Scrollable Content */}
         <nav className={classes.drawerScroll} aria-label="Navigasi menu">
-          {/* User Menu Section - Only for logged in users */}
           {session.session && (
             <>
               <Box px="sm" py="sm">
@@ -202,7 +194,6 @@ export default function NavDrawer({
             </>
           )}
 
-          {/* Navigation Section */}
           <Box px="sm" py="sm">
             <Text c="dimmed" fw={600} px="sm" mb="xs">
               JELAJAHI
@@ -245,7 +236,6 @@ export default function NavDrawer({
           </Box>
         </nav>
 
-        {/* Footer */}
         <Box
           className={classes.drawerFooter}
           style={{

@@ -1,19 +1,10 @@
-/**
- * YouTube utility functions for better error handling and video validation
- */
-
-/**
- * Extract YouTube video ID from various YouTube URL formats
- */
 export function extractYouTubeVideoId(url: string): string | null {
   if (!url) return null;
 
-  // Handle direct video IDs
   if (/^[a-zA-Z0-9_-]{11}$/.test(url)) {
     return url;
   }
 
-  // Handle various YouTube URL formats
   const patterns = [
     /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
     /youtube\.com\/v\/([a-zA-Z0-9_-]{11})/,
@@ -27,14 +18,10 @@ export function extractYouTubeVideoId(url: string): string | null {
     }
   }
 
-  // Fallback: try to extract from any string that might contain a video ID
   const fallbackMatch = url.match(/([a-zA-Z0-9_-]{11})/);
   return fallbackMatch?.[1] ?? null;
 }
 
-/**
- * Validate if a string is a valid YouTube video ID
- */
 export function isValidYouTubeVideoId(videoId: string): boolean {
   if (!videoId) return false;
 
@@ -42,25 +29,17 @@ export function isValidYouTubeVideoId(videoId: string): boolean {
   return /^[a-zA-Z0-9_-]{11}$/.test(videoId);
 }
 
-/**
- * Validate if a string is a valid YouTube URL or video ID
- */
 export function isValidYouTubeUrl(url: string): boolean {
   if (!url) return false;
 
-  // Check if it's already a valid video ID
   if (isValidYouTubeVideoId(url)) {
     return true;
   }
 
-  // Check if it's a valid YouTube URL
   const videoId = extractYouTubeVideoId(url);
   return videoId !== null;
 }
 
-/**
- * Generate YouTube embed URL with optimal parameters
- */
 export function generateYouTubeEmbedUrl(
   videoId: string,
   options: {
@@ -103,9 +82,6 @@ export function generateYouTubeEmbedUrl(
   return `https://www.youtube.com/embed/${videoId}?${params.toString()}`;
 }
 
-/**
- * Generate YouTube embed URL from any YouTube URL or video ID
- */
 export function generateYouTubeEmbedUrlFromUrl(
   videoUrl: string,
   options: {
@@ -125,9 +101,6 @@ export function generateYouTubeEmbedUrlFromUrl(
   return generateYouTubeEmbedUrl(videoId, options);
 }
 
-/**
- * Get YouTube video thumbnail URLs
- */
 export function getYouTubeThumbnailUrls(videoId: string): {
   default: string;
   medium: string;
@@ -150,9 +123,6 @@ export function getYouTubeThumbnailUrls(videoId: string): {
   };
 }
 
-/**
- * Get YouTube video thumbnail URLs from any YouTube URL or video ID
- */
 export function getYouTubeThumbnailUrlsFromUrl(videoUrl: string): {
   default: string;
   medium: string;
@@ -168,9 +138,6 @@ export function getYouTubeThumbnailUrlsFromUrl(videoUrl: string): {
   return getYouTubeThumbnailUrls(videoId);
 }
 
-/**
- * Check if YouTube video is available (basic check)
- */
 export async function checkYouTubeVideoAvailability(videoId: string): Promise<{
   available: boolean;
   error?: string;
@@ -208,9 +175,6 @@ export async function checkYouTubeVideoAvailability(videoId: string): Promise<{
   }
 }
 
-/**
- * Check if YouTube video is available from any YouTube URL or video ID
- */
 export async function checkYouTubeVideoAvailabilityFromUrl(
   videoUrl: string,
 ): Promise<{
@@ -228,9 +192,6 @@ export async function checkYouTubeVideoAvailabilityFromUrl(
   return checkYouTubeVideoAvailability(videoId);
 }
 
-/**
- * Common YouTube error messages in Indonesian
- */
 export const YOUTUBE_ERROR_MESSAGES = {
   network: "Masalah koneksi internet. Periksa koneksi Anda dan coba lagi.",
   video: "Video tidak tersedia atau dibatasi. Silakan buka video di YouTube.",
@@ -244,9 +205,6 @@ export const YOUTUBE_ERROR_MESSAGES = {
     "Terjadi kesalahan saat memuat video YouTube. Silakan coba lagi nanti.",
 } as const;
 
-/**
- * Get appropriate error message based on error type
- */
 export function getYouTubeErrorMessage(
   errorType: keyof typeof YOUTUBE_ERROR_MESSAGES,
 ): string {

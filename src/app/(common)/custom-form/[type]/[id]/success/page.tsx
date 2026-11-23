@@ -18,12 +18,10 @@ export default async function SuccessPage(props: {
   const { type, id } = params;
   if (type === "independent") redirect(`/form/${id}`);
 
-  // Validate type
   if (!["activity", "club", "independent"].includes(type)) {
     return <ErrorWrapper message="Invalid form type" />;
   }
 
-  // Map type to feature_type for API
   const featureTypeMap = {
     activity: "activity_registration",
     club: "club_registration",
@@ -81,7 +79,6 @@ export default async function SuccessPage(props: {
       return <ErrorWrapper message="Custom form not found" />;
     }
 
-    // Determine redirect URL based on form type
     let redirectUrl = "/";
     let redirectLabel = "Kembali ke Beranda";
 

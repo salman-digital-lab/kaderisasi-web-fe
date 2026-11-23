@@ -16,12 +16,11 @@ export interface ClubRegistration {
   id: number;
   club_id: number;
   member_id: number;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED';
+  status: "PENDING" | "APPROVED" | "REJECTED";
   additional_data: Record<string, unknown>;
   created_at: string;
   updated_at: string;
-  
-  // Relations
+
   club?: Club;
   roles?: ClubRegistrationRole[];
 }

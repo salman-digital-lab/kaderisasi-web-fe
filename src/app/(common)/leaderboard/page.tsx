@@ -13,7 +13,6 @@ export const metadata = {
 export default function LeaderboardPage() {
   return (
     <>
-      {/* Hero Section - Static content, renders immediately */}
       <PageHero
         title={
           <>

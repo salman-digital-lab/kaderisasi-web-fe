@@ -5,14 +5,12 @@ export default function Loading() {
   return (
     <PageContainer size="md">
       <div role="status" aria-label="Memuat halaman" aria-busy="true">
-        {/* Header */}
         <Stack align="center" gap="md" mb="xl">
           <Skeleton height={80} width={80} circle />
           <Skeleton height={32} width={300} />
           <Skeleton height={20} width={400} />
         </Stack>
 
-        {/* Registration Info Card */}
         <Paper p="xl" radius="md" withBorder>
           <Stack gap="lg">
             <Skeleton height={24} width={200} />

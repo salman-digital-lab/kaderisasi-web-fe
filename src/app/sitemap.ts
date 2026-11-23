@@ -29,7 +29,7 @@ async function getPublishedActivities(): Promise<Activity[]> {
         {
           method: "GET",
           headers: { "Content-Type": "application/json" },
-          next: { revalidate: 3600 }, // Cache for 1 hour
+          next: { revalidate: 3600 },
         },
       );
 
@@ -59,7 +59,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const currentDate = new Date();
 
-  // Static pages - public routes only
   const staticPages: MetadataRoute.Sitemap = [
     {
       url: `${BASE_URL}/tentang/bmka`,
@@ -133,7 +132,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  // Dynamic activity pages
   const activityPages: MetadataRoute.Sitemap = activities.map((activity) => ({
     url: `${BASE_URL}/activity/${activity.slug}`,
     lastModified: new Date(activity.updated_at),
