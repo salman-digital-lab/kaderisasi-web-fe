@@ -26,6 +26,8 @@ function getRegistrationErrorMessage(error: unknown): string {
     ACTIVE_CUSTOM_FORM_REQUIRED:
       "Form pendaftaran sudah tidak tersedia. Muat ulang halaman untuk melihat informasi terbaru.",
     ALREADY_REGISTERED: "Anda sudah terdaftar pada program ini.",
+    MINIMUM_LEVEL_NOT_MET:
+      "Jenjang Anda belum memenuhi persyaratan kegiatan ini. Kembali ke halaman detail untuk melihat jenjang minimum.",
   };
 
   const messageKey = error.code || error.message;

@@ -1,13 +1,12 @@
 import type { ReactElement } from "react";
-import { Alert, Badge, Stack, Text } from "@mantine/core";
-import { IconInfoCircle } from "@tabler/icons-react";
+import { Badge, Stack, Text } from "@mantine/core";
 import LinkButton from "@/components/common/LinkButton";
 import CertificateCtaButton from "@/features/certificate/CertificateCtaButton";
 import { getCertificateCta } from "@/features/certificate/utils/certificateData";
-import {
-  ACTIVITY_REGISTRANT_COLOR_STATUS_RENDER,
-  USER_LEVEL_RENDER,
-} from "@/constants/render/activity";
+import { ACTIVITY_REGISTRANT_COLOR_STATUS_RENDER } from "@/constants/render/activity";
+import ActivityLevelRequirement, {
+  meetsActivityLevel,
+} from "../ActivityLevelRequirement";
 import {
   ACTIVITY_REGISTRANT_STATUS_ENUM,
   ACTIVITY_TYPE_ENUM,
@@ -104,22 +103,12 @@ export default function ActivityRegistrationStatus({
   }
 
   if (participant) {
-    if (
-      participant.level === undefined ||
-      participant.level < activity.minimum_level
-    ) {
+    if (!meetsActivityLevel(participant.level, activity.minimum_level)) {
       return (
-        <Alert
-          color="blue"
-          icon={<IconInfoCircle size={18} aria-hidden="true" />}
-          title="Persyaratan jenjang"
-        >
-          Kegiatan ini memerlukan jenjang{" "}
-          {USER_LEVEL_RENDER[activity.minimum_level]} atau lebih tinggi.
-          {participant.level !== undefined
-            ? ` Jenjang Anda saat ini: ${USER_LEVEL_RENDER[participant.level]}.`
-            : " Jenjang profil Anda belum tersedia."}
-        </Alert>
+        <ActivityLevelRequirement
+          level={participant.level}
+          minimumLevel={activity.minimum_level}
+        />
       );
     }
     return (

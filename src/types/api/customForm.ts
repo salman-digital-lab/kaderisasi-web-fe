@@ -1,3 +1,4 @@
+import type { USER_LEVEL_ENUM } from "@/types/constants/profile";
 import type { SectionNavigation } from "@/features/customForm/form-routing";
 
 export interface CustomFormField {
@@ -62,6 +63,8 @@ export interface CustomForm {
   is_active: boolean;
   created_at: string;
   updated_at: string;
+  /** Only on an activity registration form: the activity's minimum level. */
+  minimum_level?: USER_LEVEL_ENUM | null;
 }
 
 export interface GetCustomFormByFeatureReq {

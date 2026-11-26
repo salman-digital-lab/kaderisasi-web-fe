@@ -10,6 +10,9 @@ import { FetcherError } from "@/functions/common/fetcher";
 import CustomFormContent from "@/features/customForm/CustomFormContent";
 import { ACTIVITY_TYPE_ENUM } from "@/types/constants/activity";
 import { isClubRegistrationOpen } from "@/features/clubs/registration-state";
+import ActivityLevelRequirement, {
+  meetsActivityLevel,
+} from "@/features/activity/ActivityLevelRequirement";
 
 export default async function Page(props: {
   params: Promise<{ type: string; id: string }>;
@@ -155,6 +158,22 @@ export default async function Page(props: {
   const { customForm, profileData, provinceData, countryData } = form;
   if (!customForm) {
     return <ErrorWrapper message="Custom form not found" />;
+  }
+
+  const minimumLevel = customForm.minimum_level ?? 0;
+  if (
+    featureType === "activity_registration" &&
+    !isGuest &&
+    !meetsActivityLevel(profileData?.profile?.level, minimumLevel)
+  ) {
+    return (
+      <PageContainer size="md">
+        <ActivityLevelRequirement
+          level={profileData?.profile?.level}
+          minimumLevel={minimumLevel}
+        />
+      </PageContainer>
+    );
   }
 
   return (
